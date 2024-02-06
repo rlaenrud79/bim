@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+    <div class="header-left">
+        <h2 th:text="#{layout.common.admin.user_list}">사용자 목록</h2>
+    </div>
+    <div class="header-right">
+        <div class="top-search">
+            <form id="frmSearchForm" th:replace="admin/userList/frmSearchForm :: frmSearchForm()"/>
+        </div>
+        <a href="#none" id="downloadExcel" class="btn btn-color4"><span th:text="#{admin.user_list.page.download_excel}">엑셀 다운로드</span></a>
+        <a href="#none" id="goAdd" class="btn btn-color1 pop-open-btn" data-modal="#modalAddGisung"><span th:text="#{admin.user_list.page.add_user}">등록</span></a>
+    </div>
+</div>

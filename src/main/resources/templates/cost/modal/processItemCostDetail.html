@@ -1,0 +1,93 @@
+<table class="table table-blue" id="tbProcessItemCostDetail" style="display:block">
+    <tbody>
+    <tr class="sticky-th">
+        <th rowspan="2">
+            <div class="check-set">
+                <input type="checkbox" id="processDetailItemCheck">
+                <label for="processDetailItemCheck"></label>
+            </div>
+        </th>
+        <th rowspan="2">No</th>
+        <th colspan="2">상세공종</th>
+        <th colspan="4">수량</th>
+        <th rowspan="2">공사비</th>
+    </tr>
+    <tr class="sticky-th-two">
+        <th>코드</th>
+        <th>규격</th>
+        <th>대표</th>
+        <th>ⓐ값</th>
+        <th>단위</th>
+        <th>ⓑ단가</th>
+    </tr>
+    <tr class="sticky-th-three tb-style-total">
+        <th></th>
+        <th></th>
+        <th>총계</th>
+        <th id="leftTotalCount">12</th>
+        <th colspan="4" id="leftComplexUnitPrice">3,479,058 = 3,479,058 / 1</th>
+        <th id="leftTotalCost">3,479,058</th>
+    </tr>
+    <tr th:id="left_tr_+${info.index}" th:each="row, info : ${costDetailList}">
+        <td>
+            <div class="check-set">
+                <input type="checkbox" th:id="|itemProcessDetailCheck${info.index}|" name="item_process_detail_no" class="process-detail-list-item-checkbox" th:data-no="${row.id}" th:value="${row.id}">
+                <label th:for="|itemProcessDetailCheck${info.index}|"></label>
+            </div>
+        </td>
+        <td th:text="${(info.index+1)}">1</td>
+        <td th:text="${row.code}">G000002447</td>
+        <td th:text="${row.name}">길이(대표공종)</td>
+        <td>
+            <div class="check-set">
+                <input type="checkbox" id="isFirst" th:checked="${row.isFirst == true}">
+                <label for="isFirst"></label>
+            </div>
+        </td>
+        <td th:text="${row.count}">1.0000</td>
+        <td th:text="${row.unit}">M</td>
+        <td th:text="${#numbers.formatInteger(row.unitPrice, 1, 'COMMA')}" class="txt-right">1</td>
+        <td th:text="${#numbers.formatInteger(row.cost, 1, 'COMMA')}" class="txt-right">2,147,834</td>
+    </tr>
+    </tbody>
+</table>
+<script th:inline="javascript">
+    $(document).ready(function() {
+        calculateComplexUnitPrice();
+
+        $('#processDetailItemCheck').click(function() {
+            $(".process-detail-list-item-checkbox").prop("checked",($(this).prop("checked")));
+        });
+    });
+
+    function calculateComplexUnitPrice() {
+        let totalCost = 0;
+        let firstRowCount = 0;
+        let result = '';
+        let complexUnitPrice = 0;
+        let totalCount = 0;
+
+        $("tr[id^='left_tr_']").each(function (i) {
+            let td = $(this).children();
+
+            if (td.eq(4).find('#isFirst').prop('checked')) firstRowCount = parseInt(td.eq(5).text());
+            if (isNumeric(td.eq(8).text().replaceAll(",", ""))) totalCost += parseInt(td.eq(8).text().replaceAll(",", ""));
+            else result += td.eq(2).text() + ' ';
+            totalCount += 1;
+        });
+
+        console.log("firstRowCount : " + firstRowCount);
+        if (result != '') result += [[#{cost.modal.cost_detail.message.result.can_not_calculate_without_cost}]];
+        if (firstRowCount == 0 || firstRowCount == '') result += [[#{cost.modal.cost_detail.message.result.first_count_is_zero_or_not}]];
+        if (result == '') {
+            complexUnitPrice = parseInt(totalCost / firstRowCount);
+            result += numberWithCommas(complexUnitPrice) + ' = ' + numberWithCommas(parseInt(totalCost)) + ' / ' + firstRowCount;
+        }
+        console.log("firstRowCount : " + firstRowCount + ", totalCost : " + totalCost + ", complexUnitPrice : " + complexUnitPrice  + ", result : " + result);
+
+        $("#leftComplexUnitPrice").html(result);
+        $("#leftTotalCount").html(totalCount);
+        $("#leftTotalCost").html(numberWithCommas(parseInt(totalCost)));
+    }
+
+</script>

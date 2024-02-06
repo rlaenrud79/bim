@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('coWork')"></nav>
+  <aside th:replace="layout/common :: aside('coWork','bulletinUpdate')"></aside>
+
+  <!-- contents area  -->
+  <main role="main" class="content-wrapper coWork-content board-add">
+    <!-- Content Header (Page header) -->
+    <div th:replace="coWork/bulletinUpdate/contentHeader :: contentHeader()"></div>
+
+    <!-- /.contents area -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-bulletin-add">
+          <div class="col-lg-12">
+            <div class="card content-body-area">
+              <div class="card-header">
+                <div class="col-12">
+                  <div class="bim-btn-group">
+                    <button type="button" id="btnMoveListPage" class="btn bg-gradient-info"><i class="fas fa-list"></i><span th:text="#{co_work.bulletin_update.btn_move_list_page}"> 목록으로</span></button>
+                    <button type="button" id="btnMoveViewPage" class="btn bg-gradient-info"><i class="fas fa-search"></i><span th:text="#{co_work.bulletin_update.btn_move_view_page}"> 조회</span></button>
+                    <button type="button" id="btnUpdateBulletin" class="btn bg-gradient-warning"><i class="fas fa-plus"></i><span th:text="#{co_work.bulletin_update.btn_update_bulletin}"> 수정</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="col-12" th:object="${bulletin}">
+                  <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{co_work.bulletin_update.bulletin_update}"> 게시글 수정</span></h2>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <tbody>
+                      <tr>
+                        <th><span th:text="#{co_work.bulletin_update.input_title}"> 제목</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                        <td>
+                          <div class="form-group w-50">
+                            <input type="text" id="title" name="title" class="form-control" th:field="*{title}" th:placeholder="#{co_work.bulletin_update.input_title_placeholder}">
+                          </div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th><span th:text="#{co_work.bulletin_update.input_contents}"> 내용</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+                        </th>
+                        <td>
+                          <div th:replace="common/editor/page :: load()"></div>
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <th><span th:text="#{co_work.bulletin_update.attach_file}"> 파일첨부</span></th>
+                        <td>
+                          <div class="d-flex align-items-center">
+                            <div th:replace="/common/fileUploader :: multiFileUploader('bulletinFile')"></div>
+                          </div>
+                          <div class="d-flex align-items-center">
+                            <div class="up-file-list">
+                              <div class="badge badge-pill" th:each="item, index : *{bulletinFiles}"
+                                   th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}">
+                                <a href="#" class="download-attach-file" th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}"><span th:text="${item.originFileName}">aaa.ppt</span></a>
+                                <button type="button" th:data-file-id="${item.id}" class="btn btnDeleteFile"><i class="fas fa-times"></i></button>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </main>
+  <footer th:replace="layout/common :: footer()"></footer>
+
+  <script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/common :: script()"></div>
+<div th:include="common/editor/page :: script()"></div>
+
+<script>
+  $(document).ready(function () {
+    const bulletinId = [[${bulletin.id}]]
+    const $title = $("#title");
+
+    const bulletinFileExtension = '[[${bulletinFileExtension}]]';
+    const previewFileExtension = '[[${previewFileExtension}]]';
+
+    const allowFileExtList = bulletinFileExtension.split("||");
+    const previewFileExtList = previewFileExtension.split("||");
+
+    $(this).on('click', '#btnUpdateBulletin', function () {
+      if ($title.val() === "") {
+        showErrorAlert("ALERT", "[[#{co_work.bulletin_update.alert_title}]]");
+        return false;
+      }
+
+      if (CommonEditor.isEmpty()) {
+        showErrorAlert("ALERT", "[[#{co_work.bulletin_update.alert_bulletin}]]");
+        return false;
+      }
+
+      updateBulletin();
+    });
+
+    function updateBulletin() {
+      reqPostJSON('/coWorkApi/putBulletin'
+        , setSendData()
+        , function (data) {
+          if (!data.result) {
+            showErrorAlert("ALERT", data.message);
+          } else {
+            toastr.success(data.message);
+            startFileUpload();
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function setSendData() {
+      return JSON.stringify({
+        "id": bulletinId,
+        "title": $title.val(),
+        "contents": CommonEditor.getInputData(),
+      });
+    }
+
+    function startFileUpload() {
+      $("#bulletinFile").dmUploader("start");
+    }
+
+    function completeUploadFile(obj) {
+      if ($(obj)[0].id === "bulletinFile") {
+        $("title").val("");
+        moveListPage();
+      }
+    }
+
+    function fileUploaderExtraData() {
+      return {
+        "id": bulletinId,
+        "fileUploadUIType": "BULLETIN_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeMultiUploaderScript("#bulletinFile"
+      , fileUploaderExtraData
+      , 5000000000
+      , allowFileExtList
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+
+    $(this).on('click', '.download-attach-file', function (e) {
+      e.preventDefault();
+
+      const fileExt = $(this).data('file-ext');
+      const filePath = $(this).data('file-path');
+
+      if (previewFileExtList.includes(fileExt.toLowerCase())) {
+        window.open(filePath);
+      } else {
+        executeFileDownloadModal($(this).data("file-id"), "BULLETIN_FILE");
+      }
+    });
+
+    // delete file
+    $(this).on('click', '.btnDeleteFile', function () {
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.bulletin_update.confirm_delete_bulletin_file}]]", deleteBulletinFile.bind(this));
+    });
+
+    function deleteBulletinFile() {
+      const _this = $(this);
+      const fileId = _this.data('file-id');
+
+      reqPost('/coWorkApi/deleteBulletinFile'
+        , { "id": fileId }
+        , function (data) {
+          if (!data.result) {
+            showErrorAlert("ALERT", data.message);
+          } else {
+            _this.parent().remove();
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    $(this).on('click', '#btnMoveListPage', function () {
+      moveListPage();
+    });
+
+    function moveListPage() {
+      window.location.href = `/coWork/bulletinList?keepCondition=true`;
+    }
+
+    $(this).on('click', '#btnMoveViewPage', function () {
+      moveViewPage();
+    });
+
+    function moveViewPage() {
+      window.location.href = `/coWork/bulletinView?id=${bulletinId}`;
+    }
+
+    // init
+    CommonEditor.setInputData("[[${bulletin.contents}]]");
+
+  });
+</script>
+</body>
+
+</html>

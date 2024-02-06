@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+    <div class="header-left">
+        <h2 th:text="|${gisung.title} (${gisung.jobSheetStartDate}~${gisung.jobSheetEndDate})|">기성제목노출</h2>
+    </div>
+    <div class="header-right">
+        <a href="#none" id="exportXlsx" class="btn btn-color4"><span th:text="#{page.common.download_excel}">엑셀 다운로드</span></a>
+        <a href="#none" th:if="${isWriting}" id="btnWriteGisung" class="btn btn-color2"><span th:text="#{project.job_sheet_add.btn_write}">임시저장</span></a>
+        <a href="#none" th:if="${isWriting}" id="btnWriteGisungComplete" class="btn btn-color1"><span th:text="#{project.job_sheet_add.btn_final_write}">최종저장</span></a>
+        <a href="#none" id="btnMoveListPage" class="btn"><span th:text="#{project.job_sheet_add.btn_move_list_page}">기성 목록</span></a>
+    </div>
+    </div>
+</div>

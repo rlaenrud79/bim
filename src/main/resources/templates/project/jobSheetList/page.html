@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="project/jobSheetList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+
+                <input type="hidden" id="pageNo" value="">
+                <div id="divCardBody" th:replace="project/jobSheetList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalJobSheetReferences', #{common.modal_title.job_sheet_references}, '')"></th:block>
+<!-- modal end -->
+
+<script type="text/javascript">
+    const confirmDeleteJobSheet = "[[#{project.job_sheet_list.confirm_delete_job_sheet}]]";
+    const selectDeleteJobSheet = "[[#{project.job_sheet_list.select_delete_job_sheet}]]";
+    const deleteJobSheetSelect = "[[#{project.job_sheet_list.delete_job_sheet_select}]]";
+    const confirmSearchUser = "[[#{project.job_sheet_list.confirm_search_user}]]";
+</script>
+<script src="/dist/js/pages/jobSheet.js"></script>
+
+</body>
+</html>

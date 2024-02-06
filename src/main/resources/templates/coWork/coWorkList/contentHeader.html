@@ -1,0 +1,10 @@
+<div id="divContentHeader" class="content-header" th:fragment="contentHeader()">
+  <div>
+    <h1><i class="nav-icon fas fa-people-carry"></i> <span th:text="#{co_work.co_work_list.nav.co_work}">협업</span></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/main/index}"><i class="fas fa-home"></i> <span th:text="#{co_work.co_work_list.title_home}">HOME</span></a></li>
+      <li class="breadcrumb-item"><a th:href="@{/coWork/coWorkList}" th:text="#{co_work.co_work_list.nav.co_work_management}">협업관리</a></li>
+      <li class="breadcrumb-item active"><span th:text="#{co_work.co_work_list.nav.co_work_list}">협업 목록</span></li>
+    </ol>
+  </div>
+</div>

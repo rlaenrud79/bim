@@ -1,0 +1,59 @@
+<div id="divCardBody" class="card content-body-area" th:fragment="cardBody()">
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="board-list">
+    <div class="table-wrap">
+      <table class="table">
+        <tbody>
+          <tr>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_no}">No</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_work_name}">공종명</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_writer}">등록자</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_year_month}">년월</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_month_rate}">월(%)</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_day_rate}">일(%)</th>
+            <th class="text-center" th:text="#{admin.work_plan.list_title_write_date}">등록일시</th>
+            <th class="text-center" th:text="#{admin.work_plan.title_work_plan_delete}">삭제</th>
+          </tr>
+          <th:block th:if="${totalCount == null or totalCount == 0}">
+            <tr>
+              <td colspan="8" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+            </tr>
+          </th:block>
+          <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+            <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+            <td class="text-center">
+              <a href="#" th:id="btnUpdate_+${index.index}" class="text-center pop-open-btn" data-modal="#modalWorkPlanUpdate" th:data-id="${item.id}" role="button">
+                <span class="text-over-dot" th:text="${#strings.isEmpty(item.workNameLocale) ? item.workName : item.workNameLocale}">배관공종</span>
+              </a>
+            </td>
+            <td class="text-center">
+              <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+            </td>
+            <td class="text-center" th:text="|${item.year}-${item.month}|">2023</td>
+            <td class="text-center" th:text="${#numbers.formatDecimal(item.monthRate, 1, 'COMMA', 2, 'POINT')}">0</td>
+            <td class="text-center" th:text="${item.dayRate}">0</td>
+            <td class="text-center" th:text="${#temporals.format(item.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021-04-06 11:10</td>
+            <td class="text-center">
+              <button type="button" id="btnDeleteWorkPlan" th:data-work-plan-id="${item.id}" class="btn-xs">
+                <span th:text="#{contents.document_list.btn_delete_document}">삭제</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+    </table>
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+</div><!--// board-list-->
+
+<script>
+  var currentSort = '[[${searchWorkPlanVO.SortProp}]]';
+  if (currentSort) {
+    for (let element of document.querySelectorAll("[data-sort]")) {
+      if (element.dataset.sort !== currentSort) {
+        element.style.opacity = '0.2';
+      }
+    }
+  }
+</script>

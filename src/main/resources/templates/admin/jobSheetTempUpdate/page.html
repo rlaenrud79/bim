@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('admin')"></nav>
+  <aside th:replace="layout/common :: aside('admin','jobSheetTempList')"></aside>
+
+  <!-- contents area  -->
+  <main role="main" class="content-wrapper admin-content board-add">
+    <!-- Content Header (Page header) -->
+    <div id="divContentHeader" class="content-header" th:replace="admin/jobSheetTempUpdate/contentHeader :: contentHeader()"></div>
+
+    <!-- /.contents area -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-jobsheet-templist">
+          <div class="col-lg-12">
+            <div class="card content-body-area" th:object="${jobSheetTemplate}">
+              <div>
+                <input type="hidden" id="jobSheetTemplateId" th:field="*{id}" />
+              </div>
+              <div class="card-header">
+                <div class="col-12">
+                  <div class="bim-btn-group">
+                    <button type="button" class="btn bg-gradient-info" id="btnMoveListPage"><i class="fas fa-list"></i><span th:text="#{admin.job_sheet_template.job_sheet_template_update.btn_move_list_page}"> 목록으로</span></button>
+                    <button type="button" class="btn bg-gradient-info" id="btnUpdate"><i class="fas fa-plus"></i><span th:text="#{admin.job_sheet_template.job_sheet_template_update.btn_update}"> 수정</span></button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="col-12">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <tbody>
+                      <tr>
+                        <th><span th:text="#{admin.job_sheet_template.job_sheet_template_update.input_title}">제목</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                        <td>
+                          <div class="form-group w-50">
+                            <input
+                              type="text" id="title" name="title" class="form-control" maxlength="255"
+                              th:placeholder="#{admin.job_sheet_template.job_sheet_template_update.input_title_placeholder}"
+                              th:value="*{title}"
+                            >
+                            <label for="title"></label>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th><span th:text="#{admin.job_sheet_template.job_sheet_template_update.input_enable}">사용여부</span></th>
+                        <td>
+                          <div class="form-group clearfix">
+                            <div class="icheck-primary d-inline pr-3">
+                              <input type="radio" id="enableYes" name="enable" value="true" th:checked="${#strings.equalsIgnoreCase(jobSheetTemplate.enabled,'true')}">
+                              <label for="enableYes"><span th:text="#{admin.job_sheet_template.job_sheet_template_update.input_enable_yes}">YES</span></label>
+                            </div>
+                            <div class="icheck-primary d-inline pr-3">
+                              <input type="radio" id="enableNo" name="enable" value="false" th:checked="${#strings.equalsIgnoreCase(jobSheetTemplate.enabled,'false')}">
+                              <label for="enableNo"><span th:text="#{admin.job_sheet_template.job_sheet_template_update.input_enable_no}">NO</span></label>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th><span th:text="#{admin.job_sheet_template.job_sheet_template_update.input_contents}">내용</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+                        </th>
+                        <td colspan="3">
+                          <div class="edit-area">
+                            <div th:replace="common/editor/page :: load()"></div>
+                          </div>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </main>
+
+  <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<div th:include="layout/common :: script()"></div>
+<div th:include="common/editor/page :: script()"></div>
+
+<script>
+  $(document).ready(function () {
+    const savedContents = "[[${jobSheetTemplate.contents}]]";
+
+    CommonEditor.setInputData(savedContents);
+
+    $(this).on('click', '#btnUpdate', function () {
+
+      if (isEmptyTitle()) {
+        showErrorAlert("ALERT", "[[#{admin.job_sheet_template.job_sheet_template_update.alert_title}]]");
+        return false;
+      }
+
+      if (CommonEditor.isEmpty()) {
+        showErrorAlert("ALERT", "[[#{admin.job_sheet_template.job_sheet_template_update.alert_contents}]]");
+        return false;
+      }
+
+      updateJobSheetTemplate();
+    });
+
+    $(this).on('click', '#btnMoveListPage', function () {
+      setDefaultValue();
+      moveListPage();
+    });
+
+    function isEmptyTitle() {
+      return $("#title").val() === "";
+    }
+
+    function setSendData() {
+      return JSON.stringify({
+        "id":$("#jobSheetTemplateId").val(),
+        "title": $("#title").val(),
+        "enable": $("input[name='enable']:checked").val() === "true",
+        "contents": CommonEditor.getInputData()
+      });
+    }
+
+    function setDefaultValue() {
+      $("#title").val("");
+      $('input[name="enable"]').val(['true']);
+    }
+
+    function moveListPage() {
+      window.location.href = '/admin/jobSheetTempList';
+    }
+
+    function updateJobSheetTemplate() {
+      reqPostJSON('/adminApi/putJobSheetTemplate'
+        , setSendData()
+        , function (data) {
+          if (!data.result) {
+            showErrorAlert("ALERT", data.message);
+          } else {
+            setDefaultValue();
+            toastr.success(data.message);
+            moveListPage();
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", xhr.responseJSON.message);
+        });
+    }
+  });
+</script>
+</body>
+
+</html>

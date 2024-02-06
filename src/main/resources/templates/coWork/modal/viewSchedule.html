@@ -1,0 +1,34 @@
+<!-- 모달 - 일정 상세 -->
+<div class="content sechedule-view" xmlns="http://www.w3.org/1999/html">
+  <table class="table" th:object="${scheduleItem}">
+    <tbody>
+    <tr>
+      <th th:text="#{co_work.modal.view_schedule.work}">공종</th>
+      <td th:if="${isTotalWorkCnt}" th:text="#{co_work.modal.view_schedule.all_work}">전체</td>
+      <td th:if="${!isTotalWorkCnt}" th:text="${scheduleItem.getWorksNames(#session.getAttribute('scopedTarget.userInfo')?.projectId)}">전체</td>
+    </tr>
+    <tr>
+      <th th:text="#{co_work.modal.view_schedule.term}">기간</th>
+      <td>
+        <span th:text="${#temporals.format(scheduleItem.startDate, #messages.msg('system.locale.dateformat.year_month_day'))}">2021.06.06</span>
+        &nbsp;~&nbsp;
+        <span th:text="${#temporals.format(scheduleItem.endDate, #messages.msg('system.locale.dateformat.year_month_day'))}">2021.06.06</span>
+      </td>
+    </tr>
+    <tr>
+      <th th:text="#{co_work.modal.view_schedule.title}">일정 명</th>
+      <td th:text="${scheduleItem.title}">현충일</td>
+    </tr>
+    <tr>
+      <th th:text="#{co_work.modal.view_schedule.description}">설명</th>
+      <td class="context">
+        <div class="scroll-area-v" th:utext="${scheduleItem.description}">전체 휴일입니다.</div>
+      </td>
+    </tr>
+    <tr>
+      <th th:text="#{co_work.modal.view_schedule.writer}">등록자</th>
+      <td th:text="${scheduleItem.writeEmbedded.writer.userName}">홍길동</td>
+    </tr>
+    </tbody>
+  </table>
+</div>

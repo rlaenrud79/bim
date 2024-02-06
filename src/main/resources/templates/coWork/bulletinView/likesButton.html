@@ -1,0 +1,8 @@
+<div id="divBulletinViewLikesButton" th:fragment="likesButton(isLiked)">
+  <button type="button" th:if="${not isLiked}" id="btnLike" class="btn bg-gradient-primary">
+    <i class="fas fa-heart"></i><span th:text="#{co_work.bulletin_view.btn_like}"> 좋아요</span>
+  </button>
+  <button type="button" th:if="${isLiked}" id="btnDislike" class="btn bg-gradient-primary">
+    <i class="fas fa-heart-broken"></i><span th:text="#{co_work.bulletin_view.btn_dislike}"> 좋아요 취소</span>
+  </button>
+</div>

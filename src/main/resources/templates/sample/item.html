@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('main')"></nav>
+    <aside th:replace="layout/common :: aside('main','work')"></aside>
+    <!-- contents area  -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1>등록,수정,상세조회 폼</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <ol class="breadcrumb float-sm-right">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active">General Form</li>
+                        </ol>
+                    </div>
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+        <!-- Main content -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card card-info">
+                            <div class="card-header">
+                                <h3 class="card-title">Horizontal Form</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <!-- form start -->
+                            <form class="form-horizontal">
+                                <div class="card-body">
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">Email</label>
+                                        <div class="col-sm-10">
+                                            <input type="email" class="form-control" id="inputEmail3" placeholder="Email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="inputPassword3" class="col-sm-2 col-form-label">Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="inputPassword3" placeholder="Password">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="selectNotisub" class="col-sm-2 col-form-label">Select</label>
+                                        <div class="col-sm-10">
+                                            <select class="form-control" id="selectNotisub">
+                                                <option>option 1</option>
+                                                <option>option 2</option>
+                                                <option>option 3</option>
+                                                <option>option 4</option>
+                                                <option>option 5</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="selectNotisub1" class="col-sm-2 col-form-label">Password</label>
+                                        <div class="col-sm-10">
+                                            <input type="password" class="form-control" id="selectNotisub1" placeholder="Password">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <!-- checkbox -->
+                                            <div class="form-group">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="customCheckbox11" value="option1">
+                                                    <label for="customCheckbox11" class="custom-control-label">Custom Checkbox</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="customCheckbox21" checked>
+                                                    <label for="customCheckbox21" class="custom-control-label">Custom Checkbox checked</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input" type="checkbox" id="customCheckbox31" disabled>
+                                                    <label for="customCheckbox31" class="custom-control-label">Custom Checkbox disabled</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input custom-control-input-danger" type="checkbox" id="customCheckbox41" checked>
+                                                    <label for="customCheckbox41" class="custom-control-label">Custom Checkbox with custom color</label>
+                                                </div>
+                                                <div class="custom-control custom-checkbox">
+                                                    <input class="custom-control-input custom-control-input-danger custom-control-input-outline" type="checkbox" id="customCheckbox51" checked>
+                                                    <label for="customCheckbox51" class="custom-control-label">Custom Checkbox with custom color outline</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <!-- radio -->
+                                            <div class="form-group">
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input" type="radio" id="customRadio1" name="customRadio">
+                                                    <label for="customRadio1" class="custom-control-label">Custom Radio</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input" type="radio" id="customRadio2" name="customRadio" checked>
+                                                    <label for="customRadio2" class="custom-control-label">Custom Radio checked</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input" type="radio" id="customRadio3" disabled>
+                                                    <label for="customRadio3" class="custom-control-label">Custom Radio disabled</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input custom-control-input-danger" type="radio" id="customRadio4" name="customRadio2" checked>
+                                                    <label for="customRadio4" class="custom-control-label">Custom Radio with custom color</label>
+                                                </div>
+                                                <div class="custom-control custom-radio">
+                                                    <input class="custom-control-input custom-control-input-danger custom-control-input-outline" type="radio" id="customRadio5" name="customRadio2">
+                                                    <label for="customRadio5" class="custom-control-label">Custom Radio with custom color outline</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <div class="card card-outline card-info">
+                                                    <div class="card-header">
+                                                        <h3 class="card-title">
+                                                            Summernote
+                                                        </h3>
+                                                    </div>
+                                                    <!-- /.card-header -->
+                                                    <div class="card-body">
+                                                          <textarea id="summernote">
+                                                            Place <em>some</em> <u>text</u> <strong>here</strong>
+                                                          </textarea>
+                                                    </div>
+                                                    <div class="card-footer">
+                                                        Visit <a href="https://github.com/summernote/summernote/">Summernote</a> documentation for more examples and information about the plugin.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group row">
+                                            <div class="offset-sm-2 col-sm-10">
+                                                <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" id="exampleCheck2">
+                                                    <label class="form-check-label" for="exampleCheck2">Remember me</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- /.card-body -->
+                                    <div class="card-footer">
+                                        <button type="submit" class="btn btn-info">Sign in</button>
+                                        <button type="submit" class="btn btn-default float-right">Cancel</button>
+                                    </div>
+                                    <!-- /.card-footer -->
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalSample">사용자</button>
+        <div class="container">
+            <div class="row mt-5">
+                <div class="col">
+                    <th:block th:replace="layout/modal :: modal('modalSample','모달샘플','modal-lg')"></th:block>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="layout/common :: script()"></div>
+<script>
+$(document).ready(function() {
+
+    $('#summernote').summernote({
+        placeholder: 'Hello BIM World!!!',
+        tabsize: 2,
+        height: 255
+    });
+
+    $('#modalSample').on('shown.bs.modal', function () {
+        reqGet("/sampleModal/item"
+          , function (data) {
+            $('#modalSample').find('.modal-body').html(data);
+          }
+        );
+    });
+});
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="coWork/bulletinAdd/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <div id="divCardBody" class="card-body" th:replace="coWork/bulletinAdd/cardBody :: cardBody()"/>
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script src="/dist/js/pages/bulletinList.js"></script>
+<script>
+  let bulletinId = '[[${bulletin.id}]]';
+  const bulletinFileExtension = '[[${bulletinFileExtension}]]';
+  const allowFileExtList = bulletinFileExtension.split("||");
+  const previewFileExtension = '[[${previewFileExtension}]]';
+  const previewFileExtList = previewFileExtension.split("||");
+
+  const confirmErrorNoTitle = "[[#{co_work.bulletin_add.alert_title}]]";
+  const confirmErrorNoContents = "[[#{co_work.bulletin_add.alert_bulletin}]]";
+  const confirmDelete = "[[#{co_work.bulletin_view.confirm_delete}]]";
+  const confirmDeleteBulletinFile = "[[#{co_work.bulletin_update.confirm_delete_bulletin_file}]]";
+  const confirmUpdateFreeboard = "[[#{cowork.freeboard.confirm_update_freeboard}]]";
+
+  function startFileUpload() {
+    $("#bulletinFile").dmUploader("start");
+  }
+
+  function completeUploadFile(obj) {
+    if ($(obj)[0].id === "bulletinFile") {
+      $("title").val("");
+      window.location.href = `/coWork/bulletinList?keepCondition=true`;;
+    }
+  }
+
+  function fileUploaderExtraData() {
+    return {
+      "id": bulletinId,
+      "fileUploadUIType": "BULLETIN_FILE",
+      "makeVersion": false,
+      "executeHoopsConverter": false
+    }
+  }
+
+  makeMultiUploaderScript("#bulletinFile"
+          , fileUploaderExtraData
+          , 5000000000
+          , allowFileExtList
+          , '[[#{common.file_upload.error_file_size}]]'
+          , '[[#{common.file_upload.error_ext}]]'
+          , completeUploadFile
+  );
+</script>

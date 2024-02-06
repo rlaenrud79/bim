@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div class="header">
+        <div class="header-left">
+        </div>
+        <div class="header-right">
+        </div>
+      </div>
+
+      <div class="content">
+        <h3><i class="fas fa-exclamation-triangle text-danger"></i> <span th:text="${message}">앗! 페이지를 찾을 수 없습니다.</span></h3>
+
+        <p>
+          <a href="/main/index" th:text="#{error.go_to_main}">클릭 하면 메인 페이지</a>
+        </p>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+</body>
+</html>

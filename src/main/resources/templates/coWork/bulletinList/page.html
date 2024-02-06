@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="content-header" th:replace="coWork/bulletinList/contentHeader :: contentHeader()"/>
+
+            <div class="content">
+                <input type="hidden" id="pageNo" value="">
+                <div id="divCardBody" class="card-body" th:replace="coWork/bulletinList/cardBody :: cardBody()"/>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script src="/dist/js/pages/bulletinList.js"></script>
+<script>
+    const isRoleAdminProject = [[${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject}]];
+    const confirmDeleteBulletin = "[[#{co_work.bulletin_view.confirm_delete}]]";
+    const confirmSelDeleteFreeboard = "[[#{cowork.freeboard.confirm_sel_delete_freeboard}]]";
+    const confirmSelectDeleteFreeboard = "[[#{cowork.freeboard.select_delete_freeboard}]]";
+</script>
+</body>
+
+</html>

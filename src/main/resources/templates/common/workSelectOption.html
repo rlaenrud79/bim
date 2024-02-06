@@ -1,0 +1,33 @@
+<div th:fragment="script(id)">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            var constructionData = JSON.parse([[${#strings.replace(workJson, '&quot;', '"')}]]);
+            // 주어진 constructionData 배열에서 upId 값이 0보다 큰 값이 있는지 체크
+            const hasUpId = hasUpIdGreaterThanZero(constructionData);
+
+            if (hasUpId) {
+                // 선택 요소
+                const constructionSelect = document.getElementById([[${id}]]);
+                removeAllOptions([[${id}]]);
+                const optionElement = document.createElement('option');
+                optionElement.value = "0";
+                optionElement.text = [[#{contents.modal.add_document.select_work}]];
+                constructionSelect.appendChild(optionElement);
+
+                // 공종 그룹 생성
+                constructionData.forEach(construction => {
+                    if (construction.upId === 0) {
+                        const optgroup = workCreateOptionGroup(constructionData, construction.id);
+                        optgroup.label = construction.workNameLocale;
+                        constructionSelect.appendChild(optgroup);
+                    }
+                });
+            }
+            if ($("#selWorkId").val()) {
+                $('#'+[[${id}]]).val($("#selWorkId").val()).prop('selected', true);
+            } else {
+                $('#'+[[${id}]]).val(0).prop('selected', true);
+            }
+        });
+    </script>
+</div>

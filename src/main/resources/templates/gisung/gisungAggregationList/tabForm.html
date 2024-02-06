@@ -1,0 +1,16 @@
+<div class="card-header" th:fragment="tabForm()">
+    <div class="col-12">
+        <div class="bim-btn-group">
+            <button type="button" class="btn bg-sky" id="btnMoveListPage">
+                <span th:text="#{project.job_sheet_add.btn_move_list_page}">목록으로</span>
+            </button>
+            <button type="button" class="btn bg-sky btn-tab" th:data-year="${selYear}" data-document-no="1">
+                <span>집계표(전체)</span>
+            </button>
+            <button type="button" class="btn bg-sky btn-tab" th:data-year="${selYear}" data-document-no="2">
+                <span>집계표(연차)</span>
+            </button>
+        </div>
+
+    </div>
+</div>

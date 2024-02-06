@@ -1,0 +1,35 @@
+<article id="issueResult" th:fragment="load()">
+  <header th:text="#{co_work.modeling_view.page.issue_process}">작업내용</header>
+
+  <div class="scroll-area-v">
+    <table class="table" th:each="issueReport : ${issueReports}">
+      <tbody>
+      <tr>
+        <div class="d-flex align-items-center">
+          <div th:replace="/common/userInfoAtField :: userInfoAtField(${issueReport.coWorkJoiner.accountDTO})"></div>
+        </div>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_attach_file}">첨부파일</p>
+          <p th:each="issueReportFile : ${issueReport.coWorkIssueReportFiles}">
+            <a href="#">
+              <span class="text-over-dot downloadIssueReportFile" th:data-id="${issueReportFile.id}" th:text="${issueReportFile.originFileName}">2공구.rvt</span>
+            </a>
+          </p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div class="context-area px-0 ph-0">
+            <div class="scroll-area-v" th:utext="${issueReport.contents}">
+              contents<br>
+              토공쪽에서 처리하였습니다.
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <input type="hidden" id="pageNo" value="">
+
+                <div id="divCardBody" th:replace="gisung/gisungList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddGisung',#{contents.gisung_item_list.modal_title_add}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUpdateGisung',#{contents.gisung_item_list.modal_title_update}, 'popup-md')"></th:block>
+<!-- modal end -->
+<script type="text/javascript">
+    var confirmDeleteDocument = "[[#{contents.gisung_list.confirm_delete_document}]]";
+    var deleteGisungSelect = "[[#{contents.gisung_list.delete_gisung_select}]]";
+    var selectGisungDelete = "[[#{contents.gisung_list.select_gisung_delete}]]";
+    let excelExport = false;
+
+    function exportTotalXlsx() {
+        if (!excelExport) {
+            console.log("Server started");
+
+            // WebSocket 연결을 열기
+            const socket = new WebSocket('ws://localhost:28000');
+
+            // 연결이 열린 경우 실행되는 이벤트 핸들러
+            socket.addEventListener('open', (event) => {
+                console.log('WebSocket 연결이 열렸습니다.', event);
+
+                // 서버에 메시지 전송
+                socket.send('make_gisung_excel_total');
+                excelExport = true;
+            });
+
+            // 메시지를 받은 경우 실행되는 이벤트 핸들러
+            socket.addEventListener('message', (event) => {
+                console.log('서버로부터 메시지를 수신했습니다:', event.data);
+                //if (event.data === "result_make_gisung_excel_total") {
+                    $(".btnExportTotalXlsx").html("전체 기성 엑셀 다운로드");
+                    $(".btnExportTotalXlsx").attr("href", "/commonApi/downloadFile/GISUNG_EXCEL_FILE/0");
+                //}
+                excelExport = false;
+                socket.close();
+                // 받은 메시지를 처리하는 코드를 추가하세요.
+            });
+
+            // 에러가 발생한 경우 실행되는 이벤트 핸들러
+            socket.addEventListener('error', (event) => {
+                console.error('WebSocket 오류:', event);
+                excelExport = false;
+            });
+
+            // 연결이 닫힌 경우 실행되는 이벤트 핸들러
+            socket.addEventListener('close', (event) => {
+                console.log('WebSocket 연결이 닫혔습니다.', event);
+                excelExport = false;
+            });
+        }
+    }
+</script>
+<script src="/dist/js/pages/gisung.js"></script>
+
+</body>
+</html>

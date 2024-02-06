@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div class="header" th:fragment="contentHeader()">
+        <div class="header-left">
+          <h2 th:text="${project.name}">고속국도 400호선 양평~이천간 건설공사(제4공구)</h2>
+        </div>
+        <div class="header-right">
+        </div>
+      </div><!--// header-->
+
+      <div class="content" th:utext="${project.dashboard_contents}">
+      </div><!--// content-->
+
+
+<!--      <div class="content">-->
+<!--        <div class="container-fluid">-->
+<!--          <div class="con-overview">-->
+<!--            <div class="col-lg-6">-->
+<!--              <div class="card content-body-area">-->
+<!--                <div class="card-header">-->
+<!--                  <h2 class="list-title"><i class="far fa-arrow-alt-circle-right"></i> <span th:text="#{admin.project.page.project_image}">사업 이미지</span></h2>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                  <div class="d-flex justify-content-center">-->
+<!--                    <div id="carouselControls" class="carousel slide" data-wrap="false" data-ride="carousel">-->
+<!--                      <div class="carousel-inner">-->
+<!--                        <div class="carousel-item" th:each="item, index : ${projectImages}" th:classappend="${index.index == 0 ? 'active':''}">-->
+<!--                          <img class="d-block w-75 zoom-in-image" th:src="${item.path}">-->
+<!--                        </div>-->
+<!--                      </div>-->
+<!--                      <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">-->
+<!--                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>-->
+<!--                        <span class="sr-only">Previous</span>-->
+<!--                      </a>-->
+<!--                      <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">-->
+<!--                        <span class="carousel-control-next-icon" aria-hidden="true"></span>-->
+<!--                        <span class="sr-only">Next</span>-->
+<!--                      </a>-->
+<!--                    </div>-->
+<!--                    <div class="btn-zoom-img">-->
+<!--                      <button type="button" class="btn btn-default"><i class="fas fa-search-plus"></i></button>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="card content-body-area">-->
+<!--                <div class="card-header">-->
+<!--                  <h2 class="list-title"><i class="far fa-arrow-alt-circle-right"></i> <span th:text="#{admin.project.page.partner_company}">관계사</span></h2>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                  <div class="table-responsive">-->
+<!--                    <table class="table table-bordered">-->
+<!--                      <tbody>-->
+<!--                      <tr th:each="company : ${project.companies}" th:if="${company.isDisplay and #strings.equalsIgnoreCase(company.status, 'REG')}">-->
+<!--                        <th th:text="${company.companyRole.companyRoleName}">발주 업체</th>-->
+<!--                        <td th:text="${company.name}">한국 도로 공사 주식회사</td>-->
+<!--                      </tr>-->
+<!--                      </tbody>-->
+<!--                    </table>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+
+<!--            <div class="col-lg-6"  th:object="${project}">-->
+<!--              <div class="card content-body-area">-->
+<!--                <div class="card-header">-->
+<!--                  <h2 class="list-title"><i class="far fa-arrow-alt-circle-right"></i> <span th:text="#{admin.project.page.project_summary}">사업 개요</span></h2>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                  <div class="table-responsive">-->
+<!--                    <table class="table table-bordered">-->
+<!--                      <tbody>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.project_name}">사업명</th>-->
+<!--                        <td colspan="3" th:text="*{name}">고속 국도 제14호선 함양~창녕간 건설공사(제9공구)</td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.project_purpose}">사업 목적</th>-->
+<!--                        <td colspan="3" th:text="*{purpose}">-->
+<!--                          경상남도 내륙 지방 개발 촉진 및 관광지원 활성화<br>-->
+<!--                          물류비 절감을 통한 국가 균형 발전 도모-->
+<!--                        </td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.project_address}">사업 위치</th>-->
+<!--                        <td colspan="3" th:text="*{address}">경남 합천군 대양면 오산리</td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.project_term}">공사기간</th>-->
+<!--                        <td colspan="3" th:text="*{term}">착공일로부터 2,100일</td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.start_design_date}">설계 착수일</th>-->
+<!--                        <td th:text="${#temporals.format(project.startDesignDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                        <th th:text="#{admin.project.page.end_design_date}">설계 준공일</th>-->
+<!--                        <td th:text="${#temporals.format(project.endDesignDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.start_date}">착공일</th>-->
+<!--                        <td th:text="${#temporals.format(project.startDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                        <th th:text="#{admin.project.page.start_due_date}">시공 착공 예정일</th>-->
+<!--                        <td th:text="${#temporals.format(project.startDueDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                      </tr>-->
+<!--                      <tr>-->
+<!--                        <th th:text="#{admin.project.page.end_date}">준공일</th>-->
+<!--                        <td th:text="${#temporals.format(project.endDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                        <th th:text="#{admin.project.page.end_due_date}">시공 완료 예정일</th>-->
+<!--                        <td th:text="${#temporals.format(project.endDueDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2019.03.01</td>-->
+<!--                      </tr>-->
+<!--                      </tbody>-->
+<!--                    </table>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--              <div class="card content-body-area">-->
+<!--                <div class="card-header">-->
+<!--                  <h2 class="list-title"><i class="far fa-arrow-alt-circle-right"></i> <span th:text="#{admin.project.page.project_contents}">부수 정보</span></h2>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                  <div class="table-responsive" th:utext="*{contents}"></div>-->
+<!--                </div>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>&lt;!&ndash; /.container-fluid &ndash;&gt;-->
+<!--      </div>&lt;!&ndash;// content&ndash;&gt;-->
+    </div>
+  </div>
+</div>
+
+<script>
+  $('.overview-img-slide').slick({
+    slidesToShow:1,
+    dots:true,
+    arrows:true,
+    infinite:true,
+    fade:true,
+    speed:1000
+  });
+</script>
+
+<th:block th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></th:block>
+
+<script>
+  $(document).ready(function () {
+    // 계정정보(account) 테이블 > 프로젝트관리자(isRoleAdminProject) 체크(true/false)
+    const isRoleAdminProject = [[${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject}]];
+    if(!isRoleAdminProject)     applyNoAsideLayout();
+
+
+
+  });
+
+  // $(function (){
+  //   const $this = $(this);
+  //
+  //   $('#carouselControls').carousel({
+  //     interval: 5000,
+  //     pause: "hover",
+  //     wrap: true,
+  //   });
+  //
+  //   $this.find('.btn-zoom-img').on('click', function () {
+  //     let html = "<a href='" + $('.carousel-item.active > .zoom-in-image').attr("src") + "'/>";
+  //     $(html).ekkoLightbox({ alwyasShowClose: true});
+  //     //$('.carousel-item.active > .zoom-in-image').trigger('click');
+  //   });
+  // })
+
+
+</script>
+
+</body>
+</html>

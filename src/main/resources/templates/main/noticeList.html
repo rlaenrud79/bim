@@ -1,0 +1,24 @@
+<article id="noticeList" class="notice-area" th:fragment="load()">
+  <header>
+    <h3>
+      <i class="fas fa-table"></i>
+      <span th:text="#{main.notice_area.title_notice}">공지사항</span>
+      <span class="badge badge-info" th:text="${mainNoticesCnt}">20</span>
+    </h3>
+    <a href="/coWork/notificationList"><span th:text="#{main.notice_area.title_more}">더 보기</span> <i class="fas fa-angle-right"></i></a>
+  </header>
+  <ul>
+    <li th:each="mainNotice, index : ${mainNotices}" th:if="${mainNotices.size > 0}">
+      <a th:id="aMainNotice_+${mainNotice.id}"
+         th:data-id="${mainNotice.id}"
+         th:data-is-new-tab="${mainNotice.isNewTab}"
+         href="#" class="text-over-dot">
+        <span class="badge bg-orange" th:if="${mainNotice.isNew}">NEW</span>
+        <span th:text="${mainNotice.title}">폭설에 따른 시설물 점검 안내</span>
+      </a>
+    </li>
+    <li th:if="${mainNotices.size == 0}">
+      <span th:text="#{main.notice_area.no_notice_item}">공지가 없습니다.</span>
+    </li>
+  </ul>
+</article>

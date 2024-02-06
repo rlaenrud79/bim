@@ -1,0 +1,166 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+    <div class="grid">
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i>업체명<small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="hidden" name="id" id="id" th:value="${gisungContractManager.id}">
+                <input type="text" id="company" name="company" th:value="${gisungContractManager.company}" class="form-control" placeholder="업체명을 입력해주세요.">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i>담당자명<small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="text" id="damName" name="damName" th:value="${gisungContractManager.damName}" class="form-control" placeholder="담당자명을 입력해주세요.">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i>도장<small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+<!--                <div class="user-panel d-flex mr-4">-->
+<!--                    <div class="image">-->
+<!--                        <img th:src="${#strings.isEmpty(gisungContractManager.stampPath) ? '/dist/img/no_user_photo.png' : gisungContractManager.stampPath}"-->
+<!--                             onerror="this.src='/dist/img/no_user_photo.png'"-->
+<!--                             class="w-100 img-circle" alt="User Image">-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div th:replace="/common/fileUploader :: singleFileUploader('stampFile')"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-box">
+    <th:block th:if="${gisungContractManager.id == '' || gisungContractManager.id == 0}">
+        <button id="mBtnAdd" type="button" class="btn btn-color1">등록</button>
+    </th:block>
+    <th:block th:unless="${gisungContractManager.id == '' || gisungContractManager.id == 0}">
+        <button id="mBtnAdd" type="button" class="btn btn-color1">수정</button>
+    </th:block>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+    $(document).ready(function () {
+        let gisungContactManagerId = $("#id").val();
+
+        const $company = $("#company");
+        const $damName = $("#damName");
+        const gisungContactManagerFileExtension = '[[${documentFileExtension}]]';
+        const allowFileExtList = gisungContactManagerFileExtension.split("||");
+
+        $('#mBtnAdd').off('click').on('click', function () {
+            var id = $("#id").val();
+
+            if ($company.val() === "") {
+                alert("업체명을 입력해주세요.");
+                return false;
+            }
+
+            if ($damName.val() === "") {
+                alert("담당자명을 입력해주세요.");
+                return false;
+            }
+
+            if (id === "" || id === "0") {
+                if ($('li.devo_file_list').length === 0) {
+                    alert("도장 파일을 선택해주세요.");
+                    return false;
+                }
+
+                addGisungContactManager();
+            } else {
+                //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.add_gisung.confirm_modify_gisung}]]", updateGisung);
+                updateGisungContactManager();
+            }
+        });
+
+        function addGisungContactManager() {
+            reqPostJSON('/gisungApi/postGisungContractManager', setSendData(),
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        //toastr.success(data.message);
+                        gisungContactManagerId = data.returnId;
+                        startFileUpload();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            );
+        }
+
+        function updateGisungContactManager() {
+            reqPutJSON('/gisungApi/putGisungContractManager'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        //$("#modalAddGisungContractManager").modal("hide");
+                        //reloadComponent("/gisung/gisungListCardBody", "#divCardBody", "");
+                        //location.href = "/gisung/jobSheetList?id="+data.returnId;
+                        //alert(data.message);
+                        gisungContactManagerId = gisungContactManagerId;
+                        if ($('li.devo_file_list').length > 0) {
+                            startFileUpload();
+                        } else {
+                            $('.close').click();
+                            $("#mBtnAdd").off("click");
+                            reloadComponent("/gisung/gisungContractManagerListCardBody", "#divCardBody", "");
+                        }
+                    } else {
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function setSendData() {
+            return JSON.stringify({
+                "company": $company.val(),
+                "damName": $damName.val(),
+                "id": $("#id").val()
+            });
+        }
+
+        function startFileUpload() {
+            $("#stampFile").dmUploader("start");
+        }
+
+        function completeUploadFile(obj) {
+            $('.close').click();
+            //$("#mBtnAdd").off("click");
+            reloadComponent("/gisung/gisungContractManagerListCardBody", "#divCardBody", "");
+        }
+
+        function fileUploaderExtraData() {
+            return {
+                "id": gisungContactManagerId,
+                "fileUploadUIType": "GISUNG_STAMP_FILE",
+                "makeVersion": true,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeSingleUploaderScript("#stampFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+        );
+
+    });
+</script>

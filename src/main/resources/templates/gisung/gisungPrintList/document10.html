@@ -1,0 +1,55 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="print-page print-write page-fl">
+        <div class="cover-list">
+            <h2 class="font-neo">목차 목록</h2>
+            <ul>
+                <li>
+                    <div class="txt-box">
+                        <button type="button" class="add-btn font-neo btnTableAdd"><span>+</span>신규등록</button>
+                    </div>
+                </li>
+                <li th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungTable}">
+                    <div class="txt-box summary">
+                        <p class="txt1">목차</p>
+                        <ul>
+                            <li th:each="itemC, index : ${item.contentsList}" th:text="${itemC}">1. 기성부분검사원</li>
+                        </ul>
+                    </div>
+                    <div class="btn-box">
+                        <button type="button" class="btn bg-sky btn-sm btnTableModify" th:data-id="${item.id}">
+                            <span> 선택</span>
+                        </button>
+                        <button type="button" class="btn btn-danger btn-sm btnTableDelete" th:data-id="${item.id}">
+                            <span> 삭제</span>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body cover-edit">
+            <h2 class="font-neo">목차 작성</h2>
+            <section class="page cover-ty2">
+                <div class="title">
+                    <h2>목차</h2>
+                </div>
+                <ul id="tbAddTable">
+                    <li th:each="number : ${#numbers.sequence(1, 12)}">
+                        <input type="text" name="contents" id="contents" class="" placeholder="">
+                    </li>
+                </ul>
+            </section>
+
+
+            <div class="btn-box">
+                <input id="gisungTableId" name="gisungTableId" type="hidden" value="0">
+                <input id="documentNo" name="documentNo" type="hidden" th:value="10">
+                <a href="#none" class="btn btn-color2" id="btnWriteGisungItem" th:data-gisung-id="${gisung.id}">저장</a>
+                <a href="#none" class="btn btn-color1 pop-open-btn" data-modal="#modalPrintGisungItem" id="btnDownloadPRINT">인쇄하기</a>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>

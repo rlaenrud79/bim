@@ -1,0 +1,32 @@
+
+
+    <div class="dual-list flex">
+        <section class="dual-right col6">
+            <p class="txt1">선택된 항목</p>
+            <div class="scroll-wrap">
+                <ul class="task-work-ck view">
+                    <li th:each="item, info : ${jobSheetProcessItem.worker}">
+                        <p>[[${item.name}]]</p>
+                        <p class="txt">[[${item.value}]]</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="btn-box">
+        <a href="#none" class="btn close btn-close">닫기</a>
+    </div>
+
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const $this = $("#[[${formElementIdForModal}]]");
+
+        $this.find('.btn-close').on('click', function () {
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+        });
+    });
+</script>

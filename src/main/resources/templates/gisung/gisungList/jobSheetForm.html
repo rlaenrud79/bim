@@ -1,0 +1,118 @@
+<div class="board-list" id="divCardBody" th:fragment="contentForm()">
+    <div class="scroll-wrap sc-table">
+        <table class="table">
+            <tbody>
+            <tr class="sticky-th">
+                <th th:if="${no == null or no == ''}">
+                    <div class="check-set">
+                        <input type="checkbox" id="itemCheck">
+                        <label for="itemCheck"></label>
+                    </div>
+                </th>
+                <th th:text="#{common.modal.search_single_user.list_title_no}">No</th>
+                <th th:text="#{gisung.index.page.phasing_name}">공정명</th>
+                <th th:text="#{gisung.index.page.phasing_code}">공정코드</th>
+                <th th:text="#{gisung.index.page.cost_detail}">복합단가</th>
+                <th th:text="#{gisung.index.page.total_cost}">전체 공사비(원)</th>
+                <th><span th:text="#{gisung.index.page.job_sheet}">실적</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color-aqua" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.paid_cost}">전회기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color-aqua" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.progress_cost}">금회기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color-aqua" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.sum_progress_cost}">누적기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color-aqua" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.remind_progress_cost}">잔액기성금액</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color-aqua" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th th:if="${(no == null or no == '') and isWriting}" th:text="#{cost.modal.paid_cost_all.paid_cost_etc}">비고</th>
+            </tr>
+            <tr class="tb-style-total sticky-th-two2">
+                <th th:if="${no == null or no == ''}"></th>
+                <th></th>
+                <th class="txt-cnt" colspan="3"><b><span th:text="#{gisung.index.page.total_count}">총계</span></b></th>
+                <th th:text="${#numbers.formatInteger(sumTaskCost, 1, 'COMMA')}">105,305,208</th>
+                <th><span th:text="${#numbers.formatInteger((sumTodayProgressAmount), 1, 'COMMA')}">42,122,082</span> <span class="txt-color-aqua" th:text="|(${#numbers.formatDecimal(sumTodayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span th:text="${#numbers.formatInteger(sumPaidCost, 1, 'COMMA')}">0</span> <span class="txt-color-aqua" th:text="|(${#numbers.formatDecimal(sumPaidProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(0%)</span></th>
+                <th>
+                    <input id="sumTaskCost" name="sumTaskCost" type="hidden" th:value="${#numbers.formatInteger(sumTaskCost, 1)}">
+                    <input id="sumPaidProgressRate" name="sumPaidProgressRate" type="hidden" th:value="${sumPaidProgressRate}">
+                    <input id="sumPaidCost" name="sumPaidCost" type="hidden" th:value="${#numbers.formatInteger(sumPaidCost, 1)}">
+                    <span id="sumCost" th:text="${#numbers.formatInteger((sumCost), 1, 'COMMA')}"></span> <span class="txt-color-aqua" id="sumProgressRate" th:text="|(${#numbers.formatDecimal((sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumPaidCostTxt" th:text="${#numbers.formatInteger((sumPaidCost+sumCost), 1, 'COMMA')}">0</span> <span class="txt-color-aqua" id="sumPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((sumPaidProgressRate+sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumAfterPaidCostTxt" th:text="${#numbers.formatInteger((sumTaskCost-sumPaidCost-sumCost), 1, 'COMMA')}">0</span> <span class="txt-color-aqua" id="sumAfterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-sumPaidProgressRate-sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th th:if="${(no == null or no == '') and isWriting}"></th>
+            </tr>
+            <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungProcessItemlist}">
+                <th:block th:if="${item.phasingCode != null and item.phasingCode != ''}">
+                    <th:block th:if="${item.addItem == 'Y'}">
+                        <tr class="tb-style-add">
+                    </th:block>
+                    <th:block th:unless="${item.addItem == 'Y'}">
+                        <tr>
+                    </th:block>
+                    <td th:if="${no == null or no == ''}">
+                        <div class="check-set">
+                            <input type="checkbox" th:id="|itemCheck${index.index}|" name="item_no[]" class="list-item-checkbox" th:data-no="${item.id}" th:value="${item.id}">
+                            <label th:for="|itemCheck${index.index}|"></label>
+                        </div>
+                    </td>
+                    <td th:text="${index.index}">1</td>
+                    <td class="txt-left"><b><span th:text="${item.taskName}">강상분기점1교_교대공_A1_말뚝</span></b></td>
+                    <td th:text="${item.phasingCode}">2023</td>
+                    <td><button type="button" class="btn-xs btn-bo3 btnCostDetail" data-modal="#costDetail" th:data-id="${item.id}" th:data-task-name="${item.taskName}" th:text="${#numbers.formatInteger(item.complexUnitPrice, 1, 'COMMA')}">209,064</button></td>
+                    <td th:text="${#numbers.formatInteger(item.taskCost, 1, 'COMMA')}">2000</td>
+                    <td><span th:text="${#numbers.formatInteger((item.todayProgressAmount), 1, 'COMMA')}"></span> <span class="txt-color-aqua" th:text="|(${#numbers.formatDecimal(item.todayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></td>
+                    <td><span id="paidCostText" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}"></span> <span class="txt-color-aqua" id="paidProgressRateText" th:text="|(${#numbers.formatDecimal(item.paidProgressRate*100, 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger((item.cost), 1, 'COMMA')}"></span>
+                        <input id="id" name="id" type="hidden" th:value="${item.id}">
+                        <input id="taskCost" name="taskCost" type="hidden" th:value="${item.taskCost}">
+                        <input id="afterPaidProgressRate" name="afterPaidProgressRate" type="hidden" th:value="${(100-item.paidProgressRate*100)}">
+                        <input id="afterPaidCost" name="afterPaidCost" type="hidden" th:value="${#numbers.formatInteger((item.taskCost-item.paidCost), 1)}">
+                        <input id="paidProgressRate" name="paidProgressRate" type="hidden" th:value="${(item.paidProgressRate)}">
+                        <input id="paidCost" name="paidCost" type="hidden" th:value="${item.paidCost}">
+                        <input id="progressRate" name="progressRate" type="hidden" th:value="${(item.progressRate)}">
+                        <input id="cost" name="cost" type="hidden" th:value="${item.cost}">
+                        <span class="txt-color-aqua" th:text="|(${#numbers.formatDecimal((item.progressRate)*100, 1, 'COMMA', 2, 'POINT')}%)|"></span>
+                    </td>
+                    <td><span id="sumPaidCostTxt" th:text="${#numbers.formatInteger((item.paidCost+item.cost), 1, 'COMMA')}"></span>
+                        <span class="txt-color-aqua" id="sumPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((item.paidProgressRate*100+item.progressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                    <td><span id="afterPaidCostTxt" th:text="${#numbers.formatInteger((item.taskCost-item.paidCost-item.cost), 1, 'COMMA')}"></span>
+                        <span id="afterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-item.paidProgressRate*100-item.progressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span>
+                    </td>
+                    <td class="text-center" th:if="${(no == null or no == '') and isWriting}">
+                        <a href="#none" id="btnDeleteGisungProcessItem" th:data-id="${item.id}" class="btn-xs"><span th:text="#{contents.document_list.btn_delete_document}">삭제</span></a>
+                    </td>
+                    </tr>
+                </th:block>
+                <th:block th:unless="${item.phasingCode != ''}">
+                    <th:block th:if="${item.addItem == 'Y'}">
+                        <tr class="tb-style-cate-add">
+                    </th:block>
+                    <th:block th:unless="${item.addItem == 'Y'}">
+                        <tr class="tb-style-cate">
+                    </th:block>
+                    <td th:if="${no == null or no == ''}"></td>
+                    <td></td>
+                    <td class="txt-left">
+                        <div class="tb-cate-list">
+                            <span th:text="${item.cate1Name}">교량공</span>
+                            <span th:text="${item.cate2Name}">교량공사</span>
+                            <span th:text="${item.cate3Name}">강상분기점1교</span>
+                            <span th:text="${item.cate4Name}">교대공</span>
+                            <span th:text="${item.cate5Name}">A1</span>
+                        </div>
+                    </td>
+                        <th:block th:if="${(no == null or no == '') and isWriting}">
+                            <td class="text-center" colspan="9"></td>
+                        </th:block>
+                        <th:block th:unless="${(no == null or no == '') and isWriting}">
+                            <td class="text-center" colspan="8"></td>
+                        </th:block>
+                    </tr>
+                </th:block>
+            </tbody>
+        </table><!--// table-->
+    </div><!--//table-wrap-->
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+</script>

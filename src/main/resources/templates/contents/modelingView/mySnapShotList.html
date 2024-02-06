@@ -1,0 +1,17 @@
+  <article id="mySnapShotList" th:fragment="mySnapShotList()">
+    <header>BIM 모델 Snap Shot 리스트</header>
+    <div class="scroll-area-v" id="snapShotImgList">
+      <ul>
+        <li th:each="mySnapShot : ${mySnapShots}" th:data-id="${mySnapShot.id}" >
+          <img class="zoom-in-image" th:src="${mySnapShot.source}" th:data-my-Snap-Shot="${mySnapShot.viewPointJson}"  th:data-id="${mySnapShot.id}" >
+          <div>
+            <p>
+              <span th:text="${mySnapShot.title + ' '}">1</span>
+              <span th:text="${#temporals.format(mySnapShot.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.07.08 01</span>
+            </p>
+            <button type="button" class="btn bg-gradient-danger btn-xs deleteMySnapShot">제외</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </article>

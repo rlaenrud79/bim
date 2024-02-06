@@ -1,0 +1,45 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="search-box">
+     <section>
+        <input type="hidden" id="sortProp" value="">
+         <input type="hidden" id="searchType" value="titleWithDescription">
+        <select id="searchWorkId" class="custom-select">
+          <option value="0" th:text="#{contents.document_list.select_work_type}">:: 공종 ::</option>
+          <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:text="${item.workNameLocale}"></option>
+        </select>
+     </section>
+      <section>
+          <select id="searchCategoryId" class="custom-select">
+              <option value="0" th:text="#{contents.document_list.select_category}">:: 분류 ::</option>
+              <option th:each="item, index : ${documentCategoryDTOs}" th:value="${item.id}" th:text="${item.name}"></option>
+          </select>
+      </section>
+      <section>
+        <input type="text" id="searchValue" name="searchValue" class="form-control" placeholder="">
+      </section>
+    <section class="user-search">
+<!--        <p th:text="#{contents.document_list.select_writer}">작성자</p>-->
+          <input type="text" id="searchUserDisplayName" name="searchUserDisplayName" class="wid-m" th:placeholder="#{contents.document_list.select_writer_placeholder}" readonly>
+          <input type="hidden" id="searchUserId" name="searchUserId" >
+          <a href="#none" id="btnSearchUser" class="pop-open-btn" data-modal="#modalSearchSingleUser"></a>
+    </section>
+    <section>
+        <p th:text="#{contents.document_list.select_write_date}">작성일자</p>
+      <div class="input-date-wrap">
+        <div class="input-date">
+          <input type="date" id="startDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+        <small class="bar">-</small>
+        <div class="input-date">
+          <input type="date" id="endDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+      </div>
+    </section>
+    <section>
+      <a href="#none" id="btnSearchDocument" class="btn btn-color2"><span th:text="#{contents.document_list.btn_search_document}">검색</span></a>
+<!--      <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.document_list.btn_reset_search_condition}">초기화</span></a>-->
+    </section>
+  </div>
+</form>

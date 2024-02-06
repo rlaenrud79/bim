@@ -1,0 +1,430 @@
+<!-- 모달 - 문서 등록  -->
+<div class="upload-document test">
+
+        <div class="grid">
+            <div class="col">
+                <div class="category-set">
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">1Depth</h2>
+                        </div>
+                        <div class="scroll-wrap">
+                            <th:block th:if="${#lists.size(cate1List) > 0}">
+                            <ul class="sortable_list-cate1 cate-list" data-key="cate1">
+                                <li th:each="item, index : ${cate1List}" th:id="${item.code}">
+                                    <span class="check-set" th:classappend="|span-${item.code} | + (${cate1 == item.code} ? 'on' : '')|">
+                                        <input type="checkbox" th:id="|itemCk${item.code}|" name="cate1[]" class="btn-cate1" th:value="${item.code}" th:data-code="${item.code}" th:checked="${cate1 == item.code}">
+                                        <label th:for="|itemCk${item.code}|" th:text="${item.name}"></label>
+                                    </span>
+                                    <div class="btn-box">
+                                        <a href="#none" class="btn-modify-ico btn-modify pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="1" th:data-code="${item.code}" th:data-name="${item.name}" th:data-process-id="${item.processItemId}" title="수정"></a>
+                                        <a href="#none" th:if="${item.jobSheetProcessItemCount == 0 and item.subProcessItemCount == 0}" class="btn-delete-ico btn-code-delete" data-cate-no="1" th:data-code="${item.code}" th:data-process-id="${item.processItemId}" title="삭제"></a>
+                                    </div>
+                                </li>
+                            </ul>
+                            </th:block>
+                            <th:block th:unless="${#lists.size(cate1List) > 0}">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                            </th:block>
+                        </div>
+                        <div class="cate-add">
+<!--                            <input type="text" name="bcode_name" placeholder="세부분류를 입력하세요.">-->
+                            <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="1" data-task-type="PROJECT">+ 추가</a>
+                        </div>
+                    </div><!--//section-->
+
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">2Depth</h2>
+                        </div>
+                        <div class="scroll-wrap" id="div-depth2">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                        </div>
+                        <div class="cate-add">
+<!--                            <input type="text" name="mcode_name" placeholder="세부분류를 입력하세요.">-->
+                            <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="2" data-task-type="PROJECT">+ 추가</a>
+                        </div>
+                    </div><!--//section-->
+
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">3Depth</h2>
+                        </div>
+                        <div class="scroll-wrap" id="div-depth3">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                        </div>
+                        <div class="cate-add">
+<!--                            <input type="text" name="scode_name" placeholder="세부분류를 입력하세요.">-->
+                            <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="3" data-task-type="PROJECT">+ 추가</a>
+                        </div>
+                    </div><!--//section-->
+
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">4Depth</h2>
+                        </div>
+                        <div class="scroll-wrap" id="div-depth4">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                        </div>
+                        <div class="cate-add">
+<!--                            <input type="text" name="xcode_name" placeholder="세부분류를 입력하세요.">-->
+                            <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="4" data-task-type="PROJECT">+ 추가</a>
+                        </div>
+                    </div><!--//section-->
+
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">5Depth</h2>
+                        </div>
+                        <div class="scroll-wrap" id="div-depth5">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                        </div>
+                        <div class="cate-add">
+<!--                            <input type="text" name="xcode_name" placeholder="세부분류를 입력하세요.">-->
+                            <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="5" data-task-type="TASK">+ 추가</a>
+                        </div>
+                    </div><!--//section-->
+                    <!--
+                    <div class="section">
+                        <div class="sub-title">
+                            <h2 class="title3">6Depth</h2>
+                        </div>
+                        <div class="scroll-wrap" id="div-depth6">
+                            <div class="no-list">
+                                등록된 분류가 없습니다.
+                            </div>
+                        </div>
+                        <div class="cate-add">
+                           <a href="#none" class="btn-add pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="6">+ 추가</a>
+                        </div>
+                    </div>
+                    --><!--//section-->
+                </div><!--// category-set-->
+            </div><!--// col-->
+        </div><!--// grid-->
+
+</div>
+
+
+<script>
+    var myNamespace = myNamespace || {};
+    (function ($) {
+        var o = {
+            upCode: '',
+
+            init: function () {
+                $(".sortable_list-cate1" ).sortable({
+                    connectWith: ".connectedSortable",
+
+                    update: function(e, ui) {
+                        var key = $(this).attr('data-key');
+                        var idsInOrder = [];
+                        $("ul.sortable_list-"+key+" li").each(function() { idsInOrder.push($(this).attr('id')) });
+
+                        var params = {'olist': idsInOrder};
+                        editDisplay(params);
+                        //alert('id of Item moved = '+element_id+' old position = '+oldId+' new position = '+element_id);
+                    }
+                }).disableSelection();
+
+                $.nfx.click(".btn-cate1", function () {
+                    console.log("btn-cate1");
+                    $("input[name='cate1[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(2, $(this).data('code'));
+                });
+
+                $(document).on("click", ".btn-cate2", function () {
+                    console.log("btn-cate2");
+                    $("input[name='cate2[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(3, $(this).data('code'));
+                });
+
+                $.nfx.click(".btn-cate3", function () {
+                    console.log("btn-cate3");
+                    $("input[name='cate3[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(4, $(this).data('code'));
+                });
+
+                $.nfx.click(".btn-cate4", function () {
+                    console.log("btn-cate4");
+                    $("input[name='cate4[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(5, $(this).data('code'));
+                });
+
+                $.nfx.click(".btn-cate5", function () {
+                    console.log("btn-cate5");
+                    $("input[name='cate5[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(6, $(this).data('code'));
+                });
+
+                $.nfx.click(".btn-cate6", function () {
+                    console.log("btn-cate6");
+                    $("input[name='cate6[]']:checked").prop("checked", false);
+                    $(this).prop("checked", true);
+                    getProgressData(7, $(this).data('code'));
+                });
+
+                $.nfx.click(".btn-add", function () {
+                    console.log("btn-add");
+                    const cateNo = $(this).data('cate-no');
+                    const taskType = $(this).data('task-type');
+                    const cate1 = $("input[name='cate1[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate2 = $("input[name='cate2[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate3 = $("input[name='cate3[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate4 = $("input[name='cate4[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate5 = $("input[name='cate5[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate6 = $("input[name='cate6[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    reqGet("/processModal/addProcessItemDetail?taskType="+taskType+"&cateNo="+cateNo+"&cate1="+cate1+"&cate2="+cate2+"&cate3="+cate3+"&cate4="+cate4+"&cate5="+cate5+"&cate6="+cate6
+                        , function (data) {
+                            $('#modalProcessItemAdd').find('.popup-con').html(data);
+                        }
+                        , function (xhr) {
+                            alert($.parseJSON(xhr.responseText).error);
+                        }, "html");
+                });
+
+                $.nfx.click(".btn-modify", function () {
+                    console.log("btn-modify");
+                    const cateNo = $(this).data('cate-no');
+                    const code = $(this).data('code');
+                    const taskType = $(this).data('task-type');
+                    const processItemId = $(this).data('process-id');
+                    reqGet("/processModal/addProcessItemDetail?taskType="+taskType+"&cateNo=" + cateNo + "&code=" + code + "&processItemId=" + processItemId
+                        , function (data) {
+                            $('#modalProcessItemAdd').find('.popup-con').html(data);
+                        }
+                        , function (xhr) {
+                            alert($.parseJSON(xhr.responseText).error);
+                        }, "html");
+                });
+
+                $.nfx.click(".btn-code-delete", function () {
+                    console.log("btn-delete");
+                    const cateNo = $(this).data('cate-no');
+                    const cate1 = $("input[name='cate1[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate2 = $("input[name='cate2[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate3 = $("input[name='cate3[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate4 = $("input[name='cate4[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const cate5 = $("input[name='cate5[]']:checked").map(function(){
+                        return $(this).val();
+                    }).get();
+                    const code = $(this).data('code');
+                    const processItemId = $(this).data('process-id');
+                    let upCode = "";
+                    if (confirm("[[#{process.modal.confirm_delete_process_item}]]")) {
+                        if (cateNo == 2) {
+                            if (Array.isArray(cate1)) {
+                                upCode = cate1[0];
+                            } else {
+                                upCode = cate1;
+                            }
+                        } else if (cateNo == 3) {
+                            if (Array.isArray(cate2)) {
+                                upCode = cate2[0];
+                            } else {
+                                upCode = cate2;
+                            }
+                        } else if (cateNo == 4) {
+                            if (Array.isArray(cate3)) {
+                                upCode = cate3[0];
+                            } else {
+                                upCode = cate3;
+                            }
+                        } else if (cateNo == 5) {
+                            if (Array.isArray(cate4)) {
+                                upCode = cate4[0];
+                            } else {
+                                upCode = cate4;
+                            }
+                        } else if (cateNo == 6) {
+                            if (Array.isArray(cate5)) {
+                                upCode = cate5[0];
+                            } else {
+                                upCode = cate5;
+                            }
+                        }
+                        o.deleteProcessItem(cateNo, code, processItemId, upCode);
+                    }
+                });
+            },
+
+            deleteProcessItem: function(cateNo, code, processItemId, upCode) {
+                reqDelete("/processApi/deleteProcessItem?cateNo="+cateNo+"&code="+code+"&id="+processItemId
+                    , function (data) {
+                        if (!data.result) {
+                            alert(data.message);
+                        } else {
+                            //alert(data.message);
+                            if (cateNo == 1) {
+                                getReload();
+                            } else {
+                                getProgressData(cateNo, upCode);
+                            }
+                        }
+                    },
+                    function (xhr) {
+                        alert(xhr.responseJSON.message);
+                    }
+                )
+            },
+        };
+
+        $( document ).ready(function() {
+            $.extend($.nfx, {
+                form: document.FRM
+            });
+
+            o.init();
+            myNamespace.myObject = o;
+        });
+
+    })(jQuery);
+
+    function getReload() {
+        reqGet("/processModal/addProcessItem"
+            , function (data) {
+                $('#modalProcessAdd').find('.popup-con').html(data);
+                myNamespace.myObject.init();
+            }
+            , function (xhr) {
+                alert($.parseJSON(xhr.responseText).error);
+            }, "html");
+    }
+
+    function editDisplay(params) {
+        reqPutJSON('/processApi/putProcessItemDisplay', JSON.stringify(params),
+            function (data) {
+                if (!data.result) {
+                    alert(data.message);
+                } else {
+                    //location.reload();
+                }
+            },
+            function (xhr) {
+                alert(xhr.responseJSON.message);
+
+            }
+        )
+    }
+
+    function getProgressData(cateNo, cate) {    // 2depth 이상 호출
+        console.log("setProgressCate2");
+        let divCateId = "div-depth" + cateNo;
+        console.log("divCateId : " + divCateId + "---" + cate);
+        reqPostJSON("/processApi/getProcessCategory", getProcessCategorySearchCondition2(cateNo, cate), function (data) {
+            //document.getElementById("loader").style.display="none";
+            console.log(data);
+            if (data.result) {
+                let searchProcessCategory = JSON.parse(data.model);
+                let html = "";
+                html += '<ul class="sortable_list-cate' + cateNo + ' cate-list" data-key="cate' + cateNo + '">';
+                searchProcessCategory.forEach((m, index) => {
+                    let cateCode = m.code;
+                    if (cateNo == 2) {
+                        $('#modalProcessAdd').find('#div-depth3').html("");
+                        $('#modalProcessAdd').find('#div-depth4').html("");
+                        $('#modalProcessAdd').find('#div-depth5').html("");
+                        //$('#modalProcessAdd').find('#div-depth6').html("");
+                    } else if (cateNo == 3) {
+                        $('#modalProcessAdd').find('#div-depth4').html("");
+                        $('#modalProcessAdd').find('#div-depth5').html("");
+                        //$('#modalProcessAdd').find('#div-depth6').html("");
+                    } else if (cateNo == 4) {
+                        $('#modalProcessAdd').find('#div-depth5').html("");
+                        //$('#modalProcessAdd').find('#div-depth6').html("");
+                    } else if (cateNo == 5) {
+                        //$('#modalProcessAdd').find('#div-depth6').html("");
+                    }
+
+                    html += '<li id="' + cateCode + '">';
+                    html += '<span class="check-set span-' + cateCode + '">';
+                    html += '<input type="checkbox" name="cate' + cateNo + '[]" id="itemCk' + cateCode + '" class="btn-cate' + cateNo + '" value="' + cateCode + '" data-code="' + cateCode + '">';
+                    html += '<label for="itemCk' + cateCode + '">' + m.name + '</label>';
+                    html += '</span>';
+                    html += '<div class="btn-box">';
+                    html += '<a href="#none" class="btn-modify-ico btn-modify pop-open-btn" data-modal="#modalProcessItemAdd" data-cate-no="' + cateNo + '" data-code="' + cateCode + '" data-name="' + m.name + '" data-process-id="' + m.processItemId + '" data-task-type="' + m.ganttTaskType + '" title="수정"></a>';
+                    if (parseInt(cateNo) < 5) {
+                        console.log("cateNo : " + cateNo + " / jobSheetProcessItemCount : " + m.jobSheetProcessItemCount + " / subProcessItemCount : " + m.subProcessItemCount);
+                        if (parseInt(m.jobSheetProcessItemCount) == 0 && parseInt(m.subProcessItemCount) == 0) {
+                            html += '<a href="#none" class="btn-delete-ico btn-code-delete" data-cate-no="' + cateNo + '" data-code="' + cateCode + '" data-process-id="' + m.processItemId + '" title="삭제"></a>';
+                        }
+                    } else {
+                        console.log("cateNo2 : " + cateNo + " / jobSheetProcessItemCount : " + m.jobSheetProcessItemCount + " / subProcessItemCount : " + m.subProcessItemCount);
+                        if (parseInt(m.jobSheetProcessItemCount) == 0) {
+                            html += '<a href="#none" class="btn-delete-ico btn-code-delete" data-cate-no="' + cateNo + '" data-code="' + cateCode + '" data-process-id="' + m.processItemId + '" class="삭제"></a>';
+                        }
+                    }
+                    html += '</div>';
+                    html += '</li>';
+                });
+                html += '</ul>';
+
+                if (html == "") {
+                    html = '<div class="no-list">등록된 분류가 없습니다.</div>';
+                }
+
+                $('#modalProcessAdd').find('#'+divCateId).html(html);
+                myNamespace.myObject.init();
+                let $divCate = $('#modalProcessAdd').find('#'+divCateId);
+                $divCate.find('ul.sortable_list-cate' + cateNo).sortable({
+                    connectWith: ".connectedSortable",
+                    update: function(e, ui) {
+                        var key = $(this).attr('data-key');
+                        var idsInOrder = [];
+                        $("ul.sortable_list-"+key+" li").each(function() { idsInOrder.push($(this).attr('id')) });
+
+                        var params = {'olist': idsInOrder};
+                        editDisplay(params);
+                    }
+                }).disableSelection();
+            }
+        }, function (xhr) {
+            alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function getProcessCategorySearchCondition2(cateNo, upCode) {
+        return JSON.stringify(
+            {
+                cateNo: cateNo,
+                upCode: upCode
+            }
+        );
+    }
+</script>
+<script src="/dist/js/jquery.tablednd.js"></script>

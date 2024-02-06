@@ -1,0 +1,12 @@
+<div id="divCardHeader" class="card-header" th:fragment="cardHeader()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div class="bim-btn-group">
+      <button id="btnGotoList" type="button" class="btn bg-gradient-info" data-toggle="modal" data-target="#modalUploadModel">
+        <i class="fas fa-list"></i> <span th:text="#{co_work.issue_add.btn_goto_list}">목록으로</span>
+      </button>
+      <button id="btnAddIssue" type="button" class="btn bg-gradient-info">
+        <i class="fas fa-plus"></i> <span th:text="#{co_work.issue_add.btn_execute_add}">등록</span>
+      </button>
+    </div>
+  </div>
+</div>

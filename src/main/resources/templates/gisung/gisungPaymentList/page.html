@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungPaymentList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <input type="hidden" id="pageNo" value="">
+                <div id="divCardBody" th:replace="gisung/gisungPaymentList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddGisungPayment',#{contents.gisung_payment_list.modal_title_add}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUpdateGisungPayment',#{contents.gisung_payment_list.modal_title_update}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script>
+    const confirmDeleteGisungPayment = "[[#{contents.gisung_payment_list.confirm_delete_gisung_payment}]]";
+    let PageFunction = {};
+
+    $(document).ready(function () {
+
+        const $searchType = $("#searchType");
+        const $searchValue = $("#searchValue");
+        const $searchUserId = $("#searchUserId");
+        const $searchUserDisplayName = $("#searchUserDisplayName");
+        const $startDate = $("#startDate");
+        const $endDate = $("#endDate");
+        const $sortProp = $("#sortProp");
+        const $pageNo = $("#pageNo");
+        const $pageSize = $("#pageSize");
+        const $modalUpdateGisungPayment = $('#modalUpdateGisungPayment');
+
+        $startDate.datepicker(datepickerFormat);
+        $endDate.datepicker(datepickerFormat);
+
+        // download attach file
+        $(this).on('click', '.download-attach-file', function (e) {
+            e.preventDefault();
+            executeFileDownloadModal($(this).data("file-id"), "GISUNG_PAYMENT_FILE");
+        });
+
+        // delete
+        $(this).on('click', '#btnDeleteGisungPayment', function () {
+            if (confirm("[[#{contents.gisung_payment_list.confirm_delete_gisung_payment}]]")) {
+                deleteGisungPayment.bind(this)();
+            }
+            //showConfirm("[[#{system.common.confirm.title}]]", "[[#{contents.gisung_payment_list.confirm_delete_gisung_payment}]]", deleteGisungPayment.bind(this));
+        });
+
+        function deleteGisungPayment() {
+            reqDelete(`/gisungApi/deleteGisungPayment?id=${$(this).data('gisung-payment-id')}`,
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        //toastr.success(data.message);
+                        resetAndSearch();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            )
+        }
+
+        // search
+        $(this).on('click', '#btnSearchGisungPayment', function () {
+            reloadCardBody();
+        });
+
+        // reset
+        $(this).on('click', '#btnResetSearchCondition', function () {
+            resetAndSearch();
+        });
+
+        $(this).on('click', '.sort', function () {
+            $sortProp.val($(this).data('sort'));
+            reloadCardBody();
+        });
+
+        // 등록 모달
+        $(this).on('click', '#btnAdd', function () {
+            reqGet("/gisung/addGisungPayment", function (data) {
+                $('#modalAddGisungPayment').find('.popup-con').html(data);
+            });
+        });
+
+        // 수정 모달
+        $(this).on('click', '.openUpdateModal', function (e) {
+            const url = `/gisung/updateGisungPayment?id=${$(this).data('gisung-payment-id')}`;
+            reqGet(url, function (data) {
+                $modalUpdateGisungPayment.find('.popup-con').html(data);
+            }, function (xhr) {
+                alert(xhr.responseJSON.message);
+            });
+        });
+
+        // search user
+        $(this).on('click', '#searchUserDisplayName, #btnSearchUser', function () {
+            let param = "formElementIdForUserId=searchUserId";
+            param += "&formElementIdForUserName=searchUserDisplayName";
+            param += "&formElementIdForModal=modalSearchSingleUser";
+            param += "&searchUserFilter=N";
+
+            reqGet(`/commonModal/searchSingleUser?${param}`, function (data) {
+                $('#modalSearchSingleUser').find('.popup-con').html(data);
+            });
+        });
+
+        $(this).on('change', '#pageSize', function () {
+            reloadComponent("/gisung/gisungPaymentListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+        $(this).on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function () {
+            $pageNo.val($(this).data("page-no"));
+            reloadComponent("/gisung/gisungPaymentListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+        function getSearchCondition() {
+            let param = "";
+            param += `page=${parseInt($pageNo.val()) || 0}`;
+            param += `&size=${parseInt($pageSize.val())}`;
+            param += `&searchType=${$searchType.val()}`;
+            param += `&searchValue=${$searchValue.val()}`;
+            param += `&searchUserId=${parseInt($searchUserId.val()) || 0}`;
+            param += `&searchUserDisplayName=${$searchUserDisplayName.val()}`;
+            param += `&startDateString=${$startDate.val()}`;
+            param += `&endDateString=${$endDate.val()}`;
+            param += `&SortProp=${$sortProp.val()}`;
+            return param;
+        }
+
+        function resetSearchCondition() {
+            $searchType.val('none');
+            $searchValue.val('');
+            $searchUserId.val(0);
+            $searchUserDisplayName.val('');
+            $startDate.val('');
+            $endDate.val('');
+            $sortProp.val('');
+            $pageNo.val(0);
+            $pageSize.val(20);
+        }
+
+        function resetAndSearch() {
+            resetSearchCondition();
+            reloadCardBody();
+        }
+
+        function reloadCardBody() {
+            reloadComponent("/gisung/gisungPaymentListCardBody", "#divCardBody", getSearchCondition());
+        }
+
+        PageFunction.resetAndSearch = resetAndSearch;
+        PageFunction.reloadCardBody = reloadCardBody;
+
+    });
+</script>
+</body>
+
+</html>

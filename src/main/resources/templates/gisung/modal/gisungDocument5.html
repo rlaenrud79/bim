@@ -1,0 +1,87 @@
+<div class="print-page">
+    <section class="page table-ty">
+        <div class="title">
+            <h2 th:text="${gisungItem.title}">집계표 (전체)</h2>
+        </div>
+        <div class="tb-top">
+            <h3>1.공정별 준공내역</h3>
+            <span>&lt;단위 : 원&gt;</span>
+        </div>
+
+        <table class="table">
+            <colgroup>
+                <col style="width:8%">
+                <col style="width:25%">
+                <col style="width:13%" span="4">
+                <col style="width:7%" span="2">
+            </colgroup>
+            <tbody>
+            <tr>
+                <th rowspan="2" colspan="2">공종명</th>
+                <th rowspan="2">도급액</th>
+                <th colspan="3">준공부분액</th>
+                <th rowspan="2">기성율<br>(%)</th>
+                <th rowspan="2">비교</th>
+            </tr>
+            <tr>
+                <th>전회</th>
+                <th>금회</th>
+                <th>누계</th>
+            </tr>
+            <th:block th:if="${gisungItem.id > 0}">
+                <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails01}">
+                    <th:block th:if="${item.gtype == 'A' || item.gtype == 'B'}">
+                        <tr class="bg-grey">
+                    </th:block>
+                    <th:block th:unless="${item.gtype == 'A' || item.gtype == 'B'}">
+                        <tr>
+                    </th:block>
+                    <block th:if="${index.index == 0}">
+                        <td th:rowspan="${gisungItemDetails01.size()}" class="txt-cnt" style="vertical-align: middle !important;">순공사비</td>
+                    </block>
+                    <td class="txt-left" th:text="${item.itemDetail01}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail02, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail03, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail04, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail05, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.itemDetail06, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td></td>
+                    </tr>
+                </th:block>
+                <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails02}">
+                    <th:block th:if="${item.gtype == 'C' || item.gtype == 'D' || item.gtype == 'E' || item.gtype == 'F'}">
+                        <tr class="bg-grey">
+                    </th:block>
+                    <th:block th:unless="${item.gtype == 'C' || item.gtype == 'D' || item.gtype == 'E' || item.gtype == 'F'}">
+                        <tr>
+                    </th:block>
+                    <td class="txt-left" th:text="${item.itemDetail01}" colspan="2"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail02, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail03, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail04, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatInteger(item.itemDetail05, 1, 'COMMA')}"></td>
+                    <td th:text="${#numbers.formatDecimal(item.itemDetail06, 1, 'COMMA', 2, 'POINT')}"></td>
+                    <td></td>
+                    </tr>
+                </th:block>
+            </th:block>
+            </tbody>
+        </table>
+    </section><!--//section-->
+
+
+    <div class="modal-footer">
+        <!--<button type="button" id="" class="btn bg-gradient-success btn-pdf"><span>PDF</span></button>-->
+        <button type="button" id="" onclick="btnPrint();" class="btn btn-color1"><span>인쇄하기</span></button>
+        <button id="btnCloseLayer" type="button" class="btn btn-secondary close">닫기</button>
+    </div>
+</div><!--//page-->
+
+
+<script type="text/javascript">
+    function btnPrint() {
+        window.open('/gisung/printGisungItem?id='+[[${gisung.id}]]+'&no='+[[${no}]]+'&coverTableId=0', 'printDocument', 'width=800, height=600, left=100, top=100, scrollbars=yes, resizable=yes')
+    }
+
+
+</script>

@@ -1,0 +1,113 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div th:object="${companyVO}">
+      <div class="form">
+        <div class="grid">
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_company_name}">회사명</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+              <input type="text" id="companyName" name="companyName" class="form-control" th:field="*{companyName}" th:placeholder="#{admin.company_add.card_body_company_name_place_holder}" maxlength="100">
+            </div>
+          </div>
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_tel_no}">현장 전화번호</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+              <input type="text" id="telNo" name="telNo" class="form-control" th:field="*{telNo}" th:placeholder="${telNoPlaceholder}" maxlength="20">
+            </div>
+          </div>
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_company_role}">회사역할</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="grid al-center gap-10">
+                <select class="custom-select wid-m" id="companyRoleId" th:field="*{companyRoleId}">
+                  <option value="0" th:utext="#{admin.company_add.card_body_company_role_0}">::선택::</option>
+                  <option th:each="companyRole:${companyRoles}"
+                          th:value="${companyRole.id}"
+                          th:text="${#strings.isEmpty(companyRole.roleNameLocale) ? companyRole.roleName : companyRole.roleNameLocale}">발주사</option>
+                </select>&nbsp;
+                <button type="button"
+                        id="btnAddRole"
+                        sec:authorize="hasAnyRole('ROLE_ADMIN_PROJECT')"
+                        class="btn-b"
+                        th:text="#{admin.company_add.card_body_company_btn_add_role_type}">역할 등록</button>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_company_role_type}">회사 유형</span></strong>
+            </div>
+            <div class="fm-txt txt-ip">
+              <div class="radio-set">
+                <input type="radio" id="roleType_HEAD" name="roleType" value="0">
+                <label for="roleType_HEAD" th:text="#{admin.company_add.card_body_role_type_head}">발주사</label>
+                <input type="radio" id="roleType_LEAD" name="roleType" value="1">
+                <label for="roleType_LEAD" th:text="#{admin.company_add.card_body_role_type_lead}">원도급사</label>
+                <input type="radio" id="roleType_PARTNER" name="roleType" value="2" checked="checked">
+                <label for="roleType_PARTNER" th:text="#{admin.company_add.card_body_role_type_partner}">협력업체</label>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col4">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_work}">공종</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt txt-ip">
+              <div class="check-set">
+                <input type="checkbox" id="allCheck">
+                <label for="allCheck" th:text="#{admin.company_add.card_body_target_work_all}">전체</label>
+              </div>
+
+              <div class="form-group mr-3" th:each="work, index : ${works}">
+                <div class="check-set">
+                  <input type="checkbox" class="itemCheck"
+                         th:id="works_+${work.id}"
+                         th:name="works_+${work.id}"
+                         th:value="${work.id}">
+                  <label th:for="works_+${work.id}" th:text="${work.getLocaleName()}">교량공</label>
+                </div>
+              </div>
+              <button type="button"
+                      id="btnAddWork"
+                      sec:authorize="hasAnyRole('ROLE_ADMIN_PROJECT')"
+                      class="btn-b ml-auto mg-auto"
+                      th:text="#{admin.company_add.card_body_company_btn_add_work}">공종 등록</button>
+            </div>
+          </div>
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_is_display}">사업개요 표시여부</span></strong>
+            </div>
+            <div class="fm-txt txt-ip">
+              <div class="radio-set">
+                <input type="radio" id="isDisplay_Y" name="isDisplay" value="true" checked="checked">
+                <label for="isDisplay_Y" th:text="#{admin.company_add.card_body_is_display_yes}">YES</label>
+                <input type="radio" id="isDisplay_N" name="isDisplay" value="false">
+                <label for="isDisplay_N" th:text="#{admin.company_add.card_body_is_display_no}">NO</label>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col2">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{admin.company_add.card_body_status}">사용여부</span></strong>
+            </div>
+            <div class="fm-txt txt-ip">
+              <div class="radio-set">
+                <input type="radio" id="status_REG" name="status" value="REG" checked="checked">
+                <label for="status_REG" th:text="#{admin.company_add.card_body_status_reg}">등록</label>
+                <input type="radio" id="status_DEL" name="status" value="DEL">
+                <label for="status_DEL" th:text="#{admin.company_add.card_body_status_del}">삭제</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

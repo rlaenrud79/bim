@@ -1,0 +1,80 @@
+<article id="issueDetail" th:fragment="load()">
+  <header th:text="#{co_work.modeling_view.page.issue_detail}">이슈상세</header>
+
+  <div class="scroll-area-v" th:if="${issue.id>0}">
+    <table class="table">
+      <tbody>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_title}">이슈제목</p>
+          <p th:text="${issue.title}">적치물 제거 요청</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_writer}">작성자</p>
+          <div class="d-flex align-items-center">
+            <div th:replace="/common/userInfoAtField :: userInfoAtField(${issue.writeEmbedded?.getAccountDTO()})"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_joiner}">대상자</p>
+          <div class="scroll-area-v">
+            <div class="d-flex align-items-center" th:each="coWorkIssueJoiner : ${issue.coWorkIssueJoiners}">
+              <div th:replace="/common/userInfoAtField :: userInfoAtField(${coWorkIssueJoiner.accountDTO})"></div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_write_date}">작성일시</p>
+          <p th:text="${#temporals.format(issue.WriteEmbedded?.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_last_modified_date}">최종 수정일시</p>
+          <p th:text="${#temporals.format(issue.lastModifyEmbedded?.lastModifyDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_complete_request_date}">완료 요구일자</p>
+          <p th:text="${#temporals.format(issue.requestDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_status_and_modified_date}">상태 (변경일시)</p>
+          <p><span th:text="#{${issue.status == null? 'system.empty_string' : issue.status.getMessageProperty()}}">작성중 / 의뢰 / 진행중 / 완료</span> (<span th:text="${#temporals.format(issue?.statusUpdateDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-06-25</span>)</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.issue_priority}">중요도</p>
+          <p th:text="#{${issue.priority== null? 'system.empty_string' : issue.priority.getMessageProperty()}}">긴급 / 상 / 중 / 하</p>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2">
+          <div class="context-area px-0 ph-0">
+            <div class="scroll-area-v" th:utext="${issue.contents}">
+              공사장 입구 적치물 치워주세요<br>
+              일자: 2021.05.05<br>
+              승인: 현장 관리 소장 홍길동
+            </div>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="d-flex align-items-center mt-2" th:if="${issue.id>0 && isGoing}">
+    <button type="button" th:data-co-work-issue-id="${issue.id}" data-toggle="modal" data-target="#coWorkIssueReport" class="btn bg-gradient-success btn-xs mr-auto" th:text="#{co_work.modeling_view.page.issue_process_add}">작업내용 등록</button>
+    <button type="button" id="deleteCoWorkIssue" th:if="${issue.isOwner(#session.getAttribute('scopedTarget.userInfo')?.id)}" th:data-co-work-issue-id="${issue.id}" class="btn bg-gradient-danger btn-xs ml-auto" th:text="#{co_work.modeling_view.page.issue_delete}">이슈 삭제</button>
+    <button type="button" th:if="${issue.isOwner(#session.getAttribute('scopedTarget.userInfo')?.id)}" th:data-co-work-issue-id="${issue.id}" data-type="update" data-toggle="modal" data-target="#coWorkIssueItem" class="btn bg-gradient-warning btn-xs ml-1" th:text="#{co_work.modeling_view.page.issue_modify}">이슈 수정</button>
+  </div>
+</article>

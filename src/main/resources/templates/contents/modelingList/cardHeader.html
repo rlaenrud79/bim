@@ -1,0 +1,15 @@
+<div id="divCardHeader" class="card-header" th:fragment="cardHeader()" xmlns:sec="http://www.w3.org/1999/xhtml">
+    <div class="col-12">
+        <div class="bim-btn-group">
+            <button id="btnView" type="button" class="btn bg-gradient-info">
+                <i class="fas fa-folder"></i><span th:text="#{contents.modeling_list.btn_view}">VIEW</span>
+            </button>
+            <button id="btnCoWork" type="button" class="btn bg-gradient-info">
+                <i class="fas fa-user-friends"></i><span th:text="#{contents.modeling_list.btn_co_work}">협업</span>
+            </button>
+            <button id="btnAdd" type="button" class="btn bg-gradient-info pop-open-btn" data-target="#modalUploadFile" sec:authorize="hasAnyRole('ROLE_ADMIN_PROJECT') or hasAnyRole('ROLE_ADMIN_WORK')" >
+                <i class="fas fa-plus"></i><span th:text="#{contents.modeling_list.btn_add}">등록</span>
+            </button>
+        </div>
+    </div>
+</div>

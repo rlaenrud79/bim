@@ -1,0 +1,81 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="table-wrap">
+    <table class="table">
+      <colgroup>
+        <col style="width:5%" span="2">
+        <col style="width:10%" span="2">
+        <col>
+        <col style="width:10%" span="3">
+      </colgroup>
+      <tbody>
+      <tr>
+        <th>
+          <div class="check-set">
+            <input type="checkbox" id="itemCheck">
+            <label for="itemCheck"></label>
+          </div>
+        </th>
+        <th th:text="#{contents.gisung_list.list_title_no}">No</th>
+        <th th:text="#{contents.gisung_list.list_title_year_month}">년월</th>
+        <th th:text="#{contents.gisung_list.list_title_gisung_no}">회차</th>
+        <th th:text="#{contents.gisung_list.select_title}">기성제목</th>
+        <th th:text="#{contents.gisung_list.status}">상태</th>
+        <th th:text="#{contents.gisung_list.list_title_writer}">작성자</th>
+        <th th:text="#{contents.gisung_list.list_title_write_date}">작성일자</th>
+        <th th:text="#{contents.gisung_list.list_title_delete}">비고</th>
+      </tr>
+      <th:block th:if="${totalCount == null or totalCount == 0}">
+        <tr>
+          <td colspan="11" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+        <td>
+          <div class="check-set">
+            <input type="checkbox" th:id="|itemCheck${index.index}|" name="item_no[]" class="list-item-checkbox" th:data-no="${item.id}" th:value="${item.id}">
+            <label th:for="|itemCheck${index.index}|"></label>
+          </div>
+        </td>
+        <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+        <td th:text="|${item.year}.${item.month}|">2019.02</td>
+        <td th:text="${item.gisungNo}">7</td>
+        <td>
+          <a href="#none" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-id="${item.id}" th:data-status="${item.status}" data-modal="#modalUpdateGisung" class="tb-tit openUpdateModal"><span th:text="${item.title}">2023년(1/1~3/31)</span></a>
+          <span th:unless="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+        </td>
+        <td th:classappend="${#strings.toString(item.status) == 'COMPLETE'} ? 'complete'" th:text="${#messages.msg(item.status.getMessageProperty())}">승인</td>
+        <td>
+          <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+        </td>
+        <td>
+          <span th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-05</span>
+        </td>
+        <td>
+          <a href="#none" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-id="${item.id}" th:data-status="${item.status}" class="btn-xs openUpdateModal" data-modal="#modalUpdateGisung"><span th:text="#{upper.menu.admin}">관리</span></a>
+          <a href="#none" class="btn-xs" id="btnDeleteGisung" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-id="${item.id}"><span th:text="#{contents.document_list.btn_delete_document}">삭제</span></a>
+        </td>
+      </tr>
+      </tbody>
+    </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div class="btn-area">
+      <a href="#none" class="btn-xs btn-del-sel">선택삭제</a>
+    </div>
+    <!-- paging -->
+    <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+
+
+  <script>
+    var currentSort = "[[${searchGisungVO.SortProp}]]";
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

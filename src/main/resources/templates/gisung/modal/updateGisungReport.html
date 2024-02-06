@@ -1,0 +1,234 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+  <div class="grid">
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.title}">문서명</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text" id="title" name="title" th:field="*{gisungReport.title}" class="form-control" th:placeholder="#{contents.modal.add_document.title_placeholder}">
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.attach_file}">파일첨부</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div th:replace="/common/fileUploader :: singleFileUploader('surveyFile')"></div>
+        <div class="d-flex align-items-center">
+          <div class="up-file-list">
+            <div class="badge badge-pill" th:if="${not #strings.isEmpty(gisungReport.surveyFileName)}">
+              <a href="#" class="download-attach-file" data-file-upload-type="GISUNG_REPORT_SURVEY_FILE" th:data-file-id="${gisungReport.id}" th:data-file-ext="${gisungReport.surveyFileNameExt}" th:data-file-path="${gisungReport.surveyFilePath}" th:data-origin-file-name="${gisungReport.surveyFileName}"><span th:text="${gisungReport.surveyFileName}"></span></a>
+              <a href="#none" class="btn-xs" th:data-file-id="${gisungReport.id}"><span th:text="#{layout.modal.btn_delete}">삭제</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-box">
+  <button type="button" id="btnUpdateGisungReport" class="btn btn-color1">
+    <span th:text="#{layout.modal.btn_edit}"> 수정</span>
+  </button>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+  $(document).ready(function () {
+    const gisungReportId = [[${gisungReport.Id}]]
+
+    const $title = $("#title");
+    const documentFileExtension = '[[${documentFileExtension}]]';
+    const allowFileExtList = documentFileExtension.split("||");
+
+    $('#btnUpdateGisungReport').off('click').on('click', function () {
+      if ($title.val() === "") {
+        alert("[[#{contents.modal.update_document.alert_title}]]");
+        return false;
+      }
+
+      if ($('li.devo_file_list').length > 0) {
+        if (confirm("[[#{contents.modal.update_document.alert_attach_file}]]")) {
+          updateGisungReport();
+        }
+      } else {
+        updateGisungReport();
+      }
+
+    });
+
+    function updateGisungReport() {
+      reqPutJSON('/gisungReportApi/putGisungReport', setSendData(),
+              function (data) {
+                if (!data.result) {
+                  alert(data.message);
+                } else {
+                  if ($('li.devo_file_list').length > 0) {
+                    startFileUpload();
+                  } else {
+                    $('.close').click();
+                    //resetAndSearch();
+                    location.href = "/gisung/gisungPrintForm?id="+[[${gisungReport.gisung.id}]]+"&no=8";
+                  }
+                }
+              },
+              function (xhr) {
+                alert(xhr.responseJSON.message);
+              }
+      );
+    }
+
+    function setSendData() {
+      return JSON.stringify({
+        "id": gisungReportId,
+        "title": $title.val()
+      });
+    }
+
+    $(this).on('click', '#btnSearchJobSheet', function () {
+      reqGet(`/gisungReportApi/getJobSheetGisungReport?startDate=${$("#jobSheetStartDate").val()}&endDate=${$("#jobSheetEndDate").val()}`, function (data) {
+        if (data.result) {
+          let model = JSON.parse(data.model);
+          model.forEach(jobSheet => {
+            $(".gisung-date-list").append(`<ul><li><a href="/project/jobSheetView?id=${jobSheet.id}" target="_blank">${jobSheet.title}</a></li></ul>`);
+          });
+          $(".gisung-date-list").show();
+        }
+      });
+    });
+
+    function startFileUpload() {
+      $("#surveyFile").dmUploader("start");
+    }
+
+    function completeUploadFile(obj) {
+      if ($(obj)[0].id === "surveyFile" && $("#partSurveyFile" + "s").find(".devo_file_list").length > 0) $("#partSurveyFile").dmUploader("start");
+      else if ($(obj)[0].id === "partSurveyFile" && $("#aggregateFile" + "s").find(".devo_file_list").length > 0) $("#aggregateFile").dmUploader("start");
+      else if ($(obj)[0].id === "aggregateFile" && $("#partAggregateFile" + "s").find(".devo_file_list").length > 0) $("#partAggregateFile").dmUploader("start");
+      else if ($(obj)[0].id === "partAggregateFile" && $("#accountFile" + "s").find(".devo_file_list").length > 0) $("#accountFile").dmUploader("start");
+      else if ($(obj)[0].id === "accountFile" && $("#etcFile" + "s").find(".devo_file_list").length > 0) $("#etcFile").dmUploader("start");
+      else {
+        $('.close').click();
+        //resetAndSearch();
+        location.href = "/gisung/gisungPrintForm?id="+[[${gisungReport.gisung.id}]]+"&no=8";
+      }
+    }
+
+    function fileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_SURVEY_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#surveyFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function partSurveyFileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_PART_SURVEY_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#partSurveyFile"
+            , partSurveyFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function aggregateFileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_AGGREGATE_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#aggregateFile"
+            , aggregateFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function partAggregateFileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_PART_AGGREGATE_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#partAggregateFile"
+            , partAggregateFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function accountFileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_ACCOUNT_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#accountFile"
+            , accountFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function etcFileUploaderExtraData() {
+      return {
+        "id": gisungReportId,
+        "fileUploadUIType": "GISUNG_REPORT_ETC_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#etcFile"
+            , etcFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+  });
+</script>

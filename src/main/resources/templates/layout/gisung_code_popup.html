@@ -1,0 +1,188 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" id="" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <div class="popup-tit"><span th:text="${title}">코드/비교</span>
+            </div>
+            <div class="gisung-count-set">
+                <div class="section">
+                    <input type="text" name="gcode" id="gcode" placeholder="검색코드 입력">
+                    <a href="#none" id="searchGisungCode" class="btn">검색</a>
+                </div>
+                <div class="section">
+                    <input type="text" name="schCount" id="schCount" placeholder="기성수량 입력" class="wid-s">
+                    <a href="#none" id="btnSettingCodeAllCount" class="btn-b">전체 수량 적용</a>
+                    <a href="#none" id="btnSettingCodeCount" class="btn-b">수량 배분 적용</a>
+                    <a href="#none" class="btn-b">초기화</a>
+                </div>
+            </div>
+            <div class="btn-box">
+                <a href="#none" id="btnSelProcessItemCount" class="btn btn-color1">선택 적용</a>
+                <a href="#none" id="btnProcessItemCount" class="btn btn-color1">전체 적용</a>
+                <a href="#none" class="btn close">취소</a>
+            </div>
+            <button type="button" class="close close-btn">팝업닫기</button>
+        </div><!--//popup_top-->
+        <div class="popup-con">
+        </div>
+
+    </div><!--//popup_content-->
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            $(this).on('click', '#gcodeItemCheck', function () {
+                $(".gcode-list-item-checkbox").prop("checked",($(this).prop("checked")));
+            });
+
+            $(this).on('click', '#btnSettingCodeAllCount', function () {
+                const schCount = $("#schCount").val();
+                let index = 0;
+                $('.progress-count').each(function () {
+                    //let index = $(this).closest('tr').index();
+                    $(this).val(parseFloat(schCount).toFixed(4))
+                    setProgressItemCostDetailCount(index, schCount);
+                    index++;
+                });
+            });
+
+            $(this).on('click', '#btnSettingCodeCount', function () {
+                const schCount = $("#schCount").val();
+                let totalCnt = $('.progress-count').length;
+                var roundedResult = Math.round((schCount / totalCnt) * 10000) / 10000;
+                let index = 0;
+                $('.progress-count').each(function () {
+                    $(this).val(parseFloat(roundedResult).toFixed(4));
+                    setProgressItemCostDetailCount(index, roundedResult);
+                    index++;
+                });
+            });
+
+            $(this).on('click', '#btnSelProcessItemCount', function () {
+                if ($(".gcode-list-item-checkbox:checkbox:checked").length > 0) {
+                    if (confirm("[[#{admin.modal.add_gisung.confirm_modify_sel_setting}]]")) {
+                        if (checkProcessItemCount()) {
+                            updateCountSetting();
+                        } else {
+                            alert("[[#{admin.modal.add_gisung.check_process_item_count}]]");
+                        }
+                    }
+                } else {
+                    alert("[[#{admin.modal.add_gisung.check_gisung_sel_setting}]]");
+                }
+            });
+
+            $(this).on('click', '#btnProcessItemCount', function () {
+                if (confirm("[[#{admin.modal.add_gisung.confirm_modify_all_setting}]]")) {
+                    $(".gcode-list-item-checkbox").prop("checked",true);
+                    if (checkProcessItemCount()) {
+                        updateCountSetting();
+                    } else {
+                        alert("[[#{admin.modal.add_gisung.check_process_item_count}]]");
+                    }
+                }
+            });
+
+            $('.scroll-wrap').overlayScrollbars({});
+        });
+
+        function checkProcessItemCount() {
+            let tbody = $('.tbCodeDetail tbody');
+            let count = tbody.find('tr').length;
+            let result = true;
+            tbody.find('tr').each(function(index) {
+                if ($('td#progressCheckbox:eq(' + index + ')').find("input[name='item_code_no']").is(":checked")) {
+                    console.log(index);
+                    if (index >= count - 3) return false;
+                    let codeCount = $('td#count:eq(' + index + ')').attr('data-value');
+                    console.log(codeCount);
+                    codeCount = codeCount.replace(/,/g, "");
+                    var paidProgressCount = $('td#paidProgressCount:eq(' + index + ')').attr('data-value'); //$(this).find('td#paidProgressCount').attr('data-value');
+                    console.log(paidProgressCount);
+                    paidProgressCount = paidProgressCount.replace(/,/g, "");
+                    var progressCount = $('td#progressCountInput:eq(' + index + ')').find('input[name=progressCount]').val(); //$(this).find('input[name=progressCount]').eq(index).val();
+                    console.log(progressCount);
+                    progressCount = progressCount.replace(/,/g, "");
+                    if ((parseFloat(paidProgressCount) + parseFloat(progressCount)) > parseFloat(codeCount)) {
+                        result = false;
+                        return false;
+                    }
+                }
+            });
+            return result;
+        }
+
+        function setProgressItemCostDetailCount(index, schCount) {
+            let progressCost = $.nfx.calculateMultipleZ(schCount, $('td#unitPrice:eq(' + index + ')').attr('data-value'));
+            $("td#progressCost:eq("+index+")").attr('data-value', progressCost);
+            $("td#progressCost:eq("+index+")").text($.nfx.numberWithCommas(progressCost));
+            let sumProgressCount = $.nfx.calculateAdd($("td#paidProgressCount:eq("+index+")").attr('data-value'), schCount);
+            $("td#sumProgressCount:eq("+index+")").text(parseFloat(sumProgressCount).toFixed(4));
+            let sumProgressCost = $.nfx.calculateAdd($("td#paidCost:eq("+index+")").attr('data-value'), progressCost);
+            $("td#sumProgressCost:eq("+index+")").attr('data-value', sumProgressCost);
+            $("td#sumProgressCost:eq("+index+")").text($.nfx.numberWithCommas(sumProgressCost));
+            let remindProgressCount = $.nfx.calculateMinus($("td#count:eq("+index+")").attr('data-value'), sumProgressCount);
+            $("td#remindProgressCount:eq("+index+")").text(parseFloat(remindProgressCount).toFixed(4));
+            let remindProgressCost = $.nfx.calculateMinus($("td#cost:eq("+index+")").attr('data-value'), sumProgressCost);
+            $("td#remindProgressCost:eq("+index+")").attr('data-value', remindProgressCost);
+            $("td#remindProgressCost:eq("+index+")").text($.nfx.numberWithCommas(remindProgressCost));
+        }
+
+
+        function updateCountSetting() {
+            const gisungId = $("input[name=gisungId]").val();
+            reqPostJSON('/gisungApi/saveGisungProcessItemCostDetailProgressCount/' + gisungId
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        //reloadComponent("/gisung/gisungListCardBody", "#divCardBody", "");
+                        location.href = "/gisung/jobSheetList?id="+gisungId;
+                        //toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function getInputValues () {
+            const val = [];
+            var tbody = $('.tbCodeDetail tbody');
+            var count = tbody.find('tr').length;
+            tbody.find('tr').each(function(index) {
+                if ($('td#progressCheckbox:eq(' + index + ')').find("input[name='item_code_no']").is(":checked")) {
+                    console.log(index);
+                    if (index >= count - 3) return false;
+                    var paidProgressCount = $('td#paidProgressCount:eq(' + index + ')').attr('data-value'); //$(this).find('td#paidProgressCount').attr('data-value');
+                    console.log(paidProgressCount);
+                    paidProgressCount = paidProgressCount.replace(/,/g, "");
+                    var paidCost = $('td#paidCost:eq(' + index + ')').attr('data-value'); //$(this).find('td#paidCost').attr('data-value');
+                    console.log(paidCost);
+                    paidCost = paidCost.replace(/,/g, "");
+                    var progressCount = $('td#progressCountInput:eq(' + index + ')').find('input[name=progressCount]').val(); //$(this).find('input[name=progressCount]').eq(index).val();
+                    console.log(progressCount);
+                    progressCount = progressCount.replace(/,/g, "");
+                    var progressCost = $('td#progressCost:eq(' + index + ')').attr('data-value'); //$(this).find('td#progressCost').attr('data-value');
+                    progressCost = progressCost.replace(/,/g, "");
+                    console.log(progressCost);
+                    val.push({
+                        id: $('td#progressCountInput:eq(' + index + ')').find('input[name=processItemId]').val() + "", //$(this).find('input[name=id]').eq(index).val() + "",
+                        code: $('td#code:eq(' + index + ')').text() + "", //$(this).find('td#code').text() + "",
+                        progressCount: progressCount + "",
+                        progressCost: progressCost + "",
+                        paidProgressCount: paidProgressCount + "",
+                        paidCost: paidCost + "",
+                    });
+                }
+            });
+            return val;
+        }
+
+        function setSendData() {
+            return JSON.stringify(getInputValues());
+        }
+    </script>
+</div><!--// popup-wrap-->
+

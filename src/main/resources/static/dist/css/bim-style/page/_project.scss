@@ -1,0 +1,51 @@
+/// BIM PROJECT PAGE
+
+.project-content {
+    .con-overview {
+        display: flex;
+        flex-wrap: wrap;
+
+        .list-title {
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        table { height: 100%; }
+
+        .content-body-area {
+            height: calc(100vh / 2 - 100px);
+
+            .card-body {
+                display: flex;
+
+                > div {
+                    margin: auto;
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    .con-report-view {
+        .content-body-area:nth-of-type(4) {
+            table {
+                td {
+                    > div {
+                        position: relative;
+                        margin: auto;
+                        width: 100%;
+                        height: 100%;
+                    }
+
+                    .btn-zoom-img {
+                        position: absolute;
+                        right: 0;
+                        bottom: 0;
+
+                        i { margin: 0; }
+                    }
+                }
+            }
+        }
+    }
+}

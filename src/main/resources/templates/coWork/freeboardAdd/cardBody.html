@@ -1,0 +1,67 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+
+
+  <div class="col-12">
+    <div th:object="${freeboard}">
+
+      <div class="form">
+        <div class="grid">
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{cowork.freeboard_list.list_title_title}">제목</span></strong>
+            </div>
+            <div class="fm-txt">
+              <th:block th:if="${ptype == 'edit'}">
+                <input type="hidden"
+                       id="id"
+                       th:field="*{id}">
+              </th:block>
+              <input type="text" id="title" name="title" class="form-control" th:value="${freeboard.title}" th:field="*{title}" th:placeholder="#{cowork.modal.add_freeboard.title_placeholder}" maxlength="255">
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{cowork.modal.add_freeboard.attach_file}">파일첨부</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div th:replace="/common/fileUploader :: multiFileUploader('freeboardFileUpload')"></div>
+              <th:block th:if="${ptype == 'edit'}">
+              <div class="up-file-list" >
+                <div class="badge badge-pill" th:each="attachFile, index : ${freeboard.freeboardFiles}" th:id="divFile_ + ${attachFile.id}">
+                  <a th:id="btnFreeboardFile_ + ${attachFile.id}"
+                     href="#"
+                     th:data-id="${attachFile.id}"
+                     th:data-ext="${attachFile.originFileNameExt}"
+                     th:data-file-path="${attachFile.filePath}"
+                     th:classappend="${attachFile.isImage} ? 'zoom-in-image'"
+                     th:text="${attachFile.originFileName}"
+                     th:data-is-image="${attachFile.isImage}"
+                     th:src="${#strings.isEmpty(attachFile.filePath) and attachFile.isImage ? '/dist/img/no_image.png' : attachFile.filePath}">xxxxxxxxxxxxxxxxxxxxxxx.ppt</a>
+                  <a href="#none" class="btn-xs" th:id="btnDeleteFreeboardFile_+${attachFile.id}"
+                     th:data-id="${attachFile.id}"><span th:text="#{layout.modal.btn_delete}">삭제</span></a>
+                </div>
+              </div>
+              </th:block>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{cowork.modal.add_freeboard.contents}">내용</span></strong>
+            </div>
+            <div class="fm-txt">
+              <textarea id="contents" name="contents" placeholder="내용을 입력하세요.">[[${freeboard.contents}]]</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+  });
+</script>

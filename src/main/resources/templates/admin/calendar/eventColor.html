@@ -1,0 +1,12 @@
+<div class="btn-group" style="width: 100%;" th:fragment="eventColor()">
+  <ul class="fc-color-picker" id="color-chooser">
+    <li>
+      <a style="text-color:#3c8dbc;" href="#"><i class="fas fa-square"></i></a>
+      <span th:text="#{admin.calendar.sat}">토요일(공정반영)</span>
+    </li>
+    <li th:each="scheduleType : ${scheduleTypes}">
+      <a th:style="${'color:' +  scheduleType.getScheduleColor() + ';'}"><i class="fas fa-square"></i></a>
+      <span th:utext="${scheduleType.getLocaleName()}">공휴일</span>
+    </li>
+  </ul>
+</div>

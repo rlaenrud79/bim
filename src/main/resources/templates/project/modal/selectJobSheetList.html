@@ -1,0 +1,74 @@
+<th:block th:if="${#lists.size(jobSheetList) > 0}">
+<div class="content pop-job-select">
+    <p class="title">작성하실 공사일지를 선택하세요.</p>
+    <table class="table data-table">
+        <colgroup>
+            <col style="width:5%">
+            <col style="width:5%">
+            <col style="width:80%">
+            <col style="width:10%">
+        </colgroup>
+        <thead>
+        <tr class="bg-lt-grey">
+            <th class="text-center" width="80">
+                <span th:text="#{project.job_sheet_list.list_title_no}">No</span>
+            </th>
+            <th class="text-center" width="400">
+                <span th:text="#{project.job_sheet_list.list_title_title}">제목</span>
+                <span>
+                (
+                  <i data-sort="titleASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="titleDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+            </th>
+            <th class="text-center" width="200">
+                <span th:text="#{project.job_sheet_list.list_title_report_date}">보고일자</span>
+                <span>
+                (
+                  <i data-sort="reportDateASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="reportDateDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+            </th>
+            <th class="text-center" width="100">
+                <span th:text="#{project.job_sheet_list.list_title_writer}">보고자</span>
+                <span>
+                (
+                  <i data-sort="writerASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="writerDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+            </th>
+            <th class="text-center" width="200">
+                <span th:text="#{project.job_sheet_list.list_title_write_date}">등록일시</span>
+            </th>
+        </tr>
+        <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${jobSheetList}">
+            <td class="text-center" th:text="${#lists.size(jobSheetList) - (index.index)}">1</td>
+            <td>
+                <div class="table-text-cont">
+                    <a th:href="@{/project/jobSheetUpdate(id=${item.id})}" target="_blank">
+                        <span class="text-over-dot" th:text="${item.title}">토목1 콘크리트 공정 6/24 업무보고</span>
+                    </a>
+                </div>
+            </td>
+            <td class="text-center" th:text="${#temporals.format(item.getReportDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021.06.24</td>
+            <td class="text-center">
+                <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+            </td>
+            <td class="text-center" th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.06.25 12:00:05</td>
+        </tr>
+        </thead>
+    </table>
+</div>
+<!--
+<div class="btn-footer">
+    <button type="button" id="btnPrcessAdd" class="btn bg-gradient-success"><span>확인</span></button>
+</div>
+-->
+
+<div class="modal-footer">
+    <button id="btnCloseLayer" type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+</div>
+</th:block>

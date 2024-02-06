@@ -1,0 +1,37 @@
+<div th:fragment="load()" id="projectImageArea" class="card content-body-area">
+  <div class="card-header">
+    <h2 class="list-title"><i class="far fa-arrow-alt-circle-right"></i> <span th:text="#{admin.project.page.project_image}">사업 이미지</span></h2>
+    <button class="btn bg-gradient-info ml-auto" data-toggle="modal" data-target="#projectImage" th:text="#{admin.project.page.management}">관리</button>
+  </div>
+  <div class="card-body">
+    <div class="d-flex justify-content-center">
+      <div id="carouselControls" class="carousel slide" data-wrap="false" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item" th:each="item, index : ${projectImages}" th:classappend="${index.index} == 0 ? active">
+            <img class="d-block w-75 zoom-in-image" th:src="${item.path}">
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <div class="btn-zoom-img">
+        <button type="button" class="btn btn-default"><i class="fas fa-search-plus"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(function (){
+    $('#carouselControls').carousel({
+      interval: 5000,
+      pause: "hover",
+      wrap: true,
+    });
+  })
+</script>

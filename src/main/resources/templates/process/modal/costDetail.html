@@ -1,0 +1,173 @@
+<div id="divCostDetail" class="content result-Code-validate board-list">
+
+  <div class="content search-users">
+    <div class="search-user-list">
+      <div class="scroll-area-v">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-center" colspan="5">
+              <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{process.modal.cost_detail.title_task_info}">공정 정보</span></h2>
+            </th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.work_name}">공종</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.phasing_code}">공정코드</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.task_full_path}">경로</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.task_name}">공정명</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.term}">기간</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="text-center" th:text="${processItem.work.getWorkName}">교량공</td>
+            <td class="text-center" th:text="${processItem.phasingCode}">BYD20010</td>
+            <td class="text-left" th:text="${processItem.taskFullPath}">교량공 > 용담천교량공사 > 용담천2교 > 교대 > A1 > 말뚝</td>
+            <td class="text-center" th:text="${processItem.taskName}">말뚝</td>
+            <td class="text-center" th:text="${processItem.startDate + ' ~ ' + processItem.endDate} ">2022-11-08 ~ 2022-11-09</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br /><br /><br />
+  <div class="content search-users">
+    <div class="search-user-list">
+      <div class="scroll-area-v">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-center" colspan="6">
+              <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{process.modal.cost_detail.title_info}">내역 정보</span></h2>
+            </th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count}" colspan="3">대표수량</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.complex_unit_price_b}" rowspan="2">ⓑ복합단가</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.task}" colspan="2">공사</th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.formula}">계산식</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count_value_a}">ⓐ값</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count_unit}">단위</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.task_cost_ab}">비용(ⓐ*ⓑ)</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.paid_cost_amt}">기성금</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="text-left" th:text="${processItem.firstCountFormula}">BYD20010#Count</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(processItem.firstCount, 3, 'COMMA')}">24</td>
+            <td class="text-center" th:text="${processItem.firstCountUnit}">본</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(processItem.complexUnitPrice, 3, 'COMMA')}">4,950,951</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(processItem.cost, 3, 'COMMA')}">118,822,822</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(processItem.paidCost, 3, 'COMMA')}">0</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br /><br /><br />
+  <div class="content search-users">
+    <div class="search-user-list">
+      <div class="scroll-area-v">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-center" colspan="7" >
+              <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{process.modal.cost_detail.title_detail_list}">복합단가 상세 내역</span></h2>
+            </th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.detail_work}" colspan="2">상세공종</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.count}" colspan="4">수량</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.cost}" rowspan="2">공사비(ⓐ*ⓑ)</th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.code}">코드</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.name}">명</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first}">대표</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count_value_a}">ⓐ값</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count_unit}">단위</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.first_count_unit_price_b}">ⓑ단가</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="item, index : ${processItem.processItemCostDetails}" th:if="${processItem.processItemCostDetails.size() > 0}">
+            <td class="text-center" th:text="${item.code}">A001</td>
+            <td class="text-left" th:text="${item.name}">말뚝자재비/D=609.6 M/M,T=12 M/M</td>
+            <td class="text-center">
+              <input type="checkbox" disabled th:checked="${item.isFirst}">
+            </td>
+            <td class="text-right" th:text="${#numbers.formatInteger(item.count, 3, 'COMMA')}">552.0000</td>
+            <td class="text-center" th:text="${item.unit}">M</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(item.unitPrice, 3, 'COMMA')}">133989.0000</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(item.cost, 3, 'COMMA')}">73961930.4300</td>
+          </tr>
+          <tr th:if="${processItem.processItemCostDetails.size() == 0}">
+            <td class="text-center" colspan="7" th:text="#{process.modal.cost_detail.no_data}">데이터가 없습니다.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br /><br /><br />
+  <div class="content search-users">
+    <div class="search-user-list">
+      <div class="scroll-area-v">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-center" colspan="9">
+              <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{process.modal.cost_detail.title_paid_cost_list}">기성 내역</span></h2>
+            </th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.paid_cost}" colspan="2">기성</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.this}" colspan="2">금회</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.sum}" colspan="2">누적</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.paid_cost_etc}" rowspan="2">비고</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.write}">등록</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.last_modify}">수정</th>
+          </tr>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.cost_detail.date}">년월잃</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.no}">회차</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.progress_rate}">진행률</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.paid_cost}">기성</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.progress_rate}">진행률</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.paid_cost}">기성</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.date}">년월일</th>
+            <th class="text-center" th:text="#{process.modal.cost_detail.date}">년월일</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="item, index : ${processItem.processItemCostPays}" th:if="${processItem.processItemCostPays.size() > 0}">
+            <td class="text-center" th:text="${item.costDate}">2021-11-24</td>
+            <td class="text-center" th:text="${item.costNo}">1</td>
+            <td class="text-center" th:text="${item.getIntPercent('progressRate', 100)} + '%'">23%</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(item.cost, 3, 'COMMA')}">16,971,743</td>
+            <td class="text-center" th:text="${item.getIntPercent('sumProgressRate', 100)} + '%'">0.23%</td>
+            <td class="text-right" th:text="${#numbers.formatInteger(item.sumCost, 3, 'COMMA')}">16,971,743</td>
+            <td class="text-left" th:text="${item.description}">11차 기성 테스트 입니다.</td>
+            <td class="text-center" th:text="${#temporals.format(item.writeEmbedded.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-11-15</td>
+            <td class="text-center" th:text="${#temporals.format(item.lastModifyEmbedded.getLastModifyDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-11-15</td>
+          </tr>
+          <tr th:if="${processItem.processItemCostPays.size() == 0}">
+            <td class="text-center" colspan="9" th:text="#{process.modal.cost_detail.no_data}">데이터가 없습니다.</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    const $this = $("#modalCostDetail");
+  });
+</script>

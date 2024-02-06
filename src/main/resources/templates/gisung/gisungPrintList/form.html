@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungPrintList/contentHeaderForm :: contentHeader()"></div>
+
+            <div class="">
+                <input type="hidden" id="pageNo" value="">
+
+                <!-- /.contents area -->
+                <section class="content">
+                    <div class="form-wrap">
+                        <div class="section">
+                            <input id="gisungId" name="gisungId" type="hidden" th:value="${gisung.id}">
+<!--                            <div th:replace="gisung/gisungPrintList/tabForm :: tabForm()"></div>-->
+                            <th:block th:if="${no == 7 or no == 8}">
+                                <th:block th:if="${no == 7}">
+                                    <div th:replace="gisung/gisungList/jobSheetForm :: contentForm()"></div>
+                                </th:block>
+                                <th:block th:if="${no == 8}">
+                                    <div th:replace="${'gisung/gisungPrintList/reportCardBody'} :: contentForm()"></div>
+                                </th:block>
+                            </th:block>
+                            <th:block th:unless="${no == 7}">
+                            <div th:replace="${'gisung/gisungPrintList/document'+no} :: contentForm()"></div>
+                            </th:block>
+                        </div>
+                        <div class="btn-box right-sticky">
+                            <section class="gisung-print-step">
+                                <p>기본정보 확인 및 수정</p>
+                                <button type="button" class="btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="6">
+                                    <strong>STEP 01</strong>
+                                    <span class="btn bg-sky"> 기성부분집계표(연차)</span>
+                                </button>
+                                <i class="ico-step"></i>
+                                <button type="button" class="btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="5">
+                                    <strong>STEP 02</strong>
+                                    <span class="btn bg-sky"> 기성부분집계표(전체)</span>
+                                </button>
+                                <i class="ico-step"></i>
+                                <button type="button" class="btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="4">
+                                    <strong>STEP 03</strong>
+                                    <span th:text="#{layout.common.gisung.gisung_basic_document2}" class="btn bg-sky"> 기성부분 검사원</span>
+                                </button>
+                                <i class="ico-step"></i>
+                                <button type="button" class="btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="3">
+                                    <strong>STEP 04</strong>
+                                    <span th:text="#{layout.common.gisung.gisung_basic_document1}" class="btn bg-sky"> 기성검사조서</span>
+                                </button>
+                            </section>
+                            <section>
+                                <p>추가문서인쇄</p>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="7">
+                                    <span th:text="#{layout.common.gisung.gisung_items}"> 기성부분내역서</span>
+                                </button>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="8">
+                                    <span> 기타</span>
+                                </button>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="9">
+                                    <span> 표지</span>
+                                </button>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="10">
+                                    <span> 목차</span>
+                                </button>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="1">
+                                    <span> 준공검사조서</span>
+                                </button>
+                                <button type="button" class="btn bg-green btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="2">
+                                    <span> 준공계</span>
+                                </button>
+                            </section>
+                        </div>
+                    </div>
+                    <!-- /.container-fluid -->
+                </section>
+                <!-- /.content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddGisungReport',#{contents.document_list.modal_title_add}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUpdateGisungReport',#{contents.document_list.modal_title_update}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalPrintGisungItem', #{common.modal_title.print}, 'popup-md')"></th:block> <!-- 인쇄 -->
+<th:block th:replace="layout/costdetail_popup :: modal('costDetail', #{cost.index.page.object_price_detail}, 'popup-bottom')"></th:block> <!-- 복합단가 상세 -->
+<!-- modal end -->
+
+<div id="processingProc" th:replace="process/modal/processingProc :: processingProc()"/>
+<style>
+    .dhx_grid-selected-row {
+        background: rgba(255, 198, 198, 0.3);
+        border-left: 2px solid #ff5252;
+    }
+
+    .dhx_grid-selected-cell {
+        border: 2px solid #ff5252;
+    }
+
+    .process-col-disabled {
+        background: whitesmoke;
+    }
+
+    .cost-value-changed {
+        background: lightsalmon;
+    }
+</style>
+<script type="text/javascript">
+    let gisungId = [[${gisung.id}]];
+    let gisungItemId = $("input[name=gisungItemId]").val();
+    let documentNo = [[${no}]];
+
+    const confirmGisungCoverAddGisung = "[[#{admin.modal.add_gisung_cover.confirm_add_gisung}]]";
+    const confirmGisungCoverModifyGisung = "[[#{admin.modal.add_gisung_cover.confirm_modify_gisung}]]";
+    const confirmGisungTableAddGisung = "[[#{admin.modal.add_gisung_table.confirm_add_gisung}]]";
+    const confirmGisungTableModifyGisung = "[[#{admin.modal.add_gisung_table.confirm_modify_gisung}]]";
+    const confirmAddGisung = "[[#{admin.modal.add_gisung_item.confirm_add_gisung}]]";
+    const confirmModifyGisung = "[[#{admin.modal.add_gisung_item.confirm_modify_gisung}]]";
+    const confirmGisungTableDeleteDocument = "[[#{contents.gisung_table_list.confirm_delete_document}]]";
+    const confirmGisungCoverDeleteDocument = "[[#{contents.gisung_cover_list.confirm_delete_document}]]";
+    const confirmGisungReportDelete = "[[#{contents.document_list.confirm_delete_document}]]";
+</script>
+<script src="/dist/js/pages/gisungPrint.js"></script>
+</body>
+
+</html>

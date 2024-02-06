@@ -1,0 +1,32 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="search-box" th:object="${searchFreeboardVO}">
+      <section>
+          <input type="hidden" id="searchType" value="titleWithDescription">
+        <input type="text" id="searchValue" name="searchValue" class="wid-m" placeholder="검색어를 입력하세요." th:field="*{searchValue}">
+      </section>
+      <section>
+      <div class="user-search">
+          <input type="text" id="searchUserDisplayName" class="wid-m" name="searchUserDisplayName" th:field="*{searchUserDisplayName}" th:placeholder="#{project.job_sheet_list.input_user_placeholder}" readonly>
+          <input type="hidden" id="searchUserId" class="wid-s" th:field="*{searchUserId}" name="searchUserValue">
+          <a href="#none" id="btnSearchUser" class="pop-open-btn" data-modal="#modalSearchSingleUser"></a>
+      </div>
+      </section>
+    <section>
+        <p th:text="#{contents.document_list.select_write_date}">작성일자</p>
+      <div class="input-date-wrap">
+        <div class="input-date">
+          <input type="date" id="startDate" th:field="*{startDateString}" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+        <small class="bar">-</small>
+        <div class="input-date">
+          <input type="date" id="endDate" th:field="*{endDateString}" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+      </div>
+    </section>
+    <section>
+      <a href="#none" id="btnSearchFreeboard" class="btn btn-color2"><span th:text="#{contents.document_list.btn_search_document}">검색</span></a>
+    </section>
+  </div>
+</form>

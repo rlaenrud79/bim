@@ -1,0 +1,26 @@
+<div class="print-page">
+    <section class="page list-ty1">
+        <div class="title">
+            <h2>목차</h2>
+        </div>
+        <ul>
+            <li th:each="item, index : ${contentsLists}" th:text="${item}">1. 기성부분검사원</li>
+        </ul>
+    </section>
+
+
+    <div class="modal-footer">
+        <!--<button type="button" id="" class="btn bg-gradient-success btn-pdf"><span>PDF</span></button>-->
+        <button type="button" id="" onclick="btnPrint();" class="btn btn-color1"><span>인쇄하기</span></button>
+        <button id="btnCloseLayer" type="button" class="btn btn-secondary close">닫기</button>
+    </div>
+</div><!--//page-->
+
+
+<script type="text/javascript">
+    function btnPrint() {
+        window.open('/gisung/printGisungItem?id='+[[${gisung.id}]]+'&no='+[[${no}]]+'&coverTableId='+[[${coverId}]], 'printDocument', 'width=800, height=600, left=100, top=100, scrollbars=yes, resizable=yes')
+    }
+
+
+</script>

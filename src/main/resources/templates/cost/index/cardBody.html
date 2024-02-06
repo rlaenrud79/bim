@@ -1,0 +1,62 @@
+<div id="divCardBody" th:fragment="divCardBody()">
+    <div class="scroll-wrap sc-table">
+        <table class="table">
+            <tbody>
+            <tr class="sticky-th">
+                <th th:text="#{process.modal.cost_detail.task_name}" rowspan="2">공정명</th>
+                <!--<th th:text="#{process.modal.cost_detail.work_name}" rowspan="2">공종</th>-->
+                <th th:text="#{process.modal.cost_detail.phasing_code}" rowspan="2">공정코드</th>
+                <th th:text="#{process.modal.cost_detail.progress_rate}" rowspan="2">진행률</th>
+                <th th:text="#{cost.index.page.working_duration}" rowspan="2">작업 일수</th>
+                <th th:text="#{cost.index.page.process_start_date}" rowspan="2">시작일</th>
+                <th th:text="#{cost.index.page.process_end_date}" rowspan="2">종료일</th>
+                <th th:text="#{process.modal.cost_detail.first_count}" colspan="3">대표수량</th>
+                <th th:text="#{process.modal.cost_detail.complex_unit_price_b}" rowspan="2">ⓑ복합단가</th>
+                <th th:text="#{cost.index.page.task}" colspan="2">기성금(원)</th>
+                <th th:text="#{cost.index.page.model}" rowspan="2">모델</th>
+            </tr>
+            <tr class="sticky-th">
+                <th th:text="#{process.modal.cost_detail.formula}">계산식</th>
+                <th th:text="#{process.modal.cost_detail.first_count_value_a}">ⓐ값</th>
+                <th th:text="#{process.modal.cost_detail.first_count_unit}">단위</th>
+                <th th:text="#{cost.index.page.task_cost_ab}">계획</th>
+                <th th:text="#{cost.index.page.paid_cost}">기성금</th>
+            </tr>
+            <tr class="tb-style-total sticky-th-two2">
+                <th class="txt-cnt" colspan="3"><b><span th:text="#{gisung.index.page.total_count}">총계</span></b></th>
+                <th th:text="${#numbers.formatInteger(sumTaskCost, 1, 'COMMA')}">105,305,208</th>
+                <th><span th:text="${#numbers.formatInteger((sumTodayProgressAmount), 1, 'COMMA')}">42,122,082</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumTodayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span th:text="${#numbers.formatInteger(sumPaidCost, 1, 'COMMA')}">0</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumPaidProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(0%)</span></th>
+                <th>
+                    <input id="sumTaskCost" name="sumTaskCost" type="hidden" th:value="${#numbers.formatInteger(sumTaskCost, 1)}">
+                    <input id="sumPaidProgressRate" name="sumPaidProgressRate" type="hidden" th:value="${sumPaidProgressRate}">
+                    <input id="sumPaidCost" name="sumPaidCost" type="hidden" th:value="${#numbers.formatInteger(sumPaidCost, 1)}">
+                    <span id="sumCost" th:text="${#numbers.formatInteger((sumCost), 1, 'COMMA')}"></span> <span class="txt-color4" id="sumProgressRate" th:text="|(${#numbers.formatDecimal((sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumPaidCostTxt" th:text="${#numbers.formatInteger((sumPaidCost+sumCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((sumPaidProgressRate+sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumAfterPaidCostTxt" th:text="${#numbers.formatInteger((sumTaskCost-sumPaidCost-sumCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumAfterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-sumPaidProgressRate-sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th th:if="${(no == null or no == '') and isWriting}"></th>
+            </tr>
+            <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${processItemList}">
+                <td th:text="${item.taskName}">교량공</td>
+                <td th:text="${item.phasingCode}">BR100110</td>
+                <td th:text="|${item.progressRate}%|">0.00%</td>
+                <td th:text="${#numbers.formatInteger((item.duration), 1, 'COMMA')}">100</td>
+                <td th:text="${item.startDate}">2024-01-01</td>
+                <td th:text="${item.endDate}">2024-01-01</td>
+                <td th:text="${item.firstCountFormula}">BR100110#Count/4</td>
+                <td th:text="${#numbers.formatInteger(item.firstCount, 1, 'COMMA')}">2</td>
+                <td th:text="${item.firstCountUnit}">기</td>
+                <td><a href="#none" class="pop-open-btn btnCostDetail" data-modal="#modalCostDetailPopup" th:data-id="${item.processItemId}" th:text="${#numbers.formatInteger(item.complexUnitPrice, 1, 'COMMA')}">3,108,952</a></td>
+                <td th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}">0</td>
+                <td><a href="#none" class="pop-open-btn btnPaidCost" data-modal="#paidCost" th:data-id="${item.processItemId}" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}">0</a></td>
+                <td><a href="#none" id='btnModelViewer' th:data-id='${item.processItemId}' class="btn-xs btn-color2">모델보기</a></td>
+            </tr>
+            </tbody>
+        </table><!--// table-->
+    </div><!--//table-wrap-->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.scroll-wrap').overlayScrollbars({});
+        });
+    </script>
+</div>

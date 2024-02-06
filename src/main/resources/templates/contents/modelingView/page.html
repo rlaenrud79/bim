@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/model_common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<link rel="stylesheet" href="/dist/css/common-gantt.css">
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/model_common :: preLoader()"></div>
+  <!--
+  <aside id="#leftSideBar" class="bim-viewer-sidebar">
+    <div class="control-sidebar-content">
+      <div class="sidebar-control">
+        <button id="addCoWork" type="button" class="btn bg-gradient-success mr-auto" th:text="#{contents.modeling_view.page.add_co_work}">협업등록</button>
+        <div class="window-close">
+          <button type="button" id="closeWindow" class="btn btn-danger btn-sm">
+            <i class="far fa-times-circle"></i> <span th:text="#{contents.modeling_view.page.window_close}">창 닫기</span>
+          </button>
+        </div>
+        <button type="button" class="btn btn-viewr-left-nav" data-target="#leftSideBar" data-toggle="toggle">
+          <i class="fas fa-angle-double-left"></i>
+        </button>
+      </div>
+      <article class="content-modeling-tabs">
+        <div class="nav nav-tabs" role="tablist">
+          <button type="button" class="active" data-target="#bimModelArea"
+                  aria-controls="bimModelArea" role="tab" data-toggle="tab">BIM MODEL <span id="bimModelCount" class="badge bg-success" th:text="${modelings.size()}">0</span>
+          </button>
+          <button type="button" data-target="#mySnapShotArea"
+                  aria-controls="mySnapShotArea" role="tab" data-toggle="tab">MY SNAP SHOT <span id="mySnapShotCount" class="badge bg-success" th:text="${mySnapShots.size()}">0</span>
+          </button>
+        </div>
+        <div class="tab-content">
+          <div id="bimModelArea" th:replace="contents/modelingView/bimModelArea :: load()"></div>
+          <div id="mySnapShotArea" th:replace="contents/modelingView/mySnapShotArea :: load()"></div>
+        </div>
+      </article>
+    </div>
+  </aside>
+  -->
+  <main role="main" class="">
+    <section class="content">
+      <div class="">
+        <div class="contents-content">
+          <div class="viewer-area">
+            <div th:include="common/modelingViewer :: loadCanvas()"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer th:replace="layout/model_common :: footer()"></footer>
+</div>
+
+<!-- modal -->
+<div th:replace="layout/model_common :: loadModalCaseBy('(zoomInImage)')"></div>
+<th:block th:replace="layout/modal :: modal('mySnapShotUploadFile', #{contents.modeling_view.modal_title.add_snap_shot_file}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/model_common :: script()"></div>
+<div th:include="common/modelingViewer :: loadScript()"></div>
+<script>
+  $(function () {
+    let $this = $(this);
+    const tabType = "[[${tabType}]]";
+
+    $('.btn-viewr-left-nav').click(function () {
+      $('.wrapper').toggleClass('hide-left-sidebar');
+      if ($('.wrapper').hasClass('hide-left-sidebar')) ;
+      window.setTimeout( function(){ hwv.resizeCanvas();}, 300);
+    });
+
+    $this.on("click", ".bimModel", function () {
+      let modelingId = getData(this,"tr","id");
+      reloadComponentTabActive('/contents/bimModelDetail/' + modelingId, "#bimModelDetail", "");
+    });
+
+    $this.on("click", ".accountViewPoint", function () {
+      goViewPoint($(this).data("view-point"));
+      let accountViewPointId = getData(this,"tr","id");
+      reloadComponentTabActive('/contents/myViewPointArea/' + accountViewPointId, "#myViewPointArea", "modelIds=" + modelIds);
+    });
+
+
+	$this.on("click", "img.zoom-in-image, a.zoom-in-image, button.zoom-in-image", function () {
+	  goViewPoint($(this).data("my-snap-shot"));
+      let mySnapShotId = getData(this,"img","id");
+      reloadComponentTabActive('/contents/mySnapShotArea/' + mySnapShotId, "#mySnapShotArea", "modelIds=" + modelIds,
+    		  function(){ $("#snapShotImgList").scrollTop(getScrHeight(mySnapShotId));
+     	});
+
+	});
+
+    $this.on("click", "#addCoWork", () => {
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.co_work_list.confirm_add_co_work}]]", () => {
+        window.open("/coWork/modelingView?modelIds=[[${modelIds}]]", "contents_modeling_viewer - " + new Date());
+      });
+    });
+
+    $this.on("click", "#closeWindow", function () {
+      window.close();
+    });
+
+    $this.on("click", ".deleteMySnapShot", function () {
+      let mySnapShotsId = getData(this,"li","id");
+
+      showConfirm("[[#{contents.modeling_view.page.my_snap_shot_delete}]]","[[#{contents.modeling_view.page.delete_my_snap_shot}]]",() =>{
+
+        reqDelete("/contents/mySnapShot/"+mySnapShotsId
+          , (result) => {
+            $('#mySnapShotArea').html(result);
+            $("#mySnapShotCount").html($("#mySnapShotArea li").length);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+    });
+
+    $('#mySnapShotUploadFile').on('show.bs.modal', function (e) {
+      let mySnapShotId = $(e.relatedTarget).data("my-snap-shot-id");
+      reqGet("/contentsModal/addModelFile/" + mySnapShotId
+        , function (data) {
+          $('#mySnapShotUploadFile').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $this.on("click", "a[id^='btnMySnapShotFile_']", function () {
+      let ext = $(this).data("ext");
+      if(ext.toUpperCase() === "DWG") executeFileDownloadModal($(this).data("id"), "MODELING_SNAP_SHOT_MODEL_FILE");
+      else window.open($(this).data("file-path"));
+    });
+
+    $this.on("click", ".deleteMySnapShotFile", function () {
+      let mySnapShotId = $(this).data("my-snap-shot-id");
+      let mySnapShotFileId = $(this).data("id");
+      showConfirm("[[#{contents.modeling_view.page.snap_shot_attach_file_delete}]]","[[#{contents.modeling_view.page.delete_snap_shot_attach_file}]]",() =>{
+        reqDelete("/contentsApi/mySnapShotFile/" + mySnapShotFileId
+          , (data) => {
+            if (data.result) {
+              reloadComponentTabActive('/contents/mySnapShotArea/' + mySnapShotId, "#mySnapShotArea", "modelIds=" + modelIds,
+            		  function(){ $("#snapShotImgList").scrollTop(getScrHeight(mySnapShotId));});
+              toastr.success(data.message);
+            } else {
+              toastr.error(data.message);
+            }
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+          }, "json");
+      });
+    });
+
+    let init = function ()
+    {
+      if(tabType != undefined && tabType != '') $(`button[aria-controls=${tabType}]`).trigger("click");
+    }
+
+    init();
+
+  });
+
+function getScrHeight(mySnapShotId){
+	let mySnapShots = $("#snapShotImgList").find("li");
+	let scr = 0;
+
+ 	$.each(mySnapShots, function(index, item){
+		if(Number(mySnapShotId) === $(this).data("id")){
+			return false;
+		}
+		else {
+ 			scr += $(this).outerHeight(true);
+		}
+ 	});
+	return scr;
+ 	}
+ </script>
+</body>
+</html>

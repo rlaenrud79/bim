@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('coWork')"></nav>
+    <aside th:replace="layout/common :: aside('coWork','coWorkList')"></aside>
+
+    <main role="main" class="content-wrapper coWork-content board-list">
+        <div id="divContentHeader" class="content-header" th:replace="coWork/coWorkList/contentHeader :: contentHeader()"/>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="con-issue-list">
+                    <div class="col-lg-12">
+                        <form id="frmSearch" action="/coWork/coWorkList" method="post" th:replace="coWork/coWorkList/frmSearchForm :: frmSearchForm()"/>
+                        <div class="card content-body-area">
+                            <div id="divCardHeader" class="card-header" th:replace="coWork/coWorkList/cardHeader :: cardHeader()"/>
+                            <div id="divCardBody" class="card-body" th:replace="coWork/coWorkList/cardBody :: cardBody()"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalIssueManagerList', #{co_work.co_work_list.modal_title.issue_manager_list}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalModelingList', #{co_work.co_work_list.modal_title.modeling_list}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalCoWorkIssueList', #{co_work.co_work_list.modal_title.co_work_issue_list}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/common :: script()"></div>
+<script>
+    $(document).ready(function () {
+        // 계정정보(account) 테이블 > 프로젝트관리자(isRoleAdminProject) 체크(true/false)
+        const isRoleAdminProject = [[${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject}]];
+        if(!isRoleAdminProject)     applyNoAsideLayout();
+
+        let _this = $(this);
+        let _pageNo = 0;
+        let _coWorkId = 0;
+
+        $("#searchDateStart, #searchDateEnd").datepicker(datepickerFormat);
+
+        let setSendData = function (page, pageSize) {
+            let param = "";
+
+            param += "page=" + page;
+            param += "&size=" + pageSize;
+            param += "&subject=" + $("#subject").val();
+            param += "&writerName=" + $("#writerName").val();
+            param += "&writerId=" + $("#writerId").val();
+            param += "&searchDateStart=" + $("#searchDateStart").val();
+            param += "&searchDateEnd=" + $("#searchDateEnd").val();
+            param += "&sortProp=" + $("#sortProp").val();
+
+            return param;
+        }
+
+        let searchCoWorkList = function () {
+            reloadComponent("/coWork/coWorkListCardBody", "#divCardBody", setSendData(0, $("#pageSize").val()));
+        }
+
+        let initSearchCondition = function () {
+            $("#subject").val("");
+            $("#writerName").val("");
+            $("#writerId").val("0");
+            $("#searchDateStart").val("");
+            $("#searchDateEnd").val("");
+            $("#sortProp").val("");
+        }
+
+        _this.on('click', '#btnSearch', function () {
+            searchCoWorkList();
+        });
+
+        _this.on('click', '#btnInit', function () {
+            initSearchCondition();
+            searchCoWorkList();
+        });
+
+        _this.on('change', '#pageSize', function () {
+            searchCoWorkList();
+        });
+
+        _this.on('click', '.sort', function () {
+            $("#sortProp").val($(this).data('sort'));
+            searchCoWorkList();
+        });
+
+        _this.on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function () {
+            _pageNo = $(this).data("page-no");
+            reloadComponent("/coWork/coWorkListCardBody", "#divCardBody", setSendData(_pageNo, $("#pageSize").val()));
+        });
+
+        _this.on('click', '#writerName, #btnSearchUser', function (e) {
+            modalShowAndDraggable('#modalSearchSingleUser');
+        });
+
+        _this.on('click', "a[id^='aCoWorkJoinerCnt_']", function (e) {
+            _coWorkId = $(this).data("id");
+            modalShowAndDraggable('#modalIssueManagerList');
+        });
+
+        _this.on('click', "a[id^='aCoWorkModelingCnt_']", function (e) {
+            _coWorkId = $(this).data("id");
+            modalShowAndDraggable('#modalModelingList');
+        });
+
+        _this.on('click', "a[id^='aCoWorkIssueCnt_']", function (e) {
+            _coWorkId = $(this).data("id");
+            modalShowAndDraggable('#modalCoWorkIssueList');
+        });
+
+        _this.on('show.bs.modal', '#modalSearchSingleUser', function () {
+            let param = "formElementIdForUserId=writerId";
+            param += "&formElementIdForUserName=writerName";
+            param += "&formElementIdForModal=modalSearchSingleUser";
+            param += "&searchUserFilter=N";
+
+            reqGet("/commonModal/searchSingleUser?" + param
+                , function (data) {
+                    $('#modalSearchSingleUser').find('.modal-body').html(data);
+                    refreshTooltip();
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+                }, "html");
+        });
+
+        _this.on('show.bs.modal', '#modalIssueManagerList', function () {
+            reqGet("/coWorkModal/coWorkJoinerList/" + _coWorkId
+                , function (data) {
+                    $('#modalIssueManagerList').find('.modal-body').html(data);
+                    refreshTooltip();
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+                }, "html");
+        });
+
+        _this.on('show.bs.modal', '#modalModelingList', function () {
+            reqGet("/coWorkModal/coWorkModelingList/" + _coWorkId
+                , function (data) {
+                    $('#modalModelingList').find('.modal-body').html(data);
+                    refreshTooltip();
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+                }, "html");
+        });
+
+        _this.on('show.bs.modal', '#modalCoWorkIssueList', function () {
+            reqGet("/coWorkModal/coWorkIssueList/" + _coWorkId
+                , function (data) {
+                    $('#modalCoWorkIssueList').find('.modal-body').html(data);
+                    refreshTooltip();
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+                }, "html");
+        });
+
+        _this.on('hidden.bs.modal', '#modalSearchSingleUser', function () {
+            $("#mIsSearchRoleAdminProject").off("click");
+            $("#mIsSearchRoleAdminWork").off("click");
+            $("#mSearchText").off("keyup");
+            $("button[id^='mBtnSelect_']").off("click")
+            $(this).data('bs.modal', null);
+            refreshTooltip();
+        });
+
+        _this.on('hidden.bs.modal', '#modalIssueManagerList, #modalModelingList, #modalCoWorkIssueList ', function () {
+            $(this).data('bs.modal', null);
+            refreshTooltip();
+        });
+
+        _this.on("click", "a[id^='btnDownloadModelFile']", function () {
+            executeFileDownloadModal($(this).data("id"), "MODELING_FILE");
+        });
+
+        _this.on('click', "a[id^='coWork_']", function () {
+            let coWorkId = $(this).data("id");
+            window.open("/coWork/modelingView/" + coWorkId);
+        });
+
+        _this.on('click', "a[id^='aTitle_']", function () {
+            let coWorkId = $(this).data("co-work-id");
+            window.open("/coWork/modelingView/" + coWorkId + "?tabType=issueArea&tabItemId=" + $(this).data("id"));
+        });
+
+        _this.on("click", "#addCoWork", () => {
+            showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.co_work_list.confirm_add_co_work}]]", () => {
+                window.open("/coWork/modelingView");
+            });
+        });
+    });
+</script>
+</body>
+
+</html>

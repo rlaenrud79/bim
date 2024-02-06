@@ -1,0 +1,25 @@
+<article id="bimModelList" th:fragment="load()">
+  <header th:text="#{co_work.modeling_view.page.bim_model_list.model_list}">BIM 모델 리스트</header>
+  <div class="scroll-area-v">
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.bim_model_list.model_name}">BIM 모델명</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.bim_model_list.work_name}">공종</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.bim_model_list.model_version}">버전</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item : ${modelings}" th:data-id="${item.modeling.id}">
+        <td>
+          <a href="#" class="bimModel">
+            <span class="text-over-dot" th:text="${item.modeling.modelName}">ultrai_tunnel-S01.rvt</span>
+          </a>
+        </td>
+        <td class="text-center" th:text="${item.modeling.work.name}">터널 - 구간1</td>
+        <td class="text-center" th:text="${item.modeling.version}">v_002</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

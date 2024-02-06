@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('cost')"></nav>
+  <aside th:replace="layout/common :: aside('cost','index')"></aside>
+
+  <!-- contents area  -->
+  <main role="main" class="content-wrapper cost-content">
+    <div class="content-header">
+      <div>
+        <h1><i class="nav-icon fas fa-calculator"></i> [[#{cost.index.page.cost_manage}]]</h1>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/main/index"><i class="fas fa-home"></i> HOME</a></li>
+          <li class="breadcrumb-item active" th:text="#{cost.index.page.cost_manage}">내역관리</li>
+        </ol>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-breakdown">
+          <div class="col-lg-12">
+            <div class="card content-header-area">
+              <div class="col-lg-12">
+                <div class="d-inline-flex flex-wrap justify-content-center align-items-center dhx_sample-controls day-search-form" th:object="${searchVO}">
+                  <div class="form-group">
+                    <label th:text="#{cost.index.page.work}">공종</label>
+                    <select class="custom-select" th:field="*{workId}">
+                      <option th:value="${0}" th:text="#{cost.index.page.selection}">:: 선택 ::</option>
+                      <option th:each="workName : ${workNames}" th:value="${workName.work.id}" th:text="${workName.name}">Value 2</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label th:text="#{cost.index.page.phasing_code}">공정코드</label>
+                    <input type="text" th:field="*{phasingCode}" class="form-control"/>
+                  </div>
+                  <div class="form-group">
+                    <label th:text="#{cost.index.page.phasing_name}">공정명</label>
+                    <input type="text" th:field="*{taskName}" class="form-control"/>
+                  </div>
+                  <div class="form-group from-date">
+                    <label th:text="#{cost.index.page.process_term}">작업기간</label>
+                    <div class="input-group">
+                      <input type="text" th:field="*{startDate}" class="form-control" readonly>
+                      <span>~</span>
+                      <input type="text" th:field="*{endDate}" class="form-control" readonly>
+                    </div>
+                  </div>
+                  <div class="bim-btn-group">
+                    <button type="button" id="btnSearch" class="btn bg-gradient-primary">
+                      <i class="fas fa-search"></i><span th:text="#{cost.index.page.search}"> 검색</span>
+                    </button>
+                    <button type="button" id="btnReset" class="btn bg-gradient-primary">
+                      <i class="fas fa-sync-alt"></i><span th:text="#{cost.index.page.reset_search_condition}"> 초기화</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card content-body-area">
+              <div class="card-header">
+                <div class="col-12">
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" class="form-check" id="editMode">
+                      <label for="editMode" th:text="#{cost.index.page.edit_mode}">수정 모드</label>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" class="form-check" id="viewTaskFullPath">
+                      <label for="viewTaskFullPath" th:text="#{cost.index.page.view_task_full_path}">경로</label>
+                    </div>
+                  </div>
+
+                  <div class="bim-btn-group no-wrap">
+                    <button class="btn bg-gradient-info" data-toggle="modal" data-target='#paidCostAll'>
+                      <i class="fas fa-file-invoice-dollar"></i><span th:text="#{cost.index.page.paid_cost_all}">일괄 기성</span>
+                    </button>
+                    <button class="btn bg-gradient-info" id="exportXlsx">
+                      <i class="fas fa-file-excel"></i><span th:text="#{cost.index.page.print_xlsx}">xlsx 출력</span>
+                    </button>
+                    <button class="btn bg-gradient-info" id="exportCsv">
+                      <i class="fas fa-file-csv"></i><span th:text="#{cost.index.page.print_csv}">csv 출력</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="connectedSortable dhx_sample-container mt-0">
+                  <div class="dhx_sample-container__widget" id="gridCost"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </main>
+
+  <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('costDetail', #{cost.index.page.object_price_detail}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('paidCost', #{cost.index.page.cost_detail_add_update}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('paidCostAll', #{cost.index.page.paid_cost_all}, '')"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/common :: script()"></div>
+<style>
+  .dhx_grid-selected-row {
+    background: rgba(255, 198, 198, 0.3);
+    border-left: 2px solid #ff5252;
+  }
+
+  .dhx_grid-selected-cell {
+    border: 2px solid #ff5252;
+  }
+
+  .process-col-disabled {
+    background: whitesmoke;
+  }
+
+  .cost-value-changed {
+    background: lightsalmon;
+  }
+</style>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js"></script>
+<script type="text/javascript" src="/dist/js/common-grid.js"></script>
+<script th:inline="javascript">
+  $(function () {
+    const $this = $(this);
+    const numberColId = ["firstCount", "complexUnitPrice"];
+    const editableColId = ["firstCountFormula", "firstCount", "complexUnitPrice", "firstCountUnit"];
+
+    $this.find("#startDate, #endDate").datepicker(datepickerFormat);
+
+    $this.find("#viewTaskFullPath").on("click", function () {
+      let colId = "taskFullPath";
+
+      if (gridCost.isColumnHidden(colId)) gridCost.showColumn(colId);
+      else gridCost.hideColumn(colId);
+    });
+
+    $this.find("#editMode").on("click", function () {
+      let isEditMode = $("#editMode").is(":checked");
+
+      if(isEditMode) toastr.info([[#{cost.index.page.input_can_formula_count_unit_price}]]);
+      else toastr.info([[#{cost.index.page.input_can_not_formula_count_unit_price}]]);
+
+      gridCost.paint();
+    });
+
+    $this.find("#btnReset").on("click", function () {
+      $this.find("#workId").val(0);
+      $this.find("#phasingCode").val("");
+      $this.find("#taskName").val("");
+      $this.find("#startDate").val("");
+      $this.find("#endDate").val("");
+    });
+
+    $('#paidCost').on('show.bs.modal', function (e) {
+      let processItemId = $(e.relatedTarget).data("id");
+
+      reqGet("/costModal/paidCost/" + processItemId
+        , function (data) {
+          $('#paidCost').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $('#costDetail').on('show.bs.modal', function (e) {
+      let processItemId = $(e.relatedTarget).data("id");
+
+      reqGet("/costModal/costDetail/" + processItemId
+        , function (data) {
+          $('#costDetail').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $('#paidCostAll').on('show.bs.modal', function () {
+
+      reqGet("/costModal/paidCostAll/[[${processInfo.id}]]"
+        , function (data) {
+          $('#paidCostAll').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    const gridCost = new dhx.Grid("gridCost", {
+      columns: [
+        {
+          id        : "processItemId"
+          , hidden  : true
+          , header  : [{text: "ID", rowspan: 2}]
+          , editable: false
+        },
+        {
+          id      : "workName"
+          , header: [{text: [[#{cost.index.page.work}]], align: "center"}, {content: "comboFilter", filterConfig: {multiselection: true}}]
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+          , footer: [{text: [[#{cost.index.page.aggregation}]], align: "center"}]
+        },
+        {
+          id    : "taskFullPath", header: [{text: [[#{cost.index.page.view_task_full_path}]], align: "center"}, {content: "inputFilter"}]
+          , mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id      : "phasingCode",
+          header  : [{text: [[#{cost.index.page.phasing_code}]], align: "center"}, {content: "inputFilter"}]
+          ,footer: [{content: "count", align: "center"}]
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id  : "taskName", header: [{text: [[#{cost.index.page.phasing_name}]], align: "center"}, {content: "inputFilter"}],
+          mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id  : "progressRate", header: [{text: [[#{cost.index.page.process_rate}]], align: "center"}, {content: "inputFilter"}], type: "percent", format: "#.00",
+          mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id  : "duration", header: [{text: [[#{cost.index.page.working}]], align: "center"}, {text: [[#{cost.index.page.duration}]], align: "center"}], footer: [{content: "sum"}], type: "number", format: "#,#",
+          mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id  : "startDate", header: [{text: [[#{cost.index.page.process_start_date}]], align: "center"}, {content: "inputFilter"}], align: "center",
+          mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+          , footer: [{text: [[${projectStartDate}]]}]
+        },
+        {
+          id  : "endDate", header: [{text: [[#{cost.index.page.process_end_date}]], align: "center"}, {content: "inputFilter"}], align: "center",
+          mark: function (cell, data, row, col) {
+            return "process-col-disabled";
+          }
+          , footer: [{text: [[${projectEndDate}]]}]
+        },
+        {
+          id    : "firstCountFormula", header: [{text: [[#{cost.index.page.first_count}]], align: "center", colspan: 3}, {text: [[#{cost.index.page.formula}]], align: "center"}]
+        },
+        {
+          id    : "firstCount", header: ["", {text: [[#{cost.index.page.first_count_value_a}]], align: "center"}], type: "number", format: "#,#"        },
+        {
+          id    : "firstCountUnit", header: ["", {text: [[#{cost.index.page.first_count_unit}]], align: "center"}]},
+        {
+          id               : "complexUnitPrice", header: [{text: [[#{cost.index.page.complex_unit_price_b}]], align: "center", rowspan: 2}]
+          , type           : "number"
+          , format         : "#,#"
+          , htmlEnable     : true
+          , template       : function (cell, row) {
+            return `<a href='#' data-toggle="modal" data-target='#costDetail' data-id='${row.processItemId}'>${cell}</a>`;
+          }
+          , tooltipTemplate: costDetailTemplate
+        },
+        {
+          id      : "taskCost", header: [{text: [[#{cost.index.page.task}]], align: "center", colspan: 2}, {text: [[#{cost.index.page.task_cost_ab}]], align: "center"}]
+          , footer: [{content: "sum"}]
+          , type  : "number"
+          , format: "#,#"
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id                : "paidCost"
+          , header: ["", {text: [[#{cost.index.page.paid_cost}]], align: "center"}]
+          , footer          : [{content: "sum"}]
+          , type            : "number", format: "#,#"
+          , mark            : function (cell, data) {
+            return "process-col-disabled";
+          }
+          , htmlEnable      : true
+          , template        : function (cell, row) {
+            return `<a href='#' data-toggle="modal" data-target='#paidCost' data-id='${row.processItemId}'>${cell}</a>`;
+          }, tooltipTemplate: paidCostTemplate
+        },
+        {
+          id      : "calculateCostResult"
+          , header: [{text: [[#{cost.index.page.calculate_cost_result}]], align: "center"}, {content: "selectFilter"}]
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+      ],
+      adjust      : true,
+      autoEmptyRow: false,
+      resizable   : true,
+      selection   : true
+    });
+
+    function costDetailTemplate(value, row) {
+      if (value == '0') return value;
+      let result = '';
+      reqGetSync(`/costApi/getProcessItemCostDetail/${row.processItemId}/C`, function (data) {
+        if (data.result) {
+          let model = JSON.parse(data.model);
+
+          model.forEach(item => {
+            result += `<tr>
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.isFirst ? 'v' : ''}</td>
+                        <td>${item.count}</td>
+                        <td>${item.unit}</td>
+                        <td>${numberWithCommas(item.unitPrice)}</td>
+                        <td>${numberWithCommas(item.cost)}</td>
+                      </tr>`;
+          })
+        }
+      });
+
+      return `<table>
+                <thead>
+                <tr>
+                  <th>`+[[#{cost.modal.cost_detail.detail_work_code}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.detail_work_name}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.count}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first_count_unit}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first_count_unit_price}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.cost}]]+`</th>
+                </tr>
+                </thead>
+                <tbody>
+                  ${result}
+                </tbody>
+              </table>`;
+
+    }
+
+    function paidCostTemplate(value, row) {
+      if (value == '0') return value;
+      let result = '';
+      reqGetSync(`/costApi/getProcessItemCostPay/${row.processItemId}`, function (data) {
+        if (data.result) {
+          let model = JSON.parse(data.model);
+
+          model.forEach(item => {
+            result += `<tr>
+                        <td>${item.costDate}</td>
+                        <td>${item.costNo}</td>
+                        <td>${item.progress}%</td>
+                        <td>${numberWithCommas(item.cost)}</td>
+                        <td>${item.sumProgress}%</td>
+                        <td>${numberWithCommas(item.sumCost)}</td>
+                        <td width="200">${item.description}</td>
+                        <td>${item.writeDate}</td>
+                        <td>${item.lastModifyDate}</td>
+                      </tr>`;
+          })
+        }
+      });
+
+      return `<table>
+                <thead>
+                <tr>
+                  <th>`+[[#{cost.modal.paid_cost.date}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.no}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.this_progress_rate}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.this_cost}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.sum_progress_rate}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.sum_cost}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.etc}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.write_date}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.modify_date}]]+`</th>
+                </tr>
+                </thead>
+                <tbody>
+                  ${result}
+                </tbody>
+              </table>`;
+    }
+
+    $this.find("#exportXlsx").on("click", function () {
+      gridCost.export.xlsx({url: "//export.dhtmlx.com/excel"});
+    });
+
+    $this.find("#exportCsv").on("click", function () {
+      gridCost.export.csv();
+    });
+
+    gridCost.events.on("FilterChange", function(value,colId,filterId){
+      calculateTotalProgress();
+    });
+
+    let editResult = function(row, data){
+      let model = JSON.parse(data.model);
+      row.calculateCostResult = model.calculateCostResult;
+
+      if(data.result) {
+        toastr.success(data.message);
+        row.firstCountFormula = model.firstCountFormula;
+        row.firstCount = model.firstCount;
+        row.taskCost = model.taskCost;
+      } else toastr.info(data.message);
+
+      gridCost.paint();
+    }
+
+    gridCost.events.on("BeforeEditStart", function (row, col, editorType) {
+      if (col.id == "firstCountFormula" && row.firstCountFormula == '') row.firstCountFormula = row.phasingCode;
+    });
+
+    gridCost.events.on("BeforeEditEnd", function (value, row, col) {
+      if(value == row[col.id]) return;
+
+      if(col.id == "firstCountFormula") {
+        row.variables = value.match(/(\w+(#|@)\w+)/g);
+
+        if(row.variables == undefined || row.variables.length == 0) {
+          row.calculateCostResult = [[#{cost.index.page.message.fail.formula_factor_no_exist}]];
+          gridCost.paint();
+        } else {
+          row[col.id] = value;
+          reqPutJSON("/costApi/putFormulaEvaluation",JSON.stringify(row),function(data){
+            editResult(row,data);
+          });
+        }
+      }
+
+      if(col.id == "firstCount" || col.id == "complexUnitPrice" || col.id == "firstCountUnit"){
+        if(checkNumericColumn(col,numberColId) && !isNumeric(value)) {
+          row.calculateCostResult = [[#{cost.index.page.message.fail.input_is_not_numeric}]];
+          gridCost.paint();
+        }
+
+        row[col.id] = value;
+        reqPutJSON("/costApi/putProcessItemForCost/"+col.id,JSON.stringify(row),function(data){
+          editResult(row,data);
+        });
+      }
+    });
+
+    gridCost.events.on("cellDblClick", function (row, col) {
+      let isEditableColumn = false;
+      editableColId.forEach(colId => {
+        if(colId == col.id) isEditableColumn = true;
+      });
+      if(!isEditableColumn) return;
+
+      let isEditMode = $("#editMode").is(":checked");
+      if(!isEditMode) {
+        toastr.info([[#{cost.index.page.message.info.ready_only}]]);
+        return;
+      }
+
+      if(row.paidCost > 0) {
+        toastr.info([[#{cost.index.page.message.info.already_paid_cost_can_not_edit}]]);
+        return;
+      }
+
+      if(col.id == "firstCount" && row.firstCountFormula.trim() != "") toastr.warning([[#{cost.index.page.message.warning.first_count_editing_cost_is_recalculate}]]);
+      if(col.id == "complexUnitPrice") toastr.warning([[#{cost.index.page.message.warning.input_direct_unit_price_recalculate_without_cost_detail}]]);
+
+      gridCost.editCell(row.id,col.id);
+    });
+
+    let calculateTotalProgress = function () {
+      let totalDuration = 0;
+      let totalProgressDuration = 0;
+
+      gridCost.data.forEach(row => {
+        totalDuration += row.duration;
+        totalProgressDuration += row.progressRate * row.duration;
+      });
+
+      let column = gridCost.getColumn("progressRate");
+      column.footer[0].text = (totalProgressDuration * 100 / totalDuration).toFixed(2) + "%";
+    }
+
+    let getSearchCondition = function () {
+      return JSON.stringify(
+        {
+          workId       : $("#workId").val()
+          , phasingCode: $("#phasingCode").val()
+          , taskName   : $("#taskName").val()
+          , startDate  : $("#startDate").val()
+          , endDate    : $("#endDate").val()
+        }
+      );
+    }
+
+    let getProcessItemCost = function () {
+
+      reqPostJSON("/costApi/getProcessItemCostForPass"
+        , getSearchCondition()
+        , function (data) {
+          if (data.result) {
+            let model = JSON.parse(data.model);
+            gridCost.data.parse(model);
+            calculateTotalProgress();
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    $this.find("#btnSearch").on("click", getProcessItemCost);
+
+    function init() {
+      getProcessItemCost();
+      gridCost.hideColumn("taskFullPath");
+    }
+
+    init();
+
+    $('#costDetail').on('hidden.bs.modal', function () {
+
+    });
+
+    $('#paidCost').on('hidden.bs.modal', function () {
+
+    });
+
+
+  });
+</script>
+</body>
+</html>

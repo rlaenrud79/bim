@@ -1,0 +1,23 @@
+///// BIM RESET
+
+// reset
+ul, ol, dl { margin-bottom: 0; padding: 0; list-style: none; }
+p, dd { margin-bottom: 0; }
+
+// tooltip
+.tooltip {
+    font-family: 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans HK', 'Noto Sans SC', 'Noto Sans TC', sans-serif;
+    font-size: 1rem;
+
+    .arrow::before{
+        border-bottom-color:#fd7e14!important;
+        border-top-color:#fd7e14!important; 
+    }
+
+    .tooltip-inner {
+        padding: .5rem .8rem;
+        color: #fff;
+        font-weight: 500;
+        background-color: #fd7e14!important;
+    }
+}

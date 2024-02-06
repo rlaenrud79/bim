@@ -1,0 +1,11 @@
+<div id="divContentHeader" class="content-header" th:fragment="contentHeader()">
+  <div>
+    <h1><i class="nav-icon far fa-file-alt"></i><span th:text="#{admin.job_sheet_template.job_sheet_template_update.title_job_sheet_template_update}"> 공사일지 템플릿 수정</span></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/main/index}"><i class="fas fa-home"></i><span th:text="#{admin.job_sheet_template.job_sheet_template_update.title_home}"> HOME</span></a></li>
+      <li class="breadcrumb-item"><a th:href="@{/admin/project}"><span th:text="#{admin.job_sheet_template.job_sheet_template_update.title_admin}">관리자</span></a></li>
+      <li class="breadcrumb-item"><a th:href="@{/admin/jobSheetTempList}"><span th:text="#{admin.job_sheet_template.job_sheet_template_update.title_job_sheet_temp_list}"> 공사일지 템플릿</span></a></li>
+      <li class="breadcrumb-item active"><span th:text="#{admin.job_sheet_template.job_sheet_template_update.title_update}">등록</span></li>
+    </ol>
+  </div>
+</div>

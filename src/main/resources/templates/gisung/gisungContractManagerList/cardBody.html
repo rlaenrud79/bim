@@ -1,0 +1,83 @@
+<div class="board-list" id="divCardBody" th:fragment="cardBody()">
+    <div class="scroll-wrap sc-table">
+        <table class="table">
+            <colgroup>
+                <col style="width:5%">
+                <col>
+                <col style="width:10%">
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th>
+                        <span th:text="#{contents.gisung_contract_list.list_title_no}"> No</span>
+                    </th>
+                    <th>
+                        <span th:text="#{contents.gisung_contract_list.list_company}"> 업체명</span>
+                    </th>
+                    <th>
+                        <span th:text="#{contents.gisung_contract_list.list_dam_name}"> 담당자</span>
+                    </th>
+                    <th id="th_title">
+                        <span th:text="#{contents.gisung_contract_list.list_stamp_path}"> 도장</span>
+                    </th>
+                    <th>
+                        <span th:text="#{contents.gisung_contract_list.list_title_writer}"> 작성자</span>
+                    </th>
+                    <th id="th_writeDate">
+                        <span th:text="#{contents.gisung_contract_list.list_title_write_date}"> 작성일자</span>
+                    </th>
+                    <th>
+                        <span th:text="#{contents.gisung_contract_list.list_title_delete}"> 삭제</span>
+                    </th>
+                </tr>
+                <th:block th:if="${totalCount == null or totalCount == 0}">
+                    <tr>
+                        <td colspan="7" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+                    </tr>
+                </th:block>
+                <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+                    <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+                    <td>
+                        <div class="table-text-cont">
+                            <a href="#none" class="openUpdateModal pop-open-btn" th:data-gisung-contract-manager-id="${item.id}" data-modal="#modalUpdateGisungContractManager">
+                                <span class="text-over-dot" th:text="${item.company}">업체명</span>
+                            </a>
+                        </div>
+                    </td>
+                    <td th:text="${item.damName}">담당자명</td>
+                    <td>
+                        <th:block th:if="${!#strings.isEmpty(item.stampPath)}">
+                            <div class="image"><img th:src="${item.stampPath}" class="w-25 img-circle" alt="User Image" style="width: 25% !important;"></div>
+                        </th:block>
+                        <th:block th:unless="${!#strings.isEmpty(item.stampPath)}">
+                            (인)
+                        </th:block>
+                    </td>
+                    <td>
+                        <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+                    </td>
+                    <td>
+                        <span th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-05</span>
+                    </td>
+                    <td>
+                        <button type="button" id="btnDeleteGisungContractManager" th:data-gisung-contract-manager-id="${item.id}" class="btn-xs">
+                            <span th:text="#{contents.document_list.btn_delete_document}">삭제</span>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- paging -->
+        <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+    </div>
+    <script>
+        var currentSort = "[[${searchGisungContractManagerVO.SortProp}]]";
+        if (currentSort) {
+            for (let element of document.querySelectorAll("[data-sort]")) {
+                if (element.dataset.sort !== currentSort) {
+                    element.style.opacity = '0.2';
+                }
+            }
+        }
+    </script>
+</div>

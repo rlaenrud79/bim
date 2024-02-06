@@ -1,0 +1,187 @@
+<div class="gisung-dual">
+  <!--
+  <section class="left-box">
+    <div class="form">
+      <div class="grid">
+        <div class="fm-section col4">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>공정명</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="txt">토공 - 토공_1구간_기존철거_철근깨기 [EA100000]</div>
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>작업 진행률</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="txt">0%</div>
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>작업 총 공사비</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="txt">9,144,287원</div>
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>기성일</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="input-date wid-lg">
+              <input type="date" id="startDate" placeholder="" class="wid-lg">
+              <i class="ico"></i>
+            </div>
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>기성회차</span></strong>
+          </div>
+          <div class="fm-txt">
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>금회 진행률</span></strong>
+          </div>
+          <div class="fm-txt">
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>금회 기성금</span></strong>
+          </div>
+          <div class="fm-txt">
+            <input type="text" placeholder="">
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>누적 진행률</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="txt">-</div>
+          </div>
+        </div>
+        <div class="fm-section col2">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>누적 기성금</span></strong>
+          </div>
+          <div class="fm-txt">
+            <div class="txt">-</div>
+          </div>
+        </div>
+        <div class="fm-section col4">
+          <div class="fm-tit">
+            <strong><i class="ico-require"></i><span>비고</span></strong>
+          </div>
+          <div class="fm-txt">
+            <input type="text" placeholder="">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <div class="dual-arr">
+    <button type="button" class="btn-b">추가 <img src="/dist/img/common/ico-next.png" alt=""></button>
+  </div>
+  -->
+  <section>
+    <table class="table table-blue" id="tbPaidCost">
+      <tbody>
+      <tr class="sticky-th">
+        <th colspan="2" th:text="#{cost.modal.paid_cost}">기성</th>
+        <th colspan="2" th:text="#{cost.modal.paid_cost.this}">금회</th>
+        <th colspan="2">누적</th>
+        <th rowspan="2">비고</th>
+        <th>등록</th>
+        <th>수정</th>
+      </tr>
+      <tr class="sticky-th-two">
+        <th th:text="#{cost.modal.paid_cost.year_month_day}">년월일</th>
+        <th th:text="#{cost.modal.paid_cost.number}">회차</th>
+        <th th:text="#{cost.modal.paid_cost.rate}">진행률</th>
+        <th th:text="#{cost.modal.paid_cost}">기성</th>
+        <th th:text="#{cost.modal.paid_cost.rate}">진행률</th>
+        <th th:text="#{cost.modal.paid_cost}">기성</th>
+        <th th:text="#{cost.modal.paid_cost.year_month_day}">년월일</th>
+        <th th:text="#{cost.modal.paid_cost.year_month_day}">년월일</th>
+      </tr>
+      <tr class="sticky-th-three tb-style-total">
+        <th>총계</th>
+        <th id="totalCostNo"></th>
+        <th id="totalProgressRate"></th>
+        <th id="totalCost">12</th>
+        <th id="totalSumProgressRate"></th>
+        <th id="totalSumCost">12</th>
+        <th colspan="3"></th>
+      </tr>
+      <th:block th:if="${processItemCostPayList == null or processItemCostPayList.size() == 0}">
+        <tr>
+          <td colspan="9" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:id="tr_+${info.index}" th:each="row, info : ${processItemCostPayList}">
+        <input type="hidden" id="processItemCostPayId" name="processItemCostPayId" th:value="${row.processItemCostPayId}">
+        <td th:text="${row.costDate}">2024-01-01</td>
+        <td id="costNo" th:text="${row.costNo}">1</td>
+        <td id="progressRate" th:text="${row.progressRate}" class="txt-right">0%</td>
+        <td id="cost" th:text="${#numbers.formatInteger(row.cost, 1, 'COMMA')}" class="txt-right">0</td>
+        <td id="sumProgressRate" th:text="${row.sumProgressRate}" class="txt-right">0%</td>
+        <td id="sumCost" th:text="${#numbers.formatInteger(row.sumCost, 1, 'COMMA')}" class="txt-right">0</td>
+        <td th:text="${row.description}">0</td>
+        <td th:text="${row.writeDate}">2024-01-01</td>
+        <td th:text="${row.lastModifyDate}">2024-01-01</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<div class="btn-box">
+  <a href="#none" class="btn close" th:text="#{layout.modal.close}">닫기</a>
+</div>
+
+<script th:inline="javascript">
+  $(document).ready(function() {
+    const $this = $("#paidCost");
+
+    calculatePaidCostDetail();
+  });
+
+  function calculatePaidCostDetail() {
+    let totalProgressRate = 0;
+    let totalCost = 0;
+    let totalSumProgressRate = 0;
+    let totalSumCost = 0;
+    let totalCostNo = 0;
+
+    //$("#tbCostDetail input[name='item_cost_detail_no']").each(function (i) {
+    $("#tbPaidCost tr[id^='tr_']").each(function (i) {
+      console.log("i : " + i);
+      let td = $(this).children();
+
+      console.log($(this).find('#progressRate').text() + "-----");
+      if ($(this).find('#progressRate').text()) totalProgressRate = totalProgressRate + parseFloat($(this).find('#progressRate').text().replaceAll(",", ""));
+      if ($(this).find('#cost').text()) totalCost = totalCost + parseFloat($(this).find('#cost').text().replaceAll(",", ""));
+      if ($(this).find('#sumProgressRate').text()) totalSumProgressRate = totalSumProgressRate + parseFloat($(this).find('#sumProgressRate').text().replaceAll(",", ""));
+      if ($(this).find('#sumCost').text()) totalSumCost = totalSumCost + parseFloat($(this).find('#sumCost').text().replaceAll(",", ""));
+      totalCostNo += 1;
+      console.log("totalCostNo : " + totalCostNo);
+      console.log("totalCost : " + totalCost);
+    });
+
+    $("#totalCostNo").html(totalCostNo);
+    $("#totalProgressRate").html(totalProgressRate);
+    $("#totalCost").html(numberWithCommas(parseFloat(totalCost)));
+    $("#totalSumProgressRate").html(totalSumProgressRate);
+    $("#totalSumCost").html(numberWithCommas(parseFloat(totalSumCost)));
+  }
+</script>

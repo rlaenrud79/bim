@@ -1,0 +1,17 @@
+<div id="divContentHeader" class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2><span th:text="#{co_work.bulletin_add.title_bulletin_add}"> 게시판 등록</span></h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+
+    </div>
+    <a href="#none" id="btnGotoList" class="btn btn-color2"><span th:text="#{co_work.notification_add.btn_goto_list}">목록으로</span></a>
+    <th:block th:if="${ptype == 'write'}">
+    <a href="#none" id="mBtnAdd" class="btn btn-color1"><span th:text="#{co_work.bulletin_add.title_add}">등록</span></a>
+    </th:block>
+    <th:block th:if="${ptype == 'edit'}">
+      <a href="#none" id="mBtnUpdate" class="btn btn-color1"><span th:text="#{admin.modal.update_work.btn_update}">수정</span></a>
+    </th:block>
+  </div>
+</div>

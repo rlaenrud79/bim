@@ -1,0 +1,10 @@
+<div class="header" th:fragment="contentHeader()">
+    <div class="header-left">
+        <h2 th:text="#{admin.user.page.nav_user}">사용자</h2>
+    </div>
+    <div class="header-right">
+        <a href="#none" id="goList" class="btn"><span th:text="#{admin.user.page.go_user_list}">목록으로</span></a>
+        <a th:if="${user.edit}" href="#none" id="putUser" class="btn btn-color1"><span th:text="#{admin.user.page.nav_user_update}">수정</span></a>
+        <a th:if="${user.regist}" href="#none" id="postUser" class="btn btn-color1"><span th:text="#{admin.user.page.nav_user_add}">등록</span></a>
+    </div>
+</div>

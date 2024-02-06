@@ -1,0 +1,225 @@
+<section class="content modal-paid-cost">
+    <div class="container-fluid">
+        <div class="con-breakdown">
+            <div class="col-lg-12">
+                <div class="card content-body-area">
+                    <div class="card-body">
+                        <div class="connectedSortable dhx_sample-container mt-0">
+                            <div class="dhx_sample-container__widget" id="gridPaidCost"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script th:inline="javascript">
+    $(function () {
+        const $this = $("#paidCost");
+        const taskCost = [[${processItem.taskCost}]];
+        let processItemCostPayAtCurrent = [[${processItemCostPayAtCurrent}]];
+        let limitedCostNo = [[${processItemCostPayAtCurrent.costNo}]]
+
+        $this.find("#costDate").datepicker(datepickerFormat);
+
+        const gridPaidCost = new dhx.Grid("gridPaidCost", {
+            columns: [
+                {id: "processItemCostPayId",hidden: true, header: [{text: "ID"}]},
+                {id: "costDate", header: [{text: [[#{cost.modal.paid_cost}]], align: "center", colspan: 2}, {text: [[#{cost.modal.paid_cost.year_month_day}]], align: "center"}], footer: [{text: [[#{cost.modal.paid_cost.aggregation}]], align: "center"}], align: "center", width: 110},
+                {id: "costNo", header: ["", {text: [[#{cost.modal.paid_cost.number}]], align: "center"}], footer: [{content: "count", align: "center"}], align: "center", width: 95},
+                {id: "progressRate", header: [{text: [[#{cost.modal.paid_cost.this}]], align: "center", colspan: 2}, {text: [[#{cost.modal.paid_cost.rate}]], align: "center"}], footer: [{content: "sum"}], type: "percent", format: "#", width: 110},
+                {id: "cost", header: ["", {text: [[#{cost.modal.paid_cost}]], align: "center"}], footer: [{content: "sum"}], type: "number", format: "#,#", width: 120},
+                {id: "sumProgressRate", header: [{text: [[#{cost.modal.paid_cost.sum}]], align: "center", colspan: 2}, {text: [[#{cost.modal.paid_cost.rate}]], align: "center"}], footer: [{content: "max"}], type: "percent", format: "#", width: 110},
+                {id: "sumCost", header: ["", {text: [[#{cost.modal.paid_cost}]], align: "center"}], footer: [{content: "max"}], type: "number", format: "#,#", width: 120},
+                {id: "description", header: [{text: [[#{cost.modal.paid_cost.etc}]], align: "center", rowspan: 2}], width: 300},
+                {id: "writeDate", header: [{text: [[#{cost.modal.paid_cost.add}]], align: "center"}, {text: [[#{cost.modal.paid_cost.year_month_day}]], align: "center"}], align: "center", width: 110},
+                {id: "lastModifyDate", header: [{text: [[#{cost.modal.paid_cost.update}]], align: "center"}, {text: [[#{cost.modal.paid_cost.year_month_day}]], align: "center"}], align: "center", width: 110},
+            ],
+            autoEmptyRow: false,
+            autoHeight: true,
+            selection: true,
+            dragItem: "column",
+            sortable: false,
+            rowCss: (row) => {
+                return row.isEdit ? "" : "process-col-disabled"
+            }
+        });
+
+        let setElementVisible = function (postPaidCost, putPaidCost, processItemCostPayForm) {
+            const className = "d-none";
+            postPaidCost ? $this.find("#postPaidCost").removeClass(className) : $this.find("#postPaidCost").addClass(className);
+            putPaidCost ? $this.find("#putPaidCost").removeClass(className) : $this.find("#putPaidCost").addClass(className);
+            processItemCostPayForm ? $this.find("#processItemCostPayForm").removeClass(className) : $this.find("#processItemCostPayForm").addClass(className);
+        }
+
+        let setProcessItemCostPayForm = function (item, mode) {
+            if("INSERT" == mode) {
+                setElementVisible(true, false, true);
+                limitedCostNo = processItemCostPayAtCurrent.costNo;
+            }
+
+            if("UPDATE" == mode) {
+                setElementVisible(false, true, true);
+                if(gridPaidCost.data.getLength() > 1) limitedCostNo = getItem(gridPaidCost,1).costNo + 1;
+                else limitedCostNo = 1;
+            }
+
+            $this.find("#processItemId").val(item.processItemId);
+            $this.find("#processItemCostPayId").val(item.processItemCostPayId);
+            $this.find("#costDate").val(item.costDate);
+            $this.find("#progress").val(item.progress);
+            $this.find("#cost").val(item.cost);
+            $this.find("#costNo").val(item.costNo);
+            $this.find("#sumProgress").val(item.sumProgress);
+            $this.find("#sumCost").val(item.sumCost);
+            $this.find("#description").val(item.description);
+            $this.find("#beforeSumProgress").val(item.beforeSumProgress);
+            $this.find("#beforeSumCost").val(item.beforeSumCost);
+        }
+
+        gridPaidCost.events.on("CellClick", function (row, col, e) {
+            if (row.isEdit) setProcessItemCostPayForm(row, "UPDATE");
+            else setElementVisible(false, false, false);
+        });
+
+        $this.find("#progress").on("keyup", function () {
+            let value = $(this).val();
+
+            if (!isNumeric(value)) return;
+
+            let beforeSumProgress = parseInt($this.find("#beforeSumProgress").val());
+            let beforeSumCost = parseInt($this.find("#beforeSumCost").val());
+            let thisSumProgress = parseInt(value) + beforeSumProgress;
+            let isCompleteTask = thisSumProgress >= 100;
+            let thisCost = isCompleteTask ? taskCost - beforeSumCost : parseInt(taskCost * parseInt(value) / 100);
+
+            $this.find("#cost").val(thisCost);
+            $this.find("#sumCost").val(thisCost + beforeSumCost);
+            $this.find("#sumProgress").val(thisSumProgress);
+        });
+
+        $this.find("#cost").on("keyup", function () {
+            let value = $(this).val();
+
+            if (!isNumeric(value)) return;
+
+            let beforeSumCost = parseInt($this.find("#beforeSumCost").val());
+            $this.find("#sumCost").val(parseInt(value) + beforeSumCost);
+
+        });
+
+        let checkBlank = function (idName, message) {
+            let value = $this.find("#" + idName).val();
+            if (isBlank(value)) {
+                showErrorAlert("입력값", message);
+                return true;
+            }
+            return false;
+        }
+
+        let checkNumeric = function (idName, message) {
+            let value = $this.find("#" + idName).val();
+            if (!isNumeric(value)) {
+                showErrorAlert("입력값", message);
+                return true;
+            }
+            return false;
+        }
+
+        let validatePaidCost = function () {
+            if (checkBlank("costDate", "기성일을 선택하세요.")) return true;
+
+            if (checkBlank("progress", "금회 진행률을 입력하세요.")) return true;
+            if (checkNumeric("progress", "금회 진행률을 숫자로 입력하세요.")) return true;
+
+            let thisProgress = parseInt($this.find("#progress").val());
+            let beforeSumProgress = parseInt($this.find("#beforeSumProgress").val());
+            let sumProgress = thisProgress + beforeSumProgress;
+
+            if (sumProgress > 100 || sumProgress < 0) {
+                showErrorAlert("입력값", "금회 진행률을 " + (beforeSumProgress == 0 ? "" : "-") + beforeSumProgress + " ~ " + (100 - beforeSumProgress) + " 사이 숫자로 입력하세요.");
+                return true;
+            }
+
+            if (checkBlank("cost", "금회 기성금을 입력하세요.")) return true;
+            if (checkNumeric("cost", "금회 기성금을 숫자로 입력하세요.")) return true;
+
+            let thisCost = parseInt($this.find("#cost").val());
+            let beforeSumCost = parseInt($this.find("#beforeSumCost").val());
+            let sumCost = thisCost + beforeSumCost;
+
+            if (sumCost > taskCost || sumCost < 0) {
+                showErrorAlert("입력값", "금회 기성금을 " + (beforeSumCost == 0 ? "" : "-") + numberWithCommas(beforeSumCost) + " ~ " + numberWithCommas(taskCost - beforeSumCost) + " 사이 숫자로 입력하세요.");
+                return true;
+            }
+
+            if (checkBlank("costNo", "기성 회차를 입력하세요.")) return true;
+            if (checkNumeric("costNo", "기성 회차를 숫자로 입력하세요.")) return true;
+
+            let thisCostNo = parseInt($this.find("#costNo").val());
+
+            if( thisCostNo < limitedCostNo) {
+                showErrorAlert("입력값","기성 회차를 "+limitedCostNo+" 이상 입력하세요.");
+                $this.find("#costNo").focus();
+                return true;
+            }
+
+            return false;
+        }
+
+        $this.find("#putPaidCost").on("click", function () {
+            savePaidCost("put", "/costApi/putPaidCost/" + $this.find("#processItemCostPayId").val(), "수정", "수정 하시겠습니까?");
+        });
+
+
+        let savePaidCost = function (type, url, title, message) {
+            if (validatePaidCost()) return;
+            let param = JSON.stringify($this.find("#frmProcessItemCostPay").serializeObject());
+
+            showConfirm(title, message, function () {
+                if (type == 'post') reqPostJSON(url, param, reqResult);
+                if (type == 'put') reqPutJSON(url, param, reqResult);
+            });
+        }
+
+        let reqResult = function (data) {
+            if (data.result) {
+                toastr.success(data.message);
+                $("#btnSearch").trigger("click");
+
+                let model = JSON.parse(data.model);
+                gridPaidCost.data.parse(model);
+                processItemCostPayAtCurrent = JSON.parse(data.processItemCostPayAtCurrent);
+
+                $this.find("#resetPaidCost").trigger("click");
+            } else toastr.error(data.message);
+        }
+
+        $this.find("#postPaidCost").on("click", function () {
+            savePaidCost("post", "/costApi/postPaidCost/[[${processItemId}]]", "등록", "등록 하시겠습니까?");
+        });
+
+        $this.find("#resetPaidCost").on("click",function(){
+            setProcessItemCostPayForm(processItemCostPayAtCurrent,"INSERT");
+        });
+
+
+        let getProcessItemCostPay = function () {
+            reqGet("/costApi/getProcessItemCostPay/[[${processItemId}]]", function (data) {
+                    if (data.result) {
+                        let model = JSON.parse(data.model);
+                        gridPaidCost.data.parse(model);
+                    }
+                },
+                function (xhr) {
+                    showErrorAlert("ALERT", xhr.responseJSON.message);
+                });
+        }
+
+        function init() {
+            getProcessItemCostPay();
+        }
+
+        init();
+    });
+</script>

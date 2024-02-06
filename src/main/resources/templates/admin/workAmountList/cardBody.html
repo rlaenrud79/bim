@@ -1,0 +1,55 @@
+<div id="divCardBody" class="card content-body-area" th:fragment="cardBody()">
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="board-list">
+    <div class="table-wrap">
+      <table class="table">
+        <colgroup>
+          <col style="width:5%">
+          <col>
+          <col style="width:10%" span="5">
+        </colgroup>
+        <tbody>
+          <tr>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_no}">No</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_work_name}">공종명</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_writer}">등록자</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_year}">년도</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_total_amount}">총계</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_perv_amount}">전년까지</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_amount}">당해년도</th>
+            <th class="text-center" th:text="#{admin.work_amount.list_title_write_date}">등록일시</th>
+            <th class="text-center" th:text="#{admin.work_amount.title_work_amount_delete}">삭제</th>
+          </tr>
+          <th:block th:if="${totalCount == null or totalCount == 0}">
+            <tr>
+              <td colspan="9" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+            </tr>
+          </th:block>
+          <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+            <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+            <td class="">
+              <a href="#" th:id="btnUpdate_+${index.index}" class="pop-open-btn" data-modal="#modalWorkAmountUpdate" th:data-id="${item.id}" role="button">
+                <span class="text-over-dot" th:text="${#strings.isEmpty(item.workNameLocale) ? item.workName : item.workNameLocale}">배관공종</span>
+              </a>
+            </td>
+            <td class="text-center">
+              <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+            </td>
+            <td class="text-center" th:text="${item.year}">2023</td>
+            <td class="text-center" th:text="${#numbers.formatInteger(item.totalAmount, 1, 'COMMA')}">0</td>
+            <td class="text-center" th:text="${#numbers.formatInteger(item.prevAmount, 1, 'COMMA')}">0</td>
+            <td class="text-center" th:text="${#numbers.formatInteger(item.amount, 1, 'COMMA')}">0</td>
+            <td class="text-center" th:text="${#temporals.format(item.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021-04-06 11:10</td>
+            <td class="text-center">
+              <button type="button" id="btnDeleteWorkAmount" th:data-work-amount-id="${item.id}" class="btn-xs">
+                <span th:text="#{contents.document_list.btn_delete_document}">삭제</span>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div><!--//table-wrap-->
+    <div class="paging-wrap">
+      <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+    </div><!--paging wrap-->
+  </div><!--// board-list-->

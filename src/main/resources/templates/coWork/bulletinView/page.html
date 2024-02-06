@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container" th:object="${bulletin}">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="coWork/bulletinView/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <div id="divCardBody" class="card-body" th:replace="coWork/bulletinView/cardBody :: cardBody()"/>
+        <div th:replace="coWork/bulletinView/reply :: load(*{bulletinReplies})"></div>
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<div th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></div>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script src="/dist/js/pages/bulletinList.js"></script>
+<script>
+  const alertReply = "[[#{co_work.bulletin_view.alert_reply}]]";
+  const confirmDeleteBulletinReply = "[[#{co_work.bulletin_view.confirm_delete_reply}]]";
+  const confirmDeleteBulletin = "[[#{co_work.bulletin_view.confirm_delete}]]";
+  const bulletinId = [[${bulletin.id}]];
+
+  const previewFileExtension = '[[${previewFileExtension}]]';
+  const previewFileExtList = previewFileExtension.split("||")
+</script>
+</body>
+
+</html>

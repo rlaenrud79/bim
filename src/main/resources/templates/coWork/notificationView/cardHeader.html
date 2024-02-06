@@ -1,0 +1,22 @@
+<div id="divCardHeader" class="card-header" th:fragment="cardHeader()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div class="bim-btn-group">
+      <button id="btnGoToList" type="button"
+              class="btn bg-gradient-info">
+        <i class="fas fa-list"></i> <span th:text="#{co_work.notification_view.btn_goto_list}">목록으로</span>
+      </button>
+      <button id="btnDelete" type="button"
+              class="btn bg-gradient-danger"
+              th:data-id="${noticeItem.id}"
+              th:if="${(#session.getAttribute('scopedTarget.userInfo')?.id == noticeItem.writeEmbedded.writer.id or isRoleAdminProject)}">
+        <i class="fas fa-trash"></i> <span th:text="#{co_work.notification_view.btn_delete}">삭제</span>
+      </button>
+      <button id="btnUpdateNotification" type="button"
+              class="btn bg-gradient-warning"
+              th:data-id="${noticeItem.id}"
+              th:if="${(#session.getAttribute('scopedTarget.userInfo')?.id == noticeItem.writeEmbedded.writer.id or isRoleAdminProject)}">
+        <i class="fas fa-edit"></i> <span th:text="#{co_work.notification_view.btn_update_notification}">수정</span>
+      </button>
+    </div>
+  </div>
+</div>

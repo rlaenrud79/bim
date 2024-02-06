@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/companyUpdate/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <input type="hidden" id="pageNo" value="">
+
+        <div id="divCardBody" th:replace="admin/companyUpdate/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    let _this = $(this);
+    let _companyId = 0;
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+
+    let setParam = function(page, size) {
+
+      let param = "";
+
+      param += "page=[[${pageable.pageNumber}]]";
+      param += "&size=[[${pageable.pageSize}]]";
+      param += "&workId=[[${searchCompanyVO.workId}]]";
+      param += "&companyName=[[${searchCompanyVO.companyName}]]";
+      param += "&sortProp=[[${searchCompanyVO.sortProp}]]";
+
+      return param;
+    }
+
+    let executeUpdate = function () {
+
+      reqPostJSON('/adminApi/putCompany'
+        , JSON.stringify({
+          "companyId" : _companyId,
+          "companyName": $("#companyName").val(),
+          "telNo" : $("#telNo").val(),
+          "companyRoleId" : $("#companyRoleId").val(),
+          "isDisplay" : $("input:radio[id=\'isDisplay_Y\']").is(':checked') ? true : false,
+          "isEnabled" : $("input:radio[id=\'status_REG\']").is(':checked') ? true : false,
+          "isHead" : $("input:radio[name=\'roleType\']:checked").val(),
+          "companyWorks" : _checkedWorkCnt > 0 ? _selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",") : []
+        })
+        , function (data) {
+          if (data.result) {
+            //alert(data.message);
+            $("#btnGotoList").click();
+          }
+          else{
+            alert(data.message);
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on('click', '#btnGotoList', function() {
+      location.href = "/admin/companyList?" + setParam();
+    });
+
+    _this.on('click', '#btnAddRole', function() {
+      location.href = "/admin/companyRoleList";
+    });
+
+    _this.on('click', '#btnAddWork', function() {
+      location.href = "/admin/workList";
+    });
+
+    _this.on('click', '#btnAddUser', function() {
+      location.href = "/admin/user";
+    });
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('click', '#btnUpdateCompany', function() {
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      if ($("#companyName").val() == "") {
+        alert("[[#{admin.company_update.error_no_company_name}]]");
+        return;
+      }
+
+      if ($("#telNo").val() == "") {
+        alert("[[#{admin.company_update.error_no_tel_no}]]");
+        return;
+      }
+
+      if(!checkTelNo([[${telNoPattern}]], $("#telNo").val() )){
+        alert("[[#{admin.company_update.error_no_regex_tel_no}]]");
+        return;
+      }
+
+      if ($("#companyRoleId").val() == "0") {
+        alert("[[#{admin.company_update.error_no_company_role}]]");
+        return;
+      }
+
+      $(".itemCheck").each(function (index, item) {
+        if($(this).is(':checked')) {
+          _checkedWorkCnt ++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+      console.log("aaa", $("input:radio[name=\'roleType\']:checked").val());
+      console.log("_checkedWorkCnt", _checkedWorkCnt);
+      if($("input:radio[name=\'roleType\']:checked").val() !== 0 && _checkedWorkCnt == 0) {
+        alert("[[#{admin.company_update.error_no_company_works}]]");
+        return;
+      }
+
+      _companyId = $(this).data("id");
+      if (confirm("[[#{admin.company_update.confirm_update_company}]]")) {
+        executeUpdate();
+      }
+    });
+  });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,168 @@
+<div class="form work-add" th:object="${documentCategory}">
+    <div class="grid">
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.document_category.add_sort_no}">순번</span></strong>
+            </div>
+            <div class="fm-txt">
+                <th:block th:if="${ptype == 'write'}">
+                    <input type="number"
+                           id="sortNo"
+                           name="sortNo"
+                           th:placeholder="#{contents.document_category.sort_no_placeholder}">
+                </th:block>
+                <th:block th:if="${ptype == 'edit'}">
+                <input type="hidden"
+                       id="id"
+                       th:field="*{id}">
+                <input type="number"
+                       id="sortNo"
+                       name="sortNo"
+                       th:field="*{sortNo}"
+                       th:placeholder="#{contents.document_category.sort_no_placeholder}">
+                </th:block>
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.document_category.name}">분류명</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="text"
+                       id="name"
+                       name="name"
+                       th:placeholder="#{contents.document_category.name_placeholder}"
+                       th:value="${documentCategory.name}"
+                       maxlength="1024">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="btn-box">
+    <th:block th:if="${ptype == 'write'}">
+        <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_work.btn_add}">등록</a>
+    </th:block>
+    <th:block th:if="${ptype == 'edit'}">
+        <a href="#none" id="mBtnUpdate" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+        <a href="#none" id="mBtnDelete" class="btn" th:text="#{admin.modal.update_work.btn_delete}">삭제</a>
+    </th:block>
+    <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        let _this = $("#modalDocumentCategoryAdd");
+        let updating = false;
+
+        _this.on('click', '#mBtnAdd', function () {
+            if (updating) {
+                return;
+            }
+
+            updating = true;
+            if ($("#sortNo").val() == "") {
+                alert("[[#{contents.document_category.error_no_sort_no}]]");
+                return;
+            }
+            if ($("#name").val() == "") {
+                alert("[[#{contents.document_category.name_placeholder}]]");
+                return;
+            }
+
+            //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.add_work.confirm_add_work}]]", addWork);
+            addDocumentCategory();
+        });
+
+        _this.on('click', '#mBtnDelete', function () {
+            if (updating) {
+                return;
+            }
+
+            updating = true;
+            if (confirm("[[#{contents.document_category.confirm_delete_work}]]")) {
+                deleteDocumentCategory();
+            }
+            //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_work.confirm_delete_work}]]", deleteWork);
+        });
+
+        _this.on('click', '#mBtnUpdate', function () {
+            if (updating) {
+                return;
+            }
+
+            updating = true;
+            if ($("#sortNo").val() == "") {
+                alert("[[#{contents.document_category.error_no_sort_no}]]");
+                //showErrorAlert("[[#{system.common.alert.warning}]]", "[[#{admin.modal.update_work.error_no_sort_no}]]");
+                return;
+            }
+
+            if ($("#name").val() == "") {
+                alert("[[#{contents.document_category.name_placeholder}]]");
+                //showErrorAlert("[[#{system.common.alert.warning}]]", "[[#{admin.modal.update_work.error_no_work_name_en}]]");
+                return;
+            }
+
+            if (confirm("[[#{contents.document_category.confirm_update_work}]]")) {
+                updateDocumentCategory();
+            }
+            //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_work.confirm_update_work}]]", updateWork);
+        });
+
+        function deleteDocumentCategory() {
+            reqDelete('/contentsApi/deleteDocumentCategory?id=' + parseInt($("#id").val())
+                , {}
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        reloadComponent("/contents/documentCategoryCardBody", "#divCardBody", "");
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        function updateDocumentCategory() {
+            reqPutJSON('/contentsApi/putDocumentCategory'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        reloadComponent("/contents/documentCategoryCardBody", "#divCardBody", "");
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        function addDocumentCategory() {
+            reqPostJSON('/contentsApi/postDocumentCategory'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        reloadComponent("/contents/documentCategoryCardBody", "#divCardBody", "");
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function setSendData() {
+            return JSON.stringify({
+                "id": parseInt($("#id").val()),
+                "sortNo": parseInt($("#sortNo").val()),
+                "name": $("#name").val()
+            });
+        }
+
+    });
+</script>

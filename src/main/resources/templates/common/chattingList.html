@@ -1,0 +1,67 @@
+<th:block th:fragment="list()">
+  <li id="liChattingLayer" class="nav-item dropdown">
+    <a class="nav-link" data-toggle="dropdown" href="#">
+      <i class="fas fa-comments"></i>
+      <span class="badge badge-warning navbar-badge" th:text="${totalUnreadCount}">15</span>
+    </a>
+    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+
+      <article class="popup-container popup-container-header">
+        <div class="popup-header">
+          <h1>
+            <i class="far fa-comments"></i>
+            <span th:text="#{common.chatting.title_chatting}">채팅 알림</span>
+            <span class="badge badge-dark" th:text="${totalUnreadCount}">15</span>
+          </h1>
+          <button type="button" class="btn-bim-modal-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="popup-body">
+          <div class="scroll-area-v">
+            <div>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th class="text-center" width="50px"><span th:text="#{common.chatting.list_title_no}">No</span></th>
+                  <th><span th:text="#{common.chatting.list_title_chatting_room}">채팅방 제목</span></th>
+                  <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="item, index : ${chattingRooms}">
+                  <td class="text-center"><span class="text-muted" th:text="${index.index + 1}">50</span></td>
+                  <td style="max-width: 280px;">
+                    <a th:id="aChattings_+${item.coWorkId}" href="#"
+                       th:data-id="${item.coWorkId}"
+                       class="text-over-dot test"
+                       th:text="${item.subject}">감리 계획 전달</a>
+                  </td>
+                  <td class="text-center" style="width: 2rem;">
+                    <span class="badge badge-danger mr-2" th:text="${item.unread}">5</span>
+                  </td>
+                </tr>
+                <tr th:if="${chattingRooms.size == 0}">
+                  <td class="text-center" colspan="2"><span th:text="#{common.chatting.no_chatting_room}">초대된 채팅방이 없습니다.</span></td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </li>
+  <script>
+    var tagList = document.querySelectorAll('[id^="aChattings_"]');
+
+    tagList.forEach(elem => {
+      elem.addEventListener('click', () => {
+        if (elem.dataset.id !== "") {
+          let link = `/coWork/modelingView/${elem.dataset.id}`;
+          window.open(link);
+        }
+      });
+    });
+
+
+  </script>
+</th:block>

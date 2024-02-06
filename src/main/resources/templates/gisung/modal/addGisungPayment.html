@@ -1,0 +1,121 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+    <div class="grid">
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.title}">문서명</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="text" id="title" name="title" class="form-control" th:placeholder="#{contents.modal.add_gisung_payment.title_placeholder}">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.attach_file}">파일첨부</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <div th:replace="/common/fileUploader :: singleFileUploader('gisungPaymentFile')"></div>
+            </div>
+        </div>
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.description}">파일 설명</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <textarea id="description" th:placeholder="#{contents.modal.add_gisung_payment.description_placeholder}"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-box">
+    <button type="button" id="btnAddGisungPayment" class="btn btn-color1">
+        <span th:text="#{contents.modal.add_gisung_payment.btn_add_gisung_payment}"> 등록</span>
+    </button>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+    $(document).ready(function () {
+        let gisungPaymentId = 0;
+
+        const $title = $("#title");
+        const $description = $("#description");
+        const documentFileExtension = '[[${gisungPaymentFileExtension}]]';
+        const allowFileExtList = documentFileExtension.split("||");
+
+        $('#btnAddGisungPayment').off('click').on('click', function () {
+            if ($title.val() === "") {
+                alert("[[#{contents.modal.add_gisung_payment.alert_title}]]");
+                return false;
+            }
+
+            if ($('li.devo_file_list').length === 0) {
+                alert("[[#{contents.modal.add_gisung_payment.alert_attach_file}]]");
+                return false;
+            }
+
+            if ($description.val() === "") {
+                alert("[[#{contents.modal.add_gisung_payment.alert_description}]]");
+                return false;
+            }
+
+            addGisungPayment();
+        });
+
+        function addGisungPayment() {
+            reqPostJSON('/gisungApi/postGisungPayment', setSendData(),
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        //toastr.success(data.message);
+                        gisungPaymentId = data.returnId;
+                        startFileUpload();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            );
+        }
+
+        function setSendData() {
+            return JSON.stringify({
+                "title": $title.val(),
+                "description": $description.val()
+            });
+        }
+
+        function startFileUpload() {
+            $("#gisungPaymentFile").dmUploader("start");
+        }
+
+        function completeUploadFile(obj) {
+            if ($(obj)[0].id === "gisungPaymentFile") {
+                $('.close').click();
+                reloadComponent("/gisung/gisungPaymentListCardBody", "#divCardBody", "");
+            }
+        }
+
+        function fileUploaderExtraData() {
+            return {
+                "id": gisungPaymentId,
+                "fileUploadUIType": "GISUNG_PAYMENT_FILE",
+                "makeVersion": false,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeSingleUploaderScript("#gisungPaymentFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+        );
+
+    });
+</script>

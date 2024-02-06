@@ -1,0 +1,184 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+  <div class="grid">
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_modeling.work_name}">공종</span>
+          <small class="req-ico">*</small>
+        </strong>
+      </div>
+      <div class="fm-txt">
+        <input type="hidden" id="modelingId"/>
+        <select class="custom-select" id="modelingWorkId">
+          <option value="0" th:utext="#{contents.modal.add_modeling.select_work}">::공종을 선택하세요::</option>
+          <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:text="${item.workNameLocale}"></option>
+        </select>
+        <input type="hidden" id="selWorkId" name="selWorkId" value="">
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_modeling.attach_file}">파일첨부</span>
+          <small class="req-ico">*</small>
+        </strong>
+      </div>
+      <div class="fm-txt">
+        <div th:replace="/common/fileUploader :: singleFileUploader('uploadFile')"></div>
+      </div>
+    </div>
+    <!--
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_modeling.attach_ifc_file}">IFC 파일첨부</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div th:replace="/common/fileUploader :: singleFileUploader('ifcUploadFile')"></div>
+      </div>
+    </div>
+    -->
+    <div class="fm-section col6">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_modeling.file_description}">파일 설명</span>
+          <small class="req-ico">*</small>
+        </strong>
+      </div>
+      <div class="fm-txt">
+        <textarea id="description" class="form-control" rows="5" th:placeholder="#{contents.modal.add_modeling.file_description_placeholder}"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-box">
+  <button type="button" id="mBtnAdd" class="btn btn-color1">
+    <span th:text="#{layout.modal.btn_add}"> 등록</span>
+  </button>
+</div>
+
+<div th:include="common/workSelectOption :: script('modelingWorkId')"></div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+  $(document).ready(function () {
+    let _this = $("#modalUploadFile");
+    let _modelingFileExtension = '[[${modelingFileExtension}]]';
+    let _ifcFileExtension = '[[${ifcFileExtension}]]';
+    let updating = false;
+
+    let addModeling = function () {
+
+      let workId = "";
+      if (isObject($("#modelingWorkSecondId").val())) {
+        workId = $("#modelingWorkSecondId").val();
+      } else {
+        workId = $("#modelingWorkId").val();
+      }
+      reqPost('/contentsApi/postModeling'
+              , {
+                "workId": $("#modelingWorkId").val(),
+                "description": $("#description").val()
+              }
+              , function (data) {
+                if (data.result) {
+                  $("#modelingId").val(data.returnId);
+                  $("#uploadFile").dmUploader("start");
+                }
+                else{
+                  alert(data.message);
+                  $("#modalUploadFile").modal("hide");
+                }
+              }
+              , function (xhr) {
+                alert($.parseJSON(xhr.responseJSON).error);
+              });
+    }
+
+    _this.on("change", "select[id='modelingWorkId']", function (e) {
+      getWorkSecondList($(this).val(), 'modelingWorkSecondId', 'modelingWorkSecond');
+    });
+
+    //$(document).on("click", "#mBtnAdd", function () {
+    _this.on("click", "#mBtnAdd", function (e) {
+      if (updating) {
+        return;
+      }
+
+      if ($("#modelingWorkId").val() == "") {
+        alert("[[#{contents.modal.add_modeling.error_no_work_id}]]");
+        return;
+      }
+      if ($("#uploadFile" + "s").find(".devo_file_list").length == 0) {
+        alert("[[#{contents.modal.add_modeling.error_no_upload_file}]]");
+        return false;
+      }
+
+      if ($("#description").val() == "") {
+        alert("[[#{contents.modal.add_modeling.error_no_description}]]");
+        return;
+      }
+
+      if (confirm("[[#{contents.modal.add_modeling.confirm_add_modeling}]]")) {
+        addModeling();
+      }
+      //showConfirm("[[#{system.common.confirm.title}]]", "[[#{contents.modal.add_modeling.confirm_add_modeling}]]", addModeling);
+    });
+
+    let completeUploadFile = function (obj) {
+      if ($(obj)[0].id === "uploadFile" && $("#ifcUploadFile" + "s").find(".devo_file_list").length > 0) $("#ifcUploadFile").dmUploader("start");
+
+      if ($(obj)[0].id === "uploadFile" && $("#ifcUploadFile" + "s").find(".devo_file_list").length == 0) {
+        reloadComponent("/contents/modelingListCardBody", "#divCardBody", PageFunction.setSendData());
+        alert('[[#{contents.modal.add_modeling.message_success}]]');
+        updating = true;
+        _this.find('.close-btn').click();
+      }
+
+      if ($(obj)[0].id === "ifcUploadFile") {
+        reloadComponent("/contents/modelingListCardBody", "#divCardBody", PageFunction.setSendData());
+        alert('[[#{contents.modal.add_modeling.message_success}]]');
+
+        updating = true;
+        _this.find('.close-btn').click();
+      }
+    }
+
+    let modelingFileUploaderExtraData = function () {
+      return {
+        "id": $("#modelingId").val(),
+        "fileUploadUIType": "MODELING_FILE",
+        "makeVersion": true,
+        "executeHoopsConverter" : true
+      }
+    }
+
+    makeSingleUploaderScript("#uploadFile"
+            , modelingFileUploaderExtraData
+            , 5000000000
+            , _modelingFileExtension.split("||")
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    let ifcFileUploaderExtraData = function () {
+      return {
+        "id": $("#modelingId").val(),
+        "fileUploadUIType": "MODELING_IFC_FILE",
+        "makeVersion": true,
+        "executeHoopsConverter" : true
+      }
+    }
+
+    makeSingleUploaderScript("#ifcUploadFile"
+            , ifcFileUploaderExtraData
+            , 5000000000
+            , _ifcFileExtension.split("||")
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+  });
+</script>

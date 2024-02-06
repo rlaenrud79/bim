@@ -1,0 +1,99 @@
+///// BIM WEATHER
+
+[class^="wico-"], [class*=" wico-"] {
+    display: inline-block;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 0;
+    width: 3.846rem;
+    height: 3.846rem;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100%;
+}
+
+///// 날씨 아이콘
+// 맑음
+.wico-sunny { background-image: url("/dist/img/bim-weather-svg/weather-sunny.svg"); }
+// 저녁
+.wico-night { background-image: url("/dist/img/bim-weather-svg/weather-night.svg"); }
+// 구름 많음
+.wico-clouds { background-image: url("/dist/img/bim-weather-svg/weather-clouds.svg"); }
+// 구름 많음 - 비
+.wico-clouds-rain { background-image: url("/dist/img/bim-weather-svg/weather-clouds-rain.svg"); }
+// 구름 많음 - 소나기
+.wico-clouds-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-clouds-rainshower.svg"); }
+// 구름 많음 - 비_눈
+.wico-clouds-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-clouds-rainsnow.svg"); }
+// 구름 많음 - 눈
+.wico-clouds-snow { background-image: url("/dist/img/bim-weather-svg/weather-clouds-snow.svg"); }
+// 구름 많음 - 천둥번개
+.wico-clouds-thunder { background-image: url("/dist/img/bim-weather-svg/weather-clouds-thunder.svg"); }
+// 흐림
+.wico-cloudy { background-image: url("/dist/img/bim-weather-svg/weather-cloudy.svg"); }
+// 흐림 - 비
+.wico-cloudy-rain { background-image: url("/dist/img/bim-weather-svg/weather-cloudy-rain.svg"); }
+// 흐림 - 소나기
+.wico-cloudy-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-cloudy-rainshower.svg"); }
+// 흐림 - 비_눈
+.wico-cloudy-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-cloudy-rainsnow.svg"); }
+// 흐림 - 눈
+.wico-cloudy-snow { background-image: url("/dist/img/bim-weather-svg/weather-cloudy-snow.svg"); }
+// 흐림 - 천둥번개
+.wico-cloudy-thunder { background-image: url("/dist/img/bim-weather-svg/weather-cloudy-thunder.svg"); }
+
+
+///// 낮-밤 날씨 상태 아이콘
+
+/// 낮
+// 구름 많음
+.wico-s-clouds { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds.svg"); }
+// 구름 많음 - 비
+.wico-s-clouds-rain { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds-rain.svg"); }
+// 구름 많음 - 소나기
+.wico-s-clouds-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds-rainshower.svg"); }
+// 구름 많음 - 비_눈
+.wico-s-clouds-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds-rainsnow.svg"); }
+// 구름 많음 - 눈
+.wico-s-clouds-snow { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds-snow.svg"); }
+// 구름 많음 - 천둥번개
+.wico-s-clouds-thunder { background-image: url("/dist/img/bim-weather-svg/weather-s-clouds-thunder.svg"); }
+// 흐림
+.wico-s-cloudy { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy.svg"); }
+
+// 흐림 - 비
+.wico-s-cloudy-rain { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy-rain.svg"); }
+// 흐림 - 소나기
+.wico-s-cloudy-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy-rainshower.svg"); }
+// 흐림 - 비_눈
+.wico-s-cloudy-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy-rainsnow.svg"); }
+// 흐림 - 눈
+.wico-s-cloudy-snow { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy-snow.svg"); }
+// 흐림 - 천둥번개
+.wico-s-cloudy-thunder { background-image: url("/dist/img/bim-weather-svg/weather-s-cloudy-thunder.svg"); }
+
+/// 밤
+// 구름 많음
+.wico-n-clouds { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds.svg"); }
+// 구름 많음 - 비
+.wico-n-clouds-rain { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds-rain.svg"); }
+// 구름 많음 - 소나기
+.wico-n-clouds-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds-rainshower.svg"); }
+// 구름 많음 - 비_눈
+.wico-n-clouds-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds-rainsnow.svg"); }
+// 구름 많음 - 눈
+.wico-n-clouds-snow { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds-snow.svg"); }
+// 구름 많음 - 천둥번개
+.wico-n-clouds-thunder { background-image: url("/dist/img/bim-weather-svg/weather-n-clouds-thunder.svg"); }
+// 흐림
+.wico-n-cloudy { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy.svg"); }
+// 흐림 - 비
+.wico-n-cloudy-rain { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy-rain.svg"); }
+// 흐림 - 소나기
+.wico-n-cloudy-rainshower { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy-rainshower.svg")}
+// 흐림 - 비_눈
+.wico-n-cloudy-rainsnow { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy-rainsnow.svg"); }
+// 흐림 - 눈
+.wico-n-cloudy-snow { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy-snow.svg"); }
+// 흐림 - 천둥번개
+.wico-n-cloudy-thunder { background-image: url("/dist/img/bim-weather-svg/weather-n-cloudy-thunder.svg"); }

@@ -1,0 +1,33 @@
+///// BIM SCROLL
+
+// 스크롤바 스타일
+*::-webkit-scrollbar {
+    width: 6px!important;
+    height: 6px!important;
+    background: #fff!important;
+}
+*::-webkit-scrollbar-thumb {
+    border-radius: 30px!important;
+    background-color: #007bff!important;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: darken($color: #007bff, $amount: 10%)!important;
+}
+
+
+// 가로, 세로 스크롤
+.scroll-area { overflow: auto; }
+
+// 세로 스크롤
+.scroll-area-v {
+    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+// 가로 스크롤
+.scroll-area-w {
+    overflow: hidden;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}

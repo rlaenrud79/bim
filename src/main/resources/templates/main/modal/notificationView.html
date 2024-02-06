@@ -1,0 +1,56 @@
+<div class="content notification-view">
+  <div class="title">
+    <p th:utext="${userPopUpNoticeDTO.title}">다음과 같이 5월 5일 근무에 관련된 내용을 공지합니다.</p>
+    <p>2021.06.25 14:00:00</p>
+  </div>
+  <div class="scroll-area-v">
+    <p th:utext="${userPopUpNoticeDTO.contents}">내용이 들어갑니다.</p>
+  </div>
+</div>
+<div class="btn-footer">
+  <div class="form-group">
+    <div class="icheck-primary">
+      <input type="checkbox" id="checkNoView">
+      <label for="checkNoView" th:text="#{main.modal.notification_view.dont_show_again}">다시 보지 않음</label>
+    </div>
+  </div>
+  <button type="button"
+          class="btn bg-gradient-success"
+          id="mBtnConfirm"
+
+          th:data-alert-id="${userPopUpNoticeDTO.alertId}"
+          th:text="#{main.modal.notification_view.btn_confirm}">확인
+  </button>
+</div>
+<script>
+  $(document).ready(function () {
+    let _this = $("#modalNotificationView");
+    let _title = '[[#{common.modal_title.main_alert_notice}]]';
+    let dontSeeAgain = function (alertId) {
+      reqPost('/mainApi/putNoPopup'
+        , { "alertId" : parseInt(alertId) }
+        , function (data) {
+          if (!data.result) toastr.error(data.message);
+          $("#modalNotificationView").modal("hide");
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    let setModalTitleCnt = function (cnt, totalCnt) {
+      // _this.find("#modalLongTitle").text( _title + "(" + cnt + "/" + totalCnt + ")");
+      _this.find("#modalLongTitle").text(`${_title}(${cnt}/${totalCnt})`);
+    }
+
+    _this.on("click", "#mBtnConfirm", function () {
+      let alertId = $(this).data("alert-id");
+
+      if ($("#checkNoView").is(":checked")) dontSeeAgain(alertId);
+      $("#modalNotificationView").modal("hide");
+    });
+
+    setModalTitleCnt([[${no + 1}]], [[${totalCnt}]]);
+
+  });
+</script>

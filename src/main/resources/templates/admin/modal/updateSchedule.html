@@ -1,0 +1,225 @@
+<!-- 모달 - 일정 상세 수정  -->
+<div class="content schedule-update" xmlns="http://www.w3.org/1999/html">
+  <table class="table" th:object="${scheduleItem}">
+    <tr>
+      <th width="100">
+        <span th:text="#{admin.modal.update_schedule.work}">공종</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="d-flex align-items-center">
+          <div class="form-group">
+            <div class="icheck-primary">
+              <input type="checkbox" id="allCheck" th:checked="${isTotalWorksSelected}">
+              <label for="allCheck" th:text="#{admin.modal.update_schedule.work_all}" >전체</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center mt-4" style="flex-flow:wrap;">
+          <div class="form-group mr-5" th:each="work, index : ${works}">
+            <div class="icheck-primary">
+              <input type="checkbox" class="itemCheck"
+                     th:id="works_+${work.id}"
+                     th:name="works_+${work.id}"
+                     th:value="${work.id}"
+                     th:checked="${#lists.contains(scheduleItem.getScheduleWorksIds, work.id)}">
+              <label th:for="works_+${work.id}" th:text="${work.getLocaleName()}">교량공</label>
+            </div>
+          </div>
+        </div>
+
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_schedule.term}">기간</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group from-date">
+          <div class="input-group">
+            <input type="text" class="form-control" id="startDate" name="startDate" th:value="${scheduleItem.startDateYYYYMMDD}" readonly>
+            <span> ~ </span>
+            <input type="text" class="form-control" id="endDate" name="endDate" th:value="${scheduleItem.endDateYYYYMMDD}" readonly>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_schedule.title}">일정명</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+      </th>
+      <td>
+        <div class="form-group">
+          <input type="text"
+                 id="title" name="title"
+                 class="form-control"
+                 th:field="*{title}"
+                 th:placeholder="#{admin.modal.update_schedule.title_placeholder}">
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_schedule.schedule_type}">일정 구분</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group">
+          <select class="custom-select" id="selectType" name="selectType">
+            <option value="" th:utext="#{admin.modal.update_schedule.select_type_null}">::선택::</option>
+            <option th:each="scheduleType : ${scheduleTypes}"
+                    th:value="${scheduleType.code}"
+                    th:utext="${scheduleType.getLocaleName()}"
+                    th:selected="${#strings.equalsIgnoreCase(scheduleType.code, scheduleItem.type)}">공휴일
+            </option>
+          </select>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_schedule.description}">설명</span>
+      </th>
+      <td>
+        <div class="form-group w-100">
+          <textarea id="description"
+                    `th:field="*{description}"`
+                    class="form-control"
+                    rows="5" maxlength="1024"
+                    th:placeholder="#{admin.modal.update_schedule.description_placeholder}"></textarea>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="btn-footer">
+  <button id="mBtnDelete" type="button" class="btn bg-gradient-danger" th:data-id="${scheduleItem.id}" th:text="#{admin.modal.update_schedule.btn_delete}">삭제</button>
+  <button id="mBtnUpdate" type="button" class="btn bg-gradient-warning" th:data-id="${scheduleItem.id}" th:text="#{admin.modal.update_schedule.btn_update}">수정</button>
+</div>
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+    let _selectedId = 0;
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+
+    // datepicker init
+    $("#startDate, #endDate").datepicker(datepickerFormat);
+
+    let getSendData = function () {
+      return JSON.stringify({
+        "scheduleId": _selectedId,
+        "title": $("#title").val(),
+        "startDate": $("#startDate").val(),
+        "endDate": $("#endDate").val(),
+        "selectType": $("#selectType").val(),
+        "description": $("#description").val(),
+        "scheduleWorkIds": _selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",")
+      });
+    }
+
+    let executeUpdate = function () {
+      reqPostJSON('/adminApi/putSchedule'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            toastr.success(data.message);
+            PageFunction.selectedYearMonth = $("#startDate").val().substr(0, 7);
+            $("#modalScheduleUpdate").modal("hide");
+          } else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    let executeDelete = function () {
+      reqDelete('/adminApi/deleteSchedule/' + _selectedId
+        , function (data) {
+          if (data.result) {
+            PageFunction.selectedYearMonth = $("#startDate").val().substr(0, 7);
+            $("#modalScheduleUpdate").modal("hide");
+          } else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, 'json');
+    }
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('change', '#startDate', function () {
+      let startDate = $(this).val();
+      let endDate = $("#endDate").val();
+
+      if (moment(startDate).isAfter(endDate)) $("#endDate").val($(this).val());
+    });
+
+    _this.on('change', '#endDate', function () {
+      let startDate = $("#startDate").val();
+      let endDate = $(this).val();
+
+      if (moment(endDate).isBefore(startDate)) $("#startDate").val($(this).val());
+    });
+
+    _this.on('click', '#mBtnDelete', function (){
+      _selectedId = $(this).data("id");
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_schedule.confirm_delete_schedule}]]", executeDelete);
+    });
+
+    _this.on('click', '#mBtnUpdate', function () {
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      $(".itemCheck").each(function (index, item) {
+        if ($(this).is(':checked')) {
+          _checkedWorkCnt++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+
+      if (_checkedWorkCnt == 0) {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_no_target_works}]]");
+        return;
+      }
+
+      if ($('#startDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_no_start_date}]]");
+        return;
+      }
+
+      if ($('#endDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_no_end_date}]]");
+        return;
+      }
+
+      if (moment($("#endDate").val()).isBefore( $("#startDate").val())) {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_end_before_start_date}]]");
+        return;
+      }
+
+      if ($('#title').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_no_title}]]");
+        return;
+      }
+
+      if ($('#selectType').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.update_schedule.error_no_select_type}]]");
+        return;
+      }
+
+      _selectedId = $(this).data("id");
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_schedule.confirm_update_schedule}]]", executeUpdate);
+    });
+  });
+</script>

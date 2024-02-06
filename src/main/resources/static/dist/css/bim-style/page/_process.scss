@@ -1,0 +1,51 @@
+/// BIM process-content page
+
+.process-content {
+    .content-header-area {
+        .procfile-code-result {
+            display: flex;
+            align-items: center;
+            margin: 0 1rem;
+
+            b {
+                white-space: nowrap;
+                margin-right: 1.5rem;
+                font-weight: 700;
+            }
+        }
+
+        .bim-btn-group { margin-left: auto; }
+    }
+}
+
+.con-simulation {
+    &.bim-full-screen {
+        // margin-top: -3.6rem;
+        height: calc(100vh - 128px);
+    }
+
+    > .simulation-content-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        width: 100%;
+        max-width: 100%;
+        height: 100%;
+
+        .viewer-area {
+            width: 100%;
+            min-height: calc(100% - 400px);
+            max-height: calc(100% - 400px);
+            overflow: hidden;
+        }
+
+        .gantt-chart-area {
+            width: 100%;
+            min-height: 400px;
+            max-height: 400px;
+            overflow: hidden;
+        }
+    }
+}

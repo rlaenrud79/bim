@@ -1,0 +1,175 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="top-sticky">
+        <p class="tit">준공검사조서</p>
+    </div>
+
+    <div class="print-page print-write">
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2>준공검사조서</h2>
+                </div>
+                <table>
+                    <colgroup>
+                        <col style="width:20%">
+                        <col style="width:80%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>1. 공사명 :</th>
+                        <td>
+                            <input id="gisungItemId" name="gisungItemId" type="hidden" th:value="${gisungItem.id}">
+                            <input id="documentNo" name="documentNo" type="hidden" th:value="1">
+                            <input type="text" name="title" id="title" th:value="${gisungItem.title}">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>2. 기성금액 :</th>
+                        <td>￦ <input type="text" class="wid-s" name="item01" id="item01" th:value="${#numbers.formatInteger(gisungItem.item01, 1, 'COMMA')}"> (금회 : ￦ <input type="text" class="wid-s" name="item02" id="item02" th:value="${#numbers.formatInteger(gisungItem.item02, 1, 'COMMA')}">)</td>
+                    </tr>
+                    <tr>
+                        <th>3. 계약년월일 :</th>
+                        <td>
+                            <input id="item03" name="item03" type="hidden" th:value="${gisungItem.item03}">
+                            <input type="text" class="wid-xs" name="item03_year" id="item03_year" maxlength="4"> 년 <input type="text" class="wid-xs" name="item03_month" id="item03_month" maxlength="2"> 월 <input type="text" class="wid-xs" name="item03_day" id="item03_day" maxlength="2"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>4. 착공년원일 :</th>
+                        <td>
+                            <input id="item04" name="item04" type="hidden" th:value="${gisungItem.item04}">
+                            <input type="text" class="wid-xs" name="item04_year" id="item04_year" maxlength="4"> 년 <input type="text" class="wid-xs" name="item04_month" id="item04_month" maxlength="2"> 월 <input type="text" class="wid-xs" name="item04_day" id="item04_day" maxlength="2"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>5. 준공예정일 :</th>
+                        <td>
+                            <input id="item05" name="item05" type="hidden" th:value="${gisungItem.item05}">
+                            <input type="text" class="wid-xs" name="item05_year" id="item05_year" maxlength="4"> 년 <input type="text" class="wid-xs" name="item05_month" id="item05_month" maxlength="2"> 월 <input type="text" class="wid-xs" name="item05_day" id="item05_day" maxlength="2"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>6. 계약자 :</th>
+                        <td>
+                            <div class="btn-control">
+                                <a href="#none" class="btn-add btn-contract-manager-add" title="추가"></a>
+                            </div>
+                            <table id="tbContractor">
+                                <th:block th:if="${gisungContractors.size() > 0}">
+                                    <tr th:each="item, index : ${gisungContractors}">
+                                        <td>
+                                            <input type="hidden" name="id" th:value="${item.id}">
+                                            <input type="hidden" name="company" th:value="${item.company}">
+                                            <span th:text="${item.company}"></span>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="name" th:value="${item.name}">
+                                            <span th:text="${item.name}"></span>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="stampPath" th:value="${item.stampPath}">
+                                            <th:block th:if="${!#strings.isEmpty(item.stampPath)}">
+                                                <img th:src="${item.stampPath}" style="width:25px;" alt="User Image">
+                                            </th:block>
+                                            <th:block th:unless="${!#strings.isEmpty(item.stampPath)}">
+                                                (인)
+                                            </th:block>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="company2" th:value="${item.company2}">
+                                            <span th:text="${item.company2}"></span>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="name2" th:value="${item.name2}">
+                                            <span th:text="${item.name2}"></span>
+                                        </td>
+                                        <td>
+                                            <input type="hidden" name="stampPath2" th:value="${item.stampPath2}">
+                                            <th:block th:if="${!#strings.isEmpty(item.stampPath2)}">
+                                                <img th:src="${item.stampPath2}" style="width:25px;" alt="User Image">
+                                            </th:block>
+                                            <th:block th:unless="${!#strings.isEmpty(item.stampPath2)}">
+                                                (인)
+                                            </th:block>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                <th:block th:unless="${gisungContractors.size() > 0}">
+
+                                </th:block>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="ph-20">
+                            <input id="item06" name="item06" type="hidden" th:value="${gisungItem.item06}">
+                            <p>상기 공사 기성부분 검사의 명을 받아 <input type="text" class="wid-xs" name="item06_year" id="item06_year" maxlength="4">년 <input type="text" class="wid-xs" name="item06_month" id="item06_month" maxlength="2">월 <input type="text" class="wid-xs" name="item06_day" id="item06_day" maxlength="2">일 검사한 결과 별지 명세서와 같이 전 공사에 대하여 <input type="text" class="wid-xs" name="item07" id="item07" th:value="${#numbers.formatDecimal(gisungItem.item07, 1, 'COMMA', 2, 'POINT')}">% 기성이 상위없음을 증명함</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="txt-right">
+                            <input id="item08" name="item08" type="hidden" th:value="${gisungItem.item08}">
+                            <input type="text" class="wid-xs" name="item08_year" id="item08_year" maxlength="4"> 년 <input type="text" class="wid-xs" name="item08_month" id="item08_month" maxlength="2"> 월 <input type="text" class="wid-xs" name="item08_day" id="item08_day" maxlength="2"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="txt-right">
+                            <table>
+                                <colgroup>
+                                    <col style="width:70%">
+                                    <col style="width:15%">
+                                    <col style="width:5%">
+                                </colgroup>
+                                <tr>
+                                    <th class="txt-right">검사원 :</th>
+                                    <td class="txt-right"><input type="text" name="item09" id="item09" th:value="${gisungItem.item09}"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                                <tr>
+                                    <th class="txt-right">입회원 :</th>
+                                    <td class="txt-right"><input type="text" name="item10" id="item10" th:value="${gisungItem.item10}"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="file-btm">
+                    <dl id="tbAddfile">
+                        <dt>첨부 :</dt>
+                        <th:block th:if="${gisungItem.id > 0}">
+                            <dd th:each="item, index : ${filenameLists}">
+                                <input type="text" name="filename" th:value="${item}">
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-add btn-addfile-add" title="추가"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                    <a href="#none" class="btn-remove btn-addfile-del" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </dd>
+                        </th:block>
+                        <th:block th:unless="${gisungItem.id > 0}">
+                            <dd>
+                                <input type="text" name="filename" value="기성부분 집계표">
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-add btn-addfile-add" title="추가"></a>
+                                </div>
+                            </dd>
+                        </th:block>
+                    </dl>
+                </div>
+            </section><!--//section-->
+
+            <div class="btn-box">
+                <th:block th:if="${isWriting}">
+                    <a href="#none" class="btn gisung-btn-disable" id="" th:data-gisung-id="${gisung.id}">저장</a>
+                </th:block>
+                <th:block th:unless="${isWriting}">
+                    <a href="#none" class="btn bg-gradient-primary" id="btnWriteGisungItem" th:data-gisung-id="${gisung.id}">저장</a>
+                </th:block>
+                <a href="#none" class="btn btn-color1 btn-download-print pop-open-btn" data-modal="#modalPrintGisungItem">인쇄하기</a>
+            </div>
+        </div>
+    </div>
+</div>

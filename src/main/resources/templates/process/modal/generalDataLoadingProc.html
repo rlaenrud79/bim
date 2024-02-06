@@ -1,0 +1,21 @@
+<!-- 모달 - 처리중 -->
+<!-- modal-dialog modal-sm -->
+<div id="generalDataLoadingProc" class="wrap-loading modal display-none" th:fragment="generalDataLoadingProc()">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle" th:text="#{process.modal_title.modal_data_loading_proc}">Modal title</h5>
+      </div>
+      <div class="modal-body">
+        <div class="content processing" >
+          <p th:utext="#{process.modal.processing_proc.data_loading_proc_message}">
+            공정 데이터를 화면에 로딩중입니다.<br>
+            잠시만 기다리기시 바랍니다.<br>
+            계속 현 상태가 유지되는 경우 관리자에게 문의하시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

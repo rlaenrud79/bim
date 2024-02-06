@@ -1,0 +1,29 @@
+<div class="board-top" th:fragment="type1()">
+  <div class="total-num"><span th:utext="#{common.total_list_count(${totalCount})}">총 <strong>100</strong>건</span></div>
+  <ul>
+    <li>
+      <select id="pageSize" name="pageSize">
+        <option th:each="item : ${pagingSizes}"
+                th:selected="${#strings.equalsIgnoreCase(pageSize, item)}"
+                th:value="${item}"
+                th:utext="${item} + #{system.paging_size.unit}"></option>
+      </select>
+    </li>
+  </ul>
+</div><!--//board-top-->
+
+<select id="pageSize" name="pageSize" th:data-page-no="${list.pageable.pageNumber}" th:fragment="type2()">
+  <option th:each="item : ${pagingSizes}"
+          th:selected="${#strings.equalsIgnoreCase(pageSize, item)}"
+          th:value="${item}"
+          th:utext="${item} + #{system.paging_size.unit}"></option>
+</select>
+
+<div class="board-top" th:fragment="type3(totalCount)">
+  <div class="total-num"><span th:utext="#{common.total_list_count(${totalCount})}">총 <strong>100</strong>건</span></div>
+</div><!--//board-top-->
+
+<div class="board-top" th:fragment="type4(totalCount)">
+  <div class="total-num"><span th:utext="#{common.total_list_count(${totalCount})}">총 <strong>100</strong>건</span></div>
+  <a href="#" class="btn-xs">선택삭제</a>
+</div><!--//board-top-->

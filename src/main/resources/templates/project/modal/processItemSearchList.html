@@ -1,0 +1,54 @@
+<div class="tree-nav-search">
+    <div class="tit-box">
+        <h2>총 <strong th:text="${totalCnt}">100</strong>건의 검색결과가 있습니다.</h2>
+    </div>
+    <th:block th:each="row, index : ${vmProcessItemDTOS}">
+        <th:block th:if="${#strings.isEmpty(row.cate2)}">
+            <th:block th:if="${index.index > 0}">
+                </ul>
+                </section>
+            </th:block>
+            <section>
+                <div class="tit-box">
+                    <h3>[[${row.cate1Name}]] <small>(건)</small></h3>
+                </div>
+                <ul>
+        </th:block>
+        <th:block th:unless="${#strings.isEmpty(row.cate2)}">
+            <li>
+                <span th:text="${row.cate1Name}">토공</span>
+                <span th:text="${row.cate2Name}">토공</span>
+                <span th:text="${row.cate3Name}">토공</span>
+                <span th:text="${row.cate4Name}">1구간</span>
+                <span th:text="${row.cate5Name}">기존철거</span>
+                <span>
+                    <div class="menu-top">
+                        <div class="menu-tit">
+                            <span th:text="${row.taskName}">토공_1구간_기존철거_철근깨기</span>
+                            <span class="code">([[${row.phasingCode}]])</span>
+                            <span class="rate">[[${row.progressRate}]]%</span>
+                        </div>
+                        <div class="check-set">
+                            <input type="checkbox" th:id="|itemCheck_${index.index}|" class="itemCheck" name="item_no[]" data-no="18175" value="18175">
+                            <label th:for="|itemCheck_${index.index}|"></label>
+                        </div>
+                    </div>
+                </span>
+            </li>
+        </th:block>
+    </th:block>
+    </ul>
+    </section>
+</div>
+
+<div class="btn-box sticky">
+    <div class="right-box">
+        <input type="text" name="schTaskName" id="schTaskName" th:value="${taskName}" placeholder="공정명을 입력하세요.">
+        <a href="#none" class="btn btn btn-process-search-list">검색</a>
+        <a href="#none" class="btn btn-color2 btn-process-search-reset">초기화</a>
+        <a href="#none" class="btn btn-color1 btn-process-add">공정추가</a>
+    </div>
+</div>
+<script type="text/javascript">
+    var chartJobSheetData = "[[${jobSheetChartData}]]";
+</script>

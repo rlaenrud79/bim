@@ -1,0 +1,464 @@
+<div class="sidebar" th:fragment="sidebar(menu,sub)" xmlns:sec="https://www.thymeleaf.org/doc/articles/springsecurity.html">
+  <input type="hidden" id="urlMenu" th:value="${menu}">
+  <input type="hidden" id="urlSub" th:value="${sub}">
+  <!-- Sidebar user panel (optional) -->
+  <div class="user-panel d-flex" sec:authorize="isAuthenticated()">
+    <div class="image">
+      <img th:src="${#strings.isEmpty(#session.getAttribute('scopedTarget.userInfo')?.photoPath) ? '/dist/img/user2-160x160.jpg' : #session.getAttribute('scopedTarget.userInfo')?.photoPath}"
+           onerror="this.src='/dist/img/user2-160x160.jpg'"
+           class="img-circle elevation-2">
+    </div>
+    <div class="info">
+      <a href="/main/user" class="d-block" target="_blank">[[${#session.getAttribute('scopedTarget.userInfo')?.userName}]]</a>
+    </div>
+  </div>
+
+  <!-- SidebarSearch Form -->
+  <div class="form-inline">
+    <div class="input-group" data-widget="sidebar-search" data-min-length="2" th:data-not-found-text="#{layout.common.sidebar.no_result}">
+      <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
+      <div class="input-group-append">
+        <button class="btn btn-sidebar">
+          <i class="fas fa-search fa-fw"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+
+
+
+  <!-- Sidebar Menu -->
+  <nav id="sidebar" class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <li class="nav-header">[[#{layout.common.project}]]</li>
+      <li class="nav-item" data-menu="project">
+        <a href="/project/index" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-th"></i>
+          <p>
+            [[#{layout.common.project.overview}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="project">
+        <a href="javascript:void(0)" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-book"></i>
+          <p>
+            [[#{layout.common.project.job_sheet}]]
+            <i class="fas fa-angle-down right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/project/jobSheetList" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.project.job_sheet_list}]]</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/project/jobSheetAdd" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.project.job_sheet_item}]]</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-header">
+        [[#{layout.common.contents}]]
+      </li>
+      <li class="nav-item" data-menu="contents">
+        <a href="/contents/modelingList" class="nav-link" target="_blank">
+          <i class="nav-icon far fa-image"></i>
+          <p>
+            [[#{layout.common.contents.modeling}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="contents">
+        <a href="/contents/documentList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.contents.document}]]
+          </p>
+        </a>
+      </li>
+
+      <!--
+      <li class="nav-header">
+        [[#{layout.common.gisung}]]
+      </li>
+
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungReportList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_report}]]
+          </p>
+        </a>
+      </li>
+      -->
+      <li class="nav-header">
+        [[#{layout.common.gisung.gisung_document}]]
+      </li>
+      <!--
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungBasicInfo" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_basic_info}]]
+          </p>
+        </a>
+      </li>
+      -->
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_list}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="gisung">
+        <a href="/cost/gisungCostList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_cost}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungAggregationList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_aggregation}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungPrintList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_print}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungContractManagerList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_contract}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="gisung">
+        <a href="/gisung/gisungPaymentList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-file"></i>
+          <p>
+            [[#{layout.common.gisung.gisung_payment}]]
+          </p>
+        </a>
+      </li>
+      <li class="nav-header">[[#{layout.common.coWork}]]</li>
+      <li class="nav-item" data-menu="cowork">
+        <a href="/coWork/coWorkList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-people-carry"></i>
+          <p>[[#{layout.common.coWork.co_work_list}]]</p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="cowork">
+        <a href="/coWork/issueList" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-exclamation-circle"></i>
+          <p>[[#{layout.common.coWork.issue_list}]]</p>
+        </a>
+      </li>
+      <li class="nav-item" data-menu="cowork">
+        <a href="javascript:void(0);" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-table"></i>
+          <p>[[#{layout.common.coWork.notification}]]
+            <i class="fas fa-angle-down right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/coWork/notificationList" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.coWork.notification_list}]]</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/coWork/notificationAdd" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.coWork.notification_item}]]</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item" data-menu="cowork">
+        <a href="javascript:void(0);" class="nav-link" target="_blank">
+          <i class="nav-icon fas fa-edit"></i>
+          <p>[[#{layout.common.coWork.bulletin}]]
+            <i class="fas fa-angle-down right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="/coWork/bulletinList" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.coWork.bulletin_list}]]</p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="/coWork/bulletinAdd" class="nav-link" target="_blank">
+              <i class="far fa-circle nav-icon"></i>
+              <p>[[#{layout.common.coWork.bulletin_Item}]]</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item" data-menu="cowork">
+        <a href="/coWork/calendar" class="nav-link" target="_blank">
+          <i class="nav-icon far fa-calendar-alt"></i>
+          <p>[[#{layout.common.coWork.calendar}]]</p>
+        </a>
+      </li>
+      <th:block sec:authorize="hasAnyRole('ROLE_ADMIN_PROCESS')">
+        <li class="nav-header">[[#{layout.common.process}]]</li>
+        <li class="nav-item" data-menu="process">
+          <a href="/process/index" class="nav-link" target="_blank">
+            <i class="nav-icon fas fa-chart-pie"></i>
+            <p>[[#{layout.common.process.procfile}]]</p>
+          </a>
+        </li>
+        <li class="nav-item" data-menu="process">
+          <a href="/process/simulation" class="nav-link" target="_blank">
+            <i class="nav-icon fas fa-tachometer-alt"></i>
+            <p>[[#{layout.common.process.simulation}]]</p>
+          </a>
+        </li>
+      </th:block>
+      <th:block>
+        <th:block sec:authorize="!hasAuthority('PARTNER')">
+          <th:block sec:authorize="hasAnyRole('ROLE_ADMIN_ESTIMATE')">
+            <li class="nav-header">
+              [[#{layout.common.cost}]]
+            </li>
+            <li class="nav-item" data-menu="cost">
+              <a href="/cost/index" class="nav-link" target="_blank">
+                <i class="nav-icon fas fa-calculator"></i>
+                <p class="text">[[#{layout.common.cost.breakdown}]]</p>
+              </a>
+            </li>
+          </th:block>
+          <th:block sec:authorize="hasAnyRole('ROLE_ADMIN_PROJECT')">
+            <li class="nav-header">
+              [[#{layout.common.admin}]]
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="javascript:void(0);" class="nav-link" target="_blank">
+                <i class="nav-icon fas fa-project-diagram"></i>
+                <p class="text">
+                  [[#{layout.common.project}]]
+                  <i class="fas fa-angle-down right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/project" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.overview}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/companyList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.company}]]</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="/admin/code" class="nav-link" target="_blank">
+                <i class="nav-icon fas fa-laptop-code"></i>
+                <p>[[#{layout.common.admin.category_code}]]
+                  <i class="fas fa-angle-down right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/companyRoleList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.code_role}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/workList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.code_work}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/codeCustom" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.code_custom}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/workAmountList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.code_work_amount}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/workPlanList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.code_work_plan}]]</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="javascript:void(0);" class="nav-link" target="_blank">
+                <i class="nav-icon fas fa-user-cog"></i>
+                <p>[[#{layout.common.admin.user}]]
+                  <i class="fas fa-angle-down right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/userList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.user_list}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/user" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.user_item}]]</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="javascript:void(0);" class="nav-link" target="_blank">
+                <i class="nav-icon far fa-file-alt"></i>
+                <p>[[#{layout.common.admin.jobSheetTemp}]]
+                  <i class="fas fa-angle-down right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/jobSheetTempList" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.jobSheetTemp_list}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/jobSheetTempAdd" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.jobSheetTemp_item}]]</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="/admin/calendar" class="nav-link" target="_blank">
+                <i class="nav-icon far fa-calendar-check"></i>
+                <p>[[#{layout.common.admin.calendar}]]</p>
+              </a>
+            </li>
+            <li class="nav-item" data-menu="admin">
+              <a href="javascript:void(0);" class="nav-link" target="_blank">
+                <i class="nav-icon far fa-chart-bar"></i>
+                <p>[[#{layout.common.admin.usage}]]
+                  <i class="fas fa-angle-down right"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="/admin/statisticsLogin" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.usage_login}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/statisticsMenu" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.usage_view}]]</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="/admin/statisticsUser" class="nav-link" target="_blank">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>[[#{layout.common.admin.usage_user}]]</p>
+                  </a>
+                </li>
+              </ul>
+            </li>
+          </th:block>
+          <th:block sec:authorize="hasAnyRole('ROLE_ADMIN_SYSTEM')">
+            <li class="nav-header">
+              [[#{layout.common.system}]]
+            </li>
+            <li class="nav-item" data-menu="projectList">
+              <a href="/system/projectList" class="nav-link" target="_blank">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p class="text">[[#{layout.common.system.project_list}]]</p>
+              </a>
+            </li>
+          </th:block>
+        </th:block>
+      </th:block>
+    </ul>
+  </nav>
+  <!-- /.sidebar-menu -->
+
+</div>
+<script th:fragment="script()">
+  $(document).ready(function () {
+    const urlMenu = $('#urlMenu').val();
+    const urlSub = $('#urlSub').val();
+    const urlPath = `${urlMenu}/${urlSub}`;
+    const $sidebar = $('#sidebar');
+
+    const anchorList = $sidebar.find('a');
+    const menuList = $sidebar.find('.nav-item').filter('[data-menu]').has('ul');
+
+    activeNavMenu();
+    activeAnchor();
+
+    function activeNavMenu() {
+      if (menuList.length === 0) {
+        return false;
+      }
+      for (let elem of menuList) {
+        if ($(elem).data('menu') === urlMenu.toLowerCase()) {
+          $(elem).addClass('has-treeview menu-open')
+        }
+      }
+    }
+
+    function activeAnchor() {
+      if (anchorList.length === 0) {
+        return false;
+      }
+      for (let elem of anchorList) {
+        if ($(elem).prop('pathname').toLowerCase().includes(urlPath.toLowerCase())) {
+          $(elem).addClass('active');
+          const navMenuAnchor = $(elem).parent().parent().prev();
+          if (navMenuAnchor.length !== 0 && navMenuAnchor.is('a')) {
+            navMenuAnchor.addClass('active');
+          }
+        }
+      }
+    }
+  });
+
+
+
+</script>
+
+
+
+
+

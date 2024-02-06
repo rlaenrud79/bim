@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head th:fragment="head(title)">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="${title}">BIM</title>
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <link rel="stylesheet" href="/dist/lib/datepicker.css">
+  <link rel="stylesheet" href="/dist/lib/scroll/OverlayScrollbars.min.css">
+  <link rel="stylesheet" href="/dist/lib/slick/slick.css">
+  <link rel="stylesheet" href="/dist/lib/animate.css">
+  <link rel="stylesheet" href="/dist/css/common.css?v2">
+  <link rel="stylesheet" href="/dist/css/common-gantt.css">
+  <link rel="stylesheet" href="/dist/lib/jquery/datePicker/themes/base/ui.all.css"/>
+  <link rel="stylesheet" href="/dist/css/jquery.dm-uploader.min.css">
+  <!--<script src="/dist/lib/jquery/jquery-1.11.1.min.js"></script>
+  <script src="/dist/lib/jquery/jquery.min.js"></script>-->
+  <!-- jQuery -->
+  <script src="/plugins/jquery/jquery.min.js"></script>
+  <!-- jQuery UI 1.11.4 -->
+  <script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
+  <script src="/dist/lib/jquery/jquery-migrate.min.js"></script>
+  <!--<script src="/dist/lib/jquery/jquery-ui.js"></script>-->
+  <script src="/dist/lib/wow/wow.min.js"></script>
+  <script src="/dist/lib/scroll/jquery.overlayScrollbars.min.js"></script>
+  <script src="/dist/lib/slick/slick.min.js"></script>
+  <script src="/dist/lib/wow/wow.min.js"></script>
+  <script src="/dist/js/common_p.js"></script>
+  <script src="/dist/js/pages/common.js"></script>
+  <script src="/dist/js/pages/common_btn.js"></script>
+  <script src="/dist/js/pages/js.cookie.js"></script>
+  <script src="/dist/lib/jquery/datePicker/ui/ui.datepicker-ko.js"></script>
+  <!-- jQuery Modal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+  <script src="/dist/js/eModal.js"></script>
+  <script src="/dist/js/common.js"></script>
+  <script src="/dist/js/reload.js"></script>
+  <script src="/dist/js/ajaxRequest.js"></script>
+  <script src="/dist/js/jquery.dm-uploader.min.js"></script>
+  <script src="/dist/js/fileUploader.js"></script>
+  <script src="/dist/js/fileDownloader.js"></script>
+  <script th:replace="common/alertLayer::script()"></script>
+  <script>
+    $("#btnLogOut").on("click", function(){
+      sessionStorage.clear();
+    });
+
+    reloadComponent("/common/alertLayer", "#liAlertLayer", "");
+    // 채팅영역 비활성(채팅서버 계정 확인 에러 다수 발생)
+    // reloadComponent("/common/chattingLayer", "#liChattingLayer", "");
+
+    // 발주처 계정 여부 확인 > 채팅 알림 삭제
+    if($("#liChattingLayer").length > 0){
+      if(isEmployer)  $("#liChattingLayer").remove();
+    }
+
+  </script>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <div th:fragment="navigation(menu)" class="left-area" xmlns:sec="https://www.thymeleaf.org/doc/articles/springsecurity.html">
+      <div class="title">
+        <h1><a href="/main/index"><img src="/dist/img/common/pjt-works-logo-t.png" alt=""></a></h1>
+      </div>
+
+      <div class="user-nav">
+        <div class="drop-nav">
+        <!--          <span>PlanSix Studio</span>-->
+          <span>[[${#session.getAttribute('scopedTarget.userInfo')?.userName}]] 님</span>
+          <ul>
+            <!--<li><a href="">사용자메뉴1</a></li>-->
+            <li><a href="/logout">로그아웃</a></li>
+            <!--<li><a href="">사용자메뉴3</a></li>-->
+          </ul>
+        </div>
+      </div>
+
+      <div class="side-nav">
+        <ul>
+          <li>
+            <a href="/project/index"><i class="nav-ico7"></i>[[#{layout.common.project.overview}]]</a>
+          </li>
+          <li>
+            <a href="/project/projectInfo"><i class="nav-ico7"></i>공사정보</a>
+          </li>
+          <li>
+            <a href="/project/jobSheetList"><i class="nav-ico1"></i>[[#{layout.common.project.job_sheet}]]</a>
+          </li>
+          <li>
+            <a href="javascript:;"><i class="nav-ico2"></i>[[#{layout.common.gisung.gisung_document}]]</a>
+            <div class="gnb-dep2">
+              <ul>
+                <li><a href="/gisung/gisungList">[[#{layout.common.gisung.gisung_list}]]</a></li>
+                <li><a href="/cost/gisungCostList">[[#{layout.common.gisung.gisung_cost}]]</a></li>
+                <li><a href="/gisung/gisungAggregationList">[[#{layout.common.gisung.gisung_aggregation}]]</a></li>
+                <li><a href="/gisung/gisungPrintList">[[#{layout.common.gisung.gisung_print}]]</a></li>
+                <li><a href="/gisung/gisungContractManagerList">[[#{layout.common.gisung.gisung_contract}]]</a></li>
+                <li><a href="/gisung/gisungPaymentList">[[#{layout.common.gisung.gisung_payment}]]</a></li>
+              </ul>
+            </div><!--// gnb-dep2 -->
+          </li>
+          <li>
+            <a href="javascript:;"><i class="nav-ico3"></i>[[#{layout.common.process}]]</a>
+            <div class="gnb-dep2">
+              <ul>
+                <li><a href="/process/index">[[#{layout.common.process}]]</a></li>
+                <!--<li><a href="/process/simulation">[[#{layout.common.process.simulation}]]</a></li>-->
+
+              </ul>
+            </div><!--// gnb-dep2 -->
+          </li>
+          <li>
+            <a href="javascript:;"><i class="nav-ico4"></i>[[#{layout.common.coWork}]]</a>
+            <div class="gnb-dep2">
+              <ul>
+                <!--<li><a href="#">협업 목록</a></li>
+                <li><a href="#">이슈 목록</a></li>-->
+                <li><a href="/coWork/notificationList">[[#{layout.common.coWork.notification_list}]]</a></li>
+                <li><a href="/coWork/bulletinList">[[#{layout.common.coWork.bulletin}]]</a></li>
+                <!--<li><a href="#">캘린더</a></li>-->
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="javascript:;"><i class="nav-ico5"></i>[[#{layout.common.contents}]]</a>
+            <div class="gnb-dep2">
+              <ul>
+                <li><a href="/contents/modelingList">[[#{layout.common.contents.modeling}]]</a></li>
+                <li><a href="/contents/documentList">[[#{layout.common.contents.document}]]</a></li>
+                <li><a href="/contents/documentCategory">[[#{layout.common.contents.document_category}]]</a></li>
+                <li><a href="/cost/index">[[#{layout.common.cost.breakdown}]]</a></li>
+              </ul>
+            </div><!--// gnb-dep2 -->
+          </li>
+          <li>
+            <a href="javascript:;"><i class="nav-ico6"></i>[[#{upper.menu.config}]]</a>
+            <div class="gnb-dep2">
+              <ul>
+                <li>
+                  <a href="javascript:;">[[#{layout.common.project}]]</a>
+                  <div class="gnb-dep3">
+                    <ul>
+                      <li><a href="/admin/project">[[#{layout.common.admin.overview}]]</a></li>
+                      <li><a href="/admin/companyList">[[#{layout.common.admin.company}]]</a></li>
+                    </ul>
+                  </div>
+                </li>
+                <li>
+                  <a href="javascript:;">[[#{layout.common.admin.category_code}]]</a>
+                  <div class="gnb-dep3">
+                    <ul>
+                      <li><a href="/admin/companyRoleList">[[#{layout.common.admin.code_role}]]</a></li>
+                      <li><a href="/admin/workList">[[#{layout.common.admin.code_work}]]</a></li>
+                      <li><a href="/admin/workAmountList">[[#{layout.common.admin.code_work_amount}]]</a></li>
+                      <li><a href="/admin/workPlanList">[[#{layout.common.admin.code_work_plan}]]</a></li>
+                    </ul>
+                  </div>
+                </li>
+                <li>
+                  <a href="/admin/userList">[[#{layout.common.admin.user}]]</a>
+                </li>
+                <li>
+                  <a href="/admin/calendar">[[#{layout.common.admin.calendar}]]</a>
+                </li>
+              </ul>
+            </div><!--// gnb-dep2 -->
+          </li>
+        </ul>
+      </div><!--//side-nav-->
+      <div class="side-footer">
+        <dl>
+          <dt>ci-factory</dt>
+          <dd>Copyright © 2014-2022 ci-factory.com. All rights reserved.</dd>
+        </dl>
+      </div>
+    </div><!--// left-area-->
+
+
+  </div><!--// container-->
+
+  <div th:fragment="loadModalCaseBy(case)" class="container">
+    <div class="row mt-5">
+      <div class="col">
+        <th:block th:if="${#strings.contains(case,'(zoomInImage)')}" th:replace="common/modalCaseBy :: load('zoomInImage', #{layout.common.zoomInImage}, 'modal-xl')"></th:block>
+      </div>
+    </div>
+  </div>
+
+  <footer th:fragment="footer()" class="main-footer">
+    <strong th:if="${#strings.equalsIgnoreCase(#session.getAttribute('scopedTarget.userInfo')?.productProvider, 'EUCAST')}" >Copyright &copy; 2014-2021 <a href="http://eu-cast.com">eu-cast.com</a>.</strong>
+    <strong th:if="${#strings.equalsIgnoreCase(#session.getAttribute('scopedTarget.userInfo')?.productProvider, 'HANUL')}">Copyright &copy; 2014-2022 <a href="http://www.ci-factory.com">ci-factory.com</a>.</strong>
+    All rights reserved.
+    <div class="float-right d-none d-sm-inline-block"><b>Version</b> 1.0.0</div>
+  </footer>
+</div><!--//wrap-->
+</body>
+</html>

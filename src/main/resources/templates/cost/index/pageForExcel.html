@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('cost')"></nav>
+  <aside th:replace="layout/common :: aside('cost','index')"></aside>
+  <main role="main" class="content-wrapper cost-content">
+    <div class="content-header">
+      <div>
+        <h1><i class="nav-icon fas fa-calculator"></i> 내역관리</h1>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i> HOME</a></li>
+          <li class="breadcrumb-item active">내역관리</li>
+        </ol>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-breakdown">
+          <div class="col-lg-12">
+            <div class="card content-body-area">
+              <div class="card-body">
+                <div class="connectedSortable dhx_sample-container mt-0">
+                  <div class="dhx_sample-container__widget" id="spreadsheet"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer th:replace="layout/common :: footer()"></footer>
+</div>
+<div th:include="layout/common :: script()"></div>
+<script type="text/javascript" src="/plugins/dhtmlx-spreadsheet_4.1.2/spreadsheet.js?v=4.1.2"></script>
+<script type="text/javascript" src="/plugins/dhtmlx-spreadsheet_4.1.2/common/i18n-spreadsheet.js"></script>
+<script>
+  $(function () {
+    let _costId = [[${costSnapShot.cost.id}]];
+    let _costSnapShotId = [[${costSnapShot.id}]];
+
+    dhx.i18n.setLocale("spreadsheet", [[${#locale}]]);
+    let spreadsheet = new dhx.Spreadsheet("spreadsheet", {
+      menu         : false,
+      multiSheets  : false,
+      toolbarBlocks: [
+        "undo", "colors", "decoration", "align", "format", "file"
+      ],
+      rowsCount    : 18,
+      colsCount    : 13
+    });
+
+    spreadsheet.toolbar.data.add({
+      type: "separator",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "validate",
+      tooltip: "Validate data",
+      icon   : "fas fa-tasks",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "calculate",
+      tooltip: "Calculate data",
+      icon   : "fas fa-calculator",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "save",
+      tooltip: "Save data",
+      icon   : "fas fa-save",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "snapshot",
+      tooltip: "Create new version ",
+      icon   : "fas fa-camera",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "history",
+      tooltip: "Select saved data history",
+      icon   : "fas fa-history",
+    });
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "history-1",
+      tooltip: "Select saved data history",
+      value  : "2021-07-21 23:11:11 저장",
+    }, 0, "history");
+
+    spreadsheet.toolbar.data.add({
+      type   : "menuItem",
+      id     : "history-2",
+      tooltip: "Select saved data history",
+      value  : "2021-07-03 09:23:10 저장",
+    }, 1, "history");
+
+    spreadsheet.toolbar.events.on("click", function (id) {
+      switch (id) {
+        case "validate":
+          checkValue(function (value) {
+            return !isNaN(value)
+          });
+          break;
+        case "calculate":
+          checkValue(function (value) {
+            return !isNaN(value)
+          });
+          break;
+        case "save":
+          saveCostSnapShot();
+          break;
+        case "snapshot":
+          postSnapShotCost();
+          break;
+        case "import-xlsx":
+          console.log("file open");
+          break;
+      }
+    });
+
+    let saveCostSnapShot = function () {
+      let param = JSON.stringify({
+        costId        : _costId,
+        costSnapShotId: _costSnapShotId,
+        data          : JSON.stringify(spreadsheet.serialize())
+      });
+
+      post("/costApi/saveCostSnapShot", param, function (data) {
+        if (data.result) {
+          toastr.success(data.message);
+        }
+      });
+    }
+
+    let postSnapShotCost = function () {
+      let param = {
+        costId: _costId,
+        data  : JSON.stringify(spreadsheet.serialize())
+      };
+
+      reqPost("/costApi/postSnapShotCost"
+        , param
+        , function (data) {
+          if (data.result) {
+            toastr.success(data.message);
+            let model = JSON.parse(data.model);
+
+            _costId = model.costId;
+            _costSnapShotId = model.costSnapShotId;
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    spreadsheet.contextMenu.data.remove("columns");
+    spreadsheet.contextMenu.data.remove("rows");
+
+    function checkValue(check) {
+      spreadsheet.eachCell(function (cell, value) {
+        if (!check(value)) {
+          spreadsheet.setStyle(cell, {background: "#e57373"});
+        } else {
+          spreadsheet.setStyle(cell, {background: ""});
+        }
+      }, spreadsheet.selection.getSelectedCell());
+    };
+
+    spreadsheet.menu.events.on("click", function (id) {
+      let param;
+
+      switch (id) {
+        case "validate":
+          checkValue(function (value) {
+            return !isNaN(value)
+          });
+          break;
+        case "calculate":
+          checkValue(function (value) {
+            return !isNaN(value)
+          });
+          break;
+        case "save":
+          param = {
+            costId        : _costId,
+            costSnapShotId: _costSnapShotId,
+            data          : JSON.stringify(spreadsheet.serialize())
+          };
+
+          console.log("param", param);
+
+          reqPostJSON("/costApi/putCostSnapShot"
+            , param
+            , function (data) {
+              console.log(data);
+            }
+            , function (xhr) {
+              showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+            }
+          );
+          break;
+        case "snapshot":
+          param = {
+            costId: _costId,
+            data  : JSON.stringify(spreadsheet.serialize())
+          };
+
+          reqPostJSON("/costApi/snapShotCost"
+            , param
+            , function (data) {
+              console.log(data);
+            }
+            , function (xhr) {
+              showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+            });
+          break;
+      }
+    });
+
+    spreadsheet.events.on('beforeFocusSet', function () {
+      console.log('beforeFocusSet');
+      console.log(event);
+      console.log(arguments);
+    });
+
+    spreadsheet.events.on('excelLoad', function () {
+
+      reqPost("/costApi/postCost"
+        , {name: arguments[0].name}
+        , function (data){
+          let cost = JSON.parse(data.model)
+          _costId = cost.id;
+          _costSnapShotId = 0;
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    });
+
+    spreadsheet.events.on('afterFocusSet', function () {
+      console.log('afterFocusSet');
+      console.log(event);
+      console.log(arguments);
+    });
+
+    spreadsheet.events.on('groupFill', function () {
+      console.log('groupFill');
+      console.log(event);
+      console.log(arguments);
+    });
+
+    spreadsheet.events.on('beforeValueChange', function () {
+      console.log('beforeValueChange');
+      console.log(event);
+      console.log(arguments);
+    });
+
+    spreadsheet.events.on('afterValueChange', function () {
+      console.log('afterValueChange');
+      console.log(event);
+      console.log(arguments);
+    });
+
+    let getSnapShotCost = function (costId, costSnapShotId) {
+      reqGet("/costApi/getSnapShotCost?costId="+costId+"&costSnapShotId="+costSnapShotId
+        , function (data) {
+          if (data.result) {
+            let model = JSON.parse(data.model);
+            spreadsheet.parse(model.data);
+
+            _costId = model.costId;
+            _costSnapShotId = model.costSnapShotId;
+          }
+        }
+        ,  function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, "json");
+    }
+
+    let init = function () {
+      if (_costId == 0) return false;
+      if (_costSnapShotId == 0) return false;
+
+      getSnapShotCost(_costId, _costSnapShotId);
+    }
+
+    init();
+  });
+</script>
+</body>
+</html>

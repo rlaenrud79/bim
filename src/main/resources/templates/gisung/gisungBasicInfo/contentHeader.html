@@ -1,0 +1,17 @@
+<div class="content-header" th:fragment="contentHeader()">
+  <div>
+    <h1><i class="nav-icon fas fa-file"></i><span> 기본정보</span></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a th:href="@{/main/index}"><i class="fas fa-home"></i><span th:text="#{contents.document_list.title_home}"> HOME</span></a>
+      </li>
+      <!--
+      <li class="breadcrumb-item active">
+        <a th:href="@{/contents/modelingList}"><span th:text="#{contents.document_list.title_modeling_list}"> 자료관리</span></a>
+      </li>-->
+      <li class="breadcrumb-item active">
+        <span> 기성</span>
+      </li>
+    </ol>
+  </div>
+</div>

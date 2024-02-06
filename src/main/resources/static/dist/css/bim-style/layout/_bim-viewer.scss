@@ -1,0 +1,533 @@
+/// BIN VIEWER
+
+.viewer-area {
+    width: 100%;
+    height: 100vh;
+
+    > div {
+        width: 100%;
+        height: 100%;
+        background-color: #fff;
+    }
+}
+
+.bim-viewer-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: block!important;
+    width: 350px;
+    height: 100%;
+    transition: all .3s ease-in-out, display .3s ease-in-out;
+    box-shadow: 0.15rem 0 1.75rem 0 rgba(33, 40, 50, .5);
+    z-index: 999;
+
+    .control-sidebar-content {
+        position: relative;
+        height: 100%;
+    }
+
+    .window-close {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .sidebar-control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: .3rem 1rem;
+        background-color: #efefef;
+
+        > button {
+            width: 6.154rem;
+
+            &.btn-viewr-left-nav {
+                display: flex;
+                margin-left: 1rem;
+                min-width: 40px;
+                width: 40px;
+                height: 40px;
+                color: #1d1d1f;
+                font-size: 1rem;
+                border-radius: 50px;
+
+                &:hover { background-color: #e2e2e2; }
+
+                i { margin: auto; }
+            }
+        }
+    }
+
+    .nav-tabs {
+        border-top: 1px solid #dee2e6;
+
+        button { 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0.5rem 0 0.7rem;
+            border: none;
+            font-weight: 500;
+            background-color: #efefef;
+            transition: background-color .3s;
+
+            &:hover, &.active {
+                font-weight: 900;
+                color: #fff;
+                background-color: var(--blue);
+            }
+        }
+    }
+
+    // 작업관리 컨텐츠
+    .content-modeling-tabs {
+        > div.nav-tabs {
+            button { width: calc(100% / 3); }
+        }
+    }
+
+    article:not(.content-modeling-tabs) {
+        padding: 1rem;
+
+        header {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.615rem 1rem;
+            background-color: var(--blue);
+            font-weight: bold;
+            color: #fff;
+
+            button {
+                position: absolute;
+                right: 1rem;
+            }
+        }
+
+        table, .table {
+            th {
+                padding: .5rem;
+                background-color: #EEF0F2;
+            }
+
+            td {
+                p.title {
+                    padding: .5rem 1rem;
+                    font-weight: bold;
+                    background-color: #EEF0F2;
+
+                    + p, + div {
+                        padding: 1.5rem 1rem 1rem;
+                        font-size: 1.05rem;
+                        font-weight: 500;
+                    }
+                }
+
+                a {
+                    display: inline-flex;
+                    max-width: 11.538rem;
+                }
+
+                .user-panel {
+                    span {
+                        margin: 0 .3rem;
+                    }
+                }
+            }
+        }
+
+        .btn-xs {
+            width: 5rem;
+            font-weight: 600;
+        }
+    }
+
+    .bim-model-area {
+        article {
+            height: calc(100vh / 2 - 4.231rem);
+
+            &:nth-of-type(1) {
+                .scroll-area-v { max-height: calc(44.231rem - 35px); }
+            }
+
+            &:nth-of-type(2) {
+                .scroll-area-v {
+                    max-height: 43.846rem;
+                    height: 100%;
+
+                    table {
+                        height: 100%;
+                        
+                        td {
+                            padding: 0;
+                            border: none;
+                            vertical-align: top!important;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    .my-viewpoint-area {
+        article {
+            height: calc(100vh / 2 - 4.231rem);
+
+            .scroll-area-v {
+                max-height: calc(100% - 2.692rem);
+            }
+        }
+    }
+
+    .bim-chat-area {
+        article {
+            .chat-user-list {
+                max-height: 12rem;
+
+                > div { margin-bottom: .5rem; }
+            }
+
+            &:nth-of-type(1) {
+                max-height: 31.154rem;
+                height: 31.154rem;
+            }
+        }
+
+        .chat-area {
+            height: calc(100vh - 595px);
+
+            > div {
+                height: calc(100% - 34px);
+            }
+        }
+
+        .chat-user {
+            i { color: #b4b4b4; }
+
+            &.on {
+                i { color: #28a745; }
+            }
+        }
+    }
+
+    .bim-issue-area {
+        height: calc(100vh - 14.308rem);
+        overflow-y: auto;
+
+        article {
+            &:nth-of-type(1) {
+                padding-bottom: 0;
+                height: 16.077rem;;
+                max-height: 16.077rem;;
+
+                .scroll-area-v {
+                    max-height: 12.308rem;
+                }
+
+                table {
+                    th, td { padding: .5rem; }
+                    a { max-width: 10rem; }
+                }
+            }
+
+            &:nth-of-type(2) {
+                table {
+                    td {
+                        display: flex;
+                        padding: 0;
+
+                        p.title {
+                            flex: 1;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 1rem;
+
+                            + p, + div, + a {
+                                flex: 2;
+                                padding: 1rem;
+                            }
+                        }
+
+                        .scroll-area-v {
+                            max-height: 8.846rem;
+
+                            > div {
+                                font-size: 1rem;
+
+                                &:nth-of-type(n + 2) {
+                                    margin-top: .5rem;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                div:nth-of-type(2) {
+                    margin-top: .5rem;
+                    button {
+                        margin-right: .1rem;
+                        width: 6rem;
+                    }
+                }
+            }
+
+            &:nth-of-type(3) {
+                table {
+                    margin-top: 1rem!important;
+                }
+            }
+
+            .context-area {
+                margin-top: -1px;
+                width: 100%;
+
+                > div {
+                    padding: .5rem 1rem;
+                    width: 100%;
+                    height: 6rem;
+                    border: 1px solid #dee2e6;
+                    background-color: #eef0f2;
+                }
+            }
+        }
+    }
+
+    .bim-viewpoint-area {
+        article {
+            height: calc(100vh / 2 - 4.231rem);
+            
+            .scroll-area-v {
+                max-height: calc(100% - 2.692rem);
+            }
+
+            &:nth-of-type(1) {
+                header {
+                    justify-content: space-between;
+
+                    button { width: 7rem; }
+                }
+            }
+
+            &:nth-of-type(2) {
+                header {
+                    + p {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 1rem;
+                        font-weight: bottom;
+                    }
+                }
+
+                .scroll-area-v { max-height: calc(100% - 11.692rem); }
+            }
+        }
+    }
+
+    .my-snapshot-area,
+    .snapshot-area {
+        article {
+            > div {
+                height: calc(100vh - 13.846rem);
+                text-align: center;
+            }
+        }
+
+        ul {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 0;
+            width: 100%;
+
+            li {    
+                margin-bottom: 1rem;
+                padding: 0 1.5rem;
+                border-bottom: 1px solid #dee2e6;
+
+                &:last-child { border: none; }
+                
+
+                img { width: 100%; }
+
+                > div {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+
+                    p { max-width: 70%; }
+
+                    button {
+                        position: absolute;
+                        right: 0;
+                        width: 3.077rem!important;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // cowork sidebar
+    &.cowork-sidebar {
+        .content-modeling-tabs {
+            > div.nav-tabs {
+                button {
+                    position: relative;
+                    width: calc(100% / 5);
+                    line-height: 1;
+
+                    .badge {
+                        position: absolute;
+                        top: 2px;
+                        right: 2px;
+                    }
+                }
+            }
+        }
+
+        .cowork-info {
+            p {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 0.615rem 1rem;
+                font-weight: bold;
+
+                &.title {
+                    background-color: var(--blue);
+                    color: #fff;
+                }
+            }
+        }
+    }
+}
+
+
+.content-wrapper {
+    &.modeling-view {
+        margin-top: 0;
+        margin-left: 350px!important;
+        max-height: 100%;
+
+        .content {
+            margin-top: 0!important;
+            max-width: 100%;
+            margin: 0!important;
+            height: 100%;
+
+            .card {
+                height: 100vh;
+            }
+        }
+    }
+}
+
+.hide-left-sidebar {
+    .modeling-view{
+        margin-left: 4.6rem!important;
+        max-width: calc(100% - 4.6rem);
+        width: calc(100% - 4.6rem);
+        transition: max-width .3s ease-in-out, width .3s ease-in-out;
+    }
+
+    .bim-viewer-sidebar {
+        width: 4.6rem;
+        background-color: #efefef;
+        transition: max-width .3s ease-in-out, width .3s ease-in-out;
+
+        .sidebar-control {
+            padding: 0;
+            height: 100%;
+
+            button:not(.btn-viewr-left-nav) { display: none; }
+        }
+
+        .btn-viewr-left-nav {
+            margin: 0!important;
+            width: 100%!important;
+            height: 100%!important;
+            border-radius: 0!important;
+            transform: rotate(180deg);
+        }
+
+        article { display: none; }
+
+        .window-close {
+            button { font-size: 79%; }
+        }
+
+        .cowork-info { display: none; }
+    }
+}
+
+
+// BIM VIEWR
+.ui-dialog {
+    &.ui-widget {
+        font-family: "Noto Sans KR", "Noto Sans JP", "Noto Sans HK", "Noto Sans SC", "Noto Sans TC", sans-serif !important;
+        top: 30%!important;
+        padding: 0;
+        max-width: 800px;
+        color: #212529;
+        background: #fff!important;
+        transform: translateY(-50%);
+        z-index: 5000;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .5);
+
+        .ui-dialog-titlebar {
+            display: flex;
+            align-items: center;
+            padding: .77rem;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 0;
+            background-color: #6f42c1;
+
+            .ui-button {
+                top: 1rem;
+                right: 2rem;
+                padding: 1rem;
+                margin: -1rem -1rem -1rem auto;
+                width: auto;
+                height: auto;
+                border: none;
+                background: none;
+                opacity: 1;
+                -webkit-appearance: button;
+
+                &::after {
+                    content: "×";
+                    position: absolute;
+                    right: 0;
+                    font-family: "Noto Sans KR", "Noto Sans JP", "Noto Sans HK", "Noto Sans SC", "Noto Sans TC", sans-serif !important;
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                    line-height: 1;
+                    color: #fff;
+                    text-shadow: 0 1px 0 #fff;
+                    text-indent: 0;
+                }
+
+                .ui-button-icon { display: none; }
+            }
+        }
+
+        .ui-dialog-content {
+            padding: 1rem;
+        }
+        .ui-widget-content {
+            color: #212529;
+            font-size: 1rem;
+        }
+    }
+}

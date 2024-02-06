@@ -1,0 +1,32 @@
+<div id="divCardHeader" th:fragment="cardHeader()">
+<!--  <div class="pg-title">-->
+<!--    <h2 th:text="#{project.job_sheet_list.title_job_sheet_list}">공사일지</h2>-->
+<!--    <div class="line-map">-->
+<!--      <a th:href="@{/main/index}" th:text="#{project.job_sheet_list.title_home}">Home</a>-->
+<!--      <a href="#none" th:text="#{project.job_sheet_list.title_list}">공사일지</a>-->
+<!--    </div>-->
+<!--  </div>&lt;!&ndash;//pg-title&ndash;&gt;-->
+
+<!--  <div class="board-sort">-->
+<!--    <ul>-->
+<!--      <li class="on"><a href="#">전체</a></li>-->
+<!--      <li><a href="#">토공</a></li>-->
+<!--      <li><a href="#">배수 및 옹벽공</a></li>-->
+<!--      <li><a href="#">교량공</a></li>-->
+<!--      <li><a href="#">포장공</a></li>-->
+<!--      <li><a href="#">부대공</a></li>-->
+<!--      <li><a href="#">터널공</a></li>-->
+<!--      <li><a href="#">Younji</a></li>-->
+<!--    </ul>&lt;!&ndash;// board-sort&ndash;&gt;-->
+
+  </div><!--// board-sort-->
+
+  <div class="board-top">
+    <div class="total-num"><span th:utext="#{common.total_list_count(${totalCount})}">총 <strong>100</strong>건</span></div>
+    <ul>
+      <li>
+        <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+      </li>
+    </ul>
+  </div><!--//board-top-->
+</div>

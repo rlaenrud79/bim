@@ -1,0 +1,14 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <span class="popup-tit" th:text="${title}">결재자 지정</span>
+            <div class="btn-box">
+                <a href="#none" id="btnAddGisungCostDetail" class="btn-s btn-color2">등록</a>
+                <a href="#none" class="btn-s close">취소</a>
+            </div>
+        </div><!--//popup_top-->
+        <div class="popup-con">
+
+        </div><!--//popup_con-->
+    </div><!--//popup_content-->
+</div><!--// popup-wrap-->

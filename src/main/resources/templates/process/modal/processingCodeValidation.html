@@ -1,0 +1,21 @@
+<!-- 모달 - 코드 검증 중 -->
+<!-- modal-dialog modal-sm -->
+<div id="processingCodeValidation" class="wrap-loading modal display-none" th:fragment="processingCodeValidation()">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle" th:text="#{process.modal_title.modal_processing_code_validation}">Modal title</h5>
+      </div>
+      <div class="modal-body">
+        <div class="content processing-code-validation">
+            <p th:utext="#{process.modal.processing_code_validation.proc_message}">
+                현재 코드 검증 작업을 진행하고 있습니다.<br>
+                코드 검증 작업 진행 중에는 작업을 하실 수 없습니다.<br>
+                작업 완료 후 진행해 주시기 바랍니다.
+            </p>
+            <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

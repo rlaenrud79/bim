@@ -1,0 +1,28 @@
+<!-- 모달 - 참여 대상자 -->
+<div class="content cowork-joinerlist">
+  <div class="scroll-area-v">
+    <table class="table">
+      <caption th:text="#{co_work.modal.co_work_joiner_list.title}">참여 대상자</caption>
+      <thead>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modal.co_work_joiner_list.list_title_no}">No</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_joiner_list.list_title_photo}">사진</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_joiner_list.list_title_name}">이름</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_joiner_list.list_title_company}">소속</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_joiner_list.list_title_rank}">직급</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item, index : ${coWorkJoiners}">
+        <td class="text-center" th:text="${index.index + 1}">6</td>
+        <td class="text-center">
+          <div th:replace="/common/userInfo :: userInfo(${item})"></div>
+        </td>
+        <td class="text-center" th:text="${item.userName}">김기사</td>
+        <td class="text-center" th:text="${item.companyRoleName} + ' : ' + ${item.companyName}">발주사 / 한국 발주</td>
+        <td class="text-center" th:text="${item.rank}">과장</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

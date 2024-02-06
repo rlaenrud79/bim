@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="content-header" th:replace="contents/documentList/contentHeader :: contentHeader()"/>
+
+            <div class="content">
+                <input type="hidden" id="pageNo" value="">
+                <div id="divCardBody" class="card-body" th:replace="contents/documentList/cardBody :: cardBody()"/>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<div th:include="common/workSearchSelectOption :: script('searchWorkId')"></div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddDocument',#{contents.document_list.modal_title_add}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script>
+    let PageFunction = {};
+
+    $(document).ready(function () {
+
+        const $searchWorkId = $("#searchWorkId");
+        const $searchType = $("#searchType");
+        const $searchValue = $("#searchValue");
+        const $searchUserId = $("#searchUserId");
+        const $searchUserDisplayName = $("#searchUserDisplayName");
+        const $startDate = $("#startDate");
+        const $endDate = $("#endDate");
+        const $sortProp = $("#sortProp");
+        const $pageNo = $("#pageNo");
+        const $pageSize = $("#pageSize");
+        const $modalUpdateDocument = $('#modalUpdateDocument');
+        const $searchCategory = $("#searchCategoryId");
+
+        //$startDate.datepicker(datepickerFormat);
+        //$endDate.datepicker(datepickerFormat);
+
+        // download attach file
+        $(this).on('click', '.download-attach-file', function (e) {
+            e.preventDefault();
+            executeFileDownloadModal($(this).data("file-id"), "DOCUMENT_FILE");
+        });
+
+        $(this).on('change', "select[id='searchWorkId']", function (e) {
+            getWorkSecondList($(this).val(), 'workSecondId', 'workSecond');
+        });
+
+        // delete
+        $(this).on('click', '#btnDeleteDocument', function () {
+            if (confirm("[[#{contents.document_list.confirm_delete_document}]]")) {
+                let id = $(this).data('document-id');
+                deleteDocument(id);
+            }
+        });
+
+        $(this).on('click', '.btn-del-sel', function () {
+            if ($(".list-item-checkbox:checkbox:checked").length > 0) {
+                if (confirm("[[#{contents.document_list.confirm_sel_delete_document}]]")) {
+                    deleteSelDocument();
+                }
+            } else {
+                alert("[[#{contents.document_list.select_delete_document}]]");
+            }
+        });
+
+        $(this).on("click", '.itemCheck', function (e) {
+            const menuName = $(this).attr("data-name");
+            $("." + menuName).prop("checked", ($(this).prop("checked")));
+        });
+
+        function deleteDocument(id) {
+            reqDelete(`/contentsApi/deleteDocument?id=${id}`,
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                        resetAndSearch();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            )
+        }
+
+        function deleteSelDocument() {
+            reqDeleteJSON(`/contentsApi/deleteSelDocument`, setSendDeleteData(),
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        alert(data.message);
+                        resetAndSearch();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            )
+        }
+
+        function setSendDeleteData() {
+            let val = [];
+            $(".list-item-checkbox:checkbox:checked").each(function () {
+                val.push({
+                    id: $(this).val() + "",
+                });
+            });
+
+            return JSON.stringify(val);
+        }
+
+        // search
+        $(this).on('click', '#btnSearchDocument', function () {
+            reloadCardBody();
+        });
+
+        // reset
+        $(this).on('click', '#btnResetSearchCondition', function () {
+            resetAndSearch();
+        });
+
+        $(this).on('click', '.sort', function () {
+            $sortProp.val($(this).data('sort'));
+            reloadCardBody();
+        });
+
+        // 등록 모달
+        $(this).on('click', '#btnAdd', function () {
+            reqGet("/contentsModal/addDocument", function (data) {
+                $('#modalAddDocument').find('.popup-con').html(data);
+            });
+        });
+
+        // 수정 모달
+        $(this).on('click', '.openUpdateModal', function (e) {
+            const url = `/contentsModal/updateDocument?id=${$(this).data('document-id')}`;
+            reqGet(url, function (data) {
+                $('#modalAddDocument').find('.popup-con').html(data);
+            }, function (xhr) {
+                alert(xhr.responseJSON.message);
+            });
+        });
+
+        // search user
+        $(this).on('click', '#searchUserDisplayName, #btnSearchUser', function () {
+            let param = "formElementIdForUserId=searchUserId";
+            param += "&formElementIdForUserName=searchUserDisplayName";
+            param += "&formElementIdForModal=modalSearchSingleUser";
+            param += "&searchUserFilter=N";
+            selectPopupUser(param);
+        });
+
+        $(this).on('change', '#pageSize', function () {
+            reloadComponent("/contents/documentListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+        $(this).on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function () {
+            $pageNo.val($(this).data("page-no"));
+            reloadComponent("/contents/documentListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+        $(this).on('click', ".tab", function() {
+            var tabId = $(this).attr("data-document-category-id");
+            $(this).closest("li").addClass("on");
+            $(".tab-nav-round li").not($(this).closest("li")).removeClass("on");
+            $searchCategory.val($(this).data("document-category-id"));
+            reloadCardBody();
+        });
+
+    });
+
+    PageFunction.resetAndSearch = resetAndSearch;
+    PageFunction.reloadCardBody = reloadCardBody;
+
+    function resetSearchCondition() {
+        $("#searchWorkId").val(0);
+        $("#searchType").val('none');
+        $("#searchValue").val('');
+        $("#searchUserId").val(0);
+        $("#searchUserDisplayName").val('');
+        $("#startDate").val('');
+        $("#endDate").val('');
+        $("#sortProp").val('');
+        $("#pageNo").val(0);
+        $("#pageSize").val(20);
+        $("#searchCategory").val('');
+    }
+
+    function getSearchCondition() {
+        let param = "";
+        param += `page=${parseInt($("#pageNo").val()) || 0}`;
+        param += `&size=${parseInt($("#pageSize").val())}`;
+        param += `&searchWorkId=${parseInt($("#searchWorkId").val())}`;
+        param += `&searchType=${$("#searchType").val()}`;
+        param += `&searchValue=${$("#searchValue").val()}`;
+        param += `&searchUserId=${parseInt($("#searchUserId").val()) || 0}`;
+        param += `&searchUserDisplayName=${$("#searchUserDisplayName").val()}`;
+        param += `&startDateString=${$("#startDate").val()}`;
+        param += `&endDateString=${$("#endDate").val()}`;
+        param += `&SortProp=${$("#sortProp").val()}`;
+        param += `&searchCategory=${parseInt($("#searchCategoryId").val())}`;
+        return param;
+    }
+
+    function resetAndSearch() {
+        resetSearchCondition();
+        reloadCardBody();
+    }
+
+    function reloadCardBody() {
+        reloadComponent("/contents/documentListCardBody", "#divCardBody", getSearchCondition());
+    }
+</script>
+</body>
+
+</html>

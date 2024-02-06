@@ -1,0 +1,106 @@
+<div class="form">
+    <div class="grid">
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>공종</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt">공종</div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>공정코드</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt" th:text="${processItem.phasingCode}">공정코드</div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>진행률</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt" th:text="${processItem.progressRate}">진행률</div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>작업일수</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt" th:text="${processItem.duration}">작업일수</div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>시작일</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt" th:text="${processItem.startDate}">시작일</div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>종료일</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt" th:text="${processItem.endDate}">종료일</div>
+            </div>
+        </div>
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>대표수량</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="col grid">
+                    <div class="col2"><div class="txt">계산식: <span th:text="${processItem.firstCountFormula}">EA100000#Count</span></div></div>
+                    <div class="col2"><div class="txt">ⓐ값: <span th:text="${#numbers.formatInteger(processItem.firstCount, 1)}">1</span></div></div>
+                    <div class="col2"><div class="txt">단위 : <span th:text="${processItem.firstCountUnit}">식</span></div></div>
+                </div>
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>복합단가</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt"><span th:text="${#numbers.formatInteger(processItem.complexUnitPrice, 1, 'COMMA')}">25,451,201</span> <a href="#none" class="btn-xs btn-color3 ml-10 pop-open-btn btnCostDetail" data-modal="#modalCostDetailPopup" th:data-id="${processItem.id}">수정하기</a></div>
+            </div>
+        </div>
+        <div class="fm-section col4">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>기성금(원)</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="col grid">
+                    <div class="col3"><div class="txt">계획 : <span th:text="${#numbers.formatInteger(processItem.cost, 1, 'COMMA')}">12,112,858,837</span></div></div>
+                    <div class="col3"><div class="txt">기성금 : <span th:text="${#numbers.formatInteger(processItem.paidCost, 1, 'COMMA')}">0</span> <a href="#none" class="btn-xs btn-color3 ml-10 pop-open-btn btnPaidCost" data-modal="#paidCost" th:data-id="${processItem.id}">기성내역</a></div></div>
+                </div>
+            </div>
+        </div>
+        <!--
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>공사비 계산 결과</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt">-</div>
+            </div>
+        </div>
+        -->
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>모델</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="txt"><a href="#none" id='btnModelViewer' th:data-id='${processItem.id}' class="btn-xs btn-color2">모델보기</a></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-box">
+    <!--<a href="#" class="btn btn-color1">저장</a>-->
+    <a href="#none" class="btn close" th:text="#{layout.modal.close}">닫기</a>
+</div>

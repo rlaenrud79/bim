@@ -1,0 +1,14 @@
+
+<div id="divUserInfo" class="user-info-toggle" th:fragment="userInfo(writerDTO)"
+     th:data-user-id="${writerDTO.userId}">
+    <span class="user-img">
+        <img th:src="${#strings.isEmpty(writerDTO?.photoPath) ? '/dist/img/common/ico-user.png' : writerDTO?.photoPath}"
+        alt="User Image">
+
+        <div class="user-panel bubble" th:data-user-id="${writerDTO.userId}">
+            <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '' + ${writerDTO?.userName}"></span>
+            <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '(' + ${writerDTO?.companyRoleName} + ' : ' + ${writerDTO?.companyName} + ')'"></span>
+            <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '' + ${writerDTO?.mobileNo} + ''"></span>
+        </div>
+    </span>
+</div>

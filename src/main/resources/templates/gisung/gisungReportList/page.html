@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div th:replace="gisung/gisungReportList/contentHeader :: contentHeader()"></div>
+            <input type="hidden" id="pageNo" value="">
+
+            <div class="content">
+
+                <div id="divCardBody" th:replace="gisung/gisungReportList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddGisungReport',#{contents.document_list.modal_title_add}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUpdateGisungReport',#{contents.document_list.modal_title_update}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script>
+    let PageFunction = {};
+
+    $(document).ready(function () {
+        const gisungId = [[${gisungId}]];
+        const $searchWorkId = $("#searchWorkId");
+        const $searchType = $("#searchType");
+        const $searchValue = $("#searchValue");
+        const $searchUserId = $("#searchUserId");
+        const $searchUserDisplayName = $("#searchUserDisplayName");
+        const $startDate = $("#startDate");
+        const $endDate = $("#endDate");
+        const $sortProp = $("#sortProp");
+        const $pageNo = $("#pageNo");
+        const $pageSize = $("#pageSize");
+        const $modalUpdateGisungReport = $('#modalUpdateGisungReport');
+
+        $startDate.datepicker(datepickerFormat);
+        $endDate.datepicker(datepickerFormat);
+
+        // download attach file
+        $(this).on('click', '.download-attach-file', function (e) {
+            e.preventDefault();
+            executeFileDownloadModal($(this).data("file-id"), $(this).data("file-upload-type"));
+        });
+
+        // delete
+        $(this).on('click', '#btnDeleteGisungReport', function () {
+            if (confirm("[[#{contents.document_list.confirm_delete_document}]]")) {
+                deleteGisungReport();
+            }
+            //showConfirm("[[#{system.common.confirm.title}]]", "[[#{contents.document_list.confirm_delete_document}]]", deleteGisungReport.bind(this));
+        });
+
+        function deleteGisungReport() {
+            reqDelete(`/gisungReportApi/deleteGisungReport?id=${$(this).data('gisung-report-id')}`,
+                function (data) {
+                    if (!data.result) {
+                        showErrorAlert("ALERT", data.message);
+                    } else {
+                        toastr.success(data.message);
+                        resetAndSearch();
+                    }
+                },
+                function (xhr) {
+                    showErrorAlert("ALERT", xhr.responseJSON.message);
+                }
+            )
+        }
+
+        // search
+        $(this).on('click', '#btnSearchGisungReport', function () {
+            reloadCardBody();
+        });
+
+        // reset
+        $(this).on('click', '#btnResetSearchCondition', function () {
+            resetAndSearch();
+        });
+
+        $(this).on('click', '.sort', function () {
+            $sortProp.val($(this).data('sort'));
+            reloadCardBody();
+        });
+
+        // 등록 모달
+        $(this).on('show.bs.modal', '#modalAddGisungReport', function () {
+            reqGet("/gisung/addGisungReport", function (data) {
+                $('#modalAddGisungReport').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalAddGisungReport', function () {
+            $("#btnAddGisungReport").off("click");
+            $('#modalAddGisungReport').find('.modal-body').html('');
+        });
+
+        // 수정 모달
+        $(this).on('click', '.openUpdateModal', function (e) {
+            const url = `/gisung/updateGisungReport?id=${$(this).data('gisung-report-id')}`;
+            reqGet(url, function (data) {
+                $modalUpdateGisungReport.find('.modal-body').html(data);
+                $modalUpdateGisungReport.modal('show');
+            }, function (xhr) {
+                $modalUpdateGisungReport.addClass('d-none');
+                showErrorAlert("ALERT", xhr.responseJSON.message);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalUpdateGisungReport', function () {
+            $("#btnUpdateGisungReport").off("click");
+            $('#modalUpdateGisungReport').find('.modal-body').html('');
+        });
+
+        // search user
+        $(this).on('click', '#searchUserDisplayName, #btnSearchUser', function () {
+            modalShowAndDraggable('#modalSearchSingleUser');
+        });
+
+        $(this).on('show.bs.modal', '#modalSearchSingleUser', function () {
+
+            let param = "formElementIdForUserId=searchUserId";
+            param += "&formElementIdForUserName=searchUserDisplayName";
+            param += "&formElementIdForModal=modalSearchSingleUser";
+            param += "&searchUserFilter=N";
+
+            reqGet(`/commonModal/searchSingleUser?${param}`, function (data) {
+                $('#modalSearchSingleUser').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalSearchSingleUser', function () {
+            $("#mIsSearchRoleAdminProject").off("click");
+            $("#mIsSearchRoleAdminWork").off("click");
+            $("#mSearchText").off("keyup");
+            $("button[id^='mBtnSelect_']").off("click")
+            $('#modalSearchSingleUser').find('.modal-body').html('');
+        });
+
+        $(this).on('change', '#pageSize', function () {
+            reloadComponent("/gisung/gisungReportListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+        $(this).on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function () {
+            $pageNo.val($(this).data("page-no"));
+            reloadComponent("/gisung/gisungReportListCardBody", "#divCardBody", getSearchCondition());
+        });
+
+
+        PageFunction.resetAndSearch = resetAndSearch;
+        PageFunction.reloadCardBody = reloadCardBody;
+
+    });
+
+    function getSearchCondition() {
+        let param = "";
+        param += `page=${parseInt($("#pageNo").val()) || 0}`;
+        param += `&size=${parseInt($("#pageSize").val())}`;
+        param += `&searchWorkId=${parseInt($("#searchWorkId").val())}`;
+        param += `&searchType=${$("#searchType").val()}`;
+        param += `&searchValue=${$("#searchValue").val()}`;
+        param += `&searchUserId=${parseInt($("#searchUserId").val()) || 0}`;
+        param += `&searchUserDisplayName=${$("#searchUserDisplayName").val()}`;
+        param += `&startDateString=${$("#startDate").val()}`;
+        param += `&endDateString=${$("#endDate").val()}`;
+        param += `&SortProp=${$("#sortProp").val()}`;
+        param += `&gisungId=${gisungId}`;
+        return param;
+    }
+
+    function resetSearchCondition() {
+        $("#searchWorkId").val(0);
+        $("#searchType").val('none');
+        $("#searchValue").val('');
+        $("#searchUserId").val(0);
+        $("#searchUserDisplayName").val('');
+        $("#startDate").val('');
+        $("#endDate").val('');
+        $("#sortProp").val('');
+        $("#pageNo").val(0);
+        $("#pageSize").val(20);
+    }
+
+    function resetAndSearch() {
+        resetSearchCondition();
+        reloadCardBody();
+    }
+
+    function reloadCardBody() {
+        reloadComponent("/gisung/gisungReportListCardBody", "#divCardBody", getSearchCondition());
+    }
+</script>
+</body>
+
+</html>

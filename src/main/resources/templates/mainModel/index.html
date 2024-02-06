@@ -1,0 +1,2175 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/model_common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/model_common :: preLoader()"></div>
+<!--  <nav th:replace="layout/model_common :: navigation('main')"></nav>-->
+<!--  <aside th:replace="layout/model_common :: aside('main','work')"></aside>-->
+
+  <!-- contents area  -->
+  <main role="main" class="main-content">
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-main-content bim-full-screen row">
+          <article class="main-content-area">
+            <div class="viewer-area">
+              <div th:include="common/modelingViewer :: loadCanvas()"></div>
+            </div>
+
+            <div class="gantt-chart-area" id="ganttChartArea">
+              <div class="gantt-chart-header">
+                <div id="divGanttMenu" th:replace="process/index/ganttMenuArea_sub :: ganttMenuArea()"/>
+                <div style="width:50px;"></div>
+                <div class="runtime-area">
+                  <div class="form-group">
+                    <select class="custom-select" id="playDayInterval">
+                      <option th:each="item : ${simulationMovingUnits}"
+                              th:selected="${#strings.toString(defaultSimulationMovingUnit) eq #strings.toString(item)}"
+                              th:value="${#strings.toString(item)}"
+                              th:utext="${item}"></option>
+                    </select>
+                  </div>
+                  <span class="ml-1">일</span>
+
+                  <div class="form-group">
+                    <select class="custom-select" id="playTimeInterval">
+                      <option th:each="item : ${simulationMovingIntervals}"
+                              th:selected="${#strings.toString(defaultSimulationInterval) eq #strings.toString(item)}"
+                              th:value="${#strings.toString(item)}"
+                              th:utext="${item} + #{system.simulation.moving_interval.unit}"></option>
+                    </select>
+                  </div>
+                  <span class="ml-1" th:text="#{process.simulation.page.interval}">간격(초)</span>
+                </div>
+                <div style="width:50px;"></div>
+                <div class="calender-area">
+                  <div class="start-date">
+                    <input type="date" id="startCalender">
+                  </div>
+                  <div>
+                    &nbsp;&nbsp;&nbsp; ~ &nbsp;&nbsp;&nbsp;
+                  </div>
+                  <div class="end-date">
+                    <input type="date" id="endCalender">
+                  </div>
+                </div>
+                <div class="slidebar-area" style="flex-basis:10%;" th:object="${searchVO}">
+                  <table>
+                    <tr>
+                      <td style="padding:5px;">
+                        <button type="button" id="play" class="btn bg-gradient-danger btn-sm"><i class="fas fa-play"></i></button>
+                        <button type="button" id="pause" class="btn bg-gradient-danger btn-sm d-none"><i class="fas fa-pause"></i></button>
+                      </td>
+
+                      <td style="padding:5px;">
+                        <button type="button" id="stop" class="btn bg-gradient-danger btn-sm"><i class="fas fa-stop"></i></button>
+                        <!--
+                        <button type="button" id="periodPlay" class="btn bg-gradient-danger btn-sm">구간재생</button>
+                        <button type="button" id="periodStop" class="btn bg-gradient-danger btn-sm d-none"><i class="fas fa-stop"></i></button>
+                        -->
+                      </td>
+                    </tr>
+                  </table><div style="width:50px;"></div>
+                  <!--
+                  <div class="slidebar">
+                    <div id="sliderProcess"></div>
+                  </div>
+                  -->
+                  <div class="form-group">
+                    <select id="gridWorkIdList" class="custom-select" th:field="*{workId}">
+                      <option th:value="${0}" th:text="#{cost.index.page.selection}">:: 선택 ::</option>
+                      <option th:each="workName : ${workNames}" th:value="${workName.work.id}" th:text="${workName.name}">Value 2</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="gantt-toggle-area">
+                  <button type="button" class="btn btn-gantt-chart"><i class="fas fa-angle-double-right"></i></button>
+                </div>
+              </div>
+              <div id="divGantt"></div>
+            </div>
+            <div class="card content-body-area cost-area" id="costArea">
+              <div class="card-header">
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="form-group">
+                    <div class="bim-btn-group">
+                      <button id='btnGridCostExpandAll' class='btn bg-gradient-primary'>
+                        모두 열기
+                      </button>
+                      <button id='btnGridCostCollapseAll' class='btn bg-gradient-primary'>
+                        모두 접기
+                      </button>
+                      <button type="button" id="btnShowModel" class="btn bg-gradient-primary">
+                        <span> 모델 보기</span>
+                      </button>
+                      <button type="button" id="btnCalcPaidCost" class="btn bg-gradient-primary" data-toggle="modal" data-target='#calcPaidCost'>
+                        <span> 기성</span>
+                      </button>
+                      <!-- <button type="button" id="btnSearch" class="btn bg-gradient-primary">
+                        <i class="fas fa-search"></i><span th:text="#{cost.index.page.search}"> 검색</span>
+                      </button> -->
+                      <button type="button" id="btnReset" class="btn bg-gradient-primary">
+                        <i class="fas fa-sync-alt"></i><span th:text="#{cost.index.page.reset_search_condition}"> 초기화</span>
+                      </button>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="icheck-primary">
+                      <input type="checkbox" class="form-check" id="editMode">
+                      <label for="editMode" th:text="#{cost.index.page.edit_mode}">수정 모드</label>
+                    </div>
+                  </div>
+
+                  <div class="bim-btn-group">
+                    <button class="btn bg-gradient-info" data-toggle="modal" data-target='#paidCostAll'>
+                      <i class="fas fa-file-invoice-dollar"></i><span th:text="#{cost.index.page.paid_cost_all}">일괄 기성</span>
+                    </button>
+                    <button class="btn bg-gradient-info" id="exportXlsx">
+                      <i class="fas fa-file-excel"></i><span th:text="#{cost.index.page.print_xlsx}">xlsx 출력</span>
+                    </button>
+                    <button class="btn bg-gradient-info" id="exportCsv">
+                      <i class="fas fa-file-csv"></i><span th:text="#{cost.index.page.print_csv}">csv 출력</span>
+                    </button>
+                    <button id="btnUploadCostDetailFile" class="btn bg-gradient-info">
+                      <i class="fas fa-file-excel"></i><span th:text="#{cost.index.page.upload_cost_detail}">복합단가 업로드</span>
+                    </button>
+                    <button id="btnPrintCost" class="btn bg-gradient-info">
+                      <i class="fas fa-print"></i><span th:text="#{cost.index.page.print_cost}">PRINT</span>
+                    </button>
+                    <div id="divUploadExcel" style="display: none;">
+                      <input type="file" id="file" name="files" class="form-control" th:placeholder="#{cost.modal.cost_detail_file_upload.file_placeholder}"/>
+                      <button id="mBtnRemoveFile" type="button" class="btn bg-gradient-danger mr-2" th:text="#{cost.modal.cost_detail_file_upload.btn_delete_file}">파일 제거</button>
+                      <button id="mBtnUploadFile" type="button" class="btn bg-gradient-success mr-2" th:text="#{cost.modal.cost_detail_upload.btn_upload_file}">업로드 시작</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="connectedSortable dhx_sample-container mt-0" style="min-width:100%;max-width:100%;width:100%;min-height:315px;max-height:315px;height:315px;">
+                  <div class="dhx_sample-container__widget" id="gridCost" style="min-width:100%;max-width:100;width:100%;"></div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+<!--          <aside class="main-sidebar-right">-->
+<!--            <button class="btn-main-right-nav"><i class="fas fa-angle-double-right"></i></button>-->
+
+<!--            <article id="weatherArea" class="weather-area"  th:replace="main/weatherArea :: load()"/>-->
+<!--            <article id="progressArea" class="progress-chart"  th:replace="main/progressArea :: load()"/>-->
+<!--            &lt;!&ndash; <article id="coWorkIssueList" class="card-header" th:replace="main/coWorkIssueList :: load()"/> &ndash;&gt;-->
+<!--            <article id="issueList" class="card-header" th:replace="main/issueList :: load()"/>-->
+<!--            <article id="noticeList" class="card-header" th:replace="main/noticeList :: load()"/>-->
+<!--          </aside>-->
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+  </main>
+  <footer th:replace="layout/model_common :: footer()"></footer>
+</div>
+
+
+
+<!--<button type="button" class="main-intro-open"></button>-->
+<!--<div class="main-intro">-->
+<!--  <div class="inner">-->
+<!--    <div class="title">-->
+<!--      <h1 th:text="${projectName}">고속국도 400호선 양평~이천간 건설공사(제4공구)</h1>-->
+<!--      <button type="button" class="main-intro-close"></button>-->
+<!--    </div>-->
+
+<!--    <div class="top-box">-->
+<!--      <div class="in-date"><i class="tit-dot"></i><span th:text="${todayString}">2023년 5월 1일</span></div>-->
+<!--      <th:block th:if="${nowForecastDTO eq null}">-->
+<!--        <div class="in-weather">-->
+<!--          <p>현재 날씨 정보를 가져오지 못했습니다.</p>-->
+<!--        </div>-->
+<!--      </th:block>-->
+<!--      <th:block th:unless="${nowForecastDTO eq null}" th:object="${nowForecastDTO}">-->
+<!--        <div class="in-weather">-->
+<!--          <span><i th:class="*{getSkyStatus('icon')}"></i>날씨 <strong th:text="*{getSkyStatus('text')}">맑음</strong></span>-->
+<!--          <span><img src="/dist/img/sample/in-wd-ico1.png" alt="">온도 <strong>[[*{t1h}]]°</strong></span>-->
+<!--          <span><img src="/dist/img/sample/in-wd-ico2.png" alt="">습도 <strong th:text="|*{reh}%|">69%</strong></span>-->
+<!--          <span><img src="/dist/img/sample/in-wd-ico3.png" alt="">바람 <strong th:text="|*{getWindVector()}풍|">북동풍</strong><strong th:text="|*{wsd}m/s|">1.8m/s</strong></span>-->
+<!--        </div>-->
+<!--      </th:block>-->
+<!--    </div>-->
+
+<!--    <div class="section">-->
+<!--      <div class="img">-->
+<!--        <img class="d-block zoom-in-image" th:src="${projectImage}">-->
+<!--      </div>-->
+<!--      <div class="info">-->
+<!--        <div class="table-wrap">-->
+<!--          <span th:utext="*{dashboardContents}"></span>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <div class="section">-->
+<!--      <div class="in-graph">-->
+<!--        <div class="gp-list">-->
+<!--          <h2><i class="tit-dot"></i>공정 진행률</h2>-->
+<!--          <ul>-->
+<!--            <li>-->
+<!--              <div class="gp-box" id="piechart_total" style="width:250px;height:250px;"></div>-->
+<!--              <p>계</p>-->
+<!--            </li>-->
+<!--            <th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">-->
+<!--              <li th:each="row, info : ${workAmounts}">-->
+<!--                <div class="gp-box" th:id="|piechart_work0${(info.index+1)}|" style="width:200px;height:200px;"></div>-->
+<!--                <p id="btnSubProcess" th:data-id="${(info.index+1)}" th:text="${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}">토공</p>-->
+<!--                <th:block th:if="${row.processItemDepthList != null && row.processItemDepthList != '' && row.processItemDepthList.size() > 0}">-->
+<!--                  <div class="section divSubProcess" th:id="|divSubProcess${(info.index+1)}|" style="display:none">-->
+<!--                    <div class="status">-->
+<!--                      <div class="text-center">-->
+<!--                        <th:block th:each="row2, info : ${row.processItemDepthList}">-->
+<!--                          <th:block th:if="${info.index > 0}">-->
+<!--                            <br>-->
+<!--                          </th:block>-->
+<!--                          <span th:text="|ㆍ ${row2[0]}|">토공</span> : <span th:text="|${#numbers.formatDecimal(row2[2], 1, 'COMMA', 2, 'POINT')}%|">%</span>-->
+<!--                        </th:block>-->
+<!--                      </div>-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </th:block>-->
+<!--              </li>-->
+<!--            </th:block>-->
+<!--          </ul>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+
+
+<!--    <div class="section">-->
+<!--      <div class="status">-->
+<!--        <h2><i class="tit-dot"></i>공정 현황</h2>-->
+<!--        <div class="text-right">단위 (백만원)</div>-->
+<!--        <div class="">-->
+<!--          <table>-->
+<!--            <tbody>-->
+<!--            <tr>-->
+<!--              <th rowspan="2">구분</th>-->
+<!--              <th colspan="4">전체</th>-->
+<!--              <th colspan="7">당해년도</th>-->
+<!--              <th colspan="5">실시누계</th>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--              <th>계</th>-->
+<!--              <th>전년까지</th>-->
+<!--              <th>당해년도</th>-->
+<!--              <th>내년이월</th>-->
+<!--              <th>계획</th>-->
+<!--              <th>실시</th>-->
+<!--              <th>대비</th>-->
+<!--              <th>기성</th>-->
+<!--              <th>대비</th>-->
+<!--              <th>공정률</th>-->
+<!--              <th>기성률</th>-->
+<!--              <th>계획</th>-->
+<!--              <th>실시</th>-->
+<!--              <th>대비</th>-->
+<!--              <th>기성</th>-->
+<!--              <th>대비</th>-->
+<!--            </tr>-->
+<!--            <th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">-->
+<!--              <tr>-->
+<!--                <th>계</th>-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.totalAmount / 1000000), 1, 'COMMA')}">216,070,368,431</span></td>&lt;!&ndash; 전체 계 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.prevAmount / 1000000), 1, 'COMMA')}">29,450,000,000</span></td> &lt;!&ndash; 전체 전년까지 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.amount / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> &lt;!&ndash; 전체 당해년도 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger(((workAmountTotal.totalAmount - workAmountTotal.prevAmount - workAmountTotal.amount) / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> &lt;!&ndash; 전체 내년이월 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workPlanAmountSum / 1000000), 1, 'COMMA')}">216,070,368,431</span></td> &lt;!&ndash; 당해년도 계획 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.todayAmount / 1000000), 1, 'COMMA')}">29,450,000,000</span></td> &lt;!&ndash; 당해년도 실시 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 실시 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.paidCost / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> &lt;!&ndash; 당해년도 기성 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountPaidCostContrastSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 기성 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountYearTodayAmount, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 공정률 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountYearPaidCost, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 기성률 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workPlanAmountSum2 / 1000000), 1, 'COMMA')}"></span></td> &lt;!&ndash; 누적 계획 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTodaySum / 1000000), 1, 'COMMA')}">1,005,971,800</span></td> &lt;!&ndash; 누적 실시 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastTodaySum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 누적 실시 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountPaidCostSum / 1000000), 1, 'COMMA')}"></span></td> &lt;!&ndash; 누적 기성 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastPaidCostSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 누적 실시 대비 &ndash;&gt;-->
+<!--              </tr>-->
+<!--              <tr th:each="row, info : ${workAmounts}">-->
+<!--                <th th:text="|${(info.index+1)}. ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}|">1. 토공</th>-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.totalAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 전체 계 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.prevAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 전체 전년까지 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.amount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 전체 당해년도 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger(((row.totalAmount - row.prevAmount - row.amount) / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> &lt;!&ndash; 전체 내년이월 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.workPlanAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 당해년도 계획 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.progressAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 당해년도 실시 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.progressRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> &lt;!&ndash; 당해년도 실시 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.paidCost / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> &lt;!&ndash; 당해년도 기성 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.paidCostRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> &lt;!&ndash; 당해년도 기성 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.yearProgressAmount, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 공정률 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.yearPaidCost, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> &lt;!&ndash; 당해년도 기성률 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.workPlanAmountSum / 1000000), 1, 'COMMA')}"></span></td> &lt;!&ndash; 누적 계획 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.progressAmountSum / 1000000), 1, 'COMMA')}">47,620,168</span></td> &lt;!&ndash; 누적 실시 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.progressSumRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> &lt;!&ndash; 누적 실시 대비 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="${#numbers.formatInteger((row.paidCostSum / 1000000), 1, 'COMMA')}"></span></td> &lt;!&ndash; 누적 기성 &ndash;&gt;-->
+<!--                <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.paidCostSumRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> &lt;!&ndash; 누적 기성 대비 &ndash;&gt;-->
+<!--              </tr>-->
+<!--            </th:block>-->
+<!--            </tbody>-->
+<!--          </table>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('modalNotificationView', #{common.modal_title.main_alert_notice}, 'modal-lg')"></th:block>
+<!-- modal end -->
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('costDetail', #{cost.index.page.object_price_detail}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('paidCost', #{cost.index.page.cost_detail_add_update}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('paidCostAll', #{cost.index.page.paid_cost_all}, '')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalPrintJobSheet', #{common.modal_title.print}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalJobSheetList', #{common.modal_title.print}, 'modal-xl')"></th:block>
+<!-- modal end -->
+
+
+
+
+<div id="generalDataLoadingProc" th:replace="process/modal/generalDataLoadingProc :: generalDataLoadingProc()" />
+<div id="processingProc" th:replace="process/modal/processingProc :: processingProc()"/>
+<div id="uploadProgress" th:replace="process/modal/uploadProgress :: uploadProgress()"/>
+<div id="processingCodeValidation" th:replace="process/modal/processingCodeValidation :: processingCodeValidation()"/>
+<div th:include="layout/model_common :: script()"></div>
+
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.js"></script>
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/api.js"></script>
+<script src="/dist/js/common-gantt.js"></script>
+<script src="/plugins/XLSX/xlsx.js"></script>
+<script src="/plugins/fileDragAndDrop/jquery.ezdz.js"></script>
+<script src="/dist/js/classStack.js"></script>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js"></script>
+<script type="text/javascript" src="/dist/js/common-grid.js"></script>
+
+
+<link href="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.css" rel="stylesheet" type="text/css"/>
+<link href="/dist/css/common-gantt.css" rel="stylesheet" type="text/css"/>
+<link href="/plugins/fileDragAndDrop/jquery.ezdz.css" rel="stylesheet" type="text/css"/>
+
+
+
+<th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+  <script th:inline="javascript">
+    let workAmountTotalAmount = [[${workAmountTotal.totalAmount}]];
+    let workAmountTotalTodayAmount = [[${workAmountTodaySum}]];
+    var chartDataWorkTotal = [{"title":"","id":"piechart_total","data":[workAmountTotalAmount,workAmountTotalTodayAmount],"categories":["전체 계", "실시"],"colors":['#B6B6B6', '#E8964E']}];
+    let chartId = "";
+    let rowAmount = 0;
+    let rowTodayAmount = 0;
+    let chartDataWork = [];
+    let bun = 0;
+    let color = ["#86C246","#51AF8B","#51AF8B","#4D7E95","#3471B0","#7061AF","#7061AF","#AB67BF"];
+  </script>
+  <th:block th:each="row, info : ${workAmounts}">
+    <script th:inline="javascript">
+      chartId = "piechart_work0[[${(info.index+1)}]]";
+      rowAmount = [[${row.totalAmount}]];
+      rowTodayAmount = [[${row.progressAmountSum}]];
+      bun = [[${info.index}]];
+      chartDataWork[bun] = [{"title":"","id":chartId,"data":[rowAmount,rowTodayAmount],"categories":["전체 계", "실시"],"colors":['#B6B6B6', color[bun]]}];
+    </script>
+  </th:block>
+</th:block>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script type="text/javascript" src="/dist/js/chart.js"></script>
+
+
+
+<script th:inline="javascript">
+  let _holidayClassifiedWorkDTOs = [[${holidayClassifiedWorkDTOs}]];
+  let _taskExchangeIds = [[${taskExchangeIds}]];
+  let _allTaskExchangeIds = [[${allTaskExchangeIds}]];
+  let costIds = [];
+  let isPlaying = false;
+  let playingTasks = [];
+  // let _projectStartDate = [[${projectStartDate}]];
+  // let _projectEndDate = [[${projectEndDate}]];
+  // let _locale = [[${#locale}]];
+  // let _today = [[${today}]];
+
+  let showModelToday = function(){
+    showModelBeforeToAfterDate(moment(_today).add(-1, 'days'),  moment(_today).add( 1, 'days'));
+  }
+
+  let showModelUntilToday = function (){
+    showModelBeforeToAfterDate(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date, moment(_today).add( 1, 'days'));
+  }
+
+  let showModelBeforeToAfterDate = function (beforeDate, afterDate) {
+    let processItemId;
+    let exchangeIds = [];
+
+    console.log(beforeDate,afterDate);
+
+
+    for (let i = 0; i < _taskExchangeIds.length; i++) {
+      let t = _taskExchangeIds[i];
+
+      if (moment(t.endDate).isAfter(afterDate)) break;
+      if (moment(t.endDate).isBetween(beforeDate, afterDate)) exchangeIds = exchangeIds.concat(t.exchangeIds);
+
+      processItemId = t.processItemId;
+    }
+
+    if (exchangeIds.length > 0) {
+      HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+      HwvUtility.showSelectedNodeIds();
+    }
+
+    return processItemId;
+  }
+</script>
+<script>
+
+  $('.btn-gantt-chart').click(function () {
+    // $('main').addClass('hide-cost-area');
+    $('main').toggleClass('hide-gantt-chart2');
+    //window.setTimeout( function(){ hwv.resizeCanvas();}, 500);
+    console.log('test')
+  });
+
+
+  $(document).ready(function() {
+    let _this = $(this);
+    let _currentPopUpNo = 0;
+    let _userPopUpNotices = [];
+    const isWeatherDisplay = [[${isWeatherDisplay}]]
+
+    _this.find(".issue-tab").on("click", function(){
+      let thisTab = $(this).attr("aria-controls");
+
+      if(thisTab == 'tabIssurelist') _this.find('#moreViewIssueNormal').removeClass('d-none');
+      else _this.find('#moreViewIssueNormal').addClass('d-none');
+    });
+
+    $('.nav-toggle').on('click',function(){
+      window.setTimeout( function(){ hwv.resizeCanvas();}, 300);
+    });
+
+    let _projectStartDate = "[[${projectStartDate}]]";
+    let _projectEndDate = "[[${projectEndDate}]]";
+    let _locale = "[[${#locale}]]";
+
+    document.getElementById('startCalender').valueAsDate;
+    document.getElementById('endCalender').valueAsDate;
+
+    // 공정, 내역 layer 날짜데이터 초기 세팅(프로젝트 시작일~종료일)
+    $("#startCalender").val( moment(_projectStartDate).format("YYYY-MM-DD"));
+    $("#endCalender").val( moment(_projectEndDate).format("YYYY-MM-DD"));
+
+    window.localStorage.setItem("startDate", $("#startCalender").val());
+    window.localStorage.setItem("endDate", $("#endCalender").val());
+    window.localStorage.setItem("viewPage", "processMainPageView");
+
+    $("#startCalender").on("change", function(){
+      window.localStorage.setItem("startDate", $("#startCalender").val());
+    });
+
+    $("#endCalender").on("change", function(){
+      window.localStorage.setItem("endDate", $("#endCalender").val());
+    });
+
+    $("#processMainPageView").on("click", function(){
+      $('#startCalender').val( window.localStorage.getItem("startDate") );
+      $('#endCalender').val( window.localStorage.getItem("endDate") );
+      window.localStorage.setItem("viewPage", "processMainPageView");
+    });
+
+    const sliderProcess = new dhx.Slider("sliderProcess", {
+      min          : 0,
+      max          : [[${duration}]],
+      step         : 1,
+      value        : 0,
+      label        : '[[#{process.simulation.page.task_duration}]]',
+      labelPosition: 'left',
+      tick         : 1,
+      majorTick    : [[${majorTick}]],
+      tickTemplate : tickTemplate,
+      tooltip      : true
+    });
+
+    let projectStartDate = '[[${projectStartDate}]]';
+    let timerId;
+
+    function tickTemplate(value) {
+      return value;
+    }
+
+    let procSlider = function (value, oldValue, isRange) {
+      // let afterDate = "";
+      // let beforeDate = "";
+      // if($("#startCalender").val() === ''){
+      let  afterDate = moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date).add(value + 1, 'days');
+      /*
+      }
+      else{
+         afterDate = moment($("#startCalender").val()).add(value + 1, 'days');
+      }
+*/
+      // if($("#endCalender").val() === ''){
+      let beforeDate = moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date).add(oldValue, 'days');
+      // }
+      // else{
+      //   beforeDate = moment($("#endCalender").val()).add(oldValue, 'days');
+      // }
+      // console.log('[dionysos] gantt date', beforeDate.format('YYYY-MM-DD'), afterDate.format('YYYY-MM-DD'), value, oldValue);
+
+      // if(!moment($("#startCalender").val()).add(0, 'days').isSameOrAfter(beforeDate)  ) {
+      if(oldValue !== 0){
+        console.log('[dionysos] gantt date', $("#startCalender").val(), beforeDate.format('YYYY-MM-DD'), value, oldValue);
+        if (timerId > 0) { // player
+          updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(beforeDate.format('YYYY-MM-DD'), afterDate.format('YYYY-MM-DD')));
+        } else {  // slider control
+          if (value > oldValue) {
+            if (oldValue == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+            updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(beforeDate.format('YYYY-MM-DD'), afterDate.format('YYYY-MM-DD')));
+          } else {
+            HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+            updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date, afterDate.format('YYYY-MM-DD')));
+          }
+        }
+      }
+    }
+
+    sliderProcess.events.on("change", procSlider);
+
+    let showModelBeforeToAfterDate = function (beforeDate, afterDate) {
+      let processItemId;
+      let exchangeIds = [];
+
+      for (let i = 0; i < _taskExchangeIds.length; i++) {
+        let t = _taskExchangeIds[i];
+        // console.log(t)
+
+        if (moment(t.endDate).isAfter(afterDate)) break;
+        if (moment(t.endDate).isBetween(beforeDate, afterDate)) exchangeIds = exchangeIds.concat(t.exchangeIds);
+        processItemId = t.processItemId;
+      }
+
+      if (exchangeIds.length > 0) {
+
+        HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+        // chgColorProcessStatus(exchangeIds, currentDay);
+        HwvUtility.showSelectedNodeIds();
+      }
+
+      return processItemId;
+    }
+
+    _this.find('#playDayInterval,#playTimeInterval').on('change',function(){
+      if(timerId > 0) {
+        clearInterval(timerId);
+        isPlaying = false;
+        setSliderTimer();
+      }
+    });
+
+    let setSliderTimer = function(){
+      if (sliderProcess.getValue() == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+
+      sliderProcess.disable();
+
+      let startDay = sliderProcess.getValue()[0]
+      let endDay = sliderProcess.config.max
+
+      let startDate = _projectStartDate;
+      let endDate = _projectEndDate;
+
+      if (document.getElementById("startCalender").value) {
+        const startDay2 = Number.parseInt((document.getElementById("startCalender").valueAsDate - moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date)) / (1000*60*60*24));
+        if (startDay < startDay2) {
+          startDay = startDay2;
+          startDate = document.getElementById("startCalender").value;
+        }
+      }
+      if (document.getElementById("endCalender").value) {
+        const endDay2 = Number.parseInt(document.getElementById("endCalender").valueAsDate - moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date)) / (1000*60*60*24);
+        if (endDay > endDay2 && endDay2 > startDay) {
+          endDay = endDay2;
+          endDate = document.getElementById("endCalender").value;
+        }
+      }
+      sliderProcess.setValue(startDay);
+
+      if (!isPlaying) {
+        playingTasks = _allTaskExchangeIds.filter((task) => {
+          // playingTasks = gantt.$data._eachItemMainRangeCache.filter((task) => {
+          tStartDate = moment(task.startDate);
+          tEndDate = moment(task.endDate);
+          // tStartDate = moment(task.start_date.toString("YYYY-MM-DD"));
+          // tEndDate = moment(task.end_date.toString("YYYY-MM-DD"));
+          // return /* task.type === 'task' && task.phasingCode !== "" && */
+
+          return (tStartDate.isSameOrAfter(startDate) && tEndDate.isSameOrBefore(endDate));
+
+        })
+        // playingTasks = _taskExchangeIds;
+        let exchangeIds = [];
+        // 시뮬레이션 대상을 투명한 초록색으로 변경한다.
+        /*
+        playingTasks.forEach((task) => {
+          exchangeIds = exchangeIds.concat(task.exchangeIds)
+        })
+        if (exchangeIds.length > 0) {
+          HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+          let nodeIds = HwvUtility.nodeIdsFromExchangeIds;
+          HwvUtility.setOpacitySelectedNodeIds(nodeIds, 0.4);
+          HwvUtility.setFaceColorSelectedNodeIds(nodeIds, Communicator.Color.green())
+        }
+        */
+      }
+
+      let playDayInterval = parseInt(_this.find("#playDayInterval").val());
+      let playTimeInterval = parseFloat(_this.find("#playTimeInterval").val());
+      timerId = setInterval(() => {
+        let currentDay = sliderProcess.getValue()[0];
+
+        let currentDate =  moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date).add(currentDay, 'days').format("YYYY-MM-DD");
+        // 완료 Task를 색 복원
+        /*
+        let completed = playingTasks.filter((task) => moment(task.endDate).isSameOrBefore(currentDate))
+        let exchangeIds = [];
+        completed.forEach((task) => {
+          exchangeIds = exchangeIds.concat(task.exchangeIds)
+        })
+        if (exchangeIds.length > 0) {
+          HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+          let nodeIds = HwvUtility.nodeIdsFromExchangeIds;
+          HwvUtility.setOpacitySelectedNodeIds(nodeIds, 1.0);
+          HwvUtility.unsetFaceColorSelectedNodeIds(nodeIds);
+        }
+        // 완료 Task를 배열에서 제거
+        completed.forEach((task) => {
+          let index = playingTasks.findIndex(t => t.processItemId === task.processItemId)
+          if (index > -1) { playingTasks.splice(index, 1); }
+        })*/
+        // 시작 Task를 투명도 복원하고 초록색으로 변경
+        let started = playingTasks.filter((task) => moment(task.startDate).isSameOrBefore(currentDate))
+        exchangeIds = [];
+        started.forEach((task) => {
+          exchangeIds = exchangeIds.concat(task.exchangeIds)
+        })
+        if (exchangeIds.length > 0 || playingTasks.length < 1) {
+          HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+          let nodeIds = HwvUtility.nodeIdsFromExchangeIds;
+          HwvUtility.setOpacitySelectedNodeIds(nodeIds, 1.0);
+          // HwvUtility.setFaceColorSelectedNodeIds(nodeIds, Communicator.Color.green())
+        }
+        if (currentDay >= endDay) {
+          stopPlay();
+          return;
+        }
+        let nextDay = currentDay + playDayInterval;
+        sliderProcess.setValue(nextDay);
+      }, playTimeInterval * 1000);
+      isPlaying = true;
+
+      _this.find("#play").addClass("d-none");
+      _this.find("#pause").removeClass("d-none");
+    }
+
+
+
+
+    function stopPlay() {
+      clearInterval(timerId);
+      timerId = 0;
+      isPlaying = false;
+      sliderProcess.enable();
+      _this.find("#pause").addClass("d-none");
+      _this.find("#play").removeClass("d-none");
+    }
+
+    _this.find("#play").on("click", function () {
+      if (!isPlaying)  {
+        sliderProcess.setValue(0);
+        // 모델상태 색상변경
+        HwvUtility.getNodeIdsFromExchangeIds(allTaskExchangeIds);
+        let nodeIds = HwvUtility.nodeIdsFromExchangeIds;
+        chgColorProcessStatus(allTaskExchangeIds, currentDay);
+      }
+      setSliderTimer();
+    });
+
+    _this.find("#pause").on("click", function () {
+      clearInterval(timerId);
+      timerId = 0;
+      $(this).addClass("d-none");
+      _this.find("#play").removeClass("d-none");
+    });
+
+    _this.find("#stop").on("click", function () {
+      stopPlay();
+      sliderProcess.setValue(0);
+      HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 1.0);
+    });
+
+    // let setPeriodTimer = function() {
+    //   let startDay = (document.getElementById("startCalender").valueAsDate - moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date)) / (1000*60*60*24);
+    //   let endDay = (document.getElementById("endCalender").valueAsDate - moment(gantt._getDatastores()[0]._eachItemMainRangeCache[0].start_date)) / (1000*60*60*24);
+    //   sliderProcess.setValue(startDay)
+
+    //   if (sliderProcess.getValue() == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+
+    //   sliderProcess.disable();
+
+    //   let playDayInterval = parseInt(_this.find("#playDayInterval").val());
+    //   let playTimeInterval = parseFloat(_this.find("#playTimeInterval").val());
+
+    //   timerId = setInterval(() => {
+    //     let currentDay = parseInt(sliderProcess.getValue());
+
+    //     if (currentDay >= endDay) {
+    //       sliderProcess.setValue(endDay);
+    //       _this.find("#periodStop").trigger("click");
+    //       return;
+    //     }
+
+    //     let nextDay = currentDay + playDayInterval;
+
+    //     sliderProcess.setValue(nextDay);
+    //   }, playTimeInterval * 1000);
+
+    //   $(this).addClass("d-none");
+    //   _this.find("#periodStop").removeClass("d-none");
+    // }
+
+    // _this.find("#periodPlay").on("click", setPeriodTimer)
+
+    // _this.find("#periodStop").on("click", function() {
+    //   clearInterval(timerId);
+    //   timerId = 0;
+    //   $(this).addClass("d-none");
+    //   _this.find("#periodPlay").removeClass("d-none");
+    //   sliderProcess.enable();
+    // });
+
+    // $('.btn-main-right-nav').click(function () {
+    //   $('main').toggleClass('hide-right-sidebar');
+    //   //if ($('main').hasClass('hide-right-sidebar'));
+    //   window.setTimeout( function(){ hwv.resizeCanvas();}, 500);
+    // });
+
+
+
+    _this.on('show.bs.modal', '#modalNotificationView', function () {
+      reqGet("/mainModal/notificationView?alertId=" +_userPopUpNotices[_currentPopUpNo]["id"] + "&totalCnt=" + _userPopUpNotices.length + "&no=" + _currentPopUpNo
+              , function (data) {
+                $('#modalNotificationView').find('.modal-body').html(data);
+                refreshTooltip();
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+              }, "html");
+    });
+
+    _this.on('hide.bs.modal', '#modalNotificationView', function () {
+      $('#mBtnConfirm').off("click");
+      $('#modalNotificationView').find('.modal-body').html('');
+    });
+
+    _this.on('hidden.bs.modal', '#modalNotificationView', function () {
+      _currentPopUpNo ++;
+      if(_currentPopUpNo < _userPopUpNotices.length) {
+        modalShowAndDraggable('#modalNotificationView');
+      }
+    });
+
+    _this.on("click", "a[id^=\'aMainNotice_\']", function (){
+      let link = "/common/moveToNotice/" + $(this).data("id");
+      let isNewTab = $(this).data("is-new-tab");
+      location.href = link;
+    });
+
+    _this.on("click", "a[id^=\'aMainCoWorkIssue_\']", function (){
+      window.open("/common/moveToCoWorkIssue/" + $(this).data("id"));
+    });
+
+    _this.on("click", "a[id^=\'aMainIssue_\']", function (){
+      location.href = "/common/moveToIssue/" + $(this).data("id");
+    });
+
+    let getUserNotice = function(){
+      reqGet('/mainApi/getUserPopUpNotice'
+              , function (data) {
+                if (data.result) {
+                  _userPopUpNotices = $.parseJSON(data.model);
+                  if(_userPopUpNotices.length > 0) {
+                    modalShowAndDraggable('#modalNotificationView');
+                  }
+                }
+                else toastr.error(data.message);
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              }, "json");
+    }
+
+    function loadWeather() {
+      if (isWeatherDisplay) {
+        reqGet('/main/weather', function (data) {
+          $('.weather-area').replaceWith(data);
+        }, function (xhr) {
+          console.log('xhr', xhr);
+        });
+      } else {
+        $('.weather-area').remove();
+      }
+
+    }
+
+    getUserNotice();
+    loadWeather();
+
+    $("#moveToDate").datepicker({
+      dateFormat: 'yy-mm-dd',
+      showOn: "button",
+      buttonImage: "/dist/img/calendar-alt-regular.svg",
+      minDate: moment(_projectStartDate).format("YYYY-MM-DD"),
+      maxDate: moment(_projectEndDate).format("YYYY-MM-DD"),
+      defaultDate: moment().format("YYYY-MM-DD")
+    });
+
+    // region move date event
+    _this.on("click", "#btnMoveSelectedDay", function () {
+      showDate(gantt, moment($("#moveToDate").val()).format("YYYY-MM-DD"));
+      hideTooltip($(this));
+    });
+
+    _this.on("click", "#btnMoveToday", function () {
+      showDate(gantt, moment().format("YYYY-MM-DD"));
+      hideTooltip($(this));
+    });
+
+    // region collapse and expand event
+
+    _this.on("click", "#btnCollapseAll", function () {
+      gantt.eachTask(function (task) {
+        task.$open = false;
+      });
+      gantt.render();
+      hideTooltip($(this));
+    });
+
+    _this.on("click", "#btnExpendAll", function () {
+      gantt.eachTask(function (task) {
+        task.$open = true;
+      });
+      gantt.render();
+      hideTooltip($(this));
+    });
+
+    _this.on("click", "#btnZoomFit", function () {
+      gantt.ext.zoom.setLevel("month");
+      hideTooltip($(this));
+    });
+
+    _this.on("click", "#btnZoomOut", function () {
+      gantt.ext.zoom.zoomOut();
+    });
+
+    _this.on("click", "#btnZoomIn", function () {
+      gantt.ext.zoom.zoomIn();
+    });
+
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    let _isError = false;
+    let _errorMessage = "";
+
+    let _projectStartDate = "[[${projectStartDate}]]";
+    let _projectEndDate = "[[${projectEndDate}]]";
+    let _locale = "[[${#locale}]]";
+
+    let initGlobalObject = function () {
+      _isError = false;
+      _errorMessage = "";
+    }
+
+    // region function
+    let getExchangeIdsAndSelectModel = function (id) {
+      reqGet("/processApi/exchangeIds/" + gantt.getTask(id).phasingCode
+              , function (data) {
+                let _exchangeIds = [];
+                $.each($.parseJSON(data.model), function(idx1, item1){
+                  $.each(item1.exchangeIds, function(idx2, item2){
+                    _exchangeIds.push(item2);
+                  });
+                });
+                HwvUtility.selectNodesFromExchangeIds(_exchangeIds);
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              }, "json");
+    }
+    // region initiating & data loading
+
+    let refreshGantt = function (model) {
+      gantt.clearAll();
+      todayMarker(gantt);
+      gantt.parse(model);
+      gantt.eachTask(function (task) {
+        task.$open = true;
+      });
+      gantt.render();
+
+      gantt.ext.zoom.setLevel("month");
+      showDate(gantt, moment().format("YYYY-MM-DD"));
+      $("#moveToDate").val(moment().format("YYYY-MM-DD"));
+    }
+
+    let getSchedule = function (isUpload) {
+
+      showGeneralDataLoadingProc(); // 일반 데이터 로딩
+
+      reqGet("/processApi/ganttDataInit"
+              , function(res) {
+                if (res.result) {
+                  refreshGantt(res.model);
+                  hideGeneralDataLoadingProc();
+                }
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              }, "json");
+    }
+
+    let init = function () {
+      initGlobalObject();
+      initHoliday(gantt);
+      getSchedule(false);
+
+      // 공정, 내역 layer 날짜데이터 초기 세팅(프로젝트 시작일~종료일)
+      $("#startCalender").datepicker( moment(_projectStartDate).format("YYYY-MM-dd"));
+      $("#endCalender").datepicker( moment(_projectEndDate).format("YYYY-MM-dd"));
+
+    }
+
+    // endregion initiating & data loading
+
+    // endregion function
+
+    // region gantt config
+    const formatter = gantt.ext.formatters.durationFormatter({ enter: "day", store: "day", short:true, format: "day" });
+    const linksFormatter = gantt.ext.formatters.linkFormatter({ durationFormatter: formatter });
+
+    const textEditor = {type: "text", map_to: "text"};
+    const dateEditor = {type: "date"
+      , map_to: "start_date"
+      , min: new Date(moment(_projectStartDate).format("YYYY-MM-dd"))
+      , max: new Date(moment(_projectEndDate).format("YYYY-MM-dd"))
+    };
+    const durationEditor = {type: "number", map_to: "duration", min:0, max: 10000};
+    const predecessorEditor = {type: "predecessor", map_to: "auto", formatter:linksFormatter};
+
+    gantt.plugins({
+      marker: true,
+      tooltip: true
+    });
+
+    // region specifying the date format
+
+    gantt.i18n.setLocale(getGanttLocale(_locale));               // gantt language en/kr/cn
+    gantt.config.date_format = getGanttConfigDateFormat(_locale);          // date format
+    gantt.config.task_date = getGanttConfigDateFormat(_locale);          // date format
+    //gantt.config.start_date = new Date(_projectStartDate);        // 프로젝트 시작일로 맞춤
+    //gantt.config.end_date = new Date(_projectEndDate);            // 프로젝트 종료일로 맞춤
+    gantt.config.show_tasks_outside_timescale = false;    //
+    gantt.config.min_column_width = 40;
+    gantt.config.scale_height = 20 * 3;
+    gantt.config.row_height = 30;
+
+    // endregion specifying the date format
+
+    // region holiday & holiday color setting
+    gantt.config.work_time = true;
+    gantt.templates.timeline_cell_class = function (task, date) {
+      if (!gantt.isWorkTime({date: date, task:task})) return "HOLIDAY";
+      return "";
+    };
+    // endregion holiday & holiday color setting
+
+    // region gantt layout
+    gantt.config.columns = [
+      { name: "wbs", label: "[[#{process.index.gantt_column.wbs}]]", min_width: 50, width: 50, template: gantt.getWBSCode, resize:true },
+      { name: "text", label: "[[#{process.index.gantt_column.task_name}]]", tree: true, min_width: 180, width: 200, resize:true, editor:textEditor },
+      { name: "start_date", label:"[[#{process.index.gantt_column.start_date}]]", align: "center", width: 100, resize:true, editor:dateEditor },
+      { name: "duration", label:"[[#{process.index.gantt_column.duration}]]", align: "center", width: 40, resize:true, editor:durationEditor },
+      { name: "progress", label: "[[#{process.index.gantt_column.progress}]]", align: "center", width: 40, resize:true, template: i => `${i.progress.toFixed(2)}%`},
+      { name: "predecessors", label: "[[#{process.index.gantt_column.predecessors}]]",  align: "center", width: 80, editor:predecessorEditor, resize:true,
+        template: function(task){
+          let links = task.$target;
+          let labels = [];
+          for(let i = 0; i < links.length; i++){
+            let link = gantt.getLink(links[i]);
+            labels.push(linksFormatter.format(link));
+          }
+          return labels.join(", ")
+        } }
+    ];
+
+    gantt.config.layout = {
+      css: "gantt_container",
+      cols: [
+        {
+          width:300,
+          min_width: 300,
+          rows:[
+            {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"},
+            {view: "scrollbar", id: "gridScroll", group:"horizontal"}
+          ]
+        },
+        {resizer: true, width: 1},
+        {
+          rows:[
+            {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
+            {view: "scrollbar", id: "scrollHor", group:"horizontal"}
+          ]
+        },
+        {view: "scrollbar", id: "scrollVer"}
+      ]
+    };
+    // endregion gantt layout
+
+    // region gantt functionality settting
+    gantt.config.auto_scheduling = false;                     // enables auto scheduling
+    gantt.config.auto_scheduling_strict = false;               // enables the auto scheduling mode, in which tasks will always be rescheduled to the earliest possible date
+    gantt.config.auto_scheduling_initial = false;             // defines whether gantt will do auto-scheduling on data loading/parsing
+    gantt.config.auto_scheduling_compatibility = false;        // disables usage of time constraints for tasks
+    gantt.config.schedule_from_end = false;
+    gantt.config.smart_rendering = true;
+    gantt.config.sort = false;
+    gantt.config.branch_loading = true;                     // task별 동적 로딩
+    gantt.config.branch_loading_property = "hasChild";
+    gantt.config.order_branch = true;
+    gantt.config.order_branch_free = false;
+    gantt.config.highlight_critical_path = false;
+    // endregion gantt functionality settting
+
+    // endregion gantt config
+
+    // region initializing gantt
+    gantt.ext.zoom.init(zoomConfig(gantt, _locale));
+    gantt.config.readonly = true;
+    gantt.init("divGantt");
+
+    // endregion  initializing gantt
+    init();
+
+    gantt.attachEvent("onTaskClick", function(id,e){
+      gantt.selectTask(id);
+      getExchangeIdsAndSelectModel(id);
+      return true;
+    });
+  });
+</script>
+
+<script>
+  $(function() {
+    $('.knob').knob();
+  });
+</script>
+
+<script>
+  $(function(){
+    $(window).bind("resize",function(){
+      $("main").addClass("hide-right-sidebar");
+    });
+
+    // 유저
+    // 좌측 사이드바, 우측 사이드바, 하단 영역 접기 설정을 적용(유저 설정에 의함)
+    // let svrSumSideMenu =  [[${#session.getAttribute('scopedTarget.userInfo')?.sideMenu}]]; // 사이드 메뉴 접기 설정 값
+    // svrSumSideMenu = parseInt(svrSumSideMenu);
+    // 좌측 사이드바 메뉴 설정은 layout/common.html에서 진행한다.
+    // if( (svrSumSideMenu & 2) === 2) { $("main").addClass("hide-right-sidebar"); }else{ $("main").removeClass("hide-right-sidebar"); }
+    // if( (svrSumSideMenu & 4) === 4) { $("main").addClass("hide-gantt-chart");   }else{ $("main").removeClass("hide-gantt-chart");   }
+
+    // 메인화면 설정
+    function setMainLayout() {
+      // 프로젝트웍스 logo 삭제
+      $(".nav-brand .nav-toggle").remove();
+
+      $("body .wrapper aside").hide();
+
+      // 중앙 content 영역 좌측 margin 0으로 설정
+      $('.content-wrapper').css('margin-left',0);
+
+      // 하단 footer 영역 좌측 margin 0으로 설정
+      $('.main-footer').css('margin-left',0);
+
+      // article 영역 클래스 변경(width=100%)
+      $('article').removeClass('main-content-area').addClass('main-content-area-employer');
+
+      // 간트차트,기성 영역 > 넓이 100%
+      $("#ganttChartArea").css("width","100%");
+      $("#costArea").css("width","100%");
+
+      $(".dhx_grid-body").css("width","100%");
+    }
+
+    setMainLayout();
+  });
+</script>
+<script th:inline="javascript">
+
+  $(function () {
+    const _this = $(this);
+    const numberColId = ["firstCount", "complexUnitPrice"];
+    const editableColId = ["firstCountFormula", "firstCount", "complexUnitPrice", "firstCountUnit"];
+
+    let _fileText = '[[#{cost.modal.cost_detail_file_upload.message_excel_format}]]';
+    let _openDivUploadFile = false;
+    let _rows = {};
+    let _endParse = false;
+
+    // excel upload param
+    let _executeBatchIdx = 0;
+    let _totalExecuteCnt = 0;
+    let _batchSize = 1000;
+    let _newProcessInfoId = 0;
+    let _works = [];
+    let _taskVOs = [];
+    let _taskLinkVOs = [];
+    let _excelJsonData = "";
+
+    _this.find("#startDate, #endDate").datepicker(datepickerFormat);
+
+    _this.find("#editMode").on("click", function () {
+      let isEditMode = $("#editMode").is(":checked");
+
+      if(isEditMode) toastr.info([[#{cost.index.page.input_can_formula_count_unit_price}]]);
+      else toastr.info([[#{cost.index.page.input_can_not_formula_count_unit_price}]]);
+
+      gridCost.paint();
+    });
+
+
+    _this.find("#btnReset").on("click", function () {
+      $("#gridWorkId").find("#gridWorkIdList").val(0);
+      _this.find("#gridPhasingCode").val("");
+      _this.find("#gridTaskName").val("");
+      _this.find("#gridStartDate").val("");
+      _this.find("#gridEndDate").val("");
+      window.localStorage.setItem("startDate", $("#gridStartDate").val());
+      window.localStorage.setItem("endDate", $("#gridEndDate").val());
+      _this.find("#btnCalcPaidCost").trigger("click");
+    });
+
+    $('#paidCost').on('show.bs.modal', function (e) {
+      let processItemId = $(e.relatedTarget).data("id");
+
+      reqGet("/costModal/paidCost/" + processItemId
+              , function (data) {
+                $('#paidCost').find('.modal-body').html(data);
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+              }, "html");
+    });
+
+    $('#costDetail').on('show.bs.modal', function (e) {
+      let processItemId = $(e.relatedTarget).data("id");
+
+      reqGet("/costModal/costDetail/" + processItemId
+              , function (data) {
+                $('#costDetail').find('.modal-body').html(data);
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+              }, "html");
+    });
+
+    $('#paidCostAll').on('show.bs.modal', function () {
+
+      reqGet("/costModal/paidCostAll/[[${processInfo.id}]]"
+              , function (data) {
+                $('#paidCostAll').find('.modal-body').html(data);
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+              }, "html");
+    });
+
+    const gridCost = new dhx.TreeGrid("gridCost", {
+      columns: [
+        {
+          id        : "processItemId"
+          , hidden  : true
+          , header  : [{text: "ID", rowspan: 2}]
+          , editable: false
+        },
+        {
+          id        : "exchangeId"
+          , hidden  : true
+          , header  : [{text: "exchangeId", rowspan: 2}]
+          , editable: false
+        },
+        {
+          width : 500,
+          id  : "taskName", header: [{text: [[#{cost.index.page.phasing_name}]], align: "center"}, {text: "<input id='gridTaskName' class='form-control'>"}]
+          , sortable  : false
+          , mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+          , footer: [{text: [[#{cost.index.page.aggregation}]], align: "center"}]
+        },
+        {
+          width : 80,
+          id          : "chkboxShowModel"
+          , header    : [{text: "표시", align: "center"}, {text: "<input id='costAllCheck' type='checkbox' checked>", align: "center"}]
+          , type      : "boolean"
+          , sortable  : false
+          , editable  : true
+          , mark      : function (cell, data) {
+            return "process-col-disabled";
+          }
+          , footer: [{text: "", align: "center"}]
+        },
+        {
+          width : 120,
+          id      : "workName"
+          , header: [{text: [[#{cost.index.page.work}]], align: "center"}, {text: "<div id='gridWorkId'></div>"}]
+          , align: "center"
+          , sortable  : false
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id      : "phasingCode",
+          header  : [{text: [[#{cost.index.page.phasing_code}]], align: "center"}, {text: "<input id='gridPhasingCode' class='form-control'>"}]
+          , align: "center"
+          , hidden : true
+          , sortable  : false
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          width : 100,
+          id  : "progressRate", header: [{text: [[#{cost.index.page.process_rate}]], align: "center"}, {content: "inputFilter"}]
+          , type: "number"
+          , format: "#.00"
+          , template: function(i){ if (isNaN(i)){ return `0.00%`;	} else{	return `${i}%`;	}}
+          , mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          width : 100,
+          id  : "duration", header: [{text: [[#{cost.index.page.working}]], align: "center"}, {text: [[#{cost.index.page.duration}]], align: "center"}], type: "number", format: "#,#"
+          , mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          width : 140,
+          id  : "startDate", header: [{text: [[#{cost.index.page.process_start_date}]], align: "center"}, {text: "<input type='date' id='gridStartDate' width='100' class='form-control'>"}]
+          , align: "center"
+          , sortable  : false
+          , mark: function (cell, data) {
+            return "process-col-disabled";
+          }
+          , footer: ""
+          // , footer: [{text: [[${projectStartDate}]]}]
+        },
+        {
+          width : 140,
+          id  : "endDate", header: [{text: [[#{cost.index.page.process_end_date}]], align: "center"}, {text: "<input type='date' id='gridEndDate' class='form-control'>"}]
+          , align: "center"
+          , sortable  : false
+          , mark: function (cell, data, row, col) {
+            return "process-col-disabled";
+          }
+          , footer: ""
+          // , footer: [{text: [[${projectEndDate}]]}]
+        },
+        {
+          id    : "firstCountFormula", header: [{text: [[#{cost.index.page.first_count}]], align: "center", colspan: 3}, {text: [[#{cost.index.page.formula}]], align: "center"}]
+          , hidden : true
+        },
+        {
+          width : 80,
+          id    : "firstCount", header: ["", {text: [[#{cost.index.page.first_count_value_a}]], align: "center"}], type: "number", format: "#,#"        },
+        {
+          width : 80,
+          id    : "firstCountUnit", header: ["", {text: [[#{cost.index.page.first_count_unit}]], align: "center"}]},
+        {
+          width : 120,
+          id               : "complexUnitPrice", header: [{text: [[#{cost.index.page.complex_unit_price_b}]], align: "center", rowspan: 2}]
+          , type           : "number"
+          , format         : "#,#"
+          , htmlEnable     : true
+          , template       : function (cell, row) {
+            return `<a href='#' data-toggle="modal" data-target='#costDetail' data-id='${row.processItemId}'>${cell}</a>`;
+          }
+          , tooltipTemplate: costDetailTemplate
+        },
+        {
+          width : 160,
+          id      : "taskCost", header: [{text: [[#{cost.index.page.task}]], align: "center", colspan: 3}, {text: [[#{cost.index.page.task_cost_ab}]], align: "center"}]
+          , type  : "number"
+          , format: "#,#"
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        /*{
+          width : 140,
+          id                : "totalTaskCost"
+          , header: ["", {text: [[#{cost.index.page.total_task_cost}]], align: "center"}]
+          , type  : "number"
+          , format: "#,#"
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },*/
+
+        {
+          width : 160,
+          id                : "progressAmount"
+          , header: ["",{text: [[#{cost.index.page.progress_amount}]], align: "center"}]
+          , type            : "number", format: "#,#", minWidth: 117
+          , mark            : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          width : 160,
+          id                : "paidCost"
+          // , header: [{text: [[#{cost.index.page.paid_cost}]], align: "center", rowspan: 2}]
+          , header: ["",{text: [[#{cost.index.page.paid_cost}]], align: "center"}]
+          , type            : "number", format: "#,#", minWidth: 117
+          , mark            : function (cell, data) {
+            return "process-col-disabled";
+          }
+          , htmlEnable      : true
+          , template        : function (cell, row) {
+            return (row.ganttTaskType === "TASK")?`<a href='#' data-toggle="modal" data-target='#paidCost' data-id='${row.processItemId}'>${cell}</a>`:`${cell}`;
+          }, tooltipTemplate: paidCostTemplate
+        },
+
+        {
+          width : 150,
+          id      : "calculateCostResult"
+          ,hidden : true
+          , header: [{text: [[#{cost.index.page.calculate_cost_result}]], align: "center"}, {content: "selectFilter"}]
+          , mark  : function (cell, data) {
+            return "process-col-disabled";
+          }
+        },
+        {
+          id      : "modelViewer"
+          ,hidden : true
+          , header: [{text: [[#{cost.index.page.model}]], rowspan: 2 , align: "center"}]
+          , htmlEnable     : true
+          , template       : function (cell, row) {
+            return (row.ganttTaskType !== "TASK")?"":`<button type='button' id='btnModelViewer' data-id='${row.processItemId}'><i class='fas fa-layer-group'></i></button>`;
+          }
+        },
+      ],
+      rowCss: function (row) {
+        return costIds.includes(row.id) ? 'cost_row' : '';
+      },
+      autowidth   : true,
+      // adjust      : true,
+      autoEmptyRow: false,
+      resizable   : true,
+      selection   : true
+    });
+
+    function costDetailTemplate(value, row) {
+      if (value == '0') return value;
+      let result = '';
+      reqGetSync(`/costApi/getProcessItemCostDetail/${row.processItemId}/C`, function (data) {
+        if (data.result) {
+          let model = JSON.parse(data.model);
+
+          model.forEach(item => {
+            result += `<tr>
+                        <td>${item.code}</td>
+                        <td>${item.name}</td>
+                        <td>${item.isFirst ? 'v' : ''}</td>
+                        <td>${item.count}</td>
+                        <td>${item.unit}</td>
+                        <td>${numberWithCommas(item.unitPrice)}</td>
+                        <td>${numberWithCommas(item.cost)}</td>
+                      </tr>`;
+          })
+        }
+      });
+
+      return `<table>
+                <thead>
+                <tr>
+                  <th>`+[[#{cost.modal.cost_detail.detail_work_code}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.detail_work_name}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.count}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first_count_unit}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.first_count_unit_price}]]+`</th>
+                  <th>`+[[#{cost.modal.cost_detail.cost}]]+`</th>
+                </tr>
+                </thead>
+                <tbody>
+                  ${result}
+                </tbody>
+              </table>`;
+
+    }
+
+    function paidCostTemplate(value, row) {
+      if(row.ganttTaskType !== "TASK"){
+        return false;
+      }
+      if (value == '0') return value;
+      let result = '';
+      reqGetSync(`/costApi/getProcessItemCostPay/${row.processItemId}`, function (data) {
+        if (data.result) {
+          let model = JSON.parse(data.model);
+
+          model.forEach(item => {
+            result += `<tr>
+                        <td>${item.costDate}</td>
+                        <td>${item.costNo}</td>
+                        <td>${item.progress}%</td>
+                        <td>${numberWithCommas(item.cost)}</td>
+                        <td>${item.sumProgress}%</td>
+                        <td>${numberWithCommas(item.sumCost)}</td>
+                        <td width="200">${item.description}</td>
+                        <td>${item.writeDate}</td>
+                        <td>${item.lastModifyDate}</td>
+                      </tr>`;
+          })
+        }
+      });
+
+      return `<table>
+                <thead>
+                <tr>
+                  <th>`+[[#{cost.modal.paid_cost.date}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.no}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.this_progress_rate}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.this_cost}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.sum_progress_rate}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.sum_cost}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.etc}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.write_date}]]+`</th>
+                  <th>`+[[#{cost.modal.paid_cost.modify_date}]]+`</th>
+                </tr>
+                </thead>
+                <tbody>
+                  ${result}
+                </tbody>
+              </table>`;
+    }
+
+    _this.find("#exportXlsx").on("click", function () {
+      let exportData = [];
+      let gridData = gridCost._filterData;
+      if (costIds.length > 0) {
+        gridData.forEach(m=>{
+          if (costIds.includes(m.id) && m.chkboxShowModel){
+            exportData.push(m);
+          }
+        });
+      } else {
+        gridData.forEach(m=>{
+          if(m.chkboxShowModel){
+            exportData.push(m);
+          }
+        });
+      }
+      window.open('/costApi/exportCostXlsx');
+      /*
+      reqPostJSON('/costApi/exportCostXlsx'
+      , JSON.stringify(exportData)
+      , function(){
+      });
+      */
+    });
+
+    _this.find("#exportCsv").on("click", function () {
+      gridCost.export.csv();
+    });
+
+    gridCost.events.on("FilterChange", function(value,colId,filterId){
+      calculateTotalProgress();
+    });
+
+    let editResult = function(row, data){
+      let model = JSON.parse(data.model);
+      row.calculateCostResult = model.calculateCostResult;
+
+      if(data.result) {
+        toastr.success(data.message);
+        row.firstCountFormula = model.firstCountFormula;
+        row.firstCount = model.firstCount;
+        row.taskCost = model.taskCost;
+      } else toastr.info(data.message);
+
+      gridCost.paint();
+    }
+
+    gridCost.events.on("BeforeEditStart", function (row, col, editorType) {
+      if (col.id == "firstCountFormula" && row.firstCountFormula == '') row.firstCountFormula = row.phasingCode;
+    });
+
+    function checkMyChildren(row, value){
+      gridCost._filterData.forEach(item =>{
+        if(item.processParentItemId === row.processItemId){
+          item.chkboxShowModel = value;
+
+          if(item.ganttTaskType === "PROJECT"){
+            checkMyChildren(item, value);
+          }
+        }
+      });
+    }
+
+    function checkMySibling(row){
+      let checkSibling = true;
+      let parentRow = "";
+
+      for(let i=0; i< gridCost._filterData.length ; i++){
+        if(gridCost._filterData[i].processItemId === row.processParentItemId){
+          parentRow = gridCost._filterData[i];
+          break;
+        }
+      }
+
+      if(parentRow === ""){
+        return ;
+      }
+      else{
+        gridCost._filterData.forEach(item =>{
+          if(parentRow.processItemId === item.processParentItemId){
+            if(item.chkboxShowModel === false){
+              checkSibling = false;
+            }
+          }
+        });
+
+        if(checkSibling === true){
+          for(let i=0 ; i< gridCost._filterData.length ; i++){
+            if(gridCost._filterData[i].processItemId === parentRow.processItemId){
+              gridCost._filterData[i].chkboxShowModel = true;
+              break;
+            }
+          }
+        }
+        //부모를 기준으로 다시 재귀
+        checkMySibling(parentRow);
+      }
+    }
+
+    function filterViewModel(models, filter, ganttTaskType) {
+      return models.filter((model) => {
+        return model.chkboxShowModel &&
+                (filter.taskName !== "" ? model.taskName.includes(filter.taskName) : true) &&
+                (filter.workName !== "" ? model.workName === filter.workName : true) &&
+                (filter.startDate !== "" ? moment(model.startDate).isSameOrAfter(filter.startDate) : true) &&
+                (filter.endDate !== "" ? moment(model.endDate).isSameOrBefore(filter.endDate) : true) &&
+                (ganttTaskType ? model.ganttTaskType === ganttTaskType : true);
+      })
+    }
+
+    $("#btnShowModel").on("click", function(){
+      let viewModel = gridCost._filterData;
+      hwv.selectPart(-1);
+
+      HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+      let showExchangeIds = [];
+
+      const searchCondition = JSON.parse(getSearchCondition());
+      searchCondition.workName = searchCondition.workId !== '0' ? $("#gridWorkId").find("#gridWorkIdList").val() : "";
+      let isFilter = searchCondition.taskName !== "" || searchCondition.workName !== "" || searchCondition.startDate !== "" || searchCondition.endDate !== "";
+
+      let filterModel = filterViewModel(viewModel, searchCondition)
+      filterModel.forEach((model) => {
+        if (model.exchangeId !== "") {
+          if(model.exchangeId.includes("|,|")){
+            let arrExchangeId = model.exchangeId.split("|,|");
+            arrExchangeId.forEach((exchangeId) => {
+              showExchangeIds.push(exchangeId);
+            })
+          }else{
+            showExchangeIds.push(model.exchangeId);
+          }
+        }
+        // console.log(model.exchangeId, "#", model.startDate, "#", model.endDate, "#", model.phasingCode);
+      })
+
+      if (viewModel.length === filterModel.length){
+        let rootNode = hwv.model.getAbsoluteRootNode();
+        HwvUtility.setOpacitySelectedNodeIds([rootNode], 1.0);
+        hwv.selectPart(rootNode);
+        $(zoom).trigger("click");
+        setTimeout(()=>{hwv.selectPart(-1);}, 500)
+      }
+      else if (showExchangeIds.length > 0) {
+        HwvUtility.getNodeIdsFromExchangeIds(showExchangeIds);
+        let nodeIds = HwvUtility.nodeIdsFromExchangeIds;
+        HwvUtility.showSelectedNodeIds();
+        chgColorProcessStatus(showExchangeIds, currentDay);
+        // console.log('[dionysos]length2', nodeIds.length);
+        // hwv.pauseRendering();
+        // nodeIds.forEach(nodeId =>{
+        //   HwvUtility.cwv.getSelectionManager().selectNode(nodeId, Communicator.SelectionMode.Add);
+        // });
+        // hwv.resumeRendering();
+        hwv.view.fitNodes(nodeIds, 300)
+
+      }
+    });
+
+    $("#btnCalcPaidCost").on("click", function(){
+      sumTotData = {
+        count : 0,
+        duration : 0,
+        progressDurationRate : 0,
+        taskCost : 0,
+        totalTaskCost : 0,
+        paidCost : 0,
+        progressAmount : 0,
+      };
+      const searchCondition = JSON.parse(getSearchCondition());
+      searchCondition.workName = searchCondition.workId !== '0' ? $("#gridWorkId").find("#gridWorkIdList").val() : "";
+      let isFilter = searchCondition.taskName !== "" || searchCondition.workName !== "" || searchCondition.startDate !== "" || searchCondition.endDate !== "";
+      let filterModel = filterViewModel(gridCost._filterData, searchCondition, "TASK");
+      costIds = []
+      filterModel.forEach(item=>{
+        if (isFilter) { costIds.push(item.id) }
+        item.totalTaskCost = parseInt(Number(item.taskCost) * 1.4890); // 제배율
+        sumTotData.count++;
+        sumTotData.duration += Number(item.duration);
+        sumTotData.progressDurationRate += Number(item.progressRate) * 0.01 * Number(item.duration); // progressRate가 실수타입으로 되어 있어(50% -> 50) 0.01을 곱함
+        sumTotData.taskCost += Number(item.taskCost);
+        sumTotData.paidCost += Number(item.paidCost);
+        sumTotData.progressAmount += Number(item.progressAmount);
+        sumTotData.totalTaskCost += Number(item.totalTaskCost);
+        /**
+         sumTotData.count++;
+         sumTotData.duration += Number(item.duration);
+         sumTotData.progressDurationRate += Number(item.progressRate) * Number(item.duration);
+         sumTotData.taskCost += Number(item.taskCost);
+         sumTotData.paidCost += Number(item.paidCost);
+         sumTotData.totalTaskCost += Number(item.totalTaskCost);
+         **/
+      });
+      calculateTotalProgress();
+      gridCost.paint()
+    });
+
+    gridCost.events.on("AfterEditEnd", function (value, row, col) {
+      if(col.id == "chkboxShowModel"){
+        if(row.ganttTaskType === "TASK"){
+          console.log("나의 부모의 체크박스를 회색으로 만들기");
+        }
+        else if(row.ganttTaskType === "PROJECT"){
+          checkMyChildren(row, value);
+        }
+
+        if(value === true){
+          checkMySibling(row);
+        }
+      }
+    });
+
+    gridCost.events.on("BeforeEditEnd", function (value, row, col) {
+      if(value == row[col.id]) return;
+
+      if(col.id == "firstCountFormula") {
+        row.variables = value.match(/(\w+(#|@)\w+)/g);
+
+        if(row.variables == undefined || row.variables.length == 0) {
+          row.calculateCostResult = [[#{cost.index.page.message.fail.formula_factor_no_exist}]];
+          gridCost.paint();
+        } else {
+          row[col.id] = value;
+          reqPutJSON("/costApi/putFormulaEvaluation",JSON.stringify(row),function(data){
+            editResult(row,data);
+          });
+        }
+      }
+
+      if(col.id == "firstCount" || col.id == "complexUnitPrice" || col.id == "firstCountUnit"){
+        if(checkNumericColumn(col,numberColId) && !isNumeric(value)) {
+          row.calculateCostResult = [[#{cost.index.page.message.fail.input_is_not_numeric}]];
+          gridCost.paint();
+        }
+
+        row[col.id] = value;
+        reqPutJSON("/costApi/putProcessItemForCost/"+col.id,JSON.stringify(row),function(data){
+          editResult(row,data);
+        });
+      }
+    });
+
+    gridCost.events.on("cellDblClick", function (row, col) {
+      let isEditableColumn = false;
+      editableColId.forEach(colId => {
+        if(colId == col.id) isEditableColumn = true;
+      });
+      if(!isEditableColumn) return;
+
+      let isEditMode = $("#editMode").is(":checked");
+      if(!isEditMode) {
+        toastr.info([[#{cost.index.page.message.info.ready_only}]]);
+        return;
+      }
+
+      if(row.ganttTaskType !== "TASK") {
+        return false;
+      }
+      if(row.paidCost > 0) {
+        toastr.info([[#{cost.index.page.message.info.already_paid_cost_can_not_edit}]]);
+        return;
+      }
+
+      if(col.id == "firstCount" && row.firstCountFormula.trim() != "") toastr.warning([[#{cost.index.page.message.warning.first_count_editing_cost_is_recalculate}]]);
+      if(col.id == "complexUnitPrice") toastr.warning([[#{cost.index.page.message.warning.input_direct_unit_price_recalculate_without_cost_detail}]]);
+
+      gridCost.editCell(row.id,col.id);
+    });
+
+    let calculateTotalProgress = function () {
+      gridCost.getColumn("chkboxShowModel").footer[0].text = numberWithCommas(sumTotData.count);
+      gridCost.getColumn("progressRate").footer[0].text = sumTotData.duration != 0 ? (sumTotData.progressDurationRate / sumTotData.duration * 100).toFixed(2) + "%" : "0.00%";
+      gridCost.getColumn("duration").footer[0].text = numberWithCommas(sumTotData.duration);
+      gridCost.getColumn("taskCost").footer[0].text = numberWithCommas(sumTotData.taskCost);
+      // gridCost.getColumn("totalTaskCost").footer[0].text = numberWithCommas(sumTotData.totalTaskCost);
+      gridCost.getColumn("progressAmount").footer[0].text = numberWithCommas(sumTotData.progressAmount);
+      gridCost.getColumn("paidCost").footer[0].text = numberWithCommas(sumTotData.paidCost);
+    }
+
+    let getSearchCondition = function () {
+      return JSON.stringify(
+              {
+                workId       : $("#gridWorkId").find("#gridWorkIdList").val()
+                // , phasingCode: _this.find("#gridPhasingCode").val()
+                , taskName   : _this.find("#gridTaskName").val()
+                , startDate  : _this.find("#gridStartDate").val()
+                , endDate    : _this.find("#gridEndDate").val()
+              }
+      );
+    }
+
+    let getSearchConditionInit = function () {
+      return JSON.stringify(
+              {
+                workId       : $("#workId").val()
+                // , phasingCode: $("#phasingCode").val()
+                , taskName   : $("#taskName").val()
+                , startDate  : $("#startDate").val()
+                , endDate    : $("#endDate").val()
+              }
+      );
+    }
+
+    let getProcessItemCost = function () {
+      reqPostJSON("/costApi/getProcessItemCost"
+              , getSearchConditionInit()
+              , function (data) {
+                if (data.result) {
+                  if(Object.keys(JSON.parse(data.model)).length === 0 ){
+                    showErrorAlert("ALERT", "데이터가 존재하지 않습니다");
+                    return ;
+                  }
+                  const model = listToTreeItems(JSON.parse(data.model));
+                  gridCost.data.parse(model);
+                  calculateTotalProgress();
+
+
+                  _this.find("#gridWorkId").html( document.getElementById("gridWorkIdList") );
+                }
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              });
+    }
+
+    let sumTotData = {};
+    function listToTreeItems(orignData){
+      let startDate = new Date("2999-12-31");
+      let endDate = new Date("2000-01-01");
+      let model = [], minDepth = 10, maxDepth = 0;
+      sumTotData = {
+        count : 0,
+        duration : 0,
+        progressDurationRate : 0,
+        taskCost : 0,
+        paidCost : 0,
+        progressAmount : 0,
+        totalTaskCost : 0,
+      };
+      orignData.forEach((m, index) => {
+        m.chkboxShowModel = true;
+        //if (m.processItemId == 17843) {
+        //  console.log(m);
+        //}
+        if(m.taskDepth && m.taskDepth>0){
+          if(maxDepth < m.taskDepth){
+            maxDepth = m.taskDepth;
+          }
+          if(minDepth > m.taskDepth){
+            minDepth = m.taskDepth;
+          }
+        }
+        if(m.ganttTaskType === "TASK"){
+          m.totalTaskCost = parseInt(Number(m.taskCost) * 1.4890); // 제배율
+          sumTotData.count++;
+          sumTotData.duration += Number(m.duration);
+          sumTotData.progressDurationRate += Number(m.progressRate) * 0.01 * Number(m.duration); // progressRate가 실수타입으로 되어 있어(50% -> 50) 0.01을 곱함
+          sumTotData.taskCost += Number(m.taskCost);
+          sumTotData.paidCost += Number(m.paidCost);
+          sumTotData.progressAmount += Number(m.progressAmount);
+          sumTotData.totalTaskCost += Number(m.totalTaskCost);
+          startDate = Math.min(new Date(m.startDate), startDate);
+          endDate = Math.max(new Date(m.endDate), endDate);
+        }
+
+      });
+
+      modelStartDate = startDate;
+      modelEndDate = endDate;
+
+      for(let depth=maxDepth; depth>=minDepth; depth--){
+        orignData.forEach(m => {
+          if(depth === m.taskDepth){
+            if(m.ganttTaskType === "PROJECT") {
+              m.items = [];
+              m.progressRate = "";
+              m.firstCount = "";
+              m.duration = "";
+              m.complexUnitPrice = "";
+              m.startDate = "";
+              m.endDate = "";
+
+              m.children = [];
+              let sumData = {taskCost:0,paidCost:0,duration:0,progressDurationRate:0, totalTaskCost:0};
+              let typeProjectStartDate = new Date("2999-12-31");
+              let typeProjectEndDate = new Date("2000-01-01");
+              orignData.forEach(mm => {
+                if(m.processItemId === mm.processParentItemId) {
+                  m.items.push(mm);
+                  m.children.push(mm.processItemId)
+                  sumData.taskCost += mm.taskCost;
+                  sumData.paidCost += mm.paidCost;
+                  sumData.progressAmount += mm.progressAmount;
+                  sumData.duration += mm.duration;
+                  sumData.progressDurationRate += Number(mm.progressRate) * Number(mm.duration);
+                  sumData.totalTaskCost += Number(mm.totalTaskCost);
+                  typeProjectStartDate = Math.min(new Date(mm.startDate), typeProjectStartDate);
+                  typeProjectEndDate = Math.max(new Date(mm.endDate), typeProjectEndDate);
+                }
+              });
+              m.taskCost = sumData.taskCost;
+              m.paidCost = sumData.paidCost;
+              m.progressAmount = sumData.progressAmount;
+              m.duration = sumData.duration;
+              m.totalTaskCost = sumData.totalTaskCost;
+              m.progressRate = (sumData.progressDurationRate / sumData.duration).toFixed(4);
+
+              if(!isNaN(typeProjectStartDate)){ m.startDate = new Date(typeProjectStartDate).toISOString().substr(0,10); }
+              if(!isNaN(typeProjectEndDate)) { m.endDate = new Date(typeProjectEndDate).toISOString().substr(0,10); }
+            }
+            if(minDepth === m.taskDepth){
+              model.push(m);
+            }
+          }
+        });
+      }
+      return model;
+    }
+
+    _this.on('change', '#costAllCheck', function () {
+      if( $("#costAllCheck").prop("checked") ){
+        //전부 체크
+        gridCost._filterData.forEach(item =>{
+          item.chkboxShowModel = true;
+        });
+      }
+      else{
+        //전부 체크 해제
+        gridCost._filterData.forEach(item =>{
+          item.chkboxShowModel = false;
+        });
+      }
+      gridCost.paint();
+    });
+
+    $("#btnGridCostCollapseAll").on("click", function(){
+      gridCost._filterData.filter(item => item.taskDepth === 1).forEach(item => {
+        gridCost.collapse(item.id)
+      });
+    });
+
+    $("#btnGridCostExpandAll").on("click", function(){
+      gridCost._filterData.filter(item => item.taskDepth === 1).forEach(item => {
+        gridCost.expand(item.id)
+      });
+    });
+
+    function getProcessItemCostWithChildren(){
+      reqPostJSON("/costApi/getProcessItemCostWithChildren"
+              , getSearchCondition()
+              , function (data) {
+                if (data.result) {
+                  if(Object.keys(JSON.parse(data.model)).length === 0 ){
+                    showErrorAlert("ALERT", "데이터가 존재하지 않습니다");
+                    return ;
+                  }
+                  const model = listToTreeItems(JSON.parse(data.model));
+                  gridCost.data.parse(model);
+                  calculateTotalProgress();
+                }
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              });
+    }
+
+    // _this.find("#btnSearch").on("click", getProcessItemCostWithChildren);
+
+    function init() {
+      getProcessItemCost();
+      $('.dhx_grid-body').css('width','100%');
+      $('#gridCost').css('width','100%');
+
+    }
+
+    _this.on("click", "#btnModelViewer", function () {
+      let processItemId = $(this).data("id");
+      window.open("/contents/modelingViewByProcessItemId/" + processItemId);
+    });
+
+    $("#costMainPageView").on("click", function(){
+      $('#gridStartDate').val( window.localStorage.getItem("startDate") );
+      $('#gridEndDate').val( window.localStorage.getItem("endDate") );
+      window.localStorage.setItem("viewPage", "costMainPageView");
+    });
+
+
+    init();
+
+    $('#costDetail').on('hidden.bs.modal', function () {
+
+    });
+
+    $('#paidCost').on('hidden.bs.modal', function () {
+
+    });
+
+    $('input[type="file"]').ezdz({text: _fileText});
+
+    let initFileElement = function () {
+      $("#file").val("");
+      $("#mBtnRemoveFile").hide();
+      $("#mBtnUploadFile").hide();
+      $("#fileText").parent().removeClass("ezdz-enter").removeClass("ezdz-accept");
+      $("#fileText").text(_fileText);
+    };
+
+    let initGlobalObject = function () {
+      _rows = {};
+      _taskVOs = [];
+      _excelJsonData = "";
+      _isError = false;
+      _errorMessage = "";
+    };
+
+    let openDivUploadFile = function () {
+      _openDivUploadFile = true;
+      $("#divUploadExcel").show();
+    };
+
+    let closeDivUploadFile = function () {
+      _openDivUploadFile = false;
+      $("#divUploadExcel").hide();
+    };
+
+    $("#gridStartDate").on("change", function(){
+      window.localStorage.setItem("startDate", $("#gridStartDate").val());
+    });
+
+    $("#gridEndDate").on("change", function(){
+      window.localStorage.setItem("endDate", $("#gridEndDate").val());
+    });
+
+
+    $(this).on("click", "#btnUploadCostDetailFile", function () {
+      initFileElement();
+      initGlobalObject();
+      if (_openDivUploadFile) {
+        closeDivUploadFile();
+      } else {
+        openDivUploadFile();
+      }
+      hideTooltip($(this));
+    });
+
+    $(this).on("click", "#mBtnRemoveFile", function () {
+      initFileElement();
+      initGlobalObject();
+    });
+
+    $(this).on("change", "#file", function (e) {
+
+      showProcessingProc();
+
+      _endParse = false;
+      _rows = {};
+
+      let input = e.target;
+      let reader = new FileReader();
+
+      if (input.files[0] == undefined) {
+        showErrorAlert("ALERT", '[[#{common.file_upload.error_undefined}]]');
+        return false;
+      }
+
+      if (!checkExcelFileSize(input, 5000000000)) {
+        showErrorAlert("ALERT", '[[#{common.file_upload.error_file_size}]]');
+        return false;
+      }
+
+      reader.onload = function () {
+        let data = reader.result;
+        let workBook = XLSX.read(data, {type: 'binary', cellDates: true, dateNF: 'YYYY-MM-DD'});
+
+        workBook.SheetNames.forEach(function (sheetName, index) {
+          _rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName], {raw: false});
+        });
+        _endParse = true;
+      };
+
+      reader.readAsBinaryString(input.files[0]);
+      let timer = setInterval(function () {
+        if (_endParse) {
+          hideProcessingProc();
+          $("#mBtnRemoveFile").show();
+          $("#mBtnUploadFile").show();
+          clearInterval(timer);
+        }
+      }, 1000);
+
+    });
+
+    let showProcessingProc = function () {
+      $('#processingProc').removeClass('display-none');
+    }
+
+    let hideProcessingProc = function () {
+      $('#processingProc').addClass('display-none');
+    }
+
+    let checkExcelFileSize = function (object, maxSize) {
+      if (object.files[0].size > maxSize) return false;
+      return true;
+    }
+
+    $(this).on("click", "#mBtnUploadFile", function (e) {
+      _excelJsonData = _rows;
+
+      if (!_excelJsonData && _errorMessage != "") {
+        showErrorAlert("ALERT", _errorMessage);
+        return false;
+      }
+
+      if ($("#file").val() === "") {
+        showErrorAlert("ALERT", '[[#{cost.modal.process_file_upload.error_no_upload_file}]]');
+        return false;
+      }
+
+      showConfirm([[#{system.common.confirm.title}]], [[#{cost.modal.cost_detail_file_upload.confirm_upload_file}]], executeUploadFile);
+    });
+
+    let executeUploadFile = function () {
+      showProcessingProc();
+      reqPostJSON("/costApi/saveProcessItemCostDetailByExcel", JSON.stringify(_excelJsonData), function (data) {
+        if(data.result === true){
+          setTimeout(function(){
+            hideProcessingProc();
+            toastr.info(data.message);
+            $("#workId").val(0);
+            //  $("#phasingCode").val("");
+            $("#taskName").val("");
+            $("#startDate").val("");
+            $("#endDate").val("");
+            getProcessItemCost();
+          }, 1000);
+
+        }
+        else{
+          hideProcessingProc();
+          toastr.error(data.message);
+        }
+      });
+    }
+
+    $(this).on("click", "#btnPrintCost", function () {
+      modalShowAndDraggable('#modalPrintJobSheet');
+    });
+
+    $(this).on('show.bs.modal', '#modalPrintJobSheet', function () {
+      let params = "formElementIdForUserId=jobSheetGrantorId";
+      params += "&formElementIdForModal=modalSearchJobSheetGrantor";
+      params += "&searchUserFilter=Y";
+
+      reqGet(`/commonModal/printJobSheet?${params}`, function (data) {
+        $('#modalPrintJobSheet').find('.modal-body').html(data);
+      });
+    });
+
+  });
+
+
+  $('.main-intro-open').on('click',function(){
+    $('.main-intro').addClass('on');
+    $(this).fadeOut();
+  });
+  $('.main-intro-close').on('click',function(){
+    $('.main-intro').removeClass('on');
+    $('.main-intro-open').fadeIn();
+  });
+
+
+  $('.in-graph li').on("click", function(){
+    var listItemText = $(this).find('p').data("id");
+    $(".divSubProcess").hide();
+    $("#divSubProcess"+listItemText).show();
+    /**
+     if (listItemText == "교량공") {
+      $(".divSubProcess").toggle();
+    } else {
+      $(".divSubProcess").hide();
+    }
+     **/
+  });
+  /**
+   $("#btnSubProcess").on("click", function() {
+    var bun = $(this).data("id");
+    console.log("bun + " + bun);
+    $(".divSubProcess").hide();
+    $("#divSubProcess"+bun).show();
+  });
+
+   **/
+</script>
+
+<div th:include="common/modelingViewer :: loadScript()"></div>
+
+</body>
+</html>

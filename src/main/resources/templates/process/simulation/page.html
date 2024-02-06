@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('process')"></nav>
+  <aside th:replace="layout/common :: aside('process','simulation')"></aside>
+
+  <main role="main" class="content-wrapper process-content">
+    <div class="content-header">
+      <div>
+        <h1><i class="nav-icon fas fa-tachometer-alt"></i> [[#{process.simulation.page.simulation}]]</h1>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/main/index"><i class="fas fa-home"></i> HOME</a></li>
+          <li class="breadcrumb-item"><a href="/process/index"><span th:text="#{process.simulation.page.process_management}">공정관리</span></a></li>
+          <li class="breadcrumb-item active" th:text="#{process.simulation.page.simulation}">시뮬레이션</li>
+        </ol>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-simulation bim-full-screen row">
+          <article class="simulation-content-area">
+            <div class="viewer-area">
+              <div th:include="common/modelingViewer :: loadCanvas()"></div>
+            </div>
+
+            <div class="gantt-chart-area">
+              <div class="gantt-chart-header">
+                <div class="runtime-area">
+                  <div class="form-group">
+                    <select class="custom-select" id="playDayInterval">
+                      <option th:each="item : ${simulationMovingUnits}"
+                              th:selected="${#strings.toString(defaultSimulationMovingUnit) eq #strings.toString(item)}"
+                              th:value="${#strings.toString(item)}"
+                              th:utext="${item}"></option>
+                    </select>
+                  </div>
+                  <span class="ml-1">일</span>
+
+                  <div class="form-group">
+                    <select class="custom-select" id="playTimeInterval">
+                      <option th:each="item : ${simulationMovingIntervals}"
+                              th:selected="${#strings.toString(defaultSimulationInterval) eq #strings.toString(item)}"
+                              th:value="${#strings.toString(item)}"
+                              th:utext="${item} + #{system.simulation.moving_interval.unit}"></option>
+                    </select>
+                  </div>
+                  <span class="ml-1" th:text="#{process.simulation.page.interval}">간격(초)</span>
+                </div>
+                <div class="calender-area">
+                  <div class="start-date">
+                    <input type="date" id="startCalender">
+                  </div>
+                  <div>
+                    &nbsp;&nbsp;&nbsp; ~ &nbsp;&nbsp;&nbsp;
+                  </div>
+                  <div class="end-date">
+                    <input type="date" id="endCalender">
+                  </div>
+                </div>
+                <div class="slidebar-area">
+                  <table>
+                    <tr>
+                      <td style="padding:0px;">
+                        <button type="button" id="play" class="btn bg-gradient-danger btn-sm"><i class="fas fa-play"></i></button>
+                        <button type="button" id="stop" class="btn bg-gradient-danger btn-sm d-none"><i class="fas fa-stop"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding:0px;">
+                        <button type="button" id="periodPlay" class="btn bg-gradient-danger btn-sm">구간재생</button>
+                        <button type="button" id="periodStop" class="btn bg-gradient-danger btn-sm d-none"><i class="fas fa-stop"></i></button>
+                      </td>
+                    </tr>
+                  </table>
+                  <div class="slidebar">
+                    <div id="sliderProcess"></div>
+                  </div>
+                </div>
+
+                <div class="gantt-toggle-area">
+                  <button type="button" class="btn btn-gantt-chart"><i class="fas fa-angle-double-right"></i></button>
+                </div>
+              </div>
+              <div id="divGantt"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer th:replace="layout/common :: footer()"></footer>
+</div>
+<div id="generalDataLoadingProc" th:replace="process/modal/generalDataLoadingProc :: generalDataLoadingProc()"/>
+<div th:include="layout/common :: script()"></div>
+<div th:include="common/modelingViewer :: loadScript()"></div>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js"></script>
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.js"></script>
+<script src="/dist/js/common-gantt.js"></script>
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/api.js"></script>
+<link href="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.css" rel="stylesheet" type="text/css"/>
+<link href="/dist/css/common-gantt.css" rel="stylesheet" type="text/css"/>
+<script>
+  $(function () {
+    const $this = $(this);
+    document.getElementById('startCalender').valueAsDate  = new Date();
+    document.getElementById('endCalender').valueAsDate  = new Date();
+
+    $('.btn-gantt-chart').click(function () {
+      $('main').toggleClass('hide-gantt-chart');
+      //if ($('main').hasClass('hide-gantt-chart')) ;
+      window.setTimeout(function () { hwv.resizeCanvas();}, 500);
+    });
+
+    $('.nav-toggle').on('click', function () {
+      window.setTimeout(function () {
+        hwv.resizeCanvas();
+      }, 300);
+    });
+
+    const sliderProcess = new dhx.Slider("sliderProcess", {
+      min          : 0,
+      max          : [[${duration}]],
+      step         : 1,
+      value        : 0,
+      label        : '[[#{process.simulation.page.task_duration}]]',
+      labelPosition: 'left',
+      tick         : 1,
+      majorTick    : [[${majorTick}]],
+      tickTemplate : tickTemplate,
+      tooltip      : true
+    });
+
+    let projectStartDate = '[[${projectStartDate}]]';
+    let timerId;
+
+    function tickTemplate(value) {
+      return value;
+    }
+
+    let procSlider = function (value, oldValue, isRange) {
+      let afterDate = moment(projectStartDate).add(value + 1, 'days');
+
+      if (timerId > 0) { // player
+        let beforeDate = moment(projectStartDate).add(oldValue, 'days');
+        updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(beforeDate.format('YYYY-MM-DD'), afterDate.format('YYYY-MM-DD')));
+      } else {  // slider control
+        if (value > oldValue) {
+          if(oldValue == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+          let beforeDate = moment(projectStartDate).add(oldValue, 'days');
+          updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(beforeDate.format('YYYY-MM-DD'), afterDate.format('YYYY-MM-DD')));
+        }
+        else {
+          HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+          updateSimulationMarker(gantt, afterDate, showModelBeforeToAfterDate(projectStartDate, afterDate.format('YYYY-MM-DD')));
+        }
+      }
+    }
+
+    sliderProcess.events.on("change", procSlider);
+
+    let showModelBeforeToAfterDate = function (beforeDate, afterDate) {
+      let processItemId;
+      let exchangeIds = [];
+
+      for (let i = 0; i < _taskExchangeIds.length; i++) {
+        let t = _taskExchangeIds[i];
+
+        if (moment(t.endDate).isAfter(afterDate)) break;
+        if (moment(t.endDate).isBetween(beforeDate, afterDate)) exchangeIds = exchangeIds.concat(t.exchangeIds);
+        processItemId = t.processItemId;
+      }
+
+      if (exchangeIds.length > 0) {
+        HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+        HwvUtility.showSelectedNodeIds();
+      }
+
+      return processItemId;
+    }
+
+    $this.find('#playDayInterval,#playTimeInterval').on('change',function(){
+      if(timerId > 0) {
+        clearInterval(timerId);
+        setSliderTimer();
+      }
+    });
+
+    let setSliderTimer = function(){
+      if (sliderProcess.getValue() == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+
+      sliderProcess.disable();
+
+      let playDayInterval = parseInt($this.find("#playDayInterval").val());
+      let playTimeInterval = parseFloat($this.find("#playTimeInterval").val());
+
+      timerId = setInterval(() => {
+        let currentDay = parseInt(sliderProcess.getValue());
+
+        if (currentDay >= sliderProcess.config.max) {
+          sliderProcess.setValue(sliderProcess.config.max);
+          $this.find("#stop").trigger("click");
+          return;
+        }
+
+        let nextDay = currentDay + playDayInterval;
+
+        sliderProcess.setValue(nextDay);
+      }, playTimeInterval * 1000);
+
+      $(this).addClass("d-none");
+      $this.find("#stop").removeClass("d-none");
+    }
+
+    $this.find("#play").on("click", setSliderTimer);
+
+    $this.find("#stop").on("click", function () {
+      clearInterval(timerId);
+      timerId = 0;
+      $(this).addClass("d-none");
+      $this.find("#play").removeClass("d-none");
+      sliderProcess.enable();
+    });
+
+    let setPeriodTimer = function() {
+      let startDay = parseInt( (document.getElementById("startCalender").valueAsDate - moment(projectStartDate)) / (1000*60*60*24) );
+      let endDay = parseInt( (document.getElementById("endCalender").valueAsDate - moment(projectStartDate)) / (1000*60*60*24) );
+      sliderProcess.setValue(startDay)
+
+      if (sliderProcess.getValue() == 0) HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+
+      sliderProcess.disable();
+
+      let playDayInterval = parseInt($this.find("#playDayInterval").val());
+      let playTimeInterval = parseFloat($this.find("#playTimeInterval").val());
+
+      timerId = setInterval(() => {
+        let currentDay = parseInt(sliderProcess.getValue());
+
+        if (currentDay >= endDay) {
+          sliderProcess.setValue(endDay);
+          $this.find("#periodStop").trigger("click");
+          return;
+        }
+
+        let nextDay = currentDay + playDayInterval;
+
+        sliderProcess.setValue(nextDay);
+      }, playTimeInterval * 1000);
+
+      $(this).addClass("d-none");
+      $this.find("#periodStop").removeClass("d-none");
+    }
+
+    $this.find("#periodPlay").on("click", setPeriodTimer)
+
+    $this.find("#periodStop").on("click", function() {
+      clearInterval(timerId);
+      timerId = 0;
+      $(this).addClass("d-none");
+      $this.find("#periodPlay").removeClass("d-none");
+      sliderProcess.enable();
+    });
+  });
+</script>
+<script th:inline="javascript">
+  let _holidayClassifiedWorkDTOs = [[${holidayClassifiedWorkDTOs}]];
+  let _taskExchangeIds = [[${taskExchangeIds}]];
+</script>
+<script>
+
+  $(document).ready(function () {
+
+    let _projectStartDate = "[[${projectStartDate}]]";
+    let _projectEndDate = "[[${projectEndDate}]]";
+    let _locale = "[[${#locale}]]";
+
+    let _isError = false;
+    let _errorMessage = "";
+
+    let initGlobalObject = function () {
+      _isError = false;
+      _errorMessage = "";
+    }
+
+    // 계정정보(account) 테이블 > employer값(발추처 계정 여부) 체크(true/false)
+    const isEmployer = [[${#session.getAttribute('scopedTarget.userInfo')?.employer}]];
+
+    // region function
+
+    let getExchangeIdsAndSelectModel = function (id) {
+      reqGet("/processApi/exchangeIds/" + gantt.getTask(id).phasingCode
+        , function (data) {
+          let _exchangeIds = [];
+          $.each($.parseJSON(data.model), function(idx1, item1){
+            $.each(item1.exchangeIds, function(idx2, item2){
+              _exchangeIds.push(item2);
+            });
+          });
+          if(_exchangeIds.length > 0) HwvUtility.selectNodesFromExchangeIds(_exchangeIds);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, "json");
+    }
+
+    // region initiating & data loading
+
+    let refreshGantt = function (model) {
+      gantt.clearAll();
+      todayMarker(gantt);
+      gantt.parse(model);
+      gantt.eachTask(function (task) {
+          task.$open = true;
+      });
+      gantt.render();
+
+      gantt.ext.zoom.setLevel("month");
+      showDate(gantt, moment().format("YYYY-MM-DD"));
+    }
+
+    let getSchedule = function (isUpload) {
+
+      showGeneralDataLoadingProc(); // 일반 데이터 로딩
+
+      reqGet("/processApi/ganttDataInit"
+        , function (res) {
+          if (res.result) {
+            refreshGantt(res.model);
+            hideGeneralDataLoadingProc();
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, "json");
+    }
+
+    // 발주처 계정일 경우 메인화면 설정
+    function setEmployer() {
+        // 프로젝트웍스 logo 삭제
+        $(".nav-brand .nav-toggle").remove();
+
+        $("body .wrapper aside").hide();
+
+        // 중앙 content 영역 좌측 margin 0으로 설정
+        $('.content-wrapper').css('margin-left',0);
+
+        // 하단 footer 영역 좌측 margin 0으로 설정
+        $('.main-footer').css('margin-left',0);
+
+        // article 영역 클래스 변경(width=100%)
+        $('article').removeClass('main-content-area').addClass('main-content-area-employer');
+    }
+
+    let init = function () {
+      initGlobalObject();
+      initHoliday(gantt);
+      getSchedule(false);
+  
+      // 발주처 화면 설정
+      if(isEmployer) {setEmployer();}
+
+    }
+
+    // endregion initiating & data loading
+
+    // endregion function
+
+    // region gantt config
+    const formatter = gantt.ext.formatters.durationFormatter({enter: "day", store: "day", short: true, format: "day"});
+    const linksFormatter = gantt.ext.formatters.linkFormatter({durationFormatter: formatter});
+
+    const textEditor = {type: "text", map_to: "text"};
+    const dateEditor = {
+      type    : "date"
+      , map_to: "start_date"
+      , min   : new Date(moment(_projectStartDate).format("YYYY-MM-dd"))
+      , max   : new Date(moment(_projectEndDate).format("YYYY-MM-dd"))
+    };
+    const durationEditor = {type: "number", map_to: "duration", min: 0, max: 10000};
+    const predecessorEditor = {type: "predecessor", map_to: "auto", formatter: linksFormatter};
+
+    gantt.plugins({
+      marker : true,
+      tooltip: true
+    });
+
+    // region specifying the date format
+
+    gantt.i18n.setLocale(getGanttLocale(_locale));               // gantt language en/kr/cn
+    gantt.config.date_format = getGanttConfigDateFormat(_locale);          // date format
+    gantt.config.task_date = getGanttConfigDateFormat(_locale);          // date format
+    gantt.config.start_date = new Date(_projectStartDate);        // 프로젝트 시작일로 맞춤
+    gantt.config.end_date = new Date(_projectEndDate);            // 프로젝트 종료일로 맞춤
+    gantt.config.show_tasks_outside_timescale = false;    //
+    gantt.config.min_column_width = 40;
+    gantt.config.scale_height = 20 * 3;
+    gantt.config.row_height = 30;
+
+    // endregion specifying the date format
+
+    // region holiday & holiday color setting
+    gantt.config.work_time = true;
+    gantt.templates.timeline_cell_class = function (task, date) {
+      if (!gantt.isWorkTime({date: date, task: task})) return "HOLIDAY";
+      return "";
+    };
+    // endregion holiday & holiday color setting
+
+    // region gantt layout
+    gantt.config.columns = [
+      {name: "wbs", label: "[[#{process.index.gantt_column.wbs}]]", min_width: 50, width: 50, template: gantt.getWBSCode, resize: true},
+      {name: "text", label: "[[#{process.index.gantt_column.task_name}]]", tree: true, min_width: 180, width: 200, resize: true, editor: textEditor},
+      {name: "start_date", label: "[[#{process.index.gantt_column.start_date}]]", align: "center", width: 100, resize: true, editor: dateEditor},
+      {name: "duration", label: "[[#{process.index.gantt_column.duration}]]", align: "center", width: 40, resize: true, editor: durationEditor},
+      {name: "progress", label: "[[#{process.index.gantt_column.progress}]]", align: "center", width: 40, resize: true, template: i =>`${i.progress.toFixed(2)}%`},
+      {
+        name    : "predecessors", label: "[[#{process.index.gantt_column.predecessors}]]", align: "center", width: 80, editor: predecessorEditor, resize: true,
+        template: function (task) {
+          let links = task.$target;
+          let labels = [];
+          for (let i = 0; i < links.length; i++) {
+            let link = gantt.getLink(links[i]);
+            labels.push(linksFormatter.format(link));
+          }
+          return labels.join(", ")
+        }
+      }
+    ];
+
+    gantt.config.layout = {
+      css : "gantt_container",
+      cols: [
+        {
+          width    : 300,
+          min_width: 300,
+          rows     : [
+            {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"},
+            {view: "scrollbar", id: "gridScroll", group: "horizontal"}
+          ]
+        },
+        {resizer: true, width: 1},
+        {
+          rows: [
+            {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
+            {view: "scrollbar", id: "scrollHor", group: "horizontal"}
+          ]
+        },
+        {view: "scrollbar", id: "scrollVer"}
+      ]
+    };
+
+    // endregion gantt layout
+
+    // region gantt functionality settting
+    gantt.config.auto_scheduling = false;                     // enables auto scheduling
+    gantt.config.auto_scheduling_strict = false;               // enables the auto scheduling mode, in which tasks will always be rescheduled to the earliest possible date
+    gantt.config.auto_scheduling_initial = false;             // defines whether gantt will do auto-scheduling on data loading/parsing
+    gantt.config.auto_scheduling_compatibility = false;        // disables usage of time constraints for tasks
+    gantt.config.schedule_from_end = false;
+    gantt.config.smart_rendering = true;
+    gantt.config.sort = false;
+    gantt.config.branch_loading = true;                     // task별 동적 로딩
+    gantt.config.branch_loading_property = "hasChild";
+    gantt.config.order_branch = false;
+    gantt.config.order_branch_free = false;
+    gantt.config.highlight_critical_path = false;
+    // endregion gantt functionality settting
+
+    // endregion gantt config
+
+    // region initializing gantt
+    gantt.ext.zoom.init(zoomConfig(gantt, _locale));
+    gantt.config.readonly = true;
+    gantt.init("divGantt");
+
+    // endregion  initializing gantt
+    init();
+
+    gantt.attachEvent("onTaskClick", function(id,e){
+      gantt.selectTask(id);
+      getExchangeIdsAndSelectModel(id);
+      return true;
+    });
+  });
+</script>
+
+<script>
+  $(function(){
+    $(window).bind("resize",function(){
+      if($(this).width() < 1025){
+        $('main').addClass('hide-right-sidebar');
+        $('main').addClass('hide-gantt-chart');
+      }
+      // else{
+      //   $('main').removeClass('hide-right-sidebar');
+      //   $('main').removeClass('hide-gantt-chart');
+      // }
+    });//.resize();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<div class="card content-body-area" th:fragment="attachFile()">
+  <div class="card-body">
+    <div class="col-12">
+      <h2 class="list-title">
+        <i class="far fa-arrow-alt-circle-right"></i><span th:text="#{project.job_sheet_view.attach_file}"> 첨부 파일</span>
+      </h2>
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+          <tr>
+            <th><span th:text="#{project.job_sheet_view.attach_file}"> 첨부 파일</span></th>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="up-file-list">
+                  <div class="badge badge-pill download-attach-file" th:each="item, index : ${jobSheet.jobSheetFiles}"
+                       th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}">
+                    <a href="#"><span th:text="${item.originFileName}"></span></a>
+                    <button type="button" class="btn"><i class="fas fa-save"></i></button>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

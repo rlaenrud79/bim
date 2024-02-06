@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div class="header" th:fragment="contentHeader()">
+        <div class="header-left">
+          <h2>공사정보</h2>
+        </div>
+        <div class="header-right">
+        </div>
+      </div><!--// header-->
+
+      <div class="content">
+
+        <div class="tab-nav-round tab-lg mb-20">
+          <ul>
+            <li id="tab1" class="tab on"><button type="button" class="btnWork" data-work-id="0">전체 노선도</button></li>
+            <li id="tab2" class="tab"><button type="button" class="btnWork" data-work-id="1">4공구 노선도</button></li>
+            <li id="tab3" class="tab"><button type="button" class="btnWork" data-work-id="2">주요 공사구간</button></li>
+          </ul>
+        </div>
+        <div class="pg-projectinfo">
+          <div id="content1" class="project-info on">
+            <div class="flex al-top">
+              <div class="left-box wow fadeInUp">
+                <h2 class="list-title"><span>전체 노선도</span></h2>
+                <img src="/dist/img/info-map.jpg" alt="">
+              </div>
+              <div class="right-box">
+                <div class="ani wow fadeInUp delay-02s">
+                  <h2 class="list-title"><span>4개 공구 현황</span></h2>
+                  <table class="table">
+                    <thead>
+                    <tr>
+                      <th>구분</th>
+                      <th colspan="2">1공구(기타)</th>
+                      <th colspan="2">2공구(기타)</th>
+                      <th colspan="2">3공구(기타)</th>
+                      <th colspan="2" class="bg-green">4공구(T/K)<span class="info-mk"><img src="/dist/img/info-mk.png" alt=""></span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                      <td class="bg-white">연장</td>
+                      <td colspan="2">(본선) 2Km790</td>
+                      <td colspan="2">(본선) 5Km760</td>
+                      <td colspan="2">(본선) 8Km160<br>(중앙선) 1Km077</td>
+                      <td colspan="2" class="bg-lt-green">(본선) 3Km256<br>(중앙선) 3Km254</td>
+                    </tr>
+                    <tr>
+                      <td rowspan="4"  class="bg-white">구조물 현황</td>
+                      <td>터널</td>
+                      <td>2Km609</td>
+                      <td>터널</td>
+                      <td>5Km558</td>
+                      <td>터널</td>
+                      <td>8Km558</td>
+                      <td>터널</td>
+                      <td>5Km639</td>
+                    </tr>
+                    <tr>
+                      <td>정거장</td>
+                      <td>0Km181</td>
+                      <td>정거장</td>
+                      <td>0Km202</td>
+                      <td>정거장</td>
+                      <td>0Km298</td>
+                      <td class="bg-lt-green">토공</td>
+                      <td class="bg-lt-green">0Km410</td>
+                    </tr>
+                    <tr>
+                      <td>작업구</td>
+                      <td>1개소</td>
+                      <td>작업구</td>
+                      <td>2개소</td>
+                      <td>작업구</td>
+                      <td>2개소</td>
+                      <td>개착구조물</td>
+                      <td>0Km461</td>
+                    </tr>
+                    <tr>
+                      <td>건축</td>
+                      <td>1개소(용산)</td>
+                      <td>건축</td>
+                      <td>1개소(서울)</td>
+                      <td>건축</td>
+                      <td>1개소(상봉)</td>
+                      <td class="bg-lt-green">개착구조물</td>
+                      <td class="bg-lt-green">작업구 5개소</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="ani wow fadeInUp delay-04s">
+                  <h2 class="list-title mt-50">
+                    <span>세부 노선도</span>
+                    <button type="button" class="info-popup-btn pop-open-btn" data-modal="#linePopup"><img src="/dist/img/common/ico-search.png" alt=""></button>
+                  </h2>
+                  <img src="/dist/img/info-map2.jpg" alt="">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="content2" class="project-info">
+            <div class="section">
+              <div class="img">
+                <img src="/dist/img/4line-img1.jpg" alt="">
+                <div class="img-mk">
+                  <button type="button" class="mk1 pop-open-btn wow fadeIn delay-04s" data-modal="#linePopup1"></button>
+                  <button type="button" class="mk2 pop-open-btn wow fadeIn delay-06s" data-modal="#linePopup2"></button>
+                </div>
+              </div>
+            </div>
+            <div class="section wow fadeInUp delay-02s">
+              <h2 class="list-title"><span>세부내역</span></h2>
+              <table class="table">
+                <thead>
+                <tr>
+                  <th rowspan="2">구분</th>
+                  <th rowspan="2">총연장</th>
+                  <th colspan="6">노반</th>
+                  <th rowspan="2">기계/건축</th>
+                </tr>
+                <tr>
+                  <th>터널</th>
+                  <th>개착</th>
+                  <th>토공</th>
+                  <th>환기구</th>
+                  <th>수직구</th>
+                  <th>경사터널</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                  <th class="bg-white">본선</th>
+                  <td>3,254.01m</td>
+                  <td>2,574.50m</td>
+                  <td>350.50m</td>
+                  <td>329.01m</td>
+                  <td>1개소(#18)</td>
+                  <td>2개소(통합,다기능)</td>
+                  <td>-</td>
+                  <td>본선 및 환기구 기계/건축 1식</td>
+                </tr>
+                <tr>
+                  <th class="bg-white">중앙선연결선</th>
+                  <td>3,254.50m</td>
+                  <td>3,064.78m</td>
+                  <td>110.92m</td>
+                  <td>78.80m</td>
+                  <td>1개소(#9)</td>
+                  <td>1개소(통합)</td>
+                  <td>1개소</td>
+                  <td>본선 및 환기구 기계/건축 1식</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div id="content3" class="project-info">
+            <div class="section">
+              <ul class="project-list">
+                <li class="wow fadeInUp pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+                <li class="wow fadeInUp delay-01s pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img2.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+                <li class="wow fadeInUp delay-02s pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img3.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+                <li class="wow fadeInUp delay-03s pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img4.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+                <li class="wow fadeInUp delay-04s pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img5.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+                <li class="wow fadeInUp delay-05s pop-open-btn" data-modal="#projectListPopup">
+                  <strong>공사중 교통처리</strong>
+                  <div class="img"><img src="/dist/img/overview-img6.jpg" alt=""></div>
+                  <div class="txt">
+                    <p>위치 : 중랑경찰서 인접 작업구#3</p>
+                    <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+                    <span>2023.01.01</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+
+      </div><!--// content-->
+    </div>
+  </div>
+
+  <!--노선도팝업-->
+  <div id="linePopup" class="popup-wrap">
+    <div class="popup-inner">
+      <div class="popup-top">
+        <span class="popup-tit">세부노선도</span>
+        <button type="button" class="close close-btn">팝업닫기</button>
+      </div>
+      <div class="popup-content">
+        <img src="/dist/img/info-map2-lg.jpg" alt="" class="wid-lg">
+      </div><!--//popup_con-->
+    </div><!--//popup_content-->
+  </div>
+
+  <!--본선팝업-->
+  <div id="linePopup1" class="popup-wrap popup-md popup-cnt">
+    <div class="popup-inner">
+      <div class="popup-top">
+        <span class="popup-tit">본선</span>
+        <button type="button" class="close close-btn">팝업닫기</button>
+      </div>
+      <div class="popup-content">
+        <img src="/dist/img/4line-img2.jpg" alt="" class="wid-lg">
+      </div><!--//popup_con-->
+    </div><!--//popup_content-->
+  </div>
+  <!--중앙선팝업-->
+  <div id="linePopup2" class="popup-wrap popup-md popup-cnt">
+    <div class="popup-inner">
+      <div class="popup-top">
+        <span class="popup-tit">중앙선 연결선</span>
+        <button type="button" class="close close-btn">팝업닫기</button>
+      </div>
+      <div class="popup-content">
+        <img src="/dist/img/4line-img3.jpg" alt="" class="wid-lg">
+      </div><!--//popup_con-->
+    </div><!--//popup_content-->
+  </div>
+
+  <!--주요공사구간 팝업-->
+  <div id="projectListPopup" class="popup-wrap popup-md">
+    <div class="popup-inner">
+      <div class="popup-top">
+        <span class="popup-tit">주요공사구간</span>
+        <button type="button" class="close close-btn">팝업닫기</button>
+      </div>
+      <div class="popup-content">
+        <div class="project-list-popup">
+          <div class="slide">
+            <div class="img"><img src="/dist/img/overview-img.jpg" alt=""></div>
+            <div class="txt">
+              <strong>공사중 교통처리</strong>
+              <p>위치 : 중랑경찰서 인접 작업구#3</p>
+              <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+              <span>2023.01.01</span>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="img"><img src="/dist/img/overview-img2.jpg" alt=""></div>
+            <div class="txt">
+              <strong>공사중 교통처리</strong>
+              <p>위치 : 중랑경찰서 인접 작업구#3</p>
+              <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+              <span>2023.01.01</span>
+            </div>
+          </div>
+          <div class="slide">
+            <div class="img"><img src="/dist/img/overview-img3.jpg" alt=""></div>
+            <div class="txt">
+              <strong>공사중 교통처리</strong>
+              <p>위치 : 중랑경찰서 인접 작업구#3</p>
+              <p>이슈 : 기존 가로수 확보 및 보행자 횡단보도 설치로 안전 확보 필요</p>
+              <span>2023.01.01</span>
+            </div>
+          </div>
+        </div>
+      </div><!--//popup_con-->
+    </div><!--//popup_content-->
+  </div>
+
+  <script>
+
+    $(document).ready(function() {
+      $(".tab").click(function() {
+        var tabId = $(this).attr("id").replace("tab", "");
+        $(".tab").removeClass("on");
+        $(this).addClass("on");
+        $(".project-info").removeClass("on");
+        $("#content" + tabId).addClass("on");
+
+        new WOW().init();
+      });
+
+      $('.project-list-popup').slick({})
+      $('.project-info .project-list li').on('click',function () {
+        $('.project-list-popup').slick('refresh');
+      })
+    });
+
+  </script>
+</body>
+</html>

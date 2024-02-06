@@ -1,0 +1,385 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+
+    <div class="top-sticky">
+        <div class="tab-nav-round">
+            <ul>
+                <li class="on"><button type="button" class="btn btn-color1 btn-tab" th:data-year="${selYear}" data-document-no="1">
+                    <span>집계표(전체)</span>
+                </button></li>
+                <li>
+                    <button type="button" class="btn btn-color2 btn-tab" th:data-year="${selYear}" data-document-no="2">
+                        <span>집계표(연차)</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+        <div class="">
+            <input id="documentNo" name="documentNo" type="hidden" th:value="1">
+            <select id="year" name="year" class="custom-select mr-5">
+                <option value="" th:text="#{admin.modal.add_gisung_aggregation.select_year}">:: 년도를 선택하세요 ::</option>
+                <option th:each="year : ${years}"
+                        th:value="${year}"
+                        th:text="${year}" th:selected="${year == selYear}"></option>
+            </select>
+            <th:block th:if="${list.size() > 0}">
+                <a href="#none" id="mBtnModify" class="btn bg-gradient-primary" th:text="#{admin.modal.add_gisung_aggregation.btn_modify}">수정</a>
+            </th:block>
+            <th:block th:unless="${list.size() > 0}">
+                <a href="#none" id="mBtnAdd" class="btn bg-gradient-primary" th:text="#{admin.modal.add_gisung_aggregation.btn_add}">저장</a>
+            </th:block>
+        </div>
+    </div>
+    <div class="print-page print-write">
+
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2 th:text="#{admin.modal.add_gisung_aggregation.title_config}">집계표항목설정</h2>
+                </div>
+                <table id="tbTab1" class="table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>공종명</th>
+                        <th>도급액</th>
+                        <th>(%)</th>
+                        <th></th>
+                    </tr>
+                    <th:block th:each="row, info : ${workAmounts}">
+                        <tr>
+                            <th:block th:if="${row.upId == 0}">
+                                <td class="txt-left">
+                                    <span th:text="|${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}|">1. 토 공 사</span>
+                                </td>
+                                <td><span th:text="${#numbers.formatInteger(row.totalAmount, 1, 'COMMA')}">216,070,368,431</span></td>
+                            </th:block>
+                            <th:block th:unless="${row.upId == 0}">
+                                <td class="txt-left depth2">
+                                    <span th:text="| ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}|">1. 토 공 사</span>
+                                </td>
+                                <td><span th:text="${#numbers.formatInteger(row.totalAmount, 1, 'COMMA')}">12,941,990,175</span></td>
+                            </th:block>
+                            <!--<td><span th:text="${#numbers.formatInteger(row.prevAmount, 1, 'COMMA')}">12,941,990,175</span></td>
+                            <td><span th:text="${#numbers.formatInteger(row.amount, 1, 'COMMA')}">12,941,990,175</span></td>
+                            <td><span th:text="${#numbers.formatInteger((row.prevAmount+row.amount), 1, 'COMMA')}">12,941,990,175</span></td>
+                            <td>32.10%</td>-->
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </th:block>
+                    <th:block th:if="${list1.size() > 0}">
+                        <tr th:each="item, index : ${list1}">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="Y">
+                                <input type="hidden" name="gtype[]" value="1">
+                                <input type="text" name="title[]" th:value="${item.title}">
+                            </td>
+                            <td><input type="text" name="cost[]" th:value="${item.cost}"></td>
+                            <td><input type="text" name="percent[]" th:value="${item.percent}"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" data-tbid="tbTab1" title="추가"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                        <a href="#none" class="btn-remove btn-aggregation-del" data-tbid="tbTab1" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${list1.size() > 0}">
+                        <tr>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="Y">
+                                <input type="hidden" name="gtype[]" value="1">
+                                <input type="text" name="title[]">
+                            </td>
+                            <td><input type="text" name="cost[]"></td>
+                            <td><input type="text" name="percent[]"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" data-tbid="tbTab1" title="추가"></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <tr class="bg-grey">
+                        <td class="txt-left">가. 직 접 공 사 비</td>
+                        <td id="totalCost1">7,565,054,573</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table id="tbTab2" class="table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <th:block th:if="${list2.size() > 0}">
+                        <tr th:each="item, index : ${list2}">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="Y">
+                                <input type="hidden" name="gtype[]" value="2">
+                                <input type="text" name="title[]" th:value="${item.title}">
+                            </td>
+                            <td><input type="text" name="cost[]" th:value="${item.cost}"></td>
+                            <td><input type="text" name="percent[]" th:value="${item.percent}"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" title="추가" data-tbid="tbTab2"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                        <a href="#none" class="btn-remove btn-aggregation-del" data-tbid="tbTab3" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${list2.size() > 0}">
+                        <tr>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="Y">
+                                <input type="hidden" name="gtype[]" value="2">
+                                <input type="text" name="title[]">
+                            </td>
+                            <td><input type="text" name="cost[]"></td>
+                            <td><input type="text" name="percent[]"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" data-tbid="tbTab2" title="추가"></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <tr class="bg-grey">
+                        <td class="txt-left">   B. 순 공 사 원 가</td>
+                        <td id="totalCost2"> 7,565,054,573</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table id="tbTab3" class="table tb-tab-con on">
+                    <colgroup>
+                        <col>
+                        <col style="width:30%">
+                        <col style="width:20%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <th:block th:if="${list3.size() > 0}">
+                        <tr th:each="item, index : ${list3}">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="">
+                                <input type="hidden" name="gtype[]" value="3">
+                                <input type="text" name="title[]" th:value="${item.title}">
+                            </td>
+                            <td><input type="text" name="cost[]" th:value="${item.cost}"></td>
+                            <td><input type="text" name="percent[]" th:value="${item.percent}"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" title="추가" data-tbid="tbTab3"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                        <a href="#none" class="btn-remove btn-aggregation-del" data-tbid="tbTab3" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${list3.size() > 0}">
+                        <tr>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="">
+                                <input type="hidden" name="gtype[]" value="3">
+                                <input type="text" name="title[]">
+                            </td>
+                            <td><input type="text" name="cost[]"></td>
+                            <td><input type="text" name="percent[]"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" data-tbid="tbTab3" title="추가"></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <colgroup>
+                        <col style="width:40%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <tr class="bg-grey">
+                        <td class="txt-left"> C. 공  사  비  계</td>
+                        <td id="totalCost4"> 7,565,054,573</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="bg-grey">
+                        <td class="txt-left"> D. 부 가 가 치 세</td>
+                        <td id="totalCost5"> 7,565,054,573</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr class="bg-grey">
+                        <td class="txt-left"> 가. 도  급  액  계</td>
+                        <td id="totalCost6"> 7,565,054,573</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <table id="tbTab4" class="table">
+                    <colgroup>
+                        <col>
+                        <col style="width:30%">
+                        <col style="width:20%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <th:block th:if="${list4.size() > 0}">
+                        <tr th:each="item, index : ${list4}">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="">
+                                <input type="hidden" name="gtype[]" value="4">
+                                <input type="text" name="title[]" th:value="${item.title}">
+                            </td>
+                            <td><input type="text" name="cost[]" th:value="${item.cost}"></td>
+                            <td><input type="text" name="percent[]" th:value="${item.percent}"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" title="추가" data-tbid="tbTab4"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                        <a href="#none" class="btn-remove btn-aggregation-del" data-tbid="tbTab4" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${list4.size() > 0}">
+                        <tr>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck[]" value="">
+                                <input type="hidden" name="gtype[]" value="4">
+                                <input type="text" name="title[]">
+                            </td>
+                            <td><input type="text" name="cost[]"></td>
+                            <td><input type="text" name="percent[]"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-aggregation-add" data-tbid="tbTab4" title="추가"></a>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                <table class="table">
+                    <colgroup>
+                        <col>
+                        <col style="width:30%">
+                        <col style="width:20%">
+                        <col style="width:10%">
+                    </colgroup>
+                    <tbody>
+                    <tr class="bg-grey">
+                        <td class="txt-left">총  공  사  비</td>
+                        <td id="totalCost7"> 7,565,054,573</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <!--
+                <table id="aggregationTb">
+                    <colgroup>
+                        <col style="width:20%">
+                        <col style="width:25%">
+                        <col style="width:25%">
+                        <col style="width:30%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th th:text="#{admin.modal.add_gisung_aggregation.net}">순공사비</th>
+                        <th th:text="#{admin.modal.add_gisung_aggregation.title}">공종명</th>
+                        <th th:text="#{admin.modal.add_gisung_aggregation.cost}">도급액</th>
+                        <th></th>
+                    </tr>
+                    <th:block th:if="${list.size() > 0}">
+                        <tr th:each="item, index : ${list}">
+                            <td>
+                                <input type="hidden" name="id[]" th:value="${item.id}">
+                                <input type="checkbox" name="netCheck[]" value="Y" th:checked="${item.netCheck == 'Y'}">
+                            </td>
+                            <td><input type="text" name="title[]" th:value="${item.title}"></td>
+                            <td><input type="text" name="cost[]" th:value="${item.cost}"></td>
+                            <td>
+                                <div class="btn-control">
+                                    <a href="#none" class="btn-add btn-aggregation-add" title="추가"></a>
+                                    <th:block th:if="${index.index > 0}">
+                                        <a href="#none" class="btn-remove btn-aggregation-del" title="삭제"></a>
+                                    </th:block>
+                                </div>
+                            </td>
+                        </tr>
+                    </th:block>
+                    <th:block th:unless="${list.size() > 0}">
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id[]" th:value="">
+                            <input type="checkbox" name="netCheck[]" value="Y">
+                        </td>
+                        <td><input type="text" name="title[]"></td>
+                        <td><input type="text" name="cost[]"></td>
+                        <td>
+                            <div class="btn-control">
+                                <a href="#none" class="btn-aggregation-add" title="추가"></a>
+                            </div>
+                        </td>
+                    </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+                -->
+            </section><!--//section-->
+        </div>
+        <div class="btn-box">
+            <th:block th:if="${list.size() > 0}">
+                <a href="#none" id="mBtnModify" class="btn btn-color1" th:text="#{admin.modal.add_gisung_aggregation.btn_add}">등록</a>
+            </th:block>
+            <th:block th:unless="${list.size() > 0}">
+                <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_gisung_aggregation.btn_add}">저장</a>
+            </th:block>
+        </div>
+    </div>
+</div>

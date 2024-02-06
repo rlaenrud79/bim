@@ -1,0 +1,236 @@
+<div class="form">
+    <div class="grid">
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_gisung.title}">기성제목</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="hidden" name="id" id="id" th:value="${gisung.id}">
+                <input type="text"
+                       id="title"
+                       name="title"
+                       th:placeholder="#{admin.modal.add_gisung.title_placeholder}"
+                       th:value="${gisung.title}"
+                       maxlength="1024">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_add.input_reportDate}">보고일자</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="input-date-wrap">
+                    <div class="input-date">
+                        <select id="year" class="wid-100">
+                            <option value="" th:text="#{admin.modal.add_work_amount.year}">년도</option>
+                            <option th:each="year : ${years}"
+                                    th:value="${year}"
+                                    th:text="${year}"></option>
+                        </select>
+                    </div>
+                    <div class="input-date">
+                        <select id="month" class="wid-80">
+                            <option value="" th:text="#{admin.modal.add_work_amount.month}">월</option>
+                            <option th:each="month : ${months}"
+                                    th:value="${month}"
+                                    th:text="${month}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <th:block th:if="${gisung.id == '' || gisung.id == 0}">
+        <div class="fm-section col1">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_gisung.gisung_no}">회차</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="text"
+                       id="gisungNo"
+                       name="gisungNo"
+                       th:value="${gisungNo}"
+                       maxlength="100" class="wid-s">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span>작업일지 날짜</span><small class="req-ico">*</small></strong>
+            </div>
+            <div class="fm-txt">
+                <div class="input-date-wrap">
+                    <div class="input-date">
+                        <input type="date" placeholder="" id="jobSheetStartDate" th:value="${gisung.jobSheetStartDate}">
+                        <i class="ico"></i>
+                    </div>
+                    <small class="bar">-</small>
+                    <div class="input-date">
+                        <input type="date" placeholder="" id="jobSheetEndDate" th:value="${gisung.jobSheetEndDate}">
+                        <i class="ico"></i>
+                    </div>
+                    <div class="gisung-date-list" style="display:none">
+                    </div>
+                </div>
+            </div>
+        </div>
+        </th:block>
+        <th:block th:unless="${gisung.id == '' || gisung.id == 0}">
+            <div class="fm-section col1">
+                <div class="fm-tit">
+                    <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_gisung.gisung_no}">회차</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                    <input type="text"
+                           id="gisungNo"
+                           name="gisungNo"
+                           th:value="${gisung.gisungNo}"
+                           maxlength="100" class="wid-s">
+                </div>
+            </div>
+            <div class="fm-section col2">
+                <div class="fm-tit">
+                    <strong><i class="ico-require"></i><span>작업일지 날짜</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                    <div class="input-date-wrap">
+                        <div class="input-date">
+                            <input type="date" placeholder="" id="jobSheetStartDate" th:value="${gisung.jobSheetStartDate}" readonly>
+                            <i class="ico"></i>
+                        </div>
+                        <small class="bar">-</small>
+                        <div class="input-date">
+                            <input type="date" placeholder="" id="jobSheetEndDate" th:value="${gisung.jobSheetEndDate}" readonly>
+                            <i class="ico"></i>
+                        </div>
+                        <div class="gisung-date-list" style="display:none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+</div>
+<div class="btn-box">
+    <th:block th:if="${gisung.id == '' || gisung.id == 0}">
+    <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_work.btn_add}">등록</a>
+    </th:block>
+    <th:block th:unless="${gisung.id == '' || gisung.id == 0}">
+        <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+    </th:block>
+</div>
+
+<div class="bg-loading" style="display:none">
+    <img src="/dist/img/loading.gif" alt="">
+</div>
+
+<script>
+    $(document).ready(function () {
+        var gisungId = $("#id").val();
+        let updating = false;
+        console.log("gisungId " + gisungId);
+        // datepicker init
+        if (gisungId == "" || gisungId == "0") {
+            //$("#jobSheetStartDate, #jobSheetEndDate").datepicker(datepickerFormat);
+        }
+
+        $("#year").val("[[${gisung.year}]]");
+        $("#month").val("[[${gisung.month}]]");
+
+        $(this).on('click', '#mBtnAdd', function () {
+            if (updating) {
+                return;
+            }
+            var id = $("#id").val();
+            if ($("#title").val() === "") {
+                alert("[[#{admin.modal.add_gisung.error_no_gisung_title}]]");
+                return;
+            }
+            if ($("#year").val() === "") {
+                alert("[[#{admin.modal.add_work_plan.error_no_year}]]");
+                return;
+            }
+            if ($("#month").val() === "") {
+                alert("[[#{admin.modal.add_work_plan.error_no_month}]]");
+                return;
+            }
+            if ($("#gisungNo").val() === "") {
+                alert("[[#{admin.modal.add_gisung.error_no_gisung_no}]]");
+                return;
+            }
+            if ($("#jobSheetStartDate").val() === "") {
+                alert("[[#{admin.modal.add_work_plan.error_no_job_sheet_start_date}]]");
+                return;
+            }
+            if ($("#jobSheetEndDate").val() === "") {
+                alert("[[#{admin.modal.add_work_plan.error_no_job_sheet_end_date}]]");
+                return;
+            }
+
+            if (id === "" || id === "0") {
+                if (confirm("[[#{admin.modal.add_gisung.confirm_add_gisung}]]")) {
+                    addGisung();
+                }
+            } else {
+                //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.add_gisung.confirm_modify_gisung}]]", updateGisung);
+                updateGisung();
+            }
+        });
+
+        function addGisung() {
+            $(".bg-loading").show();
+            reqPostJSON('/gisungApi/postGisung'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        updating = true;
+                        //reloadComponent("/gisung/gisungListCardBody", "#divCardBody", "");
+                        location.href = "/gisung/jobSheetList?id="+data.returnId;
+                        $(".bg-loading").hide();
+                        //toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function updateGisung() {
+            $(".bg-loading").show();
+            reqPostJSON('/gisungApi/putGisung'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $(".close").click();
+                        updating = true;
+                        //reloadComponent("/gisung/gisungListCardBody", "#divCardBody", "");
+                        location.href = "/gisung/jobSheetList?id="+data.returnId;
+                        //toastr.success(data.message);
+                        $(".bg-loading").hide();
+                    } else {
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function setSendData(status) {
+            return JSON.stringify({
+                "title": $("#title").val(),
+                "year": $("#year").val(),
+                "month": $("#month").val(),
+                "jobSheetStartDate": $("#jobSheetStartDate").val(),
+                "jobSheetEndDate": $("#jobSheetEndDate").val(),
+                "gisungNo": $("#gisungNo").val(),
+                "status": status,
+                "id": $("#id").val()
+            });
+        }
+
+    });
+</script>

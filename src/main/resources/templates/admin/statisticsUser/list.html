@@ -1,0 +1,34 @@
+<div id="list" th:fragment="load()" class="card-body">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th class="text-center" th:text="#{admin.statistics_user.page.no}">No</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.user_name}">성명</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.email}">아이디</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.company_name}">회사</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.rank}">직급</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.work_names}">공종</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.menu_name}">메뉴</th>
+          <th class="text-center" th:text="#{admin.statistics_user.page.access_date}">접속일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item,index : ${list}">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">01</td>
+          <td class="text-center" th:text="${item.userName}"></td>
+          <td class="text-center" th:text="${item.email}">kildonghong@google.com</td>
+          <td class="text-center" th:text="${item.companyName}">한국 도로공사</td>
+          <td class="text-center" th:text="${item.rank}">과장</td>
+          <td class="text-center" th:text="${item.workNames}">토공, 교랑공</td>
+          <td class="text-center" th:text="${item.menuName}">BIM 모델관리</td>
+          <td class="text-center" th:text="${#temporals.format(item.accessDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min_sec'))}">2021-04-06 11:10</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+</div>

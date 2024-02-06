@@ -1,0 +1,24 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+    <div class="search-box">
+        <input type="hidden" id="sortProp" value="">
+        <section>
+            <select id="searchType">
+                <option value="none" th:text="#{contents.gisung_contract_list.select_search_type}">선택</option>
+                <option value="company" th:text="#{contents.gisung_contract_list.select_company}">업체명</option>
+                <option value="damName" th:text="#{contents.gisung_contract_list.select_dam_name}">담당자명</option>
+            </select>
+            <input type="text" id="searchValue" class="wid-m" name="searchValue" placeholder="">
+        </section>
+        <section class="user-search">
+            <p for="writerName" th:text="#{co_work.notification_list.writer_name}">작성자</p>
+            <input type="text" id="searchUserDisplayName" class="wid-m" name="searchUserDisplayName" th:placeholder="#{co_work.bulletin_list.select_writer_placeholder}" readonly>
+            <input type="hidden" id="searchUserId" name="searchUserId">
+            <a href="#none" id="btnSearchUser" class="pop-open-btn" data-modal="#modalSearchSingleUser"></a>
+        </section>
+
+        <section>
+            <a href="#none" id="btnSearchGisung" class="btn btn-color2"><span th:text="#{contents.gisung_list.btn_search_document}">검색</span></a>
+<!--            <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.gisung_list.btn_reset_search_condition}">초기화</span></a>-->
+        </section>
+    </div>
+</form>

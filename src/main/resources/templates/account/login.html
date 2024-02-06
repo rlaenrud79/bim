@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title th:text="#{account.login.title}">AdminLTE 3 | Log in</title>
+  <link rel="shortcut icon" href="favicon/favicon.ico">
+  <link rel="stylesheet" href="/dist/lib/datepicker.css">
+  <link rel="stylesheet" href="/dist/lib/scroll/OverlayScrollbars.min.css">
+  <link rel="stylesheet" href="/dist/css/common.css">
+  <script src="/dist/lib/jquery/jquery.min.js"></script>
+  <script src="/dist/lib/jquery/jquery-migrate.min.js"></script>
+  <script src="/dist/lib/jquery/jquery-ui.js"></script>
+  <script src="/dist/lib/wow/wow.min.js"></script>
+  <script src="/dist/lib/scroll/jquery.overlayScrollbars.min.js"></script>
+  <script src="/dist/lib/slick/slick.min.js"></script>
+  <script src="/dist/js/common_p.js"></script>
+  <script src="/plugins/jquery/jquery.min.js"></script>
+  <script src="/dist/js/adminlte.min.js"></script>
+</head>
+<body>
+
+<div class="pg-login-wrap">
+  <video src="/dist/img/login-bg.mp4" width="300" autoplay muted loop></video>
+  <div class="login-content">
+    <section class="login-left">
+      <div class="login-title">
+        <h2><strong>수도권광역급행철도 B노선(용산~상봉)</strong><br>
+          제4공구 건설공사 관리시스템</h2>
+      </div>
+      <div class="login-logo">
+        <img src="/dist/img/common/login-logo.png?v2" alt="">
+      </div>
+      <!--
+      <div class="pass-find">
+        <p>아이디 / 비번을 잊으셨나요?</p>
+        <button class="btn-arr">아이디 찾기</button>
+        <button class="btn-arr">비번 찾기</button>
+      </div>
+      -->
+    </section><!--//login-left-->
+
+
+    <section class="login-right">
+
+        <div class="pg-login">
+          <form name="FRM" th:action="@{/account/login}" method="post">
+          <div class="login-top">
+            <h1>Login</h1>
+            <div class="drop-nav">
+              <span>KR</span>
+              <ul>
+                <li><a href="">KR</a></li>
+                <li><a href="">EN</a></li>
+                <li><a href="">CN</a></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="form">
+            <div class="inner">
+              <div class="fm-section">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><label for="username" th:text="#{account.login.email}"></label></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="email" id="username" name="username" th:placeholder="#{account.login.email}" th:value="${email == null ?  '': email}">
+                </div>
+              </div>
+              <div class="fm-section">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><label for="username" th:text="#{account.login.password}"></label></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="password" name="password" class="input-login-pwd" th:placeholder="#{account.login.password}">
+                </div>
+              </div>
+            </div>
+            <div class="btn-box">
+              <a href="#none" class="btn wid-lg btn-login" th:text="#{account.login.sign_in}">확인</a>
+            </div>
+
+          </div><!--//form-->
+          </form>
+        </div><!--//pg-login-->
+
+    </section><!--//login-right-->
+
+  </div>
+</div><!--//pg-login-wrap-->
+<script>
+  $(function() {
+
+    let _defaultLangCode = "[[${defaultLangCode}]]";
+    let _type = "[[${type}]]";
+
+    let init = function(){
+      if(_type === "") {
+        location.replace('/account/login?type=default&lang='+_defaultLangCode);
+      }
+    }
+
+    $("#language").on("change", function() {
+      location.replace('/account/login?type=choice&lang='+$(this).val());
+    });
+
+    $(".btn-login").click(function() {
+      document.FRM.submit();
+    });
+
+    $('.input-login-pwd').keyup(function () {
+      if (event.keyCode == 13) {
+        document.FRM.submit();
+      }
+    });
+
+    init();
+  });
+</script>
+
+</body>
+</html>
+
+
+<!--비밀번호 오류 팝업-->
+<div id="passPopup" class="popup-wrap popup-xs" tabindex="0">
+  <div class="popup-inner">
+    <div class="popup-con">
+      <div class="popup-alarm">
+        <p>현재 비밀번호가 맞지 않습니다.</p>
+        <p>비밀헌호가 기억나지 않으면 <br>관리자에게 문의해 주세요.</p>
+        <div class="btn-box">
+          <button type="button" class="btn-s btn-color1" onclick="">확인</button>
+        </div>
+      </div>
+    </div><!--//popup_con-->
+    <button type="button" class="close close-btn"></button>
+  </div><!--//popup_content-->
+</div>

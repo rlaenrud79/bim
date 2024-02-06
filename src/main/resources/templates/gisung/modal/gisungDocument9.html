@@ -1,0 +1,31 @@
+<div class="print-page">
+    <div class="btn-footer">
+        <!--<button type="button" id="" class="btn bg-gradient-success btn-pdf"><span>PDF</span></button>-->
+        <button type="button" id="" onclick="btnPrint();" class="btn bg-gradient-success"><span>PRINT</span></button>
+    </div>
+    <section class="page cover-ty1">
+        <div class="title">
+            <h2><span th:text="${gisungCover.title}">제목</span><br><small th:text="${gisungCover.subTitle}">소제목</small>
+            </h2>
+        </div>
+        <div class="date" th:text="${gisungCover.date}">날짜</div>
+        <div class="txt" th:text="${gisungCover.projectName}">공사명</div>
+    </section>
+
+
+
+    <div class="modal-footer">
+        <!--<button type="button" id="" class="btn bg-gradient-success btn-pdf"><span>PDF</span></button>-->
+        <button type="button" id="" onclick="btnPrint();" class="btn btn-color1"><span>인쇄하기</span></button>
+        <button id="btnCloseLayer" type="button" class="btn btn-secondary close">닫기</button>
+    </div>
+</div><!--//page-->
+
+
+<script type="text/javascript">
+    function btnPrint() {
+        window.open('/gisung/printGisungItem?id='+[[${gisung.id}]]+'&no='+[[${no}]]+'&coverTableId='+[[${coverId}]], 'printDocument', 'width=800, height=600, left=100, top=100, scrollbars=yes, resizable=yes')
+    }
+
+
+</script>

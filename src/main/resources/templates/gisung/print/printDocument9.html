@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link rel="stylesheet" href="/dist/css/print.css">
+
+
+<body style="overflow:visible;">
+<div class="print-page">
+    <section class="page cover-ty1">
+        <div class="title">
+            <h2><span th:text="${gisungCover.title}">제목</span><br><small th:text="${gisungCover.subTitle}">소제목</small>
+            </h2>
+        </div>
+        <div class="date" th:text="${gisungCover.date}">날짜</div>
+        <div class="txt" th:text="${gisungCover.projectName}">공사명</div>
+    </section>
+
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    window.print();
+</script>

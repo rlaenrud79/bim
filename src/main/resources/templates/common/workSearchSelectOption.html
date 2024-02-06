@@ -1,0 +1,28 @@
+<div th:fragment="script(id)">
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            var searchConstructionData = JSON.parse([[${#strings.replace(workJson, '&quot;', '"')}]]);
+            // 주어진 constructionData 배열에서 upId 값이 0보다 큰 값이 있는지 체크
+            const hasUpIdSearch = hasUpIdGreaterThanZero(searchConstructionData);
+
+            if (hasUpIdSearch) {
+                // 선택 요소
+                const constructionSearchSelect = document.getElementById([[${id}]]);
+                removeAllOptions([[${id}]]);
+                const optionElement = document.createElement('option');
+                optionElement.value = "0";
+                optionElement.text = [[#{contents.document_list.select_work_type}]];
+                constructionSearchSelect.appendChild(optionElement);
+
+                // 공종 그룹 생성
+                searchConstructionData.forEach(construction => {
+                    if (construction.upId === 0) {
+                        const optgroup = workCreateOptionGroup(searchConstructionData, construction.id);
+                        optgroup.label = construction.workNameLocale;
+                        constructionSearchSelect.appendChild(optgroup);
+                    }
+                });
+            }
+        });
+    </script>
+</div>

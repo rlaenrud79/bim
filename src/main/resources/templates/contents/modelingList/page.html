@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="contents/modelingList/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <div id="divCardBody" class="card-body" th:replace="contents/modelingList/cardBody :: cardBody()"/>
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<div th:include="common/workSearchSelectOption :: script('workId')"></div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block> <!-- 사용자 -->
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'popup-sm')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUploadFile', #{contents.modeling_list.modal_title.add_bim_model}, '')"></th:block> <!-- 등록 -->
+<!-- modal end -->
+
+<script>
+  const noSelectBimModel = "[[#{contents.modeling_viewer.page.no_select_bim_model}]]";
+  const confirmAddCoWork = "[[#{co_work.co_work_list.confirm_add_co_work}]]";
+  const confirmAddCompanyRole = "[[#{contents.modeling_list.confirm_add_company_role}]]";
+  let PageFunction = {};
+
+  let setSendData = function() {
+    let param = "";
+
+    param += "searchLatest=true";
+    param += "&workId=" + $("#workId").val();
+    param += "&fileName=" + $("#fileName").val();
+    param += "&writerName=" + $("#writerName").val();
+    param += "&writerId=" + $("#writerId").val();
+    param += "&writeDateFrom=" + $("#writeDateFrom").val();
+    param += "&writeDateEnd=" + $("#writeDateEnd").val();
+    return param;
+  }
+  PageFunction.setSendData = setSendData;
+</script>
+<script src="/dist/js/pages/modeling.js"></script>
+
+</body>
+</html>

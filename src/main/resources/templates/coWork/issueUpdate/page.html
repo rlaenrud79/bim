@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('coWork')"></nav>
+    <aside th:replace="layout/common :: aside('coWork','issueUpdate')"></aside>
+
+    <!-- contents area  -->
+    <main role="main" class="content-wrapper coWork-content board-add">
+      <!-- Content Header (Page header) -->
+      <div id="divContentHeader" class="content-header" th:replace="coWork/issueUpdate/contentHeader :: contentHeader()"/>
+
+      <!-- /.contents area -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="con-issue-add">
+            <div class="col-lg-12">
+              <div class="card content-body-area">
+                <div id="divCardHeader" class="card-header" th:replace="coWork/issueUpdate/cardHeader :: cardHeader()"/>
+                <div id="divCardBody" class="card-body" th:replace="coWork/issueUpdate/cardBody :: cardBody()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+    </main>
+
+    <footer th:replace="layout/common :: footer()"></footer>
+  </div>
+
+  <div th:include="layout/common :: script()"></div>
+  <script th:replace="common/modal/searchMultiUser::script()"></script>
+  <div th:include="common/editor/page :: script()"></div>
+  <script>
+    $(document).ready(function () {
+      let _this = $(this);
+      let _issueId = 0;
+      let _savedRequestDate = $("#requestDate").val();
+
+      CommonEditor.setInputData('[[${issueItem.contents}]]');
+
+      $("#requestDate").datepicker(datepickerFormat);
+
+      let setParam = function(page, size) {
+
+        let param = "";
+
+        param += "page=[[${pageable.pageNumber}]]";
+        param += "&size=[[${pageable.pageSize}]]";
+        param += "&searchType=[[${searchIssueVO.searchType}]]";
+        param += "&searchText=[[${searchIssueVO.searchText}]]";
+        param += "&writerName=[[${searchIssueVO.writerName}]]";
+        param += "&writerId=[[${searchIssueVO.writerId}]]";
+        param += "&searchDateType=[[${searchIssueVO.searchDateType}]]";
+        param += "&searchDateFrom=[[${searchIssueVO.searchDateFrom}]]";
+        param += "&searchDateEnd=[[${searchIssueVO.searchDateEnd}]]";
+        param += "&sortProp=[[${searchIssueVO.sortProp}]]";
+
+        return param;
+      }
+
+      function getSendData() {
+        return JSON.stringify({
+          "issueId": _issueId,
+          "title": $("#title").val(),
+          "requestDate": $("#requestDate").val(),
+          "priority": $("#priority").val(),
+          "status": $("input:radio[name='status']:checked").val(),
+          "contents": CommonEditor.getInputData(),
+          "issueManagerIds": $("#issueManagersArray").val().split(",")
+        });
+      }
+
+      let executeUpdate = function () {
+
+        reqPutJSON('/coWorkApi/putIssue'
+          , getSendData()
+          , function (data) {
+            if (data.result) {
+              toastr.success(data.message);
+              $("#btnGoToView").click();
+            }
+            else{
+              toastr.error(data.message);
+            }
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+          });
+      }
+
+      _this.on("click", "#btnGoToList", function(){
+        location.href = "/coWork/issueList?" + setParam();
+      });
+
+      _this.on("click", "#btnGoToView", function(){
+        _issueId = $(this).data("id");
+        location.href="/coWork/issueView?issueId=" + _issueId + "&" + setParam();
+      });
+
+      _this.on("click", "#btnUpdateIssue", function (){
+
+        if ($("#title").val() == "") {
+          showErrorAlert("ALERT", "[[#{co_work.issue_update.error_no_title}]]");
+          return;
+        }
+
+        if(!setSelectedUser()) return false;
+
+        if ($("#priority").val() == "0") {
+          showErrorAlert("ALERT", "[[#{co_work.issue_update.error_no_priority}]]");
+          return;
+        }
+
+        if($("#requestDate").val() != "" && moment($("#requestDate").val()).isBefore(moment(_savedRequestDate).format("YYYY-MM-DD"))){
+          showErrorAlert("ALERT", "[[#{co_work.issue_update.error_request_date_before_saved}]]");
+          return;
+        }
+
+        if(CommonEditor.getInputData() == "<p><br></p>" || CommonEditor.isEmpty()){
+          showErrorAlert("ALERT", "[[#{co_work.issue_update.error_no_contents}]]");
+          return;
+        }
+
+        _issueId = $(this).data("id");
+        showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.issue_update.confirm_update_issue}]]", executeUpdate);
+      });
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+<div id="divContentHeader" class="content-header" th:fragment="contentHeader()">
+  <div>
+    <h1><i class="nav-icon fas fa-exclamation-circle"></i> <span th:text="#{co_work.issue_update.title_issue_add}">이슈수정</span></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a th:href="@{/main/main}" ><i class="fas fa-home"></i> <span th:text="#{co_work.issue_update.title_home}">HOME</span></a></li>
+      <li class="breadcrumb-item"> <a th:href="@{/coWork/coWorkList}" ><span th:text="#{co_work.issue_update.title_co_work}">협업관리</span></a></li>
+      <li class="breadcrumb-item"> <a th:href="@{/coWork/issueList}" ><span th:text="#{co_work.issue_update.title_issue}">이슈목록</span></a></li>
+      <li class="breadcrumb-item active"> <span th:text="#{co_work.issue_update.title_issue_manage_issue_update}">이슈 수정</span></li>
+    </ol>
+  </div>
+</div>

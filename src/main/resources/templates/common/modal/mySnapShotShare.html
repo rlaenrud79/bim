@@ -1,0 +1,116 @@
+<!-- 모달 - 스냅샷 공유 -->
+<div class="snapshot-list snapshot-share" th:object="${mySnapShotShareVO}">
+  <input type="hidden" id="type" th:value="*{type}"/>
+  <input type="hidden" id="id" th:value="*{id}"/>
+  <input type="hidden" id="existSnapShotIds" th:value="*{existSnapShotIds}"/>
+  <ul>
+    <li th:each="mySnapShot : ${mySnapShots}" th:data-id="${mySnapShot.id}">
+      <a href="#none" class="shareMySnapShot">
+        <div class="img">
+          <img th:src="${mySnapShot.source}">
+        </div>
+        <div class="txt">
+          <p th:text="${mySnapShot.title}">제목</p>
+          <span th:text="${#temporals.format(mySnapShot.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2026-10-19 15:00</span>
+        </div>
+      </a>
+    </li>
+  </ul>
+</div><!--//snapshot-list-->
+
+<script>
+  $(document).ready(function () {
+    const $this = $("#mySnapShotShare");
+
+    if ($("#type").val() === "snapShotList") {
+      $(".shareMySnapShot").hide();
+    }
+
+    $this.find(".shareMySnapShot").on('click', function () {
+
+      console.log("shareMySnapShot click");
+
+      const param = {
+        type: $("#type").val(),
+        id: $("#id").val(),
+        mySnapShotId: getData(this, "li", "id"),
+        existSnapShotIds: $("#existSnapShotIds").val()
+      }
+
+      if (param.type === "coWork") {
+        showConfirm("[[#{common.modal.my_snap_shot.my_snap_shot_share}]]"
+          , "[[#{common.modal.my_snap_shot.share_my_snap_shot}]]"
+          , () => {
+            reqPost("/commonApi/shareMySnapShot"
+              , param
+              , (data) => {
+                if (data.result) {
+                  toastr.success(data.message);
+                  let rowCount = $("#snapShotCount").html();
+                  if(modelIds.trim() == ""){
+                  	location.reload();
+                  }
+                  else{
+	                  reloadComponentTabActive('/coWork/snapShotArea/'+data.returnId, "#snapShotArea", "");
+	                  $("#snapShotCount").html(++rowCount);
+	                  $("#mySnapShotShare").modal("hide");
+                  }
+                } else {
+                  toastr.error(data.message);
+                }
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              }
+            );
+          })
+      } else if (param.type === "jobSheetAdd" || param.type === "jobSheetUpdate") {
+        let textHtml = '';
+        reqPostJSON("/projectApi/renderJobSheetSnapShotAtAdd", JSON.stringify(param)
+            , function (data) {
+                if (data.result) {
+                  textHtml += '<img src="'+data.source+'" id="jobSheetSnapShotImg'+$("#id").val()+'">';
+                  textHtml += '<button type="button" name="btnSnapShotId" data-snap-shot-img="'+$("#id").val()+'" data-snap-shot-id="'+data.id+'" class="btn"><i class="fas fa-times-circle"></i></button>';
+                  $("input[name='mySnapShotId']").eq($("#id").val()).val(data.id);
+                  $("#jobSheetSnapShotList"+$("#id").val()).html(textHtml);
+                  $("#jobSheetSnapShotList"+$("#id").val()).show();
+                  $(".close").click();
+                } else {
+                  alert(data.message);
+                }
+              }
+              , function (xhr) {
+                alert($.parseJSON(xhr.responseJSON).error);
+              });
+        //reloadComponentByJson("/project/renderJobSheetSnapShotAtAdd", "#jobSheetSnapShotList", JSON.stringify(param));
+        //$("#mySnapShotShare").modal("hide");
+      /**
+      } else if (param.type === "jobSheetUpdate") {
+        let textHtml = '';
+        reqPostJSON("/projectApi/renderJobSheetSnapShotAtUpdate", JSON.stringify(param)
+                , function (data) {
+                  if (data.result) {
+                    textHtml += '<img src="'+data.source+'" style="width: 200px; height: 100px;">';
+                    textHtml += '<button type="button" name="btnSnapShotId" data-snap-shot-id="'+data.id+'" class="btn"><i class="fas fa-times-circle"></i></button>';
+                    textHtml += '<input type="hidden" name="mySnapShotId" value="'+data.id+'">';
+                    $("#jobSheetSnapShotList"+$("#id").val()).html(textHtml);
+                    $("#mySnapShotShare").modal("hide");
+                    console.log(data);
+                  } else {
+                    toastr.error(data.message);
+                  }
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+        //reloadComponentByJson("/project/renderJobSheetSnapShotAtUpdate", "#jobSheetSnapShotList", JSON.stringify(param));
+        //$("#mySnapShotShare").modal("hide");
+        //$(".savedSnapShot").remove();
+      **/
+      } else {
+
+      }
+    });
+  });
+
+</script>

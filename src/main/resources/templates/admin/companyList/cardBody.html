@@ -1,0 +1,63 @@
+<div id="divCardBody" class="board-list" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="table-wrap">
+    <table class="table">
+      <tbody>
+      <tr>
+        <th th:text="#{admin.company_list.list_title_no}">No</th>
+        <th th:text="#{admin.company_list.list_title_company_name}">회사명</th>
+        <th th:text="#{admin.company_list.list_title_tel_no}">현장 전화번호</th>
+        <th th:text="#{admin.company_list.list_title_responsible_user}">현장 책임자</th>
+        <th th:utext="#{admin.company_list.list_title_responsible_tel_no}">현장 책임자<br/>휴대전화 번호</th>
+        <th th:text="#{admin.company_list.list_title_company_role}">회사역할</th>
+        <th th:text="#{admin.company_list.list_title_works}">공종</th>
+        <th th:text="#{admin.company_list.list_title_is_display}">사업개요 표시</th>
+        <th th:text="#{admin.company_list.list_title_status}">사용여부</th>
+        <th th:text="#{admin.company_list.list_title_last_modify_date}">최종 수정일시</th>
+        <th th:text="#{contents.document_list.list_title_delete}">삭제</th>
+      </tr>
+      <th:block th:if="${totalCount == null or totalCount == 0}">
+        <tr>
+          <td colspan="11" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+        <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+        <td>
+          <div class="table-text-cont">
+            <a th:id="aCompany_+${index.index}" href="#" th:data-id="${item.id}">
+              <span class="text-over-dot" th:text="${item.name}">한국 CM</span>
+            </a>
+          </div>
+        </td>
+        <td th:text="${item.telNo}">032-1111-2222</td>
+        <td>
+          <div th:replace="/common/userInfo :: userInfo(${item.responsibleUserDTO})"></div>
+        </td>
+        <td th:text="${item.responsibleUserDTO.mobileNo}">010-3333-4444</td>
+        <td th:text="${item.companyRoleName}">감리사</td>
+        <td th:text="${item.worksNames}">토공, 터널공, 배수공</td>
+        <td th:text="${#strings.equalsIgnoreCase(item.isDisplay, 'true') ? 'Y' : 'N'}">Y</td>
+        <td th:text="${#strings.equalsIgnoreCase(item.status, 'REG') ? 'Y' : 'N'}">Y</td>
+        <td th:text="${#temporals.format(item.lastModifyDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021-04-06</td>
+        <td>
+          <a href="#" id="btnDeleteCompany" th:data-company-id="${item.id}" class="btn-xs"><span th:text="#{layout.modal.btn_delete}">삭제</span></a>
+        </td>
+      </tr>
+      </tbody>
+    </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+  <script>
+    var currentSort = '[[${searchCompanyVO.sortProp}]]';
+
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

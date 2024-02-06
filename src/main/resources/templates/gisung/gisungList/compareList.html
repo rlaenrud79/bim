@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungList/jobSheet_contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <div class="form-wrap">
+                    <div class="section mb-0">
+                        <input type="hidden" name="gisungId" id="gisungId" th:value="${gisung.id}">
+                        <div class="board-top" th:replace="common/pagingSizeSelectBox :: type4(${list.size()})" /><!--//board-top-->
+                        <div id="divCardBody" th:replace="gisung/gisungList/compareForm :: contentForm()"/>
+                    </div>
+                    <div class="btn-box right-sticky">
+                        <section>
+                            <a href="#none" id="btnSearchProcess" class="btn btn-color-orange pop-open-btn" data-modal="#taskAddPopup" th:text="#{contents.gisung_list.btn_gisung_process_item_add}">기성 공정 추가</a>
+                        </section>
+                        <section>
+                            <p th:text="#{contents.gisung_list.gisung_plan_excel}">기성 목표치 엑셀 처리</p>
+                            <a href="#none" class="btn btn-color-dkred" id="exportGcodeXlsx" th:text="#{contents.gisung_list.gisung_list_excel_donwload}">리스트 다운로드</a>
+                            <a href="#none" id="btnListExcelUpload" class="btn btn-color-dkred pop-open-btn" data-modal="#listExcelUpload" th:text="#{contents.gisung_list.gisung_list_excel_upload}">리스트 업로드</a>
+                            <p class="file-name">파일명.exel</p>
+                            <a href="#none" class="btn btn-color-violet" th:text="#{contents.gisung_list.gisung_list_excel_compare}">검증/비교</a>
+                        </section>
+
+                        <!--퍼블 -->
+                        <section>
+                            <p>기성 목표치 엑셀 처리</p>
+                            <a href="#" class="btn btn-color-dkred">리스트 다운로드</a>
+                            <a href="#" class="btn btn-color-dkred pop-open-btn" data-modal="#addFilePopup">리스트 업로드</a>
+                            <a href="#" class="btn btn-color-dkred"><i class="btn-loading"></i>리스트 업로드중</a>
+                            <div class="load-info">
+                                <small>완료 예상 시간: 20분 후 <br>새로고침해서 확인하세요.</small>
+                                <a href="#" class="btn-xs">취소하기</a>
+                            </div>
+                        </section>
+                        <section>
+                            <p>업로드 된 파일</p>
+                            <p class="file-name">파일명.exel</p>
+                            <a href="#" class="btn btn-color-violet pop-open-btn" data-modal="#taskComparisonPopup">검증/비교</a>
+                        </section>
+                        <!--// 퍼블-->
+
+                    </div><!--//btn-box-->
+                </div>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('taskAddPopup', #{project.job_sheet_add.btn_add_progress}, 'popup-lg')"></th:block> <!-- 공정 추가 -->
+<th:block th:replace="layout/costdetail_popup :: modal('costDetail', #{cost.index.page.object_price_detail}, 'popup-bottom')"></th:block> <!-- 복합단가 상세 -->
+<th:block th:replace="layout/popup :: modal('listExcelUpload', #{contents.gisung_list.gisung_list_excel_upload}, 'popup-sm')"></th:block> <!-- 리스트 업로드 팝업 -->
+<!-- modal end -->
+
+<script type="text/javascript">
+    var gisungId = [[${gisung.id}]];
+</script>
+<script src="/dist/js/pages/gisung.js"></script>
+</body>
+</html>

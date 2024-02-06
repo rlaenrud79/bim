@@ -1,0 +1,68 @@
+<li id="liAlertLayer" class="nav-item dropdown">
+  <a class="nav-link" data-toggle="dropdown" href="#">
+    <i class="fas fa-bell"></i>
+    <span class="badge badge-danger navbar-badge" th:text="${alerts.size}">3</span>
+  </a>
+  <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+    <article class="popup-container popup-container-header">
+      <div class="popup-header">
+        <h1>
+          <i class="far fa-bell"></i>
+          <span th:text="#{common.alert.title_alert}">알림</span>
+          <span class="badge badge-dark" th:text="${alerts.size}">3</span>
+        </h1>
+        <button type="button" class="btn-bim-modal-close"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="popup-body">
+        <div class="scroll-area-v">
+          <div>
+            <table class="table">
+              <thead>
+              <tr>
+                <th class="text-center" width="50px"><span th:text="#{common.alert.list_title_no}">No</span></th>
+                <th class="text-center"><span th:text="#{common.alert.list_title_type}">구분</span></th>
+                <th class="text-center"><span th:text="#{common.alert.list_title_title}">제목</span></th>
+                <th class="text-center"><span th:text="#{common.alert.list_title_elapse_time}">경과시간</span></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="item, index : ${alerts}">
+                <td class="text-center"><span class="text-muted" th:text="${index.index + 1}">50</span></td>
+                <td class="text-center"><span th:text="#{${item.type.getMessageProperty()}}">공지</span></td>
+                <td style="max-width: 180px;">
+                  <a th:id="aAlerts_+${item.id}" href="#"
+                     th:data-id="${item.id}"
+                     th:data-is-new-tab="${item.isNewTab}"
+                     class="text-over-dot"
+                     th:utext="${item.title}">휴무일 공지(2021.07.07)</a></td>
+                <td class="text-center"><span class="text-muted" th:text="${item.elapseTime}">2h 15m</span></td>
+              </tr>
+              <tr th:if="${alerts.size == 0}">
+                <td class="text-center" colspan="4"><span th:text="#{common.alert.no_alert_item}">알림이 없습니다.</span></td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </article>
+  </div>
+</li>
+<script th:fragment="script()">
+  $(document).ready(function () {
+    const __this__ = $("#liAlertLayer");
+
+    __this__.find("a[id^=\'aAlerts_\']").on("click", function(){
+      let link = "/common/moveToItem/" + $(this).data("id");
+      let isNewTab = $(this).data("is-new-tab");
+
+      if(isNewTab) {
+        window.open(link);
+        setTimeout(function () {
+          reloadComponent("/common/alertLayer", "#liAlertLayer", "");
+        }, 1000);
+      }
+      else location.href = link;
+    });
+  });
+</script>

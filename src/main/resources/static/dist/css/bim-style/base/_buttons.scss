@@ -1,0 +1,45 @@
+/// BIM BUTTONS
+
+[class^="btn-bim-"], [class*=" btn-bim-"] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    outline: 0;
+    border: 1px solid transparent;
+    background-color: transparent;
+    color: $font-color;
+
+    &:hover {
+        color: lighten($font-color, $amount: 10%);
+    }
+
+    &:focus {
+        outline: 0 solid rgba(0,125,250,0.6);
+        outline-offset: 1px;
+    }
+}
+
+// modal & popup button
+.btn-modal-close {
+    i {
+        margin-top: 1px;
+        font-size: 1.1rem;
+        color: $font-color;
+    }
+}
+
+.btn-order {
+    i {margin: 3px;}
+}
+
+.bim-btn-group {
+    button {
+        min-width: 80px;
+
+        i { margin-right: .3rem; }
+    }
+}
+
+table button i { margin-right: .3rem; }

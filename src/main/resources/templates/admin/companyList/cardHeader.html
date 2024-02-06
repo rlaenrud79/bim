@@ -1,0 +1,16 @@
+<div id="divCardHeader" class="card-header" th:fragment="cardHeader()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div class="form-group">
+      <label th:text="#{admin.company_list.search_list_count}">목록 개수</label>
+      <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+    </div>
+    <div class="bim-btn-group">
+      <button id="btnExcelDownload" type="button" class="btn bg-gradient-info">
+        <i class="fas fa-file-excel"></i> <span th:text="#{admin.company_list.btn_excel_download}">엑셀 다운로드</span>
+      </button>
+      <button id="btnAdd" type="button" class="btn bg-gradient-info">
+        <i class="fas fa-plus"></i> <span th:text="#{admin.company_list.btn_add}">등록</span>
+      </button>
+    </div>
+  </div>
+</div>

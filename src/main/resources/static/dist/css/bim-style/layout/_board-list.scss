@@ -1,0 +1,85 @@
+/// BIM LIST
+
+.board-list {
+    .content-header-area {
+        .card-header {
+            padding-top: 0;
+
+            > div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .bim-btn-group { margin-left: auto; }
+            }
+        }
+    }
+
+    .content-body-area {
+        .card-header {
+            display: flex;
+            align-items: center;
+            height: 77.75px;
+            max-height: 77.75px;
+
+            > .form-group { margin-left: auto }
+            > .bim-btn-group { margin: .5rem .5rem .5rem auto; }
+        }
+
+        .card-body {
+            padding-top: 0;
+            height: calc(100vh - 26.8rem);
+
+            .number-results {
+                position: absolute;
+                left: 0;
+                margin: 0 1.5rem;
+            }
+
+            > div {
+                &:nth-of-type(1) { height: calc(100% - 3.162rem); }
+                &:nth-of-type(2) {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 1rem;
+                    border-top: 1px solid #dee2e6;
+                }
+
+                table {
+                    position: relative;
+                    min-width: 65.385rem;
+
+                    th, td { padding: .5rem; }
+
+                    thead {
+                        position: sticky;
+                        top: 0;
+                        z-index: 1;
+
+                        tr {
+                            background: rgba(255, 255, 255, .8);
+                            backdrop-filter: saturate(180%) blur(5px);
+                            box-shadow: 0px 0px 2px gray;
+                        }
+
+                        th {
+                            height: 3.654rem;
+                            border: none;
+                        }
+                    }
+
+                    tbody {
+                        tr {
+                            &:hover { background-color: #f8f9fa; }
+
+                            td {}
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+

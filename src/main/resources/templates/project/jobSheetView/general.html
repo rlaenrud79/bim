@@ -1,0 +1,40 @@
+<div class="card content-body-area pdf_page" th:fragment="general()">
+  <div class="card-body">
+    <div class="col-12">
+      <h2 class="list-title">
+        <i class="far fa-arrow-alt-circle-right"></i><span th:text="#{project.job_sheet_view.general}">일반현황</span>
+      </h2>
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+          <tr>
+            <th><span th:text="#{project.job_sheet_view.project_name}"> 공사명</span></th>
+            <td th:text="${projectName}">고속도로 제 400호선 양평-이천간 건설공사 4공구</td>
+
+            <th><span th:text="#{project.job_sheet_view.temperature}"> 온도</span></th>
+            <td class="text-center">
+              <span th:text="#{project.job_sheet_view.temperature_max}">최고 </span>
+              <b><span th:text="*{temperatureMax}"> 29.3 ℃</span></b>
+              /
+              <span th:text="#{project.job_sheet_view.temperature_min}">최저 </span>
+              <b><span th:text="*{temperatureMin}"> 13.6 ℃</span></b></td>
+          </tr>
+          <tr>
+            <th><span th:text="#{project.job_sheet_view.location}"> 위치</span></th>
+            <td th:text="*{location}">경기도 여주시 산록면 용담리</td>
+
+            <th><span th:text="#{project.job_sheet_view.weather}"> 기상</span></th>
+            <td class="text-center">
+              <span th:text="#{project.job_sheet_view.rain_fall_amount}">강수량 </span>
+              <b><span th:text="*{rainfallAmount}"> 44 mm</span></b>
+              /
+              <span th:text="#{project.job_sheet_view.snow_fall_amount}">강설량 </span>
+              <b><span th:text="*{snowfallAmount}"> 0 mm</span></b>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

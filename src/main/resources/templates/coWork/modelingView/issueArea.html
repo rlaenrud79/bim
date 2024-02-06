@@ -1,0 +1,4 @@
+<div th:fragment="load()" id="issueArea" class="" role="tabpanel" th:class="${modelings!=null and modelings.size() > 0 ? 'tab-pane bim-issue-area' : 'bim-issue-area non-model'}">
+  <article id="issueList" th:replace="coWork/modelingView/issueList::load()"></article>
+  <div id="issueItem" th:replace="coWork/modelingView/issueItem::load()"></div>
+</div>

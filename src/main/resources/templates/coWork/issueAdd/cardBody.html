@@ -1,0 +1,88 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <h2 class="list-title"><i class="far fa-list-alt"></i> <span th:text="#{co_work.issue_add.card_body_issue_info}">이슈 정보</span></h2>
+    <div class="table-responsive" th:object="${issue}">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th>
+            <span th:text="#{co_work.issue_add.card_body_issue_title}">이슈 제목</span>
+            <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+          </th>
+          <td colspan="3">
+            <div class="form-group w-50">
+              <input type="text"
+                     id="title" name="title"
+                     class="form-control"
+                     th:field="*{title}"
+                     th:placeholder="#{co_work.issue_add.card_body_issue_title_place_holder}"
+                     maxlength="255">
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.issue_add.card_body_issue_managers}">대상자</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+          <td colspan="3">
+            <input type="hidden" id="issueManagersArray" name="issueManagersArray" />
+            <div id="divMultiUserSelect" th:include="common/modal/searchMultiUser::load()" class="dual-subject-list"></div>
+          </td>
+        </tr>
+
+        <tr>
+          <th th:text="#{co_work.issue_add.card_body_issue_request_date}">완료 요구일자</th>
+          <td>
+            <div class="form-group from-date w-50">
+              <div class="input-group">
+                <input type="text" class="form-control" id="requestDate" th:field="*{requestDate}" readonly>
+              </div>
+            </div>
+          </td>
+
+          <th> <span th:text="#{co_work.issue_add.card_body_priority}">중요도</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+          <td>
+            <div class="form-group w-75">
+              <select class="custom-select" id="priority" th:field="*{priority}">
+                <option value="0" th:utext="#{co_work.issue_common.card_body_priority_0}">::선택::</option>
+                <option value="10" th:utext="#{co_work.issue_common.card_body_priority_10}">긴급</option>
+                <option value="20" th:utext="#{co_work.issue_common.card_body_priority_20}">상</option>
+                <option value="30" th:utext="#{co_work.issue_common.card_body_priority_30}">중</option>
+                <option value="40" th:utext="#{co_work.issue_common.card_body_priority_40}">하</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+
+        <tr>
+          <th><span th:text="#{co_work.issue_add.card_body_status}">상태</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+          <td colspan="3">
+            <div class="form-group clearfix">
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="status_write" name="status" value="WRITE" checked="checked">
+                <label for="status_write" th:text="#{co_work.issue_common.card_body_status_write}">작성중</label>
+              </div>
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="status_request" name="status" value="REQUEST" >
+                <label for="status_request" th:text="#{co_work.issue_common.card_body_status_request}">의뢰</label>
+              </div>
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="status_going" name="status" value="GOING" >
+                <label for="status_going" th:text="#{co_work.issue_common.card_body_status_going}">진행중</label>
+              </div>
+              <div class="icheck-primary d-inline">
+                <input type="radio" id="status_complete" name="status" value="COMPLETE" >
+                <label for="status_complete" th:text="#{co_work.issue_common.card_body_status_complete}">완료</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.issue_add.card_body_contents}">내용</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+          <td colspan="3">
+              <div th:replace="common/editor/page :: load()"></div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,110 @@
+/* 1024 */
+
+@media screen and (max-width: 1024px) {
+  .main-content .con-main-content > .main-content-area {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .main-content.hide-right-sidebar .main-content-area {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .main-content.hide-right-sidebar .main-sidebar-right {
+    right: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 0 0 0 8px;
+  }
+
+  .main-content.hide-right-sidebar .main-sidebar-right .btn-main-right-nav,
+  .main-content.hide-right-sidebar .con-main-content > .main-sidebar-right .btn-main-right-nav:hover {
+    background-color: #fd7e14;
+  }
+
+  .main-content.hide-right-sidebar  .con-main-content > .main-sidebar-right .btn-main-right-nav i {
+    color: #fff;
+  }
+
+  .main-content.hide-right-sidebar .con-main-content > .main-sidebar-right .btn-main-right-nav {
+    border: none;
+  }
+
+  .main-content .con-main-content > .main-sidebar-right {
+    -webkit-box-shadow: 0 0 5px 0 rgba(0, 0, 0, 10%);
+            box-shadow: 0 0 5px 0 rgba(0, 0, 0, 10%);
+    z-index: 5;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .ui-dialog.ui-widget {
+    left: 50%!important;
+    transform: translateX(-50%) translateY(-50%);
+    max-width: 650px;
+  }
+
+  #viewer-settings-dialog .hoops-ui-window-body {
+    width: 100%!important;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .ui-modelbrowser-window {
+    width: 100%!important;
+  }
+
+  .ui-dialog.ui-widget {
+    top: 50%!important;
+    transform: translateX(-50%) translateY(-50%);
+    max-width: calc(100% - 20px);
+  }
+
+  #viewer-settings-dialog {
+    transform: translateX(-50%) translateY(-50%);
+    min-width: calc(100% - 20px)!important;
+    max-width: calc(100% - 20px);
+  }
+
+  #viewer-settings-dialog .hoops-ui-window-body.selected {
+    width: 100%!important;
+  }
+
+  .settings-group-general select {
+    width: 100%!important;
+  }
+
+  .hoops-ui-window-footer {
+    flex-wrap: wrap;
+  }
+
+  .hoops-ui-window-footer .version {
+    width: 100%;
+    margin-bottom: .5rem;
+  }
+
+  .hoops-ui-window-footer .hoops-ui-footer-buttons {
+    margin-left: auto;
+  }
+
+  #settings-splat-enabled-style {
+    display: flex;
+    flex-direction: column;
+    width: 100%!important;
+  }
+
+  #snapshot-dialog {
+    max-width: calc(100% - 20px);
+    width: calc(100% - 20px);
+  }
+
+  #snapshot-dialog .hoops-ui-window-body {
+    overflow: scroll;
+    height: calc(100vh - 300px);
+  }
+
+  #snapshot-dialog #mySnapShotTitle {
+    width: 50%!important;
+  }
+}

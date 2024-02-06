@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="content-header" th:replace="cost/index/contentHeader :: contentHeader()"/>
+
+            <div class="content">
+                <section class="gisung-cost-content">
+
+                    <div class="card-header">
+                        <input type="hidden" name="workId" id="workId" value="0"/>
+                        <input type="hidden" name="pageMode" id="pageMode" th:value="${pageMode}"/>
+                        <!--추가-->
+                        <div class="tab-nav-round">
+                            <ul>
+                                <li class="on"><button type="button" class="btnTableWork" data-work-id="0" th:text="#{admin.modal.add_schedule.work_all}">전체</button></li>
+                                <th:block th:each="item, index : ${workList}">
+                                    <li><button type="button" class="btnTableWork" th:text="${item.workNameLocale}" th:data-work-id="${item.id}">전체</button></li>
+                                </th:block>
+                            </ul>
+                            <!--
+                            <button class="btn bg-gradient-info" data-toggle="" data-target="">
+                              <span>공정추가</span>
+                            </button>
+                            -->
+                            <!--                <div class="check-set ml-30">-->
+                            <!--                  <input type="checkbox" class="form-check" id="editMode">-->
+                            <!--                  <label for="editMode" th:text="#{cost.index.page.edit_mode}">수정 모드</label>-->
+                            <!--                </div>-->
+                        </div><!--//sub-tab-->
+
+                        <div class="bim-btn-group no-wrap">
+                            <!--
+                            <button class="btn-xs" data-toggle="modal" data-target='#paidCostAll'>
+                              <span th:text="#{cost.index.page.paid_cost_all}">일괄 기성</span>
+                            </button>
+                            -->
+                            <button class="btn-xs" id="pageTree">
+                                <span>Tree 보기</span>
+                            </button>
+                            <button class="btn-xs" id="pageTable">
+                                <span>Table 보기</span>
+                            </button>
+                            <button class="btn-xs" id="exportXlsx">
+                                <span th:text="#{cost.index.page.print_xlsx}">xlsx 출력</span>
+                            </button>
+                            <!--
+                            <button class="btn-xs" id="exportCsv">
+                              <span th:text="#{cost.index.page.print_csv}">csv 출력</span>
+                            </button>
+                            -->
+                            <button id="btnUploadCostDetailFile" class="btn-xs pop-open-btn" data-modal="#listExcelUpload">
+                                <span th:text="#{cost.index.page.upload_cost_detail}">복합단가 업로드</span>
+                            </button>
+                            <div class="load-info" style="display:none">
+                                <small>완료 예상 시간: 1-2분 후 <br>새로고침해서 확인하세요.</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--          <div class="card-body">-->
+                    <!--            <div class="connectedSortable dhx_sample-container mt-0">-->
+                    <!--              <div class="dhx_sample-container__widget" id="gridCost"></div>-->
+                    <!--            </div>-->
+                    <!--          </div>-->
+
+
+                    <div class="cost-total-box">
+                        <strong>기성금 총계</strong>
+                        <span id="totalPaidCost" th:text="|${#numbers.formatInteger(paidCostSum, 1, 'COMMA')}원|">108,672,938,196원</span>
+                    </div>
+
+                    <div id="divCardBody" th:replace="cost/index/cardBody :: divCardBody()"/>
+
+                </section>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!--내역관리 세부 팝업-->
+<th:block th:replace="layout/popup :: modal('modalCostPopup',#{contents.gisung_item_list.modal_title_add}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalCostDetailPopup',#{contents.gisung_item_list.modal_title_cost_detail}, 'popup-ml')"></th:block>
+<th:block th:replace="layout/popup :: modal('listExcelUpload', #{system.process_cost_service.process_item_cost_detail_excel_upload}, 'popup-sm')"></th:block> <!-- 복합단가 업로드 팝업 -->
+<th:block th:replace="layout/popup :: modal('paidCost', #{cost.index.page.cost_detail_add_update}, 'popup-ml')"></th:block>
+
+
+<!--기성설정 팝업-->
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+
+</script>
+<script src="/dist/js/pages/cost.js"></script>
+
+</body>
+</html>
+
+
+<div class="bg-loading" style="display:none">
+    <img src="/dist/img/loading.gif" alt="">
+</div>

@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2><span th:text="#{co_work.bulletin_list.title_bulletin_list}"> 게시판관리</span></h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <form id="frmSearchForm" th:replace="coWork/freeboardList/frmSearchForm :: frmSearchForm()"/>
+    </div>
+
+    <a href="/coWork/freeboardAdd" class="btn btn-color1"><span th:text="#{contents.modeling_list.btn_add}">등록</span></a>
+  </div>
+</div><!--// header-->

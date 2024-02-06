@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/userList/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <input type="hidden" id="pageNo" value="">
+
+        <div th:replace="admin/userList/list :: load()" id="list" ></div>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<div th:include="common/workSearchSelectOption :: script('workId')"></div>
+<script>
+  $(function () {
+    const $this = $(this);
+
+    $this.find("#goAdd").on("click",function () {
+      location.href="/admin/user";
+    });
+
+    $this.find("#downloadExcel").on("click",function () {
+      window.open("/admin/userListExcel?" + getSearchConditionParam());
+    });
+
+    $this.on('click', '.sort', function() {
+      $("#sortProp").val($(this).data('sort'));
+      searchList();
+    });
+
+    $this.find("#resetSearchCondition").on("click", function () {
+      $this.find("#roleId").val("0");
+      $this.find("#workId").val("0");
+      $this.find("#companyId").val("0");
+      $this.find("#searchType").val("");
+      $this.find("#searchText").val("");
+      $this.attr("disabled", true);
+    });
+
+    $this.find("#searchType").on("change", function () {
+      const $searchText = $this.find("#searchText");
+      if ($(this).val() == "") {
+        $searchText.attr("disabled", true);
+        $searchText.val("");
+      } else $searchText.attr("disabled", false);
+    });
+
+    $this.on("click","#searchUser,#btnPagePrevious,a[id^='btnPageNo_'],#btnPageNext", searchList);
+
+    $this.on("change", "#pageSize", searchList);
+
+    function searchList(){
+      let param = getSearchConditionParam();
+      param += "&page=" + $(this).data("page-no");
+      param += "&size=" + $this.find("#pageSize").val();
+      param += "&sortProp=" + $this.find("#sortProp").val();
+
+      reloadComponent("/admin/searchUserList","#list",param);
+    }
+
+    function getSearchConditionParam()
+    {
+      return "roleId=" +$this.find("#roleId").val()
+      + "&workId=" +$this.find("#workId").val()
+      + "&companyId=" +$this.find("#companyId").val()
+      + "&searchType=" +$this.find("#searchType").val()
+      + "&searchText=" +$this.find("#searchText").val();
+    }
+  });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+
+    <div class="dual-list flex">
+        <section class="dual-left col3">
+            <p class="txt1" th:text="#{project.modal.job_sheet.select_item}">항목을 선택하세요.</p>
+            <div class="scroll-wrap">
+                <ul class="task-work-ck">
+                    <li th:each="row, index : ${processWorkerList}">
+                        <div class="check-set">
+                            <input type="checkbox" th:id="${'worker' + index.index}" class="workerItemCheck" name="workerItem[]" th:value="${row.id}" th:data-name="${row.workerName}">
+                            <label th:for="${'worker' + index.index}" th:text="${row.workerName}"></label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section class="dual-right col3">
+            <p class="txt1" th:text="#{project.modal.job_sheet.selected_items}">선택된 항목</p>
+            <div class="scroll-wrap">
+                <ul class="task-work-ck div-worker">
+                    <li class="no-list">
+                        <span th:text="#{project.modal.job_sheet.no_selected_items}">선택한 항목이 없습니다.</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="btn-box">
+        <a href="#none" class="btn btn-color1 btnPrcessItemAdd" th:text="#{common.modal.btn_save}">저장</a>
+        <a href="#none" class="btn btn-close" th:text="#{common.modal.btn_cancel}">취소</a>
+    </div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const $this = $("#[[${formElementIdForModal}]]");
+        const currentProcessItemIndex = [[${currentProcessItemIndex}]];
+        const checkboxes = document.querySelectorAll('.workerItemCheck');
+
+        getProcessItemValues(currentProcessItemIndex);
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('click', function() {
+                let html = "";
+                const table = $(".div-worker");
+                if (this.checked) {
+                    html += '<li id="'+this.value+'" data-name="'+this.getAttribute("data-name")+'">';
+                    html += '    <p>'+this.getAttribute("data-name")+'</p>';
+                    html += '    <input name="workerItemValue" type="number" min="0" step="1" maxlength="10" value="0" class="wid-80" placeholder="숫자입력">';
+                    html += '        <a href="#none" class="btn-delete-ico btn-worker-del" data-id="'+this.value+'" title="삭제"><span class="hidden">삭제</span></a>';
+                    html += '</li>';
+                } else {
+                    const liToRemove = document.getElementById(this.value);
+                    if (liToRemove) {
+                        liToRemove.remove();
+                    }
+                }
+                $(".div-worker .no-list").remove();
+                table.append(html);
+            });
+        });
+
+        // 인원관리 항목 삭제
+        $this.on('click', '.btn-worker-del', function () {
+            let workerId = $(this).attr("data-id");
+            $('input[type="checkbox"][name="workerItem[]"][value="' + workerId + '"]').prop('checked', false);
+            const liToRemove = document.getElementById(workerId);
+            if (liToRemove) {
+                liToRemove.remove();
+            }
+        });
+
+        // 인원관리, 장비관리 적용
+        //$this.find('#mSearchText').on('keyup', function () {
+        $('.btnPrcessItemAdd').click(function () {
+            const target = "tblProcessWorker";
+            const selector = $("p." + target);
+            const table = $(selector).eq(currentProcessItemIndex);
+            const names = [];
+            const workerIds = [];
+            const values = [];
+            let inputdiv = "";
+            let html = "";
+
+            $('.div-worker > li').each(function() {
+                // data-no 속성을 사용하여 item_no 값을 가져옴
+                var worker = $(this).attr('id');
+                var workerName = $(this).attr('data-name');
+                if (worker) {
+                    let progressItemValue = $(this).find("input[name='workerItemValue']").val();
+                    inputdiv += '<input name="progressWorkerId" type="hidden" value="' + worker + '">';
+                    inputdiv += '<input name="progressWorkerName" type="hidden" value="' + workerName + '">';
+                    inputdiv += '<input name="progressWorkerValue" type="hidden" value="' + progressItemValue + '">';
+                    workerIds.push(worker);
+                    names.push(workerName);
+                    values.push(progressItemValue);
+                }
+            });
+
+            if (names.length > 0) {
+                html += names[0] + ' ' + values[0] + '명 외 <strong class="txt-color1">' + (names.length - 1) + '</strong>건';
+                html += inputdiv;
+            }
+            table.html(html);
+
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+
+        });
+
+        $this.find('.btn-close').on('click', function () {
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+        });
+    });
+
+    function getProcessItemValues(currentProcessItemIndex) {
+        const target = "tblProcessWorker";
+        const selector = $("p." + target);
+        const table = $(selector).eq(currentProcessItemIndex);
+        const workerIds = table.find('input[name=progressWorkerId]');
+        const names = table.find('input[name=progressWorkerName]');
+        const values = table.find('input[name=progressWorkerValue]');
+        let html = "";
+        for (let i=0; i<names.length; i++) {
+            html += '<li id="'+workerIds.eq(i).val()+'" data-name="'+names.eq(i).val()+'">';
+            html += '    <p>'+names.eq(i).val()+'</p>';
+            html += '    <input name="workerItemValue" type="number" min="0" step="1" maxlength="10" value="' + values.eq(i).val() + '" class="wid-80" placeholder="숫자입력">';
+            html += '        <a href="#none" class="btn-delete-ico btn-worker-del" data-id="'+workerIds.eq(i).val()+'" title="삭제"><span class="hidden">삭제</span></a>';
+            html += '</li>';
+            $('.workerItemCheck[value="' + workerIds.eq(i).val() + '"]').prop('checked', true);
+        }
+        $(".div-worker").html(html);
+    }
+</script>

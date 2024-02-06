@@ -1,0 +1,3511 @@
+<!-- 모달 - my view point -->
+<div th:fragment="myVirwPoint()" class="modal fade" id="myVirwPoint">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> MY VIEW POINT</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+
+
+        <!-- 모달 - my view point -->
+        <div class="content my-view-point">
+          <div class="header-option">
+            <div class="form-group">
+              <label form="modelName">view point 명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></label>
+              <input type="text" id="modelName" name="modelName" class="form-control"
+                placeholder="저장할 View Point 이름을 입력하세요.">
+            </div>
+            <button type="button" class="btn bg-gradient-primary ml-2"><i class="fas fa-save"></i> 저장</button>
+          </div>
+
+          <div class="myviewpoint-list">
+            <div class="scroll-area-v">
+              <table class="table">
+                <caption>저장 View Point 리스트</caption>
+                <thead>
+                  <tr>
+                    <th class="text-center w-50">View point 명</th>
+                    <th class="text-center w-50">작업</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">
+                      <div class="form-group">
+                        <p class="text-left">상부 거더 1좌측 뷰상부 거더 1좌측 뷰</p>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-app"><i class="fas fa-share-square"></i></button>
+                      <button type="button" class="btn btn-app"><i class="fas fa-users"></i></button>
+                      <button type="button" class="btn btn-app">
+                        <i class="fas fa-edit"></i>
+                        <!-- <i class="fas fa-save"></i> -->
+                      </button>
+                      <button type="button" class="btn btn-app"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="text-center">
+                      <div class="form-group">
+                        <input type="text" id="modelName" name="modelName" class="form-control w-100"
+                          placeholder="수정할 View point 명.">
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-app"><i class="fas fa-share-square"></i></button>
+                      <button type="button" class="btn btn-app"><i class="fas fa-users"></i></button>
+                      <button type="button" class="btn btn-app">
+                        <i class="fas fa-save"></i>
+                      </button>
+                      <button type="button" class="btn btn-app"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 오브젝트 검색 -->
+<div th:fragment="searchObject()" class="modal fade" id="searchObject">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 오브젝트 검색</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 오브젝트 검색 -->
+        <div class="content search-object">
+          <div class="header-option">
+            <div class="form-group">
+              <label for="modelName">오브젝트명</label>
+              <div class="input-group">
+                <input type="text" id="modelName" name="modelName" class="form-control" placeholder="">
+                <div class="input-group-append">
+                  <button type="button" class="input-group-text"><i class="fas fa-search"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="search-object-list">
+            <div class="scroll-area-v">
+              <table class="table">
+                <caption>오브젝트 리스트</caption>
+                <tbody>
+                  <tr>
+                    <td>
+                      <a href="">
+                        <span class="text-over-dot">직사각형패턴_마리나-패널-아연도강판-1.1.2</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="">
+                        <span class="text-over-dot">직사각형패턴_마리나-패널-아연도강판-1.1.2</span>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <a href="">
+                        <span class="text-over-dot">직사각형패턴_마리나-패널-아연도강판-1.1.2</span>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 공지 -->
+<div th:fragment="notificationView()" class="modal fade" id="notificationView">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 공지 <span>&#40; 2 &#47; 5 &#41;</span></h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 모달 - 공지 -->
+        <div class="content notification-view">
+          <div class="title">
+            <p>
+              <span class="badge bg-danger">재공지</span> 다음과 같이 5월 5일 근무에 관련된 내용을 공지합니다.
+            </p>
+            <p>2021.06.25 14:00:00</p>
+          </div>
+          <div class="scroll-area-v">
+            <p>내용이 들어 갑니다.</p>
+          </div>
+        </div>
+        <div class="btn-footer">
+          <div class="form-group">
+            <div class="icheck-primary">
+              <input type="checkbox" id="">
+              <label for="">다시 보지 않음</label>
+            </div>
+          </div>
+          <button type="button" class="btn bg-gradient-success">확인</button>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 이미지 확대 -->
+<div th:fragment="imgView()" class="modal fade" id="imgView">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+
+      <div class="modal-body">
+
+        <!-- 모달 - 이미지 확대 -->
+        <!-- 모달 사이즈  modal-dialog = modal-xl -->
+        <div class="content img-zoom-view">
+          <figure>
+            <img src="https://via.placeholder.com/1000x800">
+          </figure>
+        </div>
+
+
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 사용자 검색 -->
+<div th:fragment="searchUsers()" class="modal fade" id="searchUsers">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 사용자 검색</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 모달 - 사용자 검색 -->
+        <!-- 모달 사이즈  modal-dialog = modal-lg -->
+        <div class="content search-users">
+          <div class="header-option">
+            <div class="form-group">
+              <div class="icheck-primary">
+                <input type="checkbox" id="">
+                <label for="">사업관리자</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="icheck-primary">
+                <input type="checkbox" id="">
+                <label for="">공종관리자</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <select class="custom-select">
+                <option>Value 1</option>
+                <option>Value 2</option>
+                <option>Value 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="text" id="" name="" class="form-control">
+            </div>
+          </div>
+
+          <div class="search-user-list">
+            <div class="scroll-area-v">
+              <table class="table">
+                <caption>결과</caption>
+                <thead>
+                  <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">사진</th>
+                    <th class="text-center">이름</th>
+                    <th class="text-center">소속</th>
+                    <th class="text-center">직급</th>
+                    <th class="text-center">선택</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">6</td>
+                    <td class="text-center">
+                      <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                        title="<div>홍길동</div><div>&#40; CM사 : 한국CM &#41;</div><div>000-0000-0000</div>">
+                        <div class="image">
+                          <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">김기사</td>
+                    <td class="text-center">발주사 / 한국 발주</td>
+                    <td class="text-center">과장</td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-block bg-gradient-success btn-sm">선택</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 뷰포인트 선택-->
+<div th:fragment="selectViewPoint()" class="modal fade" id="selectViewPoint">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+
+        <!-- 모달 - 뷰포인트 선택-->
+        <div class="content select-view-point">
+          <div class="header-option">
+            <button type="button" class="btn bg-gradient-primary">선택</button>
+          </div>
+          <div class="scroll-area-v">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-center" width="10">
+                    <div class="form-group">
+                      <div class="icheck-primary">
+                        <input type="checkbox" id="a" name="" value="">
+                        <label for="a"></label>
+                      </div>
+                    </div>
+                  </th>
+                  <th class="text-center" width="50">No</th>
+                  <th width="300">View Point 명</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="form-group">
+                      <div class="icheck-primary">
+                        <input type="checkbox" id="a" name="" value="">
+                        <label for="a"></label>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">1</td>
+                  <td>상부 거더 1좌측 뷰</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 스냅샷 공유 -->
+<div th:fragment="snapShotShare()" class="modal fade" id="snapShotShare">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 스냅샷 공유 -->
+        <div class="content snapshot-share">
+          <p class="d-flex justify-content-center font-weight-bold">BIM 모델 Snap Shot 리스트</p>
+          <div class="scroll-area-v">
+            <ul>
+              <li>
+                <img src="https://via.placeholder.com/500x300">
+                <div>
+                  <p>
+                    <span>스냅샵</span>
+                    <span>1</span>
+                    <span>2021.07.08 01</span>
+                  </p>
+                  <button type="button" class="btn bg-gradient-primary btn-xs">공유</button>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 참조자 -->
+<div th:fragment="viewReferences()" class="modal fade" id="viewReferences">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 참조자 -->
+        <div class="content view-references">
+          <div class="scroll-area-v">
+            <table class="table">
+              <caption>결과</caption>
+              <thead>
+                <tr>
+                  <th class="text-center" width="100">No</th>
+                  <th class="text-center" width="100">작성자</th>
+                  <th class="text-center" width="100">이름</th>
+                  <th class="text-center" width="150">소속</th>
+                  <th class="text-center" width="100">직급</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center">01</td>
+                  <td class="text-center">
+                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true" title=""
+                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                      <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">홍기사</td>
+                  <td class="text-center">발주사 / 한국 발주</td>
+                  <td class="text-center">과장</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 승인 -->
+<div th:fragment="approveJobSheet()" class="modal fade" id="approveJobSheet">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 승인 -->
+        <div class="content approve-jobsheet">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th class="text-center">결재자</th>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true" title=""
+                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                      <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                    </div>
+                    <p class="ml-3">이결재 (발주사 / 한국 발주)</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-center">홍기사</th>
+                <td>
+                  <div class="form-group">
+                    <textarea class="form-control" placeholder="의견을 입력해주세요."></textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">승인</button>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 반려 -->
+<div th:fragment="denyJobSheet()" class="modal fade" id="denyJobSheet">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 반려 -->
+        <div class="content deny-jobsheet">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th class="text-center">결재자</th>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true" title=""
+                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                      <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                    </div>
+                    <p class="ml-3">이결재 (발주사 / 한국 발주)</p>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th class="text-center">홍기사</th>
+                <td>
+                  <div class="form-group">
+                    <textarea class="form-control" placeholder="의견을 입력해주세요."></textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-danger">반려</button>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 파일 다운로드 -->
+<div th:fragment="downloadFile()" class="modal fade" id="downloadFile">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 파일 다운로드</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 파일 다운로드 -->
+        <div class="content download-file">
+          <h3>다음 파일을 다운로드 하시겠습니까?</h3>
+          <ul>
+            <li>
+              <p class="title">파일명</p>
+              <a href="">파일명 파일명.rvt</a>
+            </li>
+            <li>
+              <p class="title">버전</p>
+              <p>v_002</p>
+            </li>
+          </ul>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+          <button type="button" class="btn bg-gradient-primary">다운로드</button>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 결재자 -->
+<div th:fragment="searchSingleApprover()" class="modal fade" id="searchSingleApprover">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <!-- 모달 - 결재자 -->
+        <!-- modal-dialog modal-lg -->
+        <div class="content search-single-approver">
+          <div class="header-option">
+            <div class="form-group">
+              <div class="icheck-primary">
+                <input type="checkbox" id="">
+                <label for="">사업관리자</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="icheck-primary">
+                <input type="checkbox" id="">
+                <label for="">공종관리자</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <select class="custom-select">
+                <option>Value 1</option>
+                <option>Value 2</option>
+                <option>Value 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <input type="text" id="" name="" class="form-control">
+            </div>
+          </div>
+
+          <div class="search-user-list">
+            <div class="scroll-area-v">
+              <table class="table">
+                <caption>결과</caption>
+                <thead>
+                  <tr>
+                    <th class="text-center">No</th>
+                    <th class="text-center">사진</th>
+                    <th class="text-center">이름</th>
+                    <th class="text-center">소속</th>
+                    <th class="text-center">직급</th>
+                    <th class="text-center">선택</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="text-center">6</td>
+                    <td class="text-center">
+                      <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                        title="<div>홍길동</div><div>&#40; CM사 : 한국CM &#41;</div><div>000-0000-0000</div>">
+                        <div class="image">
+                          <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-center">김기사</td>
+                    <td class="text-center">발주사 / 한국 발주</td>
+                    <td class="text-center">과장</td>
+                    <td class="text-center">
+                      <button type="button" class="btn btn-block bg-gradient-success btn-sm">선택</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 큰 참조자 -->
+<div th:fragment="searchMultiReferences()" class="modal fade" id="searchMultiReferences">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <!-- 모달 - 큰 참조자 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content search-multi-references">
+          <div class="dual-subject-list">
+            <div class="dual-subject-header">
+              <div class="form-group">
+                <div class="icheck-primary">
+                  <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input type="hidden"
+                    name="_searchLatest" value="on">
+                  <label for="searchLatest">사업관리자</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="icheck-primary">
+                  <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input type="hidden"
+                    name="_searchLatest" value="on">
+                  <label for="searchLatest">공종관리자</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <select class="custom-select">
+                  <option>Value 1</option>
+                  <option>Value 2</option>
+                  <option>Value 3</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <input type="text" id="" name="" class="form-control" placeholder="">
+              </div>
+            </div>
+            <div class="dual-subject-body">
+              <div class="col-lg-5">
+                <div class="scroll-area-v">
+                  <table class="table">
+                    <caption>결과</caption>
+                    <thead>
+                      <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">사진</th>
+                        <th class="text-center">이름</th>
+                        <th class="text-center">소속</th>
+                        <th class="text-center">직급</th>
+                        <th class="text-center">선택</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">6</td>
+                        <td class="text-center">
+                          <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                            title=""
+                            data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                            <div class="image">
+                              <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-center">김기사</td>
+                        <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                        <td class="text-center">과장</td>
+                        <td class="text-center">
+                          <div class="form-group">
+                            <div class="icheck-primary">
+                              <input type="checkbox" id="icheck2" name="" value="">
+                              <label for="icheck2"></label>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-lg-1 btn-dual-subject">
+                <button class="btn btn-default">선택<i class="fas fa-long-arrow-alt-right"></i></button>
+                <button class="btn btn-default">제외<i class="fas fa-long-arrow-alt-left"></i></button>
+                <button class="btn bg-gradient-success">확인</button>
+              </div>
+              <div class="col-lg-5">
+                <div class="scroll-area-v">
+                  <table class="table">
+                    <caption>참여자</caption>
+                    <thead>
+                      <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">사진</th>
+                        <th class="text-center">이름</th>
+                        <th class="text-center">소속</th>
+                        <th class="text-center">직급</th>
+                        <th class="text-center">선택</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">6</td>
+                        <td class="text-center">
+                          <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                            title=""
+                            data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                            <div class="image">
+                              <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                            </div>
+                          </div>
+                        </td>
+                        <td class="text-center">김기사</td>
+                        <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                        <td class="text-center">과장</td>
+                        <td class="text-center">
+                          <div class="form-group">
+                            <div class="icheck-primary">
+                              <input type="checkbox" id="icheck1" name="" value="">
+                              <label for="icheck1"></label>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - BIM 모델 등록 -->
+<div th:fragment="uploadModel()" class="modal fade" id="uploadModel">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> BIM 모델 등록</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+        <!-- 모달 - BIM 모델 등록 -->
+        <div class="content upload-model">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>공종 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일첨부 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>IFC 파일첨부 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일 설명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <textarea class="form-control" rows="5" placeholder="파일에 관련된 설명을 입력하세요."></textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- 모달 - 도면 추가 / 등록 -->
+<div th:fragment="uploadFloorPlan()" class="modal fade" id="uploadFloorPlan">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 도면추가</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 모달 - 도면 추가 / 등록 -->
+        <div class="content upload-floor-plan">
+          <p class="mb-3">첨부할 도면을 선택해 주세요.</p>
+
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>파일첨부 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- 모달 - 도면 뷰어 -->
+<div th:fragment="floorPlanView()" class="modal fade" id="floorPlanView">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 도면 뷰어</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 도면 뷰어 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content floor-plan-view">
+          <div class="scroll-area-v"></div>
+        </div>
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 스냅샷 등록-->
+<div th:fragment="snapShotAdd()" class="modal fade" id="snapShotAdd">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> SNAP SHOT</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+        <!-- 모달 - 스냅샷 등록-->
+        <!-- modal-dialog modal-xl -->
+        <div class="content snapshot-add">
+          <div>
+            <img src="https://via.placeholder.com/1000x800">
+          </div>
+        </div>
+        <div class="btn-footer">
+          <div class="form-group">
+            <label for="modelName">명칭 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></label>
+            <input type="text" id="modelName" name="modelName" class="form-control" placeholder="스냅샷 이름을 입력하세요.">
+          </div>
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 문서 등록  -->
+<div th:fragment="uploadDocument()" class="modal fade" id="uploadDocument">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 문서 등록</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 모달 - 문서 등록  -->
+        <div class="content upload-document">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>문서명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" id="" name="" class="form-control" placeholder="문서 제목을 입력하세요.">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>공종 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일첨부 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일 설명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <textarea class="form-control" rows="5" placeholder="파일에 관련된 설명을 입력하세요."></textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 - 문서 수정  -->
+<div th:fragment="modifyDocument()" class="modal fade" id="modifyDocument">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 문서 수정</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <!-- 모달 - 문서 수정  -->
+        <div class="content modify-document">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>문서명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" id="" name="" class="form-control" placeholder="문서 제목을 입력하세요.">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>공종 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일첨부 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일 설명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <textarea class="form-control" rows="5" placeholder="파일에 관련된 설명을 입력하세요."></textarea>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 참여 대상자 -->
+<div th:fragment="coworkJoinerList()" class="modal fade" id="coworkJoinerList">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 참여 대상자 -->
+        <div class="content cowork-joinerlist">
+          <div class="scroll-area-v">
+            <table class="table">
+              <caption>결과</caption>
+              <thead>
+                <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center">사진</th>
+                  <th class="text-center">이름</th>
+                  <th class="text-center">소속</th>
+                  <th class="text-center">직급</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center">6</td>
+                  <td class="text-center">
+                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                      title="<div>홍길동</div><div>&#40; CM사 : 한국CM &#41;</div><div>000-0000-0000</div>">
+                      <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">김기사</td>
+                  <td class="text-center">발주사 / 한국 발주</td>
+                  <td class="text-center">과장</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 관련 BIM 모델 -->
+<div th:fragment="coworkModelingList()" class="modal fade" id="coworkModelingList">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 관련 BIM 모델 -->
+        <div class="content cowork-modelinglist">
+          <div class="scroll-area-v">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center">BIM 모델명</th>
+                  <th class="text-center">공종</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center">6</td>
+                  <td>
+                    <div class="table-text-cont">
+                      <a href="">
+                        <span class="text-over-dot">ultrai_tunnel-S01.rvt</span>
+                      </a>
+                    </div>
+                  </td>
+                  <td class="text-center">터널-구간1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 관련 이슈 -->
+<div th:fragment="issueList()" class="modal fade" id="issueList">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 관련 이슈 -->
+        <!-- modal-dialog modal-lg -->
+        <div class="content issueList">
+          <div class="scroll-area-v">
+            <table class="table">
+              <caption>이슈 리스트</caption>
+              <thead>
+                <tr>
+                  <th class="text-center">No</th>
+                  <th class="text-center">제목</th>
+                  <th class="text-center">작성자</th>
+                  <th class="text-center">완료요구일자</th>
+                  <th class="text-center">중요도</th>
+                  <th class="text-center">상태</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="text-center">6</td>
+                  <td>
+                    <div class="table-text-cont">
+                      <a href="">
+                        <span class="text-over-dot">휴무일 공지(2021.05.05)</span>
+                      </a>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom" data-html="true"
+                      title="<div>홍길동</div><div>&#40; CM사 : 한국CM &#41;</div><div>000-0000-0000</div>">
+                      <div class="image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                    </div>
+                  </td>
+                  <td class="text-center">2021-04-06</td>
+                  <td class="text-center">긴급</td>
+                  <td class="text-center">작성중</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 이슈등록 -->
+<div th:fragment="addCoworkIssue()" class="modal fade" id="addCoworkIssue">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 이슈등록 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content add-coworkissue">
+          <div class="table-responsive">
+            <table class="table">
+              <caption>이슈정보</caption>
+              <tbody>
+                <tr>
+                  <th>이슈 제목 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="form-group w-75">
+                      <input type="text" id="" name="" class="form-control" placeholder="이슈 제목을 입력하세요.">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>대상자 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="dual-subject-list">
+                      <div class="dual-subject-header">
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">사업관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">공종관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <select class="custom-select">
+                            <option>Value 1</option>
+                            <option>Value 2</option>
+                            <option>Value 3</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" id="" name="" class="form-control" placeholder="">
+                        </div>
+                      </div>
+                      <div class="dual-subject-body">
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>사용자 리스트</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck2" name="" value="">
+                                        <label for="icheck2"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="col-lg-1 btn-dual-subject">
+                          <button class="btn btn-default">선택<i class="fas fa-long-arrow-alt-right"></i></button>
+                          <button class="btn btn-default">제외<i class="fas fa-long-arrow-alt-left"></i></button>
+                        </div>
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>참여자</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck1" name="" value="">
+                                        <label for="icheck1"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>완료 요구일자</th>
+                  <td>
+                    <div class="form-group from-date w-25">
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="reservation">
+                        <div class="input-group-append">
+                          <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>중요도 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td>
+                    <div class="form-group w-25">
+                      <select class="custom-select">
+                        <option>Value 1</option>
+                        <option>Value 2</option>
+                        <option>Value 3</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>상태 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="form-group clearfix">
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio1" name="r1">
+                        <label for="radio1">성중</label>
+                      </div>
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio2" name="r1">
+                        <label for="radio2">의뢰</label>
+                      </div>
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio3" name="r1">
+                        <label for="radio3">진행중</label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="radio" id="radio4" name="r1">
+                        <label for="radio4">완료</label>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>내용 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="edit-area">
+                      edit-area
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 이슈수정 -->
+<div th:fragment="updateCoworkIssue()" class="modal fade" id="updateCoworkIssue">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 이슈수정 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content update-coworkissue">
+          <div class="table-responsive">
+            <table class="table">
+              <caption>이슈정보</caption>
+              <tbody>
+                <tr>
+                  <th>이슈 제목 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="form-group w-75">
+                      <input type="text" id="" name="" class="form-control" placeholder="이슈 제목을 입력하세요.">
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>대상자 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="dual-subject-list">
+                      <div class="dual-subject-header">
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">사업관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">공종관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <select class="custom-select">
+                            <option>Value 1</option>
+                            <option>Value 2</option>
+                            <option>Value 3</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" id="" name="" class="form-control" placeholder="">
+                        </div>
+                      </div>
+                      <div class="dual-subject-body">
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>사용자 리스트</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck2" name="" value="">
+                                        <label for="icheck2"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="col-lg-1 btn-dual-subject">
+                          <button class="btn btn-default">선택<i class="fas fa-long-arrow-alt-right"></i></button>
+                          <button class="btn btn-default">제외<i class="fas fa-long-arrow-alt-left"></i></button>
+                        </div>
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>참여자</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck1" name="" value="">
+                                        <label for="icheck1"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>완료 요구일자</th>
+                  <td>
+                    <div class="form-group from-date w-25">
+                      <div class="input-group">
+                        <input type="text" class="form-control" id="reservation">
+                        <div class="input-group-append">
+                          <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>중요도 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td>
+                    <div class="form-group w-25">
+                      <select class="custom-select">
+                        <option>Value 1</option>
+                        <option>Value 2</option>
+                        <option>Value 3</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>상태 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="form-group clearfix">
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio1" name="r1">
+                        <label for="radio1">성중</label>
+                      </div>
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio2" name="r1">
+                        <label for="radio2">의뢰</label>
+                      </div>
+                      <div class="icheck-primary d-inline pr-3">
+                        <input type="radio" id="radio3" name="r1">
+                        <label for="radio3">진행중</label>
+                      </div>
+                      <div class="icheck-primary d-inline">
+                        <input type="radio" id="radio4" name="r1">
+                        <label for="radio4">완료</label>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>내용 <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div class="edit-area">
+                      edit-area
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 작업내용 등록 -->
+<div th:fragment="addCoworkIssueReport()" class="modal fade" id="addCoworkIssueReport">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 작업내용 등록 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content add-coworkissue-report">
+          <table class="table">
+            <caption>작업내용</caption>
+            <tbody>
+              <tr>
+                <th>순번 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="edit-area">
+                    edit-area
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>파일 첨부</th>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <button type="button" class="btn bg-gradient-primary" data-toggle="modal"
+                      data-target="">파일첨부</button>
+                    <div class="up-file-list">
+                      <div class="badge badge-pill">xxxxxxxxxxxxxxxxxxxxxxx.ppt</div>
+                      <div class="badge badge-pill">xxxxxxxxxxxxxxxxxxxxxxx.ppt <button type="button" class="btn"><i
+                            class="fas fa-times-circle"></i></button></div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 협업 수정 -->
+<div th:fragment="updateCowork()" class="modal fade" id="updateCowork">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 협업 수정 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content update-cowork">
+          <div class="table-responsive">
+            <table class="table">
+              <caption>협업정보</caption>
+              <tbody>
+                <tr>
+                  <th>협업 제목</th>
+                  <td colspan="3">
+                    <div class="form-group w-75">
+                      <input type="text" id="" name="" class="form-control" placeholder="이슈 제목을 입력하세요.">
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>작성자</th>
+                  <td>김감독 (발주사 : 한국 발주)</td>
+                </tr>
+
+                <tr>
+                  <th>작성일시 / 최종 수정일시</th>
+                  <td>2021.04.17 11:00 / 2021.04.17 16:00</td>
+                </tr>
+
+                <tr>
+                  <th>대상자</th>
+                  <td colspan="3">
+                    <div class="dual-subject-list">
+                      <div class="dual-subject-header">
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">사업관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <div class="icheck-primary">
+                            <input type="checkbox" id="searchLatest" name="searchLatest" value="true"><input
+                              type="hidden" name="_searchLatest" value="on">
+                            <label for="searchLatest">공종관리자</label>
+                          </div>
+                        </div>
+                        <div class="form-group">
+                          <select class="custom-select">
+                            <option>Value 1</option>
+                            <option>Value 2</option>
+                            <option>Value 3</option>
+                          </select>
+                        </div>
+                        <div class="form-group">
+                          <input type="text" id="" name="" class="form-control" placeholder="">
+                        </div>
+                      </div>
+                      <div class="dual-subject-body">
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>사용자 리스트</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck2" name="" value="">
+                                        <label for="icheck2"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="col-lg-1 btn-dual-subject">
+                          <button class="btn btn-default">선택<i class="fas fa-long-arrow-alt-right"></i></button>
+                          <button class="btn btn-default">제외<i class="fas fa-long-arrow-alt-left"></i></button>
+                        </div>
+                        <div class="col-lg-5">
+                          <div class="scroll-area-v">
+                            <table class="table">
+                              <caption>참여자</caption>
+                              <thead>
+                                <tr>
+                                  <th class="text-center">No</th>
+                                  <th class="text-center">사진</th>
+                                  <th class="text-center">이름</th>
+                                  <th class="text-center">소속</th>
+                                  <th class="text-center">직급</th>
+                                  <th class="text-center">선택</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td class="text-center">6</td>
+                                  <td class="text-center">
+                                    <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                      data-html="true" title=""
+                                      data-original-title="<div>홍길동</div><div>( CM사 : 한국CM )</div><div>000-0000-0000</div>">
+                                      <div class="image">
+                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td class="text-center">김기사</td>
+                                  <td class="text-center"><small>발주사 / 한국 발주</small></td>
+                                  <td class="text-center">과장</td>
+                                  <td class="text-center">
+                                    <div class="form-group">
+                                      <div class="icheck-primary">
+                                        <input type="checkbox" id="icheck1" name="" value="">
+                                        <label for="icheck1"></label>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-danger">삭제</button>
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 일정 상세 -->
+<div th:fragment="secheduleView()" class="modal fade" id="secheduleView">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 일정 상세 -->
+        <div class="content sechedule-view">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>공종</th>
+                <td>전체</td>
+              </tr>
+              <tr>
+                <th>기간</th>
+                <td>2021.06.06 ~ 2021.06.06</td>
+              </tr>
+              <tr>
+                <th>일정 명</th>
+                <td>현충일</td>
+              </tr>
+              <tr>
+                <th>설명</th>
+                <td class="context">
+                  <div class="scroll-area-v">
+                    전체 휴일입니다.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>등록자</th>
+                <td>홍길동</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 공정파일업로드 -->
+<div th:fragment="uploadProcessFile()" class="modal fade" id="uploadProcessFile">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 공정파일업로드 -->
+        <div class="content upload-processfile">
+          <p class="mb-3">공정 포맷에 맞는 엑셀파일을 첨부해주세요.</p>
+
+          <table class="table">
+            <tbody>
+              <tr>
+                <th>파일첨부 <small class="keysmall">(<span>*</span>)</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <div class="input-group">
+                      <div class="custom-file">
+                        <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i>
+                          파일선택</label>
+                        <input type="file" class="custom-file-input" id="exampleInputFile">
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">파일업로드</button>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 알림 -->
+<div th:fragment="modalNotice()" class="modal fade" id="modalNotice">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 알림 -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content modal-notice">
+          <p>
+            공정 코드 검증 작업을 시작하였습니다.<br>
+            공정 코드 검증 작업은 시간이 소요되는 작업입니다.<br>
+            작업 완료 후 “검증 결과“ 확인을 통해서 결과를 확인하시기 바랍니다.
+          </p>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">확인</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 코드 검증 중 -->
+<div th:fragment="processingCodeValidation()" class="modal fade" id="processingCodeValidation">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 코드 검증 중 -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content processing-code-validation">
+          <p>
+            현재 코드 검증 작업을 진행하고 있습니다.<br>
+            코드 검증 작업 진행 중에는 작업을 하실 수 없습니다.<br>
+            작업 완료 후 진행해 주시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+
+
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 코드 검증 결과 -->
+<div th:fragment="resultCodeValidate()" class="modal fade" id="resultCodeValidate">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 코드 검증 결과 -->
+        <!-- modal-dialog modal-xl -->
+        <div class="content result-Code-validate board-list">
+          <div class="card content-header-area">
+            <div class="col-lg-12">
+              <div class="form-group">
+                <div class="icheck-primary">
+                  <input type="checkbox" id="a" name="" value="">
+                  <label for="a">성공</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="icheck-primary">
+                  <input type="checkbox" id="b" name="" value="">
+                  <label for="b">실패</label>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>검색구분</label>
+                <select class="custom-select">
+                  <option>Value 1</option>
+                  <option>Value 2</option>
+                  <option>Value 3</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <input type="text" id="" name="" class="form-control" placeholder="">
+              </div>
+
+              <div class="bim-btn-group">
+                <button type="button" class="btn bg-gradient-primary"><i class="fas fa-search"></i> 검색</button>
+                <button type="reset" class="btn bg-gradient-primary"><i class="fas fa-sync-alt"></i> 초기화</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card content-header-area">
+            <div class="col-lg-12">
+              <p>
+                <b>코드 검증 결과</b>
+                <b>전체</b>
+                <span class="all">42,034</span>
+                <span>건</span>
+                <b>성공</b>
+                <span class="success">42,000</span>
+                <span>건</span>
+                <b>실패</b>
+                <span class="fail">34</span>
+                <span>건</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="card content-body-area">
+            <div class="card-header">
+              <div class="col-12">
+                <p class="number-results">
+                  결과 <span>23건이 있습니다.</span>
+                </p>
+                <div class="form-group">
+                  <label>목록 개수</label>
+                  <select class="custom-select">
+                    <option>Value 1</option>
+                    <option>Value 2</option>
+                    <option>Value 3</option>
+                  </select>
+                </div>
+                <div class="bim-btn-group">
+                  <button type="button" class="btn bg-gradient-info" data-toggle="modal" data-target=""><i
+                      class="fas fa-file-excel"></i> 엑셀다운로드</button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="col-12">
+                <div class="table-responsive scroll-area-v">
+                  <table class="table">
+                    <caption>결과</caption>
+                    <thead>
+                      <tr>
+                        <th class="text-center" width="100">No</th>
+                        <th class="text-center" width="400">공정명</th>
+                        <th class="text-center" width="220">페이징코드</th>
+                        <th class="text-center" width="200">시작일자</th>
+                        <th class="text-center" width="200">종료일자</th>
+                        <th class="text-center" width="200">결과</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="text-center">01</td>
+                        <td>
+                          <div class="table-text-cont">
+                            <span class="text-over-dot">휴무일 공지(2021.05.05)</span>
+                          </div>
+                        </td>
+                        <td class="text-center">페이징 코드</td>
+                        <td class="text-center">2021-04-06</td>
+                        <td class="text-center">2021-04-06</td>
+                        <td class="text-center">SUCCESS</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <nav aria-label="Page navigation example">
+                  <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                      <a class="page-link" href="#" aria-label="Previous">
+                        <span aria-hidden="true">«</span>
+                        <span class="sr-only">Previous</span>
+                      </a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                      <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">»</span>
+                        <span class="sr-only">Next</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - Validation 중 -->
+<div th:fragment="processingValidation()" class="modal fade" id="processingValidation">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - Validation 중 -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content processing-validation">
+          <p>
+            현재 Validation을 진행하고 있습니다.<br>
+            Validation 진행 중에는 작업을 하실 수 없습니다.<br>
+            작업 완료 후 진행해 주시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 산정중  -->
+<div th:fragment="processingCalculation()" class="modal fade" id="processingCalculation">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 산정중  -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content processing-calculation">
+          <p>
+            현재 산정 작업을 진행하고 있습니다.<br>
+            산정 작업 진행 중에는 작업을 하실 수 없습니다.<br>
+            작업 완료 후 진행해 주시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 저장중  -->
+<div th:fragment="processingSave()" class="modal fade" id="processingSave">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 저장중  -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content processing-save">
+          <p>
+            현재 저장 작업을 진행하고 있습니다.<br>
+            저장 작업 진행 중에는 작업을 하실 수 없습니다.<br>
+            작업 완료 후 진행해 주시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 날씨 좌표 설정  -->
+<div th:fragment="weatherCoodinate()" class="modal fade" id="weatherCoodinate">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+
+        <!-- 모달 - 날씨 좌표 설정  -->
+        <div class="content weather-cood-inate">
+          <table class="table">
+            <caption>지역 선택</caption>
+            <tbody>
+              <tr>
+                <th>1단계</th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>2단계</th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>3단계</th>
+                <td>
+                  <div class="form-group w-100">
+                    <select class="custom-select">
+                      <option>Value 1</option>
+                      <option>Value 2</option>
+                      <option>Value 3</option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table mt-3">
+            <caption>좌표 정보</caption>
+            <tbody>
+              <tr>
+                <th>X 좌표</th>
+                <td>○○○○○</td>
+              </tr>
+              <tr>
+                <th>Y 좌표</th>
+                <td>○○○○○</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">확인</button>
+        </div>
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 사업 이미지 관리  -->
+<div th:fragment="manageBizImage()" class="modal fade" id="manageBizImage">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 사업 이미지 관리  -->
+        <div class="content manage-biz-image">
+          <div class="scroll-area-v">
+            <table class="table">
+              <caption>이미지 리스트</caption>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="up-file-list">
+                      <div class="badge badge-pill">xxxxxxxxxxxxxxxxxxxxxxx.ppt <button type="button" class="btn"><i
+                            class="fas fa-times-circle"></i></button></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="up-file-list">
+                      <div class="badge badge-pill">xxxxxxxxxxxxxxxxxxxxxxx.ppt <button type="button" class="btn"><i
+                            class="fas fa-times-circle"></i></button></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="btn-footer">
+          <div class="form-group w-100">
+            <div class="input-group">
+              <div class="custom-file">
+                <label class="custom-file-label" for="exampleInputFile"><i class="fas fa-upload"></i> 이미지 파일선택</label>
+                <input type="file" class="custom-file-input" id="exampleInputFile">
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn bg-gradient-success">저장</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+-----------------------------------------------
+
+
+<!-- 모달 - 일정 상세 등록  -->
+<div th:fragment="scheduleAdd()" class="modal fade" id="scheduleAdd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 일정 상세 등록  -->
+        <div class="content schedule-add">
+          <table class="table">
+            <tr>
+              <th width="100">공종 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">교량공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">교량공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">배수공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">부대공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">터널공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">토공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">포장공</label>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>기간 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group from-date">
+                  <div class="input-group">
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                    <span>~</span>
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>일정명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group">
+                  <input type="text" id="" name="" class="form-control" placeholder="일정을 등록하세요.">
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>일정 구분 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group">
+                  <label>검색구분</label>
+                  <select class="custom-select">
+                    <option>Value 1</option>
+                    <option>Value 2</option>
+                    <option>Value 3</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>설명</th>
+              <td>
+                <div class="form-group w-100">
+                  <textarea class="form-control" rows="5" placeholder="일정 상세 설명을 입력하세요."></textarea>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">저장</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 일정 상세 수정  -->
+<div th:fragment="scheduleUpdate()" class="modal fade" id="scheduleUpdate">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+
+        <!-- 모달 - 일정 상세 수정  -->
+        <div class="content schedule-update">
+          <table class="table">
+            <tr>
+              <th width="100">공종 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">교량공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">교량공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">배수공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">부대공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">터널공</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center mt-4">
+                  <div class="form-group mr-5">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">토공</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="icheck-primary">
+                      <input type="checkbox" id="a" name="" value="">
+                      <label for="a">포장공</label>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>기간 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group from-date">
+                  <div class="input-group">
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                    <span>~</span>
+                    <input type="text" class="form-control">
+                    <div class="input-group-append">
+                      <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>일정명 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group">
+                  <input type="text" id="" name="" class="form-control" placeholder="일정을 등록하세요.">
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>일정 구분 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+              <td>
+                <div class="form-group">
+                  <label>검색구분</label>
+                  <select class="custom-select">
+                    <option>Value 1</option>
+                    <option>Value 2</option>
+                    <option>Value 3</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+
+            <tr>
+              <th>설명</th>
+              <td>
+                <div class="form-group w-100">
+                  <textarea class="form-control" rows="5" placeholder="일정 상세 설명을 입력하세요."></textarea>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-danger">삭제</button>
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 공사일지 템플릿 등록  -->
+<div th:fragment="jobSheetTempAdd()" class="modal fade" id="jobSheetTempAdd">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+        <!-- 모달 - 공사일지 템플릿 등록  -->
+        <!-- modal-dialog modal-lg -->
+        <div class="content jobsheet-temp-add">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th width="130">제목 <small class="keysmall">(<span>*</span>)</small></th>
+                <td>
+                  <div class="form-group w-75">
+                    <input type="text" id="" name="" class="form-control" placeholder="템플릿 제목을 입력하세요.">
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <th>사용여부 <small class="keysmall">(<span>*</span>)</small></th>
+                <td>
+                  <div class="form-group clearfix">
+                    <div class="icheck-primary d-inline pr-3">
+                      <input type="radio" id="radio1" name="r1">
+                      <label for="radio1">YES</label>
+                    </div>
+                    <div class="icheck-primary d-inline pr-3">
+                      <input type="radio" id="radio2" name="r1">
+                      <label for="radio2">NO</label>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="px-0 py-0">
+                  <div class="edit-area">
+                    edit-area
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">저장</button>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- 모달 - 공사일지 템플릿 수정  -->
+<div th:fragment="jobSheetTempUpdate()" class="modal fade" id="jobSheetTempUpdate">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+
+        <!-- 모달 - 공사일지 템플릿 수정  -->
+        <div class="content jobsheet-temp-update">
+          <table class="table">
+            <tbody>
+              <tr>
+                <th width="130">제목 <small class="keysmall">(<span>*</span>)</small></th>
+                <td>
+                  <div class="form-group w-75">
+                    <input type="text" id="" name="" class="form-control" placeholder="템플릿 제목을 입력하세요.">
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <th>사용여부 <small class="keysmall">(<span>*</span>)</small></th>
+                <td>
+                  <div class="form-group clearfix">
+                    <div class="icheck-primary d-inline pr-3">
+                      <input type="radio" id="radio1" name="r1">
+                      <label for="radio1">YES</label>
+                    </div>
+                    <div class="icheck-primary d-inline pr-3">
+                      <input type="radio" id="radio2" name="r1">
+                      <label for="radio2">NO</label>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="px-0 py-0">
+                  <div class="edit-area">
+                    edit-area
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+<!-- 모달 - 처리중 -->
+<div th:fragment="processing()" class="modal fade" id="processing">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 이미지 확대</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 처리중 -->
+        <!-- modal-dialog modal-sm -->
+        <div class="content processing">
+          <p>
+            현재 요청을 처리중입니다.<br>
+            잠시만 기다리기시 바랍니다.<br>
+            계속 현 상태가 유지되는 경우 관리자에게 문의하시기 바랍니다.
+          </p>
+          <div th:replace="layout/modal :: modalCodeLoder()"></div>
+        </div>
+
+
+
+
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 모달 - 회사 역할 등록 -->
+<div th:fragment="companyRoleAdd()" class="modal fade" id="companyRoleAdd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 회사 역할 등록</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+        <div class="content company-role-add">
+          <table class="table">
+            <caption>역할</caption>
+            <tbody>
+              <tr>
+                <th>순번 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <caption>역할명</caption>
+            <tbody>
+              <tr>
+                <th>영어 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>한글</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>중국어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 모달 - 회사 역할 수정 -->
+<div th:fragment="companyRoleModify()" class="modal fade" id="companyRoleModify">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 회사 역할 수정</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <div class="content company-role-modify">
+          <table class="table">
+            <caption>역할</caption>
+            <tbody>
+              <tr>
+                <th>순번 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <caption>역할명</caption>
+            <tbody>
+              <tr>
+                <th>영어 <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>한글</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>중국어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-danger">삭제</button>
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<!-- 모달 - 공종 등록 -->
+<div th:fragment="workAdd()" class="modal fade" id="workAdd">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 공종 등록</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+        <!-- 모달 - 공종 등록 -->
+        <div class="content work-add">
+          <table class="table">
+            <caption>공종</caption>
+            <tbody>
+              <tr>
+                <th>순번</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <caption>공종명</caption>
+            <tbody>
+              <tr>
+                <th>영어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>한글</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>중국어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-success">등록</button>
+        </div>
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- 모달 - 공종 수정 -->
+<div th:fragment="workModify()" class="modal fade" id="workModify">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"><i class="far fa-window-restore"></i> 공종 수정</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+
+
+        <!-- 모달 - 공종 수정 -->
+        <div class="content work-modify">
+          <table class="table">
+            <caption>공종</caption>
+            <tbody>
+              <tr>
+                <th>순번</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <table class="table">
+            <caption>공종명</caption>
+            <tbody>
+              <tr>
+                <th>영어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>한글</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>중국어</th>
+                <td>
+                  <div class="form-group w-100">
+                    <input type="text" class="form-control" placeholder="">
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-footer">
+          <button type="button" class="btn bg-gradient-danger">삭제</button>
+          <button type="button" class="btn bg-gradient-warning">수정</button>
+        </div>
+
+
+
+
+
+
+      </div>
+
+    </div>
+  </div>
+</div>

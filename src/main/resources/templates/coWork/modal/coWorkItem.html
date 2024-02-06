@@ -1,0 +1,88 @@
+<!-- 모달 - 협업 수정 -->
+<!-- modal-dialog modal-xl -->
+<form id="frmCoWork" th:object="${coWork}">
+  <input type="hidden" th:field="*{id}"/>
+  <input type="hidden" id="coWorkJoiner" name="joinerIds"/>
+<div class="content update-cowork">
+    <div class="table-responsive">
+        <table class="table">
+            <caption th:text="#{co_work.modeling_view.page.co_work_information}">협업정보</caption>
+            <tbody>
+                <tr>
+                    <th th:text="#{co_work.co_work_list.list.co_work_title}">협업 제목</th>
+                    <td colspan="3">
+                        <div class="form-group w-75">
+                            <input type="text" th:field="*{subject}" class="form-control" th:placeholder="#{co_work.modeling_view.page.input_co_work_subject}">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th th:text="#{co_work.co_work_list.list.writer}">작성자</th>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div th:replace="/common/userInfoAtField :: userInfoAtField(${coWork.writeEmbedded.accountDTO})"></div>
+                      </div>
+                    </td>
+                </tr>
+                <tr>
+                  <th><span th:text="#{co_work.co_work_list.list.write_date}">작성일시</span> / <span th:text="#{co_work.co_work_list.list.last_write_date}">최종 수정일시</span></th>
+                    <td><span th:text="${#temporals.format(coWork.WriteEmbedded.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</span> / <span th:text="${#temporals.format(coWork.lastModifyEmbedded.lastModifyDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 16:00</span></td>
+                </tr>
+
+                <tr>
+                  <th><span th:text="#{co_work.modal.add_co_work_issue.issue_joiner}">대상자</span> <small class="keysmall">(<span>*</span>)</small></th>
+                  <td colspan="3">
+                    <div th:include="common/modal/searchMultiUser::load()" class="dual-subject-list"></div>
+                  </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="btn-footer">
+    <button type="button" id="btnCompleteCoWork" th:data-id="${coWork.id}" class="btn bg-gradient-danger" th:text="#{co_work.modeling_view.page.delete}">삭제</button>
+    <button type="button" id="btnPutCoWork" class="btn bg-gradient-warning" th:text="#{co_work.modeling_view.page.update}">수정</button>
+</div>
+</form>
+<script th:replace="common/modal/searchMultiUser::script()"></script>
+<script>
+  $(document).ready(function () {
+    const $this = $("#coWorkItem");
+
+    $this.find("#btnPutCoWork").on("click", function () {
+
+      let subject = $this.find("#subject").val();
+      if (subject.trim() == "") {
+        showErrorAlert("[[#{co_work.modal.add_co_work_issue.save_issue}]]", "[[#{co_work.modal.add_co_work_issue.input_issue_title}]]");
+        return false;
+      }
+
+      if (!setSelectedUser()) return false;
+      let param = JSON.stringify($this.find("#frmCoWork").serializeObject());
+
+      reqPutJSON("/coWorkApi/putCoWork"
+        , param
+        , (data) => {
+          if(data.result) location.reload();
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    });
+
+    $this.find("#btnCompleteCoWork").on("click", function () {
+      let coWorkId = $(this).data("id");
+      showConfirm("[[#{co_work.modal.co_work_item.co_work_complete}]]", "[[#{co_work.modal.co_work_item.update_complete_co_work_status}]]", () => {
+        reqPut("/coWorkApi/completeCoWork/" + coWorkId
+          , {}
+          , (data) => {
+            if(data.result) location.reload();
+            else showErrorAlert("ALERT",data.message);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+          });
+      });
+    });
+  })
+</script>

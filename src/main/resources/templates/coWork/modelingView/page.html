@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <aside id="" class="bim-viewer-sidebar cowork-sidebar" th:classappend="${modelings.size()} > 0 ? '' : 'non-model'">
+    <div class="control-sidebar-content">
+      <input type="hidden" id="coWorkId" th:value="${coWork.id}"/>
+
+      <div class="cowork-info">
+        <div>
+          <p class="title" th:text="#{co_work.modeling_view.page.co_work_information}">협업 정보</p>
+          <div class="sidebar-control">
+            <button th:if="${isGoing and (isWriter or #authorization.expression('hasRole(''ROLE_ADMIN_PROJECT'')'))}"
+                    id="updateCoWork" type="button" class="btn bg-gradient-warning btn-xs" data-toggle="modal" data-target="#coWorkItem"
+                    th:data-id="${coWork.id}" th:text="#{co_work.modeling_view.page.update}">협업수정</button>
+            <!-- <button type="button" class="btn btn-viewr-left-nav" data-target="#leftSideBar" data-toggle="toggle"  th:if="${modelings.size() > 0}"></button> -->
+            <div class="window-close">
+              <button type="button" id="closeWindow" class="btn btn-danger btn-sm">
+                <i class="far fa-times-circle"></i> <span th:text="#{co_work.modeling_view.page.window_close}">창 닫기</span>
+              </button>
+            </div>
+            <button type="button" class="btn btn-viewr-left-nav" data-target="#leftSideBar" data-toggle="toggle">
+              <i class="fas fa-angle-double-left"></i>
+            </button>
+          </div>
+        </div>
+        <p class="text-info">
+          [<span th:text="#{${coWork.status.getMessageProperty()}}"></span>]
+          <span id="coWorkSubject" th:text="${coWork.subject}">2021.06.06 협업 요청</span>
+        </p>
+      </div>
+      <div class="user-list">
+        <div class="scroll-area-w">
+          <div th:each="coWorkJoiner : ${coWork.coWorkJoiners}" class="user-panel" data-toggle="tooltip" data-placement="right" data-html="true" th:data-user-id="${coWorkJoiner.joiner.id}" th:data-original-title="'<div>'+${coWorkJoiner.joiner.userName}+'</div><div>'+${coWorkJoiner.joiner.mobileNo}+'</div>'">
+            <div class="image">
+              <img th:src="${coWorkJoiner.joiner.photoPath}"
+                   onerror="this.src='/dist/img/no_user_photo.png'"
+                   class="img-circle">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <article class="content-modeling-tabs">
+        <div class="nav nav-tabs" role="tablist" th:if="${modelings.size() > 0}">
+          <button type="button" class="active" data-target="#chattingArea" id="chat-tab"
+                  aria-controls="chattingArea" role="tab" data-toggle="tab">CHATTING
+          </button>
+          <button type="button" data-target="#issueArea"
+                  aria-controls="issueArea" role="tab" data-toggle="tab">ISSUE <span id="issueCount" class="badge bg-success" th:text="${issues.size()}">5</span>
+          </button>
+          <button type="button" th:if="${modelings.size() > 0}" data-target="#bimModelArea"
+                  aria-controls="bimModelArea" role="tab" data-toggle="tab">BIM MODEL<span id="bimModelCount" class="badge bg-success" th:text="${modelings.size()}">5</span>
+          </button>
+          <button type="button" data-target="#snapShotArea" id="snapShotAreaBtn"
+                  aria-controls="snapShotArea" role="tab" data-toggle="tab">SNAP SHOT<span id="snapShotCount" class="badge bg-success" th:text="${snapShots.size()}">12</span>
+          </button>
+        </div>
+        <div class="tab-content" th:classappend="${modelings.size()} > 0 ? '' : 'non-model'">
+          <div id="chattingArea" th:replace="coWork/modelingView/chattingArea :: load()"></div>
+          <div id="issueArea" th:replace="coWork/modelingView/issueArea :: load()"></div>
+          <div id="bimModelArea" th:if="${modelings.size() > 0}" th:replace="coWork/modelingView/bimModelArea :: load()"></div>
+          <div id="snapShotArea" th:replace="coWork/modelingView/snapShotArea :: load()"></div>
+        </div>
+      </article>
+    </div>
+  </aside>
+
+  <main role="main" class="content-wrapper modeling-view">
+    <section class="content">
+      <div class="container-fluid">
+        <div class="coWork-content">
+          <div class="viewer-area">
+            <div th:include="common/modelingViewer :: loadCanvas()"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('mySnapShotShare',#{co_work.modeling_view.page.my_snap_shot_share},'')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('coWorkIssueItem',#{co_work.modeling_view.page.add_issue},'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('coWorkIssueReport', #{co_work.modal_title.add_issue_report}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('coWorkItem', #{co_work.modeling_view.page.co_work_update}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('snapShotUploadFile', #{contents.modeling_view.modal_title.add_snap_shot_file}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/common :: script()"></div>
+<div th:include="common/modelingViewer :: loadScript()"></div>
+<script th:inline="javascript" th:fragment="script()">
+$(document).ready(function () {
+    const chatServerHost = [[${@environment.getProperty('system.chatting_server.host')}]];
+    const chatServerPort = [[${@environment.getProperty('system.chatting_server.port')}]];
+
+    const chatServerSocketURL = `ws://${chatServerHost}:${chatServerPort}/websocket`;
+
+    const rocketChatId = [[${rocketChatId}]];
+    const rocketChatToken = [[${rocketChatToken}]];
+
+    const rocketChatSocket = new WebSocket(chatServerSocketURL);
+    const loginUniqId = `${rocketChatId}_login_${new Date().getTime()}`;
+    const streamNotifyUserUniqId = `${rocketChatId}_stream_user_${new Date().getTime()}`;
+
+     rocketChatSocket.onopen = () => {
+      tryConnect();
+    }
+
+    rocketChatSocket.onmessage = (e) => {
+      const recv = JSON.parse(e.data);
+
+      if (recv.msg === "ping") {
+        sendPong();
+
+      } else if (recv.msg === "connected") {
+        tryLogin();
+
+      } else if (recv.msg === "result" && recv.id === loginUniqId) {
+        subStreamNotifyUser();
+
+      } else if (recv.msg === "nosub") {
+        rocketChatSocket.close();
+      }
+    }
+
+    rocketChatSocket.onclose = (e) => {
+      if (e.wasClean) {
+        console.log(`[close] connection(code=${e.code} reason=${e.reason})`);
+      } else {
+        console.error(`[close] connection(code=${e.code} reason=${e.reason})`)
+      }
+
+      $("#iframeChat").remove();
+      $("#chat-log-out-area").remove();
+      const msg = [[#{co_work.modeling_view.page.session_expired}]];
+      $('#iframe-area').append(`<div id="chat-log-out-area">${msg}</div>`);
+
+    }
+
+    rocketChatSocket.onerror = (err) => {
+      console.error(`[error]: ${err.message}`)
+    }
+
+    const tryConnect = () => {
+      const connectRequest = {
+        "msg": "connect",
+        "version": "1",
+        "support": ["1", "pre2", "pre1"]
+      }
+      rocketChatSocket.send(JSON.stringify(connectRequest));
+    }
+
+    const sendPong = () => {
+      const pongRequest = {
+        "msg": "pong"
+      }
+      rocketChatSocket.send(JSON.stringify(pongRequest));
+    }
+
+    const tryLogin = () => {
+      const loginRequest = {
+        "msg": "method",
+        "method": "login",
+        "id": loginUniqId,
+        "params": [
+          {
+            "resume": rocketChatToken
+          }
+        ]
+      }
+      rocketChatSocket.send(JSON.stringify(loginRequest));
+    }
+
+    const subStreamNotifyUser = () => {
+      const subStreamUserRequest = {
+        "msg": "sub",
+        "id": streamNotifyUserUniqId,
+        "name": "stream-notify-user",
+        "params": [
+          rocketChatId + "/rooms-changed",
+          false
+        ]
+      }
+      rocketChatSocket.send(JSON.stringify(subStreamUserRequest));
+    }
+  });
+
+</script>
+<script>
+  $(document).ready(function () {
+
+    let $this = $(this);
+    let roomOpened = true;
+    let isLogout = false;
+    let iframeLoadCounter = 0;
+    let loadRetryCounter = 0;
+
+    const chatServerHost = "[[${@environment.getProperty('system.chatting_server.host')}]]";
+    const chatServerPort = "[[${@environment.getProperty('system.chatting_server.port')}]]";
+    const chatServerURL = `http://${chatServerHost}:${chatServerPort}`;
+
+    const teamName = "[[${chatting.teamName}]]";
+    const rocketChatToken = "[[${rocketChatToken}]]";
+    const sessionExpiredMessage = "[[#{co_work.modeling_view.page.session_expired}]]";
+
+    $('.btn-viewr-left-nav').click(function () {
+      $('.wrapper').toggleClass('hide-left-sidebar');
+      window.setTimeout(function () {
+        hwv.resizeCanvas();
+      }, 300);
+    });
+
+    $this.on("click", "#closeWindow", function () {
+      window.close();
+    });
+
+    $this.on("click", ".bimModel", function () {
+      let modelingId = getData(this, "tr", "id");
+      reloadComponentTabActive('/coWork/bimModelDetail/' + modelingId, "#bimModelDetail", "");
+    });
+
+	$this.on("click", "img.zoom-in-image, a.zoom-in-image, button.zoom-in-image", function () {
+		let snapShotId = getData(this,"img","id");
+		goViewPoint($(this).data("snap-shot"));
+		reloadComponentTabActive('/coWork/snapShotArea/' + snapShotId, "#snapShotArea", "",
+			function(){ $("#snapShotImgList").scrollTop(getScrHeight(snapShotId));});
+
+	});
+
+	$this.on("click", "#snapShotAreaBtn", function () {
+		 if (modelIds.trim() == "") {
+			makeModelViewer();
+		 }
+	});
+
+
+    $('#coWorkIssueItem').on('show.bs.modal', function (e) {
+
+      let type = $(e.relatedTarget).data("type");
+      let url = "/coWorkModal/" + type + "CoWorkIssue/";
+
+      $(this).find('.modal-title').text($(e.relatedTarget).html());
+
+      if (type == 'add') url += $("#coWorkId").val();
+      if (type == 'update') url += $(e.relatedTarget).data("co-work-issue-id");
+
+      reqGet(url
+        , function (data) {
+          $('#coWorkIssueItem').find('.modal-body').html(data);
+        }
+        ,   function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $("#coWorkIssueItem").on('hidden.bs.modal', function () {
+
+      $("#coWorkIssueItem").find('.modal-body').html('');
+    });
+
+    $('#mySnapShotShare').on('show.bs.modal', function () {
+        reqGet("/commonModal/mySnapShotShare?type=coWork&id=" + $("#coWorkId").val()
+          , function (data) {
+            $('#mySnapShotShare').find('.modal-body').html(data);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+
+    $('#mySnapShotShare').on('hidden.bs.modal', function () {
+      $(".shareMySnapShot").off("click");
+      $(this).find('.modal-body').html('');
+    });
+
+    $this.on("click", ".deleteSnapShot", function () {
+
+      let snapShotId = getData(this, "li", "id");
+
+      showConfirm("[[#{co_work.modeling_view.page.snap_shot_delete}]]", "[[#{co_work.modeling_view.page.delete_snap_shot}]]", () => {
+        reqDelete("/coWork/deleteSnapShot/" + snapShotId
+          , (result) => {
+            let rowCount = parseInt($("#snapShotCount").html());
+            $('#snapShotArea').html(result);
+            $("#snapShotCount").html(--rowCount);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+    });
+
+    $('#snapShotUploadFile').on('show.bs.modal', function (e) {
+      let coWorkSnapShotId = $(e.relatedTarget).data("snap-shot-id");
+      reqGet("/coWorkModal/addModelFile/" + coWorkSnapShotId
+        , function (data) {
+          $('#snapShotUploadFile').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $this.on("click", ".deleteSnapShotFile", function () {
+      let coWorkSnapShotFileId = $(this).data("id");
+
+      showConfirm("[[#{co_work.modeling_view.page.snap_shot_attach_file_delete}]]", "[[#{co_work.modeling_view.page.delete_snap_shot_attach_file}]]", () => {
+        reqDelete("/coWork/deleteSnapShotFile/" + coWorkSnapShotFileId
+          , (result) => {
+            $('#snapShotFileList').html(result);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+    });
+
+    $this.on("click", ".downloadSnapShotFile", function () {
+      let ext = getData(this, "a", "ext");
+
+      if (ext.toUpperCase() === "DWG") {
+        executeFileDownloadModal(getData(this, "a", "id"), "CO_WORK_SNAP_SHOT_MODEL_FILE");
+      } else {
+        window.open(getData(this, "a", "file-path"));
+      }
+    });
+
+    $this.on("click", ".issueItem", function () {
+      let coWorkIssueId = getData(this, "tr", "id");
+      reloadComponentTabActive('/coWork/issueDetail/' + coWorkIssueId, "#issueItem", "");
+    });
+
+    $this.on("click", "#deleteCoWorkIssue", function () {
+      let coWorkIssueId = $(this).data("co-work-issue-id");
+
+      showConfirm("[[#{co_work.modeling_view.page.issue_delete}]]", "[[#{co_work.modeling_view.page.delete_issue_with_result}]]", () => {
+        reqDelete("/coWork/deleteCoWorkIssue/" + coWorkIssueId
+          , (result) => {
+            let rowCount = parseInt($("#issueCount").html());
+            $('#issueArea').html(result);
+            $("#issueCount").html(--rowCount);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+    });
+
+    $('#coWorkIssueReport').on('show.bs.modal', function (e) {
+
+      let coWorkIssueId = $(e.relatedTarget).data("co-work-issue-id");
+      $(this).find('.modal-title').text($(e.relatedTarget).html());
+
+      reqGet("/coWorkModal/coWorkIssueReport/" + coWorkIssueId
+        , function (data) {
+          $("#coWorkIssueReport").find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }, "html");
+    });
+
+    $('#coWorkIssueReport').on('hidden.bs.modal', function () {
+      $("#postCoWorkIssueReport").off("click");
+      $(this).find('.modal-body').html('');
+    });
+
+    $this.on("click", ".downloadIssueReportFile", function () {
+      executeFileDownloadModal($(this).data("id"), "CO_WORK_ISSUE_REPORT_FILE");
+    });
+
+    $this.on("click", "#modelFileNameRvt", function () {
+      executeFileDownloadModal($(this).data("id"), "MODELING_FILE");
+    });
+
+    $this.on("click", "#modelFileNameIfc", function () {
+      executeFileDownloadModal($(this).data("id"), "MODELING_IFC_FILE");
+    });
+
+    $('#coWorkItem').on('show.bs.modal', function (e) {
+
+      let coWorkId = $(e.relatedTarget).data("id");
+
+      reqGet("/coWorkModal/coWorkItem/" + coWorkId
+        , function (data) {
+          $('#coWorkItem').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, "html");
+    });
+
+    $('#coWorkItem').on('hidden.bs.modal', function () {
+      $("#btnPutCoWork").off("click");
+      $("#btnCompleteCoWork").off("click");
+      $(this).find('.modal-body').html('');
+    });
+
+    let init = function () {
+      $("#[[${tabType}]]_[[${tabItemId}]]").trigger("click");
+      $("button[aria-controls=[[${tabType}]]]").trigger("click");
+
+      loadChatClient();
+      setInterval(tryCheckSession, 60000);
+    }
+
+    function tryCheckSession() {
+      $.ajax({
+        type: 'GET',
+        url: '/coWorkApi/checkSession'
+      })
+      .fail(function(xhr) {
+        if (xhr.responseJSON.status === 900) {
+          clearInterval(tryCheckSession);
+          $("#iframeChat").remove();
+          $("#chat-log-out-area").remove();
+          $('#iframe-area').append(`<div id="chat-log-out-area">${sessionExpiredMessage}</div>`);
+        }
+      });
+    }
+
+    $this.on("click", '#chat-tab', function () {
+      if (roomOpened) {
+        return false;
+      } else {
+        $("#iframeChat").remove();
+        loadChatClient();
+      }
+    });
+
+    function loadChatClient() {
+      loadRetryCounter = loadRetryCounter+1;
+
+      if (rocketChatToken.length > 1) {
+        if (roomOpened === false && iframeLoadCounter > 1) {
+          $("#iframeChat").remove();
+          $("#chat-log-out-area").remove();
+          $('#iframe-area').append(`<div id="chat-log-out-area">${sessionExpiredMessage}</div>`);
+
+        } else {
+          tryLoadIframe();
+        }
+
+      } else {
+        $("#iframeChat").remove();
+        $("#chat-log-out-area").remove();
+        $('#iframe-area').append(`<div id="chat-log-out-area">${sessionExpiredMessage}</div>`);
+      }
+    }
+
+    function tryLoadIframe() {
+      const $iframe = $(`<iframe id="iframeChat" width="100%" height="100%" frameborder=0 framespacing=0 marginheight=0 marginwidth=0 scrolling=yes vspace=0></iframe>`)
+      .on('load', function () {
+        iframeLoadCounter++;
+        tryIframeLogin();
+      })
+      .attr('src', getCoWorkChatURL());
+      $('#iframe-area').append($iframe);
+    }
+
+    function tryIframeLogin() {
+      document.getElementById('iframeChat').contentWindow.postMessage({
+        externalCommand: 'login-with-token',
+        token: rocketChatToken
+      }, '*');
+    }
+
+    function getCoWorkChatURL() {
+      return `${chatServerURL}/group/${teamName}?layout=embedded`;
+    }
+
+    window.addEventListener('message', function (e) {
+      const data = e.data;
+
+      if(loadRetryCounter > 25){
+        roomOpened = false;
+      }
+
+      if (data.eventName === "Custom_Script_Logged_Out") {
+
+        if (!isLogout) {
+          $("#iframeChat").remove();
+          $("#chat-log-out-area").remove();
+          loadChatClient();
+
+        } else {
+          $("#iframeChat").remove();
+          $("#chat-log-out-area").remove();
+          $('#iframe-area').append(`<div id="chat-log-out-area">${sessionExpiredMessage}</div>`);
+          isLogout = true;
+        }
+
+      }
+    });
+
+    init();
+  });
+
+  function getScrHeight(mySnapShotId){
+		let mySnapShots = $("#snapShotImgList").find("li");
+		let scr = 0;
+
+	 	$.each(mySnapShots, function(index, item){
+			if(Number(mySnapShotId) === $(this).data("id")){
+				return false;
+			}
+			else {
+	 		scr += $(this).outerHeight(true);
+			}
+	 	});
+		return scr;
+	}
+
+  function makeModelViewer(){
+	  let snapShotModelIds =  "[[${snapShot.ViewModelId}]]";
+	  if(snapShotModelIds.trim() != ""){
+		reqGet("/modelingViewerApi/models/" + snapShotModelIds
+              , function (data) {
+                models = JSON.parse(data.models);
+                modelIds = data.modelIds;
+                if(data.myWorkIds){
+	                  myWorkIds = data.myWorkIds.split(",");
+                }
+                //UserViewer.opt.model = data.model;// default is none-model
+                createModelingViewer();
+              }
+              , function (xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+              }, "json");
+	  }
+  }
+</script>
+<style>
+.bim-viewer-sidebar.non-model{
+	width : 100%;
+	position : relative;
+}
+.bim-viewer-sidebar.non-model .control-sidebar-content .user-list{
+	width : 100%;
+	max-width: 100%;
+}
+.tab-content.non-model .non-model{
+	float: left;
+	width: calc(100% / 3);
+  height: calc(100vh - 130px);
+  border: 1px solid #eee;
+}
+.tab-content.non-model .non-model div{
+	width: 100%;
+  overflow: hidden;
+}
+
+.tab-content.non-model .non-model div.bim-issue-area {
+  overflow-y: auto;
+  width: 100%!important;
+  height: auto;
+  border: none;
+}
+</style>
+</body>
+</html>

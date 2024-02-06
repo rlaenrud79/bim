@@ -1,0 +1,214 @@
+<div class="scroll-wrap sc-table-f">
+  <table class="table table-blue tbCostDetail">
+    <tbody>
+    <tr class="sticky-th">
+      <th rowspan="2">No</th>
+      <th rowspan="2">코드</th>
+      <th rowspan="2">공종명</th>
+      <th rowspan="2">단위</th>
+      <th rowspan="2">ⓐ 대표수량</th>
+      <th rowspan="2">ⓑ 수량</th>
+      <th rowspan="2">ⓒ 단가</th>
+      <th>공사비</th>
+      <th colspan="2">실적</th>
+      <th colspan="2">전회기성</th>
+      <th colspan="2">금회기성</th>
+      <th colspan="2">누적기성</th>
+      <th colspan="2">잔여기성금액</th>
+    </tr>
+    <tr class="sticky-th-two">
+      <th>ⓐ * ⓑ * ⓒ</th>
+      <th>수량</th>
+      <th>금액</th>
+      <th>수량</th>
+      <th>금액</th>
+      <th>수량</th>
+      <th>금액</th>
+      <th>수량</th>
+      <th>금액</th>
+      <th>수량</th>
+      <th>금액</th>
+    </tr>
+    <tr class="tb-style-total sticky-th-three">
+      <th colspan="3">총계</th>
+      <th colspan="4" th:text="${resultText}">5,861,670 = 5,861,670 / 1</th>
+      <th id="totalCost" th:text="${#numbers.formatInteger(totalCost, 1, 'COMMA')}">5,861,670</th>
+      <th th:text="${#numbers.formatDecimal(totalJobSheetProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+      <th th:text="${#numbers.formatInteger(totalJobSheetProgressAmount, 1, 'COMMA')}">879,250</th>
+      <th th:text="${#numbers.formatDecimal(totalPaidProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+      <th th:text="${#numbers.formatInteger(totalPaidCost, 1, 'COMMA')}">879,250</th>
+      <th id="totalProgressCount" th:text="${#numbers.formatDecimal(totalProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+      <th id="totalProgressCost" th:text="${#numbers.formatInteger(totalProgressCost, 1, 'COMMA')}">879,250</th>
+      <th id="totalSumProgressCount" th:text="${#numbers.formatDecimal(totalSumProgressCount, 1, 'COMMA', 2, 'POINT')}">30.00</th>
+      <th id="totalSumProgressCost" th:text="${#numbers.formatInteger(totalSumProgressCost, 1, 'COMMA')}">1,758,501</th>
+      <th id="totalRemindProgressCount" th:text="${#numbers.formatDecimal(totalRemindProgressCount, 1, 'COMMA', 2, 'POINT')}">70.00</th>
+      <th id="totalRemindProgressCost" th:text="${#numbers.formatInteger(totalRemindProgressCost, 1, 'COMMA')}">4,103,169</th>
+    </tr>
+    <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+      <td th:text="${(index.index+1)}">1</td>
+      <td id="code" th:text="${item.code}">00000</td>
+      <td class="txt-left" id="name" th:text="${item.name}">철근콘크리트타설/펌프카/보통(S15, 100m3. 이하)</td>
+      <td id="unit" th:text="${item.unit}">M3</td>
+      <td th:text="${processItem.firstCount}">1,146</td>
+      <td id="count" th:data-value="${item.count}" th:text="${#numbers.formatInteger(item.count, 1, 'COMMA')}">170,605,932</td>
+      <td id="unitPrice" th:data-value="${#numbers.formatInteger(item.unitPrice, 1)}" th:text="${#numbers.formatInteger(item.unitPrice, 1, 'COMMA')}">16,603</td>
+      <td id="cost" th:data-value="${#numbers.formatInteger(item.cost, 1)}" th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}">1,146</td>
+      <td id="jobSheetProgressCount" th:text="${#numbers.formatDecimal(item.jobSheetProgressCount, 1, 'COMMA', 2, 'POINT')}">181,495,672</td>
+      <td id="jobSheetProgressAmount" th:data-value="${#numbers.formatInteger(item.jobSheetProgressAmount, 1)}" th:text="${#numbers.formatInteger(item.jobSheetProgressAmount, 1, 'COMMA')}">142.16</td>
+      <td id="paidProgressCount" th:data-value="${item.paidProgressCount}" th:text="${#numbers.formatDecimal(item.paidProgressCount, 1, 'COMMA', 2, 'POINT')}">3,629,913</td>
+      <td id="paidCost" th:data-value="${#numbers.formatInteger(item.paidCost, 1)}" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}">284.32</td>
+      <td>
+        <input type="hidden" id="id" name="id" class="form-control" placeholder="" th:value="${item.id}">
+        <input type="text" id="progressCount" name="progressCount" class="form-control input-box-xs" placeholder="" th:value="${item.progressCount}">
+      </td>
+      <td id="progressCost" th:data-value="${#numbers.formatInteger(item.progressCost, 1)}" th:text="${#numbers.formatInteger(item.progressCost, 1, 'COMMA')}">12</td>
+      <td id="sumProgressCount" th:text="${#numbers.formatDecimal(item.sumProgressCount, 1, 'COMMA', 2, 'POINT')}">3,629,913</td>
+      <td id="sumProgressCost" th:data-value="${#numbers.formatInteger(item.sumProgressCost, 1)}" th:text="${#numbers.formatInteger(item.sumProgressCost, 1, 'COMMA')}">426.48</td>
+      <td id="remindProgressCount" th:text="${#numbers.formatDecimal(item.remindProgressCount, 1, 'COMMA', 2, 'POINT')}">10,889,740</td>
+      <td id="remindProgressCost" th:data-value="${#numbers.formatInteger(item.remindProgressCost, 1)}" th:text="${#numbers.formatInteger(item.remindProgressCost, 1, 'COMMA')}">6,681.52</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<script th:inline="javascript">
+  $(function () {
+    const $this = $("#costDetail");
+
+    $this.find("#btnAddGisungCostDetail").on("click", function () {
+      showConfirm([[#{cost.modal.cost_detail.message.saving}]], [[#{cost.modal.cost_detail.message.save}]], function () {
+        reqPostJSON("/gisungApi/saveGisungProcessItemCostDetail/[[${gisungProcessItemId}]]", setSendData(), function (data) {
+          if (data.result) {
+            alert(data.message);
+            location.reload();
+          } else alert(data.message);
+        });
+      });
+    });
+
+    function getInputValues () {
+      const val = [];
+      var tbody = $('.tbCostDetail tbody');
+      var count = tbody.find("tr[id^='trIndex_']").length;
+      tbody.find("tr[id^='trIndex_']").each(function(index) {
+        if (index == count - 3) return false;
+        var count2 = $(this).find('td#count').attr('data-value');
+        count2 = count2.replace(/,/g, "");
+        var unit = $(this).find('td#unit').text();
+        unit = unit.replace(/,/g, "");
+        var unitPrice = $(this).find('td#unitPrice').text();
+        unitPrice = unitPrice.replace(/,/g, "");
+        var cost = $(this).find('td#cost').attr('data-value');
+        cost = cost.replace(/,/g, "");
+        var jobSheetProgressCount = $(this).find('td#jobSheetProgressCount').text();
+        jobSheetProgressCount = jobSheetProgressCount.replace(/,/g, "");
+        var jobSheetProgressAmount = $(this).find('td#jobSheetProgressAmount').attr('data-value');
+        jobSheetProgressAmount = jobSheetProgressAmount.replace(/,/g, "");
+        var paidProgressCount = $(this).find('td#paidProgressCount').text();
+        paidProgressCount = paidProgressCount.replace(/,/g, "");
+        var paidCost = $(this).find('td#paidCost').attr('data-value');
+        paidCost = paidCost.replace(/,/g, "");
+        var progressCount = $(this).find('input[name=progressCount]').val();
+        progressCount = progressCount.replace(/,/g, "");
+        var progressCost = $(this).find('td#progressCost').attr('data-value');
+        progressCost = progressCost.replace(/,/g, "");
+        var sumProgressCount = $(this).find('td#sumProgressCount').text();
+        sumProgressCount = sumProgressCount.replace(/,/g, "");
+        var sumProgressCost = $(this).find('td#sumProgressCost').attr('data-value');
+        sumProgressCost = sumProgressCost.replace(/,/g, "");
+        var remindProgressCount = $(this).find('td#remindProgressCount').text();
+        remindProgressCount = remindProgressCount.replace(/,/g, "");
+        var remindProgressCost = $(this).find('td#remindProgressCost').attr('data-value');
+        remindProgressCost = remindProgressCost.replace(/,/g, "");
+        val.push({
+          id: $(this).find('input[name=id]').val() + "",
+          code: $(this).find('td#code').text() + "",
+          name: $(this).find('td#name').text() + "",
+          isFirst: $(this).find('td#isFirst').text() + "",
+          count: count2 + "",
+          unit: unit + "",
+          unitPrice: unitPrice + "",
+          cost: cost + "",
+          jobSheetProgressCount: jobSheetProgressCount + "",
+          jobSheetProgressAmount: jobSheetProgressAmount + "",
+          paidProgressCount: paidProgressCount + "",
+          paidCost: paidCost + "",
+          progressCount: progressCount + "",
+          progressCost: progressCost + "",
+          sumProgressCount: sumProgressCount + "",
+          sumProgressCost: sumProgressCost + "",
+          remindProgressCount: remindProgressCount + "",
+          remindProgressCost: remindProgressCost + "",
+        });
+      });
+      return val;
+    }
+
+    function setSendData() {
+      return JSON.stringify(getInputValues());
+    }
+
+    $(this).on('change', '#progressCount', function() {
+      let index = $(this).closest('tr').index();
+      let progressCount = $(this).val();
+      $(this).val(parseFloat(progressCount).toFixed(4))
+      let progressCost = calculateMultipleZ(progressCount, $('td#unitPrice:eq(' + index + ')').attr('data-value'));
+      $("td#progressCost:eq("+index+")").attr('data-value', progressCost);
+      $("td#progressCost:eq("+index+")").text(numberWithCommas(progressCost));
+      let sumProgressCount = calculateAdd($("td#paidProgressCount:eq("+index+")").attr('data-value'), progressCount);
+      $("td#sumProgressCount:eq("+index+")").text(parseFloat(sumProgressCount).toFixed(4));
+      let sumProgressCost = calculateAdd($("td#paidCost:eq("+index+")").attr('data-value'), progressCost);
+      $("td#sumProgressCost:eq("+index+")").attr('data-value', sumProgressCost);
+      $("td#sumProgressCost:eq("+index+")").text(numberWithCommas(sumProgressCost));
+      let remindProgressCount = calculateMinus($("td#count:eq("+index+")").attr('data-value'), sumProgressCount);
+      $("td#remindProgressCount:eq("+index+")").text(parseFloat(remindProgressCount).toFixed(4));
+      let remindProgressCost = calculateMinus($("td#cost:eq("+index+")").attr('data-value'), sumProgressCost);
+      $("td#remindProgressCost:eq("+index+")").attr('data-value', remindProgressCost);
+      $("td#remindProgressCost:eq("+index+")").text(numberWithCommas(remindProgressCost));
+
+      setCalculateCost();
+    });
+
+  });
+
+  function setCalculateCost() {
+    var totalCost = 0;
+    var totalProgressCount = 0;
+    var totalProgressCost = 0;
+    var totalSumProgressCount = 0;
+    var totalSumProgressCost = 0;
+    var totalRemindProgressCount = 0;
+    var totalRemindProgressCost = 0;
+    var tbody = $('.tbCostDetail tbody');
+    var count = tbody.find('tr').length;
+    tbody.find('tr').each(function(index) {
+      if (index == count - 1) return false;
+      totalProgressCount = totalProgressCount + parseFloat($(this).find('input[name=progressCount]').val());
+      totalProgressCost = totalProgressCost + parseInt($(this).find('td#progressCost').attr('data-value'));
+      totalSumProgressCount = totalSumProgressCount + parseFloat($(this).find('td#sumProgressCount').text());
+      totalSumProgressCost = totalSumProgressCost + parseInt($(this).find('td#sumProgressCost').attr('data-value'));
+      totalRemindProgressCount = totalRemindProgressCount + parseFloat($(this).find('td#remindProgressCount').text());
+      totalRemindProgressCost = totalRemindProgressCost + parseInt($(this).find('td#remindProgressCost').attr('data-value'));
+    });
+    totalCost =  $('td#totalCost').text();
+    totalCost = parseInt(totalCost.replace(/,/g, ""));
+    totalProgressCount = parseFloat((totalProgressCost/totalCost)*100).toFixed(2);
+    totalSumProgressCount = parseFloat((totalSumProgressCost/totalCost)*100).toFixed(2);
+    totalRemindProgressCount = parseFloat((totalRemindProgressCost/totalCost)*100).toFixed(2);
+    $('td#totalProgressCount').text(totalProgressCount);
+    $('td#totalProgressCost').text(numberWithCommas(totalProgressCost));
+    $('td#totalSumProgressCount').text(totalSumProgressCount);
+    $('td#totalSumProgressCost').text(numberWithCommas(totalSumProgressCost));
+    $('td#totalRemindProgressCount').text(totalRemindProgressCount);
+    $('td#totalRemindProgressCost').text(numberWithCommas(totalRemindProgressCost));
+  }
+
+  function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+  $(document).ready(function() {
+    $('.scroll-wrap').overlayScrollbars({});
+  });
+
+</script>

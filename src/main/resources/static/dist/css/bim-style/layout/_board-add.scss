@@ -1,0 +1,68 @@
+/// BIM ADD
+
+.board-add {
+    .content-body-area {
+        .card-header {
+            > div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .bim-btn-group { margin-left: auto; }
+            }
+        }
+    }
+
+    table {
+        border-bottom: 1px solid #dee2e6;
+
+        tbody {
+            th {
+                width: 15.385rem;
+                text-align: center;
+                background-color: #EEF0F2;
+            }
+
+            td { padding: 1rem 2rem; }
+        }
+    }
+
+    .up-file-list {
+        display: flex;
+        align-items: center;
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            min-height: 22px;
+            padding: .1rem .5rem;
+            margin: .5rem;
+            background: #ebebeb;
+        }
+
+        button {
+            padding: 0;
+            margin-left: .5rem;
+            margin-right: -.5rem;
+
+            i { color: #dc3545; }
+        }
+    }
+
+    .form-group { margin: 0; }
+
+    .edit-area {
+        min-height: 23.077rem;
+        width: 100%;
+    }
+
+    table {
+        button {
+            &.btn {
+                &.bg-gradient-primary {
+                    min-width: 8.846rem;
+                }
+            }
+        }
+    }
+}

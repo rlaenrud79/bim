@@ -1,0 +1,429 @@
+<section class="content modal-costdetail">
+    <div class="container-fluid">
+        <div class="con-breakdown">
+            <div class="col-lg-12">
+
+                <div class="card content-body-area">
+                    <div class="card-body">
+                        <div class="connectedSortable dhx_sample-container d-flex align-items-stretch mt-0">
+                            <div class="dhx_sample-container__widget" id="gridCostDetail"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script th:inline="javascript">
+    $(function () {
+        const $this = $("#costDetail");
+        const numberColId = ["unitPrice", "count"];
+        const isPaidCost = [[${isPaidCost}]];
+        const savedComplexUnitPrice = [[${savedComplexUnitPrice}]];
+
+        //region gridCostDetail-complex taskCost detail
+        let saveData = [];
+
+        const gridCostDetail = new dhx.Grid("gridCostDetail", {
+            columns: [
+                {id: "processItemCodeDetailId", header: [{text: "id"}], hidden: true},
+                {
+                    id: "code",
+                    header: [{text: [[#{cost.modal.cost_detail.detail_work}]], align: "center", colspan: 2}, {text: [[#{cost.modal.cost_detail.code}]], align: "center"}],
+                    width: 120,
+                    footer: [{text: [[#{cost.modal.cost_detail.aggregation}]], align: "center"}],
+                    editable: true
+                },
+                {
+                    id: "name", header: ["", {text: [[#{cost.modal.cost_detail.name}]], align: "center"}], width: 400
+                    , footer: [{content: "count", align: "center"}], editable: true
+                },
+                {
+                    id: "isFirst"
+                    , header: [{text: [[#{cost.modal.cost_detail.count}]], align: "center", colspan: 4}, {text: [[#{cost.modal.cost_detail.first}]], align: "center"}]
+                    , width: 55
+                    , editable: true
+                    , type: "boolean"
+                    , footer: [{text: "", colspan: 4, align: "right"}]
+                },
+                {id: "count", header: ["", {text: [[#{cost.modal.cost_detail.first_count_value_a}]], align: "center"}], width: 100, type: "number", format: "#,#.0000", editable: true},
+                {id: "unit", header: ["", {text: [[#{cost.modal.cost_detail.first_count_unit}]], align: "center"}], width: 80, editable: true},
+                {id: "unitPrice", header: ["", {text: [[#{cost.modal.cost_detail.first_count_unit_price_b}]], align: "center"}], width: 120, type: "number", format: "#,#", editable: true},
+                {
+                    id: "cost"
+                    , header: [{text: [[#{cost.modal.cost_detail.cost}]], align: "center"}, {text: "ⓐ * ⓑ", align: "center"}]
+                    , width: 150
+                    , footer: [{content: "sum"}]
+                    , type: "number"
+                    , format: "#,#"
+                    , mark: function () {
+                        return "process-col-disabled";
+                    }
+                },
+            ],
+            // adjust        : true,
+            autoEmptyRow: true,
+            resizable: true,
+            selection: "row",
+            multiselection: true
+        });
+
+        window.addEventListener('paste', ({ clipboardData: { items } }) => {
+            for (const item of items) {
+                if (item.type === 'text/plain') {
+                    item.getAsString((text) => {
+                        pasteExcelClipboard(text)
+                    });
+                }
+            }
+        });
+
+        function pasteExcelClipboard(text){
+            let splitTextLine = text.split('\n');
+            splitTextLine.forEach(function(textLine, index){
+                if( index === (splitTextLine.length-1) ){
+                    return;
+                }
+                else{
+                    let splitTextTab = textLine.split('\t');
+                    let clipboardData = [];
+
+                    splitTextTab.forEach(function(splitValue, index){
+                        if( index === (splitTextTab.length-1) ){
+                            clipboardData[index] = splitValue.replace('\r', '');
+                        }else{
+                            clipboardData[index] = splitValue;
+                        }
+                    })
+                    multipleCost = clipboardData[2].replace(',', '') * clipboardData[4].replace(',', '');
+                    let newDataId = gridCostDetail.data.add({
+                        "code": clipboardData[0].trim(),
+                        "name": clipboardData[1].trim(),
+                        "count": clipboardData[2].replace(',', ''),
+                        "unit": clipboardData[3].trim(),
+                        "unitPrice": clipboardData[4].replace(',', ''),
+                        "cost": multipleCost,
+                        "isChecked": true,
+                        "rowState": "C",
+                        "isFirst": false
+                    })
+
+                    gridCostDetail.addRowCss(newDataId, "cost-value-changed");
+                    calculateComplexUnitPrice(gridCostDetail);
+                    aggregateSaveRow();
+                }
+            });
+        };
+
+        let deleteData = [];
+        let deleteRow = [];
+
+        gridCostDetail.events.on("CellClick", function (row, col, e) {
+            deleteData = [];
+            deleteRow = [];
+
+            let cells = gridCostDetail.selection.getCells();
+            cells.forEach(cell => {
+                if (isSavedRow(cell.row)) deleteData.push(cell.row);
+                if (isNewRow(cell.row)) deleteRow.push(cell.row);
+            });
+
+            $this.find("#deleteTargetCount").text(deleteData.length + deleteRow.length);
+        });
+
+        let calculateComplexUnitPrice = function (grid) {
+            let totalCost = 0;
+            let firstRow = {count: 0};
+            let result = '';
+            let complexUnitPrice = 0;
+
+            grid.data.forEach(row => {
+                if (isEmptyRow(row)) return;
+                if (!row.isChecked) return;
+                if (row.isFirst) firstRow = row;
+                if (isNumeric(row.cost)) totalCost += row.cost;
+                else result += row.code + ' ';
+            });
+
+            if (result != '') result += [[#{cost.modal.cost_detail.message.result.can_not_calculate_without_cost}]];
+            if (firstRow.count == 0 || firstRow.count == '') result += [[#{cost.modal.cost_detail.message.result.first_count_is_zero_or_not}]];
+            if (result == '') {
+                complexUnitPrice = parseInt(totalCost / firstRow.count);
+                result += '<a href="#">' + numberWithCommas(complexUnitPrice) + ' = ' + numberWithCommas(parseInt(totalCost)) + ' / ' + firstRow.count + '</a>';
+            }
+
+            let column = grid.getColumn("isFirst");
+            column.footer[0].text = result;
+
+            return complexUnitPrice;
+        }
+
+        gridCostDetail.events.on("beforeEditEnd", function (value, row, col) {
+            if (value == row[col.id]) return true;
+
+            if (isEmptyRow(row)) {
+                row.rowState = "C";
+                row.isChecked = true;
+                gridCostDetail.addRowCss(row.id, "cost-value-changed");
+            }
+
+            // radio button method
+            if (col.id == "isFirst") {
+                gridCostDetail.data.forEach(item => {
+                    if (item.isFirst) {
+                        item.isFirst = false;
+                        setRowState(item);
+                    }
+                })
+            }
+        });
+
+        let setRowState = function (row) {
+            if (isNewRow(row)) return;
+            let changedValueCount = 0;
+
+            for (colId in row.originData) {
+                if (row[colId] == row.originData[colId]) gridCostDetail.removeCellCss(row.id, colId, "cost-value-changed");
+                else {
+                    ++changedValueCount;
+                    gridCostDetail.addCellCss(row.id, colId, "cost-value-changed");
+                }
+            }
+
+            if (changedValueCount == 0) row.rowState = "R";
+            else row.rowState = "U";
+        }
+
+        //number type column value revision
+        let setNumericValue = function (value, row, col) {
+            if (checkNumericColumn(col,numberColId)) {
+                if (!isNumeric(value)) {
+                    if (isNewRow(row)) row[col.id] = 0;
+                    else row[col.id] = row.originData[col.id];
+                }
+                calculateCost(row);
+            }
+        }
+
+        let calculateCost = function (row) {
+            row.cost = calculateMultiple(row.count, row.unitPrice);
+        }
+
+        let aggregateSaveRow = function () {
+            saveData = [];
+            gridCostDetail.data.forEach(row => {
+                if (isSaveTargetRow(row)) {
+                    saveData.push(row);
+                }
+                $this.find("#saveTargetCount").text(saveData.length);
+            })
+        }
+
+        gridCostDetail.events.on("afterEditEnd", function (value, row, col) {
+            setNumericValue(value, row, col);
+            calculateComplexUnitPrice(gridCostDetail);
+            setRowState(row);
+            aggregateSaveRow();
+        });
+
+        $this.find("#removeRowCostDetail").on("click", function () {
+            let message = [[#{cost.modal.cost_detail.message.delete}]];
+
+            if (isPaidCost) {
+                showErrorAlert([[#{cost.modal.cost_detail.message.deleting}]], [[#{cost.modal.cost_detail.message.existing_cost_detail_can_not_delete}]]);
+                return;
+            }
+
+            if ((deleteData.length + deleteRow.length) == 0) {
+                showErrorAlert([[#{cost.modal.cost_detail.message.deleting}]], [[#{cost.modal.cost_detail.message.cost_detail_is_not}]]);
+                return;
+            }
+
+            if (saveData.length > 0) message = [[#{cost.modal.cost_detail.message.save_before_cost_detail_is}]] + message;
+
+            showConfirm([[#{cost.modal.cost_detail.message.deleting}]], message, function () {
+                reqPostJSON("/costApi/deleteProcessItemCostDetail/[[${processItemId}]]", JSON.stringify(deleteData), function (data) {
+                    if (data.result) {
+                        toastr.success(data.message);
+                        let model = JSON.parse(data.model);
+                        gridCostDetail.data.parse(model);
+                        aggregateSaveRow();
+                        calculateComplexUnitPrice(gridCostDetail);
+                    } else toastr.info(data.message);
+                });
+            });
+        });
+
+        $this.find("#saveCostDetail").on("click", function () {
+            if (saveData.length == 0) {
+                showErrorAlert([[#{cost.modal.cost_detail.message.saving}]], [[#{cost.modal.cost_detail.message.cost_detail_is_not_saving_data}]]);
+                return;
+            }
+
+            if (isPaidCost) {
+                let complexUnitPrice = calculateComplexUnitPrice(gridCostDetail);
+                if (complexUnitPrice != savedComplexUnitPrice) {
+                    showErrorAlert([[#{cost.modal.cost_detail.message.saving}]], [[#{cost.modal.cost_detail.message.saved_paid_cost_same_can_save}]]+`(${savedComplexUnitPrice})`);
+                    return;
+                }
+            }
+
+            showConfirm([[#{cost.modal.cost_detail.message.saving}]], [[#{cost.modal.cost_detail.message.save}]], function () {
+                reqPostJSON("/costApi/saveProcessItemCostDetail/[[${processItemId}]]", JSON.stringify(saveData), function (data) {
+                    if (data.result) {
+                        $("#btnSearch").trigger("click");
+                        toastr.success(data.message);
+                        let model = JSON.parse(data.model);
+                        gridCostDetail.data.parse(model);
+                        aggregateSaveRow();
+                        calculateComplexUnitPrice(gridCostDetail);
+                    } else toastr.info(data.message);
+                });
+            });
+        });
+
+        let getProcessItemCostDetail = function () {
+            reqGet("/costApi/getProcessItemCostDetail/[[${processItemId}]]/R", function (data) {
+                    if (data.result) {
+                        let model = JSON.parse(data.model);
+                        gridCostDetail.data.parse(model);
+                        aggregateSaveRow();
+                        calculateComplexUnitPrice(gridCostDetail);
+                    }
+                },
+                function (xhr) {
+                    showErrorAlert("ALERT", xhr.responseJSON.message);
+                });
+        }
+
+        $this.find(".setBookmark").on("click", function () {
+            let isBookmark = $(this).data("is-bookmark");
+
+            reqPost("/costApi/setProcessItemBookmark/[[${processItemId}]]/" + isBookmark, {}, function (data) {
+                if (data.result) {
+                    toastr.success(data.message);
+                    $this.find(".setBookmark[data-is-bookmark=" + isBookmark + "]").addClass("d-none");
+                    $this.find(".setBookmark[data-is-bookmark=" + !isBookmark + "]").removeClass("d-none");
+                }
+            });
+        });
+
+        function init() {
+            getProcessItemCostDetail();
+        }
+
+        init();
+        //endregion
+
+        $this.find("#loadBookmark").on("click", function () {
+            $("#bookmarks option[value!='0']").remove();
+
+            reqGet("/costApi/getProcessItemCostDetailBookmark/", function (data) {
+                if (data.result) {
+                    let model = JSON.parse(data.model);
+                    toastr.success([[#{cost.modal.cost_detail.message.load_bookmark}]]+`(${model.length})`);
+
+                    model.forEach(processItem => {
+                        $("#bookmarks").append(`<option value='${processItem.processItemId}'>${processItem.title}</option>`);
+                    })
+                }
+            });
+        });
+
+        $this.find("#bookmarks").on("change", function () {
+            let id = $(this).val();
+
+            if (id == "0") {
+                $("#processItemBookmarkCostDetail").addClass("d-none");
+                gridCostTemplate.data.removeAll();
+                return;
+            }
+
+            reqGet(`/costApi/getProcessItemCostDetail/${id}/C`, function (data) {
+                    if (data.result) {
+                        let model = JSON.parse(data.model);
+                        gridCostTemplate.data.parse(model);
+                        calculateComplexUnitPrice(gridCostTemplate);
+                        countCheckedBookmarkCostDetail();
+                        $("#processItemBookmarkCostDetail").removeClass("d-none");
+                    }
+                },
+                function (xhr) {
+                    showErrorAlert("ALERT", xhr.responseJSON.message);
+                });
+        });
+
+        //region gridCostTemplate-bookmark
+        const gridCostTemplate = new dhx.Grid("gridCostTemplate", {
+            columns: [
+                {id: "processItemCodeDetailId", header: [{text: "id"}], hidden: true},
+                {id: "isChecked", header: [{text: [[#{cost.modal.cost_detail.selection}]], align: "center", rowspan: 2}], width: 55, editable: true, type: "boolean"},
+                {id: "code", header: [{text: [[#{cost.modal.cost_detail.detail_work}]], align: "center", colspan: 2}, {text: [[#{cost.modal.cost_detail.code}]], align: "center"}], width: 120, footer: [{text: [[#{cost.modal.cost_detail.aggregation}]], align: "center"}], editable: true},
+                {id: "name", header: ["", {text: [[#{cost.modal.cost_detail.name}]], align: "center"}], width: 420, footer: [{content: "count", align: "center"}], editable: true},
+                {id: "isFirst", header: [{text: [[#{cost.modal.cost_detail.count}]], align: "center", colspan: 4}, {text: [[#{cost.modal.cost_detail.first}]], align: "center"}], width: 55, editable: true, type: "boolean", footer: [{text: "", colspan: 4, align: "right"}]},
+                {id: "count", header: ["", {text: [[#{cost.modal.cost_detail.first_count_value_a}]], align: "center"}], width: 100, type: "number", format: "#,#.0000", editable: true},
+                {id: "unit", header: ["", {text: [[#{cost.modal.cost_detail.first_count_unit}]], align: "center"}], width: 80, editable: true},
+                {id: "unitPrice", header: ["", {text: [[#{cost.modal.cost_detail.first_count_unit_price_b}]], align: "center"}], width: 120, type: "number", format: "#,#", editable: true},
+                {
+                    id: "cost", header: [{text: [[#{cost.modal.cost_detail.cost}]], align: "center", rowspan: 2}, {text: "ⓐ * ⓑ", align: "center"}], width: 150, footer: [{content: "sum"}], type: "number", format: "#,#"
+                    , mark: function () {
+                        return "process-col-disabled";
+                    }
+                },
+            ],
+            leftSplit: 1
+            , resizable: true
+            , selection: "cell"
+        });
+
+        gridCostTemplate.events.on("beforeEditEnd", function (value, row, col) {
+            if (value == row[col.id]) return true;
+
+            // radio button method
+            if (col.id == "isFirst") {
+                gridCostTemplate.data.forEach(item => {
+                    if (item.isFirst) item.isFirst = false;
+                })
+            }
+        });
+
+        gridCostTemplate.events.on("afterEditEnd", function (value, row, col) {
+            setNumericValue(value, row, col);
+            calculateComplexUnitPrice(gridCostTemplate);
+            countCheckedBookmarkCostDetail();
+        });
+
+        let countCheckedBookmarkCostDetail = function () {
+            let count = countChecked(gridCostTemplate, "isChecked");
+            $this.find("#addCostDetailCount").text(count);
+            return count;
+        }
+
+        $this.find("#addCostDetail").on("click", function () {
+            let isFirstRow = isRow(gridCostDetail, "isFirst", true);
+
+            let moveData = [];
+
+            gridCostTemplate.data.forEach(row => {
+                if (row.isChecked) {
+                    let newRow = cloneObj(row);
+                    if (isFirstRow) newRow.isFirst = false;
+                    gridCostDetail.addRowCss(gridCostDetail.data.add(newRow), "cost-value-changed");
+
+                    moveData.push(row);
+                }
+            })
+
+            moveData.forEach(row => {
+                gridCostTemplate.data.remove(row.id);
+            })
+            calculateComplexUnitPrice(gridCostTemplate);
+            if (countCheckedBookmarkCostDetail() == 0) {
+                $("#processItemBookmarkCostDetail").addClass("d-flex");
+            }
+            aggregateSaveRow();
+            calculateComplexUnitPrice(gridCostDetail);
+        });
+        //endregion
+    });
+</script>

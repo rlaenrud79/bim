@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/workPlanList/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <input type="hidden" id="tmpWorkPlanId" value="">
+        <input type="hidden" id="pageNo" value="">
+
+        <div id="divCardBody" th:replace="admin/workPlanList/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalWorkPlanAdd', #{admin.work_plan.modal_title.add_work} , 'popup-md')">공종 계획 등록</th:block>
+<th:block th:replace="layout/popup :: modal('modalWorkPlanUpdate', #{admin.work_plan.modal_title.update_work}, 'popup-md')">공종 계획 수정</th:block>
+<!-- modal end -->
+
+<div th:include="common/workSearchSelectOption :: script('searchWorkId')"></div>
+<script>
+  let confirmDeleteWorkAmount = "[[#{contents.work_plan_list.confirm_delete_work_plan}]]"
+</script>
+<script src="/dist/js/pages/workPlan.js"></script>
+</body>
+</html>

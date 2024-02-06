@@ -1,0 +1,92 @@
+<!-- 모달 - 사업 이미지 관리  -->
+<div class="content manage-biz-image">
+    <div class="scroll-area-v">
+        <table class="table">
+            <caption>이미지 리스트</caption>
+            <tbody>
+                <tr th:each="image : ${images}">
+                    <td>
+                        <div class="up-file-list">
+                            <div class="badge badge-pill"><span th:text="${image.fileName}">xxxxxxxxxxxxxxxxxxxxxxx.ppt</span>
+                              <button type="button" class="btn"><i class="fas fa-times-circle deleteProjectImage" th:data-id="${image.id}" ></i></button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="content upload-floor-plan mt-2">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th><span th:text="#{contents.modal.add_model_file.attach_file}">파일첨부</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+      <td>
+        <div th:replace="/common/fileUploader :: multiFileUploader('projectImageUpload')"></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="btn-footer">
+    <button type="button" id="postProjectImage" class="btn bg-gradient-success">등록</button>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script th:inline="javascript">
+  $(function () {
+    let $this = $("#projectImage");
+    let _imgFileExtension = [[${imgFileExtension}]];
+
+    $this.find(".deleteProjectImage").on("click",  function () {
+      let _this = $(this);
+      let projcetImageId = _this.data("id");
+
+      reqDelete("/adminApi/projectImage/"+projcetImageId
+        , function(data){
+          if(data.result) {
+            toastr.success(data.message);
+            _this.closest("tr").remove();
+            reloadComponentTabActive("/admin/projectImageArea", "#projectImageArea", "");
+          } else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, 'json');
+    });
+
+    $this.find("#postProjectImage").on("click", function (e) {
+
+      if ($("#projectImageUpload" + "s").find(".devo_file_list").length == 0) {
+        showErrorAlert("ALERT", [[#{contents.modal.add_model_file.error_no_upload_file}]]);
+        return false;
+      }
+
+      $("#projectImageUpload").dmUploader("start");
+    });
+
+    let completeUploadFile = function (obj) {
+      reloadComponentTabActive("/admin/projectImageArea", "#projectImageArea", "");
+      toastr.success([[#{admin.modal.project_image.upload_project_image_success}]]);
+      $this.modal("hide");
+    }
+
+    let projectImageFileExtraData = function () {
+      return {
+        "id"                   : [[${projectId}]],
+        "fileUploadUIType"     : "PROJECT_IMAGE_FILE",
+        "makeVersion"          : false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeMultiUploaderScript("#projectImageUpload"
+      , projectImageFileExtraData
+      , 5000000000
+      , _imgFileExtension.split("||")
+      , [[#{common.file_upload.error_file_size}]]
+      , [[#{common.file_upload.error_ext}]]
+      , completeUploadFile
+    );
+  });
+</script>

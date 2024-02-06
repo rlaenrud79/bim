@@ -1,0 +1,591 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="print-page print-write">
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2><input type="text" th:value="${gisungItem.title}"></h2>
+                </div>
+                <table class="mb-20">
+                    <colgroup>
+                        <col style="width:50%">
+                        <col style="width:30%">
+                    </colgroup>
+                    <tr>
+                        <th class="txt-left"><input type="text" th:value="${gisungItem.item01}"></th>
+                        <td class="txt-left"><input type="text" th:value="${gisungItem.item02}"></td>
+                    </tr>
+                    <tr>
+                        <th class="txt-left"><input type="text" th:value="${gisungItem.item03}"></th>
+                        <td class="txt-left"><input type="text" th:value="${gisungItem.item04}"></td>
+                    </tr>
+                    <tr>
+                        <th class="txt-left"><input type="text" th:value="${gisungItem.item05}"></th>
+                        <td class="txt-left"><input type="text" th:value="${gisungItem.item06}"></td>
+                    </tr>
+                </table>
+                <div class="tb-top">
+                    <h3>1.공정별 기성내역</h3>
+                    <span>&lt;단위 : 원&gt;</span>
+                </div>
+
+                <div class="tb-tab">
+                    <a href="#none" class="on btn-document-tab">순공사비 입력</a>
+                    <a href="#none" class="btn-document-tab">그외 입력</a>
+                </div>
+
+                <table id="tbTab1" class="table mb-20 tb-tab-con on">
+                    <colgroup>
+                        <col style="width:3%">
+                        <col style="width:20%">
+                        <col style="width:15%" span="4">
+                        <col style="width:10%">
+                        <col style="width:5%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th rowspan="2" colspan="2">공종명</th>
+                        <th rowspan="2">도급액</th>
+                        <th colspan="3">준공부분액</th>
+                        <th rowspan="2">기성율<br>(%)</th>
+                        <th rowspan="2">비고</th>
+                    </tr>
+                    <tr>
+                        <th>전회까지</th>
+                        <th>금회</th>
+                        <th>누계</th>
+                    </tr>
+                    <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails01}">
+                        <block th:if="${index.index == 0}">
+                        <td rowspan="25" class="txt-cnt" style="vertical-align: middle !important;">순공사비</td>
+                        </block>
+                        <td class="txt-left" th:text="${item.itemDetail01}">Ⅰ 토목공사 </td>
+                        <td><input type="text" name="itemDetail02" th:value="${item.itemDetail02}"></td>
+                        <td><input type="text" name="itemDetail03" th:value="${item.itemDetail03}"></td>
+                        <td><input type="text" name="itemDetail04" th:value="${item.itemDetail04}"></td>
+                        <td><input type="text" name="itemDetail05" th:value="${item.itemDetail05}"></td>
+                        <td><input type="text" name="itemDetail06" th:value="${item.itemDetail06}"></td>
+                        <td></td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <td class="txt-left depth2">1. 토 공 사</td>
+                        <td>717,210,724</td>
+                        <td>112,811,055</td>
+                        <td>117,427,123</td>
+                        <td>230,238,178</td>
+                        <td>32.10%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left depth2">2. 배수및옹벽공사</td>
+                        <td>361,805,871</td>
+                        <td>104,574,815</td>
+                        <td>10,650,554</td>
+                        <td>115,225,369</td>
+                        <td>31.84%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left depth2">3. 교 량 공 사</td>
+                        <td>2,442,969,369</td>
+                        <td>1,963,465,520</td>
+                        <td>47,923,136</td>
+                        <td>2,011,388,656</td>
+                        <td>82.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left depth2">4. 포 장 공 사</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left depth2">5. 부 대 공 사</td>
+                        <td>546,004,707</td>
+                        <td>295,984,955</td>
+                        <td>103,816,221</td>
+                        <td>399,801,176</td>
+                        <td>73.22%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left depth2">6. 터 널 공 사</td>
+                        <td>3,497,063,902</td>
+                        <td>694,989,830</td>
+                        <td>1,098,802,302</td>
+                        <td>1,793,792,132</td>
+                        <td>51.29%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">Ⅱ 기계설비공사</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">Ⅲ 전 기 공 사</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">Ⅳ 통신관로공사</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr class="bg-grey">
+                        <td class="txt-left">직접공사비 계</td>
+                        <td> 7,565,054,573</td>
+                        <td> 3,171,826,175</td>
+                        <td> 1,378,619,336</td>
+                        <td> 4,550,445,511</td>
+                        <td>60.15%</td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td class="txt-left">간접노무비</td>
+                        <td>347,422,645</td>
+                        <td>130,245,491</td>
+                        <td>59,277,599</td>
+                        <td>189,523,090</td>
+                        <td>54.55%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">산재보험료</td>
+                        <td>123,921,077</td>
+                        <td>41,212,148</td>
+                        <td>22,575,057</td>
+                        <td>63,787,205</td>
+                        <td>51.47%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">안전관리비</td>
+                        <td>270,000,000</td>
+                        <td>124,011,387</td>
+                        <td>115,921,909</td>
+                        <td>239,933,296</td>
+                        <td>88.86%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">고용보험료</td>
+                        <td>18,309,313</td>
+                        <td>14,144,409</td>
+                        <td>7,747,979</td>
+                        <td>21,892,388</td>
+                        <td>119.56%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">퇴직공제부금비</td>
+                        <td>14,000,000</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">건강보험료</td>
+                        <td>34,000,000</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">연금보험료</td>
+                        <td>32,000,000</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">노인장기요양보험료</td>
+                        <td>4,000,000</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">건설기계대여대금지급보증서발급금액</td>
+                        <td>33,085,361</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">환경보전비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">공사이행보증수수료</td>
+                        <td>3,200,000</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">건설하도급대금지급보증수수료</td>
+                        <td>5,729,402</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">기타경비</td>
+                        <td>538,310,776</td>
+                        <td>201,807,661</td>
+                        <td>91,847,122</td>
+                        <td>293,654,783</td>
+                        <td>54.55%</td>
+                        <td></td>
+                    </tr>
+                    <tr class="bg-gery">
+                        <td class="txt-left">(1) 순공사비계</td>
+                        <td>8,989,033,147</td>
+                        <td>3,683,247,271</td>
+                        <td>1,675,989,002</td>
+                        <td>5,359,236,273</td>
+                        <td>59.61%</td>
+                        <td></td>
+                    </tr>
+                    -->
+                    </tbody>
+                </table>
+
+                <table id="tbTab2" class="table mb-20 tb-tab-con">
+                    <colgroup>
+                        <col style="width:23%">
+                        <col style="width:15%" span="4">
+                        <col style="width:10%">
+                        <col style="width:5%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th rowspan="2">공종명</th>
+                        <th rowspan="2">도급액</th>
+                        <th colspan="3">준공부분액</th>
+                        <th rowspan="2">기성율<br>(%)</th>
+                        <th rowspan="2">비고</th>
+                    </tr>
+                    <tr>
+                        <th>전회까지</th>
+                        <th>금회</th>
+                        <th>누계</th>
+                    </tr>
+                    <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails02}">
+                        <td class="txt-left" th:text="${item.itemDetail01}">(2) 일반관리비</td>
+                        <td><input type="text" name="itemDetail02" th:value="${item.itemDetail02}"></td>
+                        <td><input type="text" name="itemDetail03" th:value="${item.itemDetail03}"></td>
+                        <td><input type="text" name="itemDetail04" th:value="${item.itemDetail04}"></td>
+                        <td><input type="text" name="itemDetail05" th:value="${item.itemDetail05}"></td>
+                        <td><input type="text" name="itemDetail06" th:value="${item.itemDetail06}"></td>
+                        <td></td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <td class="txt-left" th:text="${item.itemDetail01}">(2) 일반관리비</td>
+                        <td><input type="text" name="itemDetail02" th:value="${item.itemDetail02}"></td>
+                        <td><input type="text" name="itemDetail03" th:value="${item.itemDetail03}"></td>
+                        <td><input type="text" name="itemDetail04" th:value="${item.itemDetail04}"></td>
+                        <td><input type="text" name="itemDetail05" th:value="${item.itemDetail05}"></td>
+                        <td><input type="text" name="itemDetail06" th:value="${item.itemDetail06}"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(3) 이 윤</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(4) 건설공사손해보험료</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(5) 간접피해보상비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(a) 정기안전점검비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(b) 기술사용료</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(c) 콘크리트생산시설전기인입비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(d) 터널전기인입시설비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(e) 추가 P.S 적용항목</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(f) Restrike 확인 및 분석</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(g) T.A.B 공사비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(h) 프로그램입력비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(i) 모바일전자상황판</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(j) 시공상세도작성비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(k)비탈면조정공사비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(l) 안전관리계획서 검토비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(m) 시험말뚝 시공 및 성능시험</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(n) 기타환경보전비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(o) 설계도서인쇄,출력 및 준공도서</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(p) 물가변동(K1=3.74%)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(6) 공사비 계</td>
+                        <td>9,832,527,304</td>
+                        <td>4,016,018,213</td>
+                        <td>1,818,181,818</td>
+                        <td>5,834,200,031</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(7) 부가가치세</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(8) 수탁공사비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(9) 도급액</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">지급자재비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr class="bg-grey">
+                        <td class="txt-left">(9) 총공사비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    -->
+                    </tbody>
+                </table>
+
+                <div class="tb-top">
+                    <h3>2. 노선 및 예산과목 구분</h3>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th rowspan="2" class="txt-cnt">노선</th>
+                            <th rowspan="2" class="txt-cnt">예산과목/구분</th>
+                            <th rowspan="2" class="txt-cnt">도급액</th>
+                            <th colspan="3" class="txt-cnt">기   성   부   분   액(원)</th>
+                            <th rowspan="2" class="txt-cnt">비고</th>
+                        </tr>
+                        <tr>
+                            <th class="txt-cnt">전회까지</th>
+                            <th class="txt-cnt">금     회</th>
+                            <th class="txt-cnt">누     계</th>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><input type="text" name="item07" th:value="${gisungItem.item07}"></td>
+                            <td class="text-left"><input type="text" name="item08" th:value="${gisungItem.item08}"></td>
+                            <td><input type="text" name="item09" th:value="${gisungItem.item09}"></td>
+                            <td><input type="text" name="item10" th:value="${gisungItem.item10}"></td>
+                            <td><input type="text" name="item11" th:value="${gisungItem.item11}"></td>
+                            <td><input type="text" name="item12" th:value="${gisungItem.item12}"></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </section><!--//section-->
+        </div>
+    </div>
+</div>

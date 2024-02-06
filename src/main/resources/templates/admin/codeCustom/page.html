@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<link rel="stylesheet" href="/plugins/dhtmlx-suite_7.2.3/suite.min.css">
+<style>
+
+  .custom-class .dhx_tree-list-item__icon:before {
+    color: #007bff;
+  }
+
+  .custom-class > li {
+    margin-top: 0.5rem;
+  }
+
+  .custom-class p {
+    font-size: 1rem;
+    font-weight: normal;
+    cursor: pointer;
+  }
+
+</style>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('admin')"></nav>
+  <aside th:replace="layout/common :: aside('admin','codeCustom')"></aside>
+
+  <!-- contents area  -->
+  <main role="main" class="content-wrapper admin-content board-add">
+    <!-- Content Header (Page header) -->
+    <div th:replace="admin/codeCustom/contentHeader :: contentHeader()"></div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-coustom">
+          <div class="d-flex flex-wrap w-100 col-lg-12">
+            <div class="col-md-1 col-lg-4">
+              <div class="card content-body-area">
+                <div class="card-body">
+                  <div class="col-12">
+                    <h2><i class="fas fa-sitemap"></i> CODE TREE</h2>
+                    <div id="tree_container" class="scroll-area-v"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <th:block th:if="${configCustom != null} ">
+              <div class="col-md-1 col-lg-8">
+                <div class="card content-header-area">
+                  <div class="col-lg-12">
+                    <div class="bim-btn-group d-flex w-100">
+                      <button type="button" id="btnDefault" class="btn bg-gradient-info ml-auto">
+                        <span th:text="#{admin.code_custom.btn_default}"> 기본값 적용</span>
+                      </button>
+                      <button type="button" id="btnRegister" class="btn bg-gradient-warning ml-1">
+                        <span th:text="#{admin.code_custom.btn_register}"> 설정값 등록</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div th:replace="admin/codeCustom/cardBody :: cardBody(${configCustom})"></div>
+              </div>
+            </th:block>
+          </div>
+        </div>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+  </main>
+
+  <footer th:replace="layout/common :: footer()"></footer>
+
+  <!-- modals -->
+</div>
+<div th:include="layout/common :: script()"></div>
+<script src="/plugins/dhtmlx-suite_7.2.3/suite.min.js"></script>
+<script th:inline="javascript">
+
+  const configTreeDTOs = /*[[${configTreeDTOs}]]*/ [];
+
+  $(document).ready(function () {
+
+    const dataset = [];
+
+    configTreeDTOs.forEach(function (item, index) {
+      dataset.push({
+        id: `group_${item.id}`,
+        value: item.code,
+        opened: true,
+        items: getSubTree(item.configs)
+      });
+    });
+
+    function getSubTree(configs) {
+      if (!configs || configs.length === 0) {
+        return [];
+      }
+      return configs.map(function (item, index) {
+        return {
+          id: item.id,
+          value: item.code,
+        }
+      });
+    }
+
+    const tree = new dhx.Tree("tree_container", {
+      // config options
+      itemHeight: 30,
+      css: "custom-class",
+      icon: {
+        folder: "fas fa-folder",
+        openFolder: "fas fa-folder-open",
+        file: "far fa-file-alt"
+      },
+      template: function ({value}, isFolder) {
+        const valueTemplate = `
+          <p class="dhx_tree_template__value ml-2 config"> ${value}</p>
+        `
+        const folderTemplate = `
+          <p class="ml-2"> ${value}</p>
+        `
+        return isFolder ? folderTemplate : valueTemplate;
+      },
+
+    });
+
+    $(this).on('click', '.dhx_tree-list__item.dhx_tree-list-item', function (e) {
+      const id = $(this).attr('dhx_id');
+      if (!id) {
+        return false;
+      }
+      reloadComponent(`/admin/codeCustomCardBody`, '#divCardBody', `configId=${id}`);
+    });
+
+    $(this).on('click', '#btnDefault', function () {
+      const configCustomId = $('#configCustomId').val();
+
+      if (parseInt(configCustomId) === 0) {
+        showErrorAlert("ALERT", [[#{admin.code_custom.alert_already_use_default}]]);
+        return false;
+      }
+      showConfirm([[#{system.common.confirm.title}]], [[#{admin.code_custom.confirm_use_default}]], deleteConfigCustom);
+    });
+
+    function deleteConfigCustom() {
+      reqDelete(`/adminApi/configCustom?id=${$('#configCustomId').val()}`,
+        function (data) {
+          toastr.success(data.message);
+          reloadComponent(`/admin/codeCustomCardBody`, '#divCardBody', `configId=${$('#configId').val()}`);
+        },
+        function (xhr) {
+          showErrorAlert("ALERT", xhr.responseJSON.message);
+        }
+      );
+    }
+
+    $(this).on('click', '#btnRegister', function () {
+      const configId = $('#configId').val();
+      const inputType = $('#configInputType').val();
+
+      if ($('#configScope').val() === 'SYSTEM') {
+        return false;
+      }
+
+      let customValue = '';
+      let mode = '';
+
+      if (parseInt($('#configCustomId').val()) === 0) {
+        mode = 'CREATE';
+      } else {
+        mode = 'UPDATE'
+      }
+
+      if (inputType === 'checkbox') {
+        const checkboxList = $("input:checkbox[id^='checkbox']:checked");
+        $.each(checkboxList, function (idx, elem) {
+          if ($(elem).is(':checked')) {
+            customValue += $(elem).val();
+            if (idx !== checkboxList.length - 1) {
+              customValue += ',';
+            }
+          }
+        });
+      } else if (inputType === 'radio') {
+        customValue = $("input:radio[id^='radio']:checked").val();
+      } else {
+        customValue = $("#inputText").val();
+      }
+
+      if (mode === 'CREATE') {
+        reqPostJSON('/adminApi/configCustom', setSendData(customValue),
+          function (data) {
+            toastr.success(data.message);
+            reloadComponent(`/admin/codeCustomCardBody`, '#divCardBody', `configId=${configId}`);
+          },
+          function (xhr) {
+            showErrorAlert("ALERT", xhr.responseJSON.message);
+          }
+        );
+      } else {
+        reqPutJSON(
+          '/adminApi/configCustom', setSendData(customValue),
+          function (data) {
+            toastr.success(data.message);
+            reloadComponent(`/admin/codeCustomCardBody`, '#divCardBody', `configId=${configId}`);
+          },
+          function (xhr) {
+            showErrorAlert("ALERT", xhr.responseJSON.message);
+          }
+        );
+      }
+
+    });
+
+    function setSendData(customValue) {
+      return JSON.stringify({
+        "id": $('#configCustomId').val(),
+        "configId": $('#configId').val(),
+        customValue
+      });
+    }
+
+    tree.data.parse(dataset);
+
+  });
+</script>
+</body>
+
+</html>

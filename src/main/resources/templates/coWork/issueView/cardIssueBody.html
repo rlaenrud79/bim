@@ -1,0 +1,68 @@
+<div id="divCardIssueBody" class="card-body" th:fragment="cardIssueBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <h2 class="list-title"><i class="far fa-list-alt"></i> <span th:text="#{co_work.issue_view.card_issue}">이슈</span></h2>
+    <div class="table-responsive" th:object="${issueItem}">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th th:text="#{co_work.issue_view.card_issue_body_issue_title}">이슈 제목</th>
+          <td colspan="3" th:text="${issueItem.title}">적치물 제거 요청</td>
+        </tr>
+
+        <tr>
+          <th th:text="#{co_work.issue_view.card_issue_body_writer}">작성자</th>
+          <td>
+            <div class="d-flex align-items-center">
+              <div th:replace="/common/userInfoAtField :: userInfoAtField(${issueItem.writeEmbedded.accountDTO})"></div>
+            </div>
+          </td>
+
+          <th th:text="#{co_work.issue_view.card_issue_body_write_last_modify_date}">작성일시 / 최종 수정일시</th>
+          <td>
+            <b th:text="${#temporals.format(issueItem.writeEmbedded.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</b>
+            /
+            <b th:text="${#temporals.format(issueItem.lastModifyEmbedded.lastModifyDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 16:00</b>
+          </td>
+        </tr>
+
+        <tr>
+          <th rowspan="3" th:text="#{co_work.issue_view.card_issue_body_issue_managers}">대상자</th>
+          <td rowspan="3">
+            <div class="d-flex align-items-center justify-content-between" th:each="issueManager, index : ${issueItem.issueManagers}">
+              <div th:replace="/common/userInfoAtField :: userInfoAtField(${issueManager.accountDTO})"></div>
+            </div>
+          </td>
+
+          <th th:text="#{co_work.issue_view.card_issue_body_request_date}">완료 요구일자</th>
+          <td th:text="${#temporals.format(issueItem.requestDate, #messages.msg('system.locale.dateformat.year_month_day'))}">2021.06.30</td>
+        </tr>
+
+        <tr>
+          <th th:text="#{co_work.issue_view.card_issue_body_status_and_update_date}">상태 (변경일시)</th>
+          <td th:text="#{${issueItem.status.getMessageProperty()}} + ' (' + ${#temporals.format(issueItem.statusUpdateDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))} + ')'">작성중 (2021-06-25)
+          </td>
+
+        </tr>
+
+        <tr>
+          <th th:text="#{co_work.issue_view.card_issue_body_priority}">중요도</th>
+          <td th:if="${issueItem.priority == 10}" th:text="#{co_work.issue_list.list_priority_10}">긴급 / 상 / 중 / 하</td>
+          <td th:if="${issueItem.priority == 20}" th:text="#{co_work.issue_list.list_priority_20}">긴급 / 상 / 중 / 하</td>
+          <td th:if="${issueItem.priority == 30}" th:text="#{co_work.issue_list.list_priority_30}">긴급 / 상 / 중 / 하</td>
+          <td th:if="${issueItem.priority == 40}" th:text="#{co_work.issue_list.list_priority_40}">긴급 / 상 / 중 / 하</td>
+        </tr>
+
+        <tr>
+          <td colspan="4" class="px-0 py-0">
+            <div class="context-area">
+              <div class="scroll-area-v">
+                <div th:replace="common/editor/preview :: load('contents-preview-issue', ${issueItem.contents})"></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

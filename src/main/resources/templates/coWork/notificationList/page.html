@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="coWork/notificationList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+                <div id="divCardBody" th:replace="coWork/notificationList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<!-- modal end -->
+
+<script>
+    $(document).ready(function () {
+        // 계정정보(account) 테이블 > 프로젝트관리자(isRoleAdminProject) 체크(true/false)
+        const isRoleAdminProject = [[${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject}]];
+        if(!isRoleAdminProject)     applyNoAsideLayout();
+    });
+</script>
+<script src="/dist/js/pages/notification.js"></script>
+</body>
+
+</html>

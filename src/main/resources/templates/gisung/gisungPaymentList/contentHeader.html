@@ -1,0 +1,11 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{contents.gisung_payment_list.title_gisung_payment_list}">결제승인관리</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <form id="frmSearchForm" th:replace="gisung/gisungPaymentList/frmSearchForm :: frmSearchForm()"/>
+    </div>
+    <a href="#none" id="btnAdd" class="btn btn-color1 pop-open-btn" data-modal="#modalAddGisungPayment"><span th:text="#{contents.gisung_list.btn_open_add_modal}">신규등록</span></a>
+  </div>
+</div>

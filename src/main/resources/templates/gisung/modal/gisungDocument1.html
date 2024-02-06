@@ -1,0 +1,118 @@
+<div class="print-page">
+    <section class="page pg-ty1">
+        <div class="title">
+            <h2>준공검사조서</h2>
+        </div>
+        <table>
+            <tbody>
+            <tr>
+                <th>1. 공사명 :</th>
+                <td th:text="${gisungItem.title}">고속국도 제400호선~ 양평 이천간 건설공사 제4공구(제3차)</td>
+            </tr>
+            <tr>
+                <th>2. 기성금액 :</th>
+                <td>￦<span th:text="${#numbers.formatInteger(gisungItem.item01, 1, 'COMMA')}">11,736,113,000</span> (금회 : ￦<span th:text="${#numbers.formatInteger(gisungItem.item01, 1, 'COMMA')}">5,753,451,000</span>)</td>
+            </tr>
+            <tr>
+                <th>3. 계약년월일 :</th>
+                <td th:text="${gisungItem.item03}">2023</td>
+            </tr>
+            <tr>
+                <th>4. 착공년원일 :</th>
+                <td th:text="${gisungItem.item04}">2023</td>
+            </tr>
+            <tr>
+                <th>5. 준공예정일 :</th>
+                <td th:text="${gisungItem.item05}">2023</td>
+            </tr>
+            <tr>
+                <th>6. 계약자 :</th>
+                <td>
+                    <table>
+                        <th:block th:if="${gisungContractors.size() > 0}">
+                            <tr th:each="item, index : ${gisungContractors}">
+                                <td th:text="${item.company}"></td>
+                                <td th:text="${item.name}"></td>
+                                <td>
+                                    <th:block th:if="${!#strings.isEmpty(item.stampPath)}">
+                                        <img th:src="${item.stampPath}" style="width:25px;" alt="User Image">
+                                    </th:block>
+                                    <th:block th:unless="${!#strings.isEmpty(item.stampPath)}">
+                                        (인)
+                                    </th:block>
+                                </td>
+                                <td th:text="${item.company2}"></td>
+                                <td th:text="${item.name2}"></td>
+                                <td>
+                                    <th:block th:if="${!#strings.isEmpty(item.stampPath2)}">
+                                        <img th:src="${item.stampPath2}" style="width:25px;" alt="User Image">
+                                    </th:block>
+                                    <th:block th:unless="${!#strings.isEmpty(item.stampPath2)}">
+                                        (인)
+                                    </th:block>
+                                </td>
+                            </tr>
+                        </th:block>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="ph-20">
+                    <p>상기 공사 기성부분 검사의 명을 받아 <span th:text="${gisungItem.item06}">2022</span> 검사한 결과 별지 명세서와 같이 전 공사에 대하여 <span th:text="${#numbers.formatDecimal(gisungItem.item07, 1, 'COMMA', 2, 'POINT')}">69.04</span>% 기성이 상위없음을 증명함</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="txt-right">
+                    <span th:text="${gisungItem.item08}">11</span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3" class="txt-right">
+                    <table>
+                        <colgroup>
+                            <col style="width:70%">
+                            <col style="width:15%" span="2">
+                        </colgroup>
+                        <tr>
+                            <th class="txt-right">검사원 :</th>
+                            <td class="txt-right" th:text="${gisungItem.item09}">최윤형</td>
+                            <td class="txt-right">(인)</td>
+                        </tr>
+                        <tr>
+                            <th class="txt-right">검사원 :</th>
+                            <td class="txt-right" th:text="${gisungItem.item10}">최윤형</td>
+                            <td class="txt-right">(인)</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="file-btm">
+            <dl>
+                <dt>첨부 :</dt>
+                <th:block th:if="${gisungItem.id > 0}">
+                    <dd th:each="item, index : ${filenameLists}">
+                        <span th:text="${item}">.</span>
+                    </dd>
+                </th:block>
+            </dl>
+        </div>
+    </section><!--//section-->
+
+
+    <div class="modal-footer">
+        <!--<button type="button" id="" class="btn bg-gradient-success btn-pdf"><span>PDF</span></button>-->
+        <button type="button" id="" onclick="btnPrint();" class="btn btn-color1"><span>인쇄하기</span></button>
+        <button id="btnCloseLayer" type="button" class="btn btn-secondary close">닫기</button>
+    </div>
+</div><!--//page-->
+
+
+<script type="text/javascript">
+    function btnPrint() {
+        window.open('/gisung/printGisungItem?id='+[[${gisung.id}]]+'&no='+[[${no}]]+'&coverTableId=0', 'printDocument', 'width=800, height=600, left=100, top=100, scrollbars=yes, resizable=yes')
+    }
+
+
+</script>

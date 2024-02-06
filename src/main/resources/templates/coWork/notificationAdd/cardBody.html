@@ -1,0 +1,118 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+
+
+  <div class="col-12">
+    <div th:object="${notice}">
+
+      <div class="form">
+        <div class="grid">
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_notification_title}">제목</span></strong>
+            </div>
+            <div class="fm-txt">
+              <input type="text" id="title" name="title" class="form-control" th:field="*{title}" th:placeholder="#{co_work.notification_add.card_body_notification_title_place_holder}" maxlength="255">
+            </div>
+          </div>
+          <div class="fm-section col1">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_is_popup}">팝업여부</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="radio-set">
+                <input type="radio" id="isPopup_true" name="isPopup" value="true">
+                <label for="isPopup_true" th:text="#{co_work.notification_add.card_body_is_popup_yes}">YES</label>
+                <input type="radio" id="isPopup_false" name="isPopup" value="false" checked="checked">
+                <label for="isPopup_false" th:text="#{co_work.notification_add.card_body_is_popup_no}">NO</label>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col5">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_is_popup_term}">팝업 게시일시</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="grid al-center gap-10">
+                <div class="input-date">
+                  <input type="date" class="form-control" id="startDateDay" name="startDateDay" readonly>
+                  <i class="ico"></i>
+                </div>
+                <select class="custom-select wid-s" id="startDateHour" name="startDateHour" disabled="disabled">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_hour_null}">::선택::</option>
+                  <option th:each="hour : ${hourList}" th:value="${hour}" th:text="${hour}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_hour}">시</span>&nbsp;
+                <select class="custom-select wid-s" id="startDateMin" name="startDateMin" disabled="disabled">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_min_null}">::선택::</option>
+                  <option th:each="min : ${minList}" th:value="${min}" th:text="${min}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_min}">분</span>
+                <span> ~ </span>
+                <div class="input-date">
+                  <input type="date" class="form-control" id="endDateDay" name="endDateDay" readonly>
+                  <i class="ico"></i>
+                </div>
+                <select class="custom-select wid-s" id="startEndHour" name="startEndHour" disabled="disabled">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_hour_null}">::선택::</option>
+                  <option th:each="hour : ${hourList}" th:value="${hour}" th:text="${hour}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_hour}">시</span>&nbsp;
+                <select class="custom-select wid-s" id="startEndMin" name="startEndMin" disabled="disabled">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_min_null}">::선택::</option>
+                  <option th:each="min : ${minList}" th:value="${min}" th:text="${min}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_min}">분</span>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_target_work}">대상</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="check-set">
+                <input type="checkbox" id="allCheck">
+                <label for="allCheck" th:text="#{co_work.notification_add.card_body_target_work_all}">전체</label>
+              </div>
+
+              <div class="form-group mr-3" th:each="work, index : ${works}">
+                <div class="check-set">
+                  <input type="checkbox" class="itemCheck"
+                         th:id="works_+${work.id}"
+                         th:name="works_+${work.id}"
+                         th:value="${work.id}">
+                  <label th:for="works_+${work.id}" th:text="${work.getLocaleName()}">교량공</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_attach_file}">파일첨부</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div th:replace="/common/fileUploader :: multiFileUploader('noticeFileUpload')"></div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_contents}">내용</span></strong>
+            </div>
+            <div class="fm-txt">
+<!--              <div th:replace="common/editor/page :: load()"></div>-->
+              <textarea id="contents" name="contents" placeholder="내용을 입력하세요."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+  });
+</script>

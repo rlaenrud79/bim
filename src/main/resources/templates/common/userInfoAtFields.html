@@ -1,0 +1,23 @@
+<div id="divUserInfoAtFields" class="grid al-center gap-10">
+    <div class="user-info-toggle"  th:each="writerDTO, index : ${writerDTOs}">
+        <div class="user-img">
+            <img th:src="${#strings.isEmpty(writerDTO.photoPath) ? '/dist/img/no_user_photo.png' : writerDTO.photoPath}"
+                 class="img-circle" alt="User Image">
+
+            <div class="user-panel bubble"
+                 th:data-user-id="${writerDTO.userId}">
+                <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '' + ${writerDTO?.userName}"></span>
+                <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '(' + ${writerDTO?.companyRoleName} + ' : ' + ${writerDTO?.companyName} + ')'"></span>
+                <span th:text="${ writerDTO == null or writerDTO.userId == 0 } ? '' : '' + ${writerDTO?.mobileNo} + ''"></span>
+            </div>
+
+        </div>
+
+
+
+        <div>
+            <span th:text="${writerDTO.userName}">홍길동</span>&#40;<span th:text="${writerDTO.companyRoleName}">발주사</span>/<span th:text="${writerDTO.companyName}">한국 발주</span>&#41;
+        </div>
+    </div>
+</div>
+

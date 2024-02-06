@@ -1,0 +1,94 @@
+<div class="card content-body-area" id="divCardBody" th:fragment="cardBody(configCustom)" th:object="${configCustom}">
+  <div class="card-body">
+    <input type="hidden" id="configCustomId" th:value="${configCustom.id}"/>
+    <input type="hidden" id="configId" th:value="${configCustom.configId}"/>
+    <input type="hidden" id="configInputType" th:value="${configCustom.configInputType}"/>
+    <input type="hidden" id="configScope" th:value="${configCustom.configScope}"/>
+    <div class="col-12">
+      <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{admin.code_custom.code_info}"> 코드 정보</span></h2>
+      <div class="table-responsive">
+        <table class="table thbg">
+          <tbody>
+          <tr>
+            <th class="text-center">
+              <span th:text="#{admin.code_custom.code_name}"> 코드명</span>
+            </th>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="form-group w-50">
+                  <span th:text="|*{configCode}(${#strings.defaultString(configCustom.configLocaleName,'')})|"></span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-center">
+              <span th:text="#{admin.code_custom.code_description}"> 설명</span>
+            </th>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="form-group w-50">
+                  <span th:text="*{configDescription}"></span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th class="text-center">
+              <span th:text="#{admin.code_custom.code_default_value}"> 기본값</span>
+            </th>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="form-group w-50">
+                  <span th:text="*{configDefaultValue}"></span>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <tr th:if="*{configScope} == 'CUSTOM'">
+            <th class="text-center"><span th:text="#{admin.code_custom.code_custom_value}"> 사용자 설정값</span></th>
+            <td>
+              <div class="d-flex align-items-center">
+                <div class="form-group w-50">
+                  <th:block th:if="${configCustom.configInputType == 'checkbox'}" th:with="checkboxList = ${#strings.listSplit(configCustom.configDataOption,',')}">
+                    <th:block th:each="item, index : ${checkboxList}" th:with="compareList = ${configCustom.customValue} ? ${#strings.listSplit(configCustom.customValue,',')} : ${checkboxList}">
+                      <input type="checkbox" th:id="checkbox_+${index.index}" th:value="${item}" th:checked="${#lists.contains(compareList, item)}" th:text="${item}"/>
+                      <label th:for="checkbox_+${index.index}"></label>
+                      &nbsp;
+                    </th:block>
+                  </th:block>
+
+                  <th:block th:if="${configCustom.configInputType == 'radio'}" th:with="radioList = ${#strings.listSplit(configCustom.configDataOption,',')}">
+                    <th:block th:each="item, index : ${radioList}" th:with="compareValue = ${configCustom.customValue} ?: ${configCustom.configDefaultValue}">
+                      <input type="radio" name="customRadioValue" th:id="radio_+${index.index}" th:checked="${item == compareValue}" th:value="${item}" th:text="${item}"/>
+                      <label th:for="radio_+${index.index}"></label>
+                    </th:block>
+                  </th:block>
+
+                  <th:block th:if="${configCustom.configInputType == 'input'}">
+                    <input type="text" id="inputText" name="inputTextValue" th:value="${#strings.defaultString(configCustom.customValue, configCustom.configDataOption)}"/>
+                  </th:block>
+
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var scope = "[[${configCustom.configScope}]]";
+
+    if (scope === 'SYSTEM') {
+      document.getElementById('btnDefault').disabled = true;
+      document.getElementById('btnRegister').disabled = true;
+    } else {
+      document.getElementById('btnDefault').disabled = false;
+      document.getElementById('btnRegister').disabled = false;
+    }
+
+  </script>
+</div>

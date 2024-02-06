@@ -1,0 +1,76 @@
+
+<div class="task-add-filter">
+    <div class="task-add-search">
+        <select name="search_gcode" id="search_gcode">
+            <option value="" th:text="#{cost.modal.cost_detail.selection}"></option>
+            <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${codeList}">
+                <option th:value="${item.code}" th:text="${item.name}" th:selected="${search_code == item.code}"></option>
+            </th:block>
+        </select>
+    </div>
+    <div class="check-set">
+        <input type="checkbox" id="search_costmin" name="search_costmin" value="Y">
+        <label for="search_costmin" th:text="#{gisung.index.detail.search_process_100}">실적 100% 공정만 보기</label>
+    </div>
+    <div class="search-box">
+        <input type="text" name="schTaskName" id="schTaskName" th:placeholder="#{gisung.index.detail.search_gcode}">
+        <a href="#none" class="btn btn-process-item-search" th:text="#{layout.modal.btn_search}">검색</a>
+    </div>
+</div>
+
+<div class="board-list" style="display:none">
+    <div class="scroll-wrap sc-table">
+        <table class="table tb-process-item-search">
+            <thead>
+            <tr class="sticky-th">
+                <th>
+                    <div class="check-set">
+                        <input type="checkbox" id="itemCheckSearch">
+                        <label for="itemCheckSearch"></label>
+                    </div>
+                </th>
+                <th th:text="#{common.modal.search_single_user.list_title_no}">No</th>
+                <th th:text="#{gisung.index.page.phasing_name}">공정명</th>
+                <th th:text="#{gisung.index.page.phasing_code}">공정코드</th>
+                <th th:text="#{gisung.index.page.cost_detail}">복합단가</th>
+                <th th:text="#{gisung.index.page.total_cost}">전체 공사비(원)</th>
+                <th><span th:text="#{gisung.index.page.job_sheet}">실적</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.paid_cost}">기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+                <tr>
+                <td>
+                    <div class="check-set">
+                        <input type="checkbox" th:id="|itemCheckSearch${index.index}|" name="item_no[]" class="list-item-checkbox itemCheck" th:data-no="${item.id}" th:value="${item.id}">
+                        <label th:for="|itemCheckSearch${index.index}|"></label>
+                    </div>
+                </td>
+                <td th:text="${(index.index+1)}">1</td>
+                <td class="txt-left"><b><span th:text="${item.taskName}">강상분기점1교_교대공_A1_말뚝</span></b></td>
+                <td th:text="${item.phasingCode}">2023</td>
+                <td><button type="button" class="btn-xs btn-bo3 btnCostDetailSearch" data-modal="#costDetail" th:data-id="${item.id}" th:data-task-name="${item.taskName}" th:text="${#numbers.formatInteger(item.complexUnitPrice, 1, 'COMMA')}">209,064</button></td>
+                <td th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}">2000</td>
+                <td><span th:text="${#numbers.formatInteger((item.progressAmount), 1, 'COMMA')}"></span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(item.progressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></td>
+                <td><span id="paidCostText" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}"></span> <span class="txt-color4" id="paidProgressRateText" th:text="|(${#numbers.formatDecimal(item.paidProgressRate*100, 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                </tr>
+            </th:block>
+            </tbody>
+        </table><!--// table-->
+    </div><!--//table-wrap-->
+</div>
+
+<div class="btn-box sticky">
+    <div class="right-box">
+        <a href="#none" id="btnPrcessAdd" class="btn btn-color1" th:text="#{common.modal.btn_set_save}">적용</a>
+        <a href="#none" class="btn btn-process-search-reset" th:text="#{common.modal.btn_cancel}">취소</a>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+
+</script>

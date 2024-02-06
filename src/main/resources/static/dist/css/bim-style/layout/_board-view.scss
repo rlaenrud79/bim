@@ -1,0 +1,119 @@
+/// BIM VIEW
+
+.board-view {
+    .content-body-area {
+        .card-header {
+            > div {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .bim-btn-group { margin-left: auto; }
+            }
+        }
+    }
+
+    table {
+        border-bottom: 1px solid #dee2e6;
+
+        tbody {
+            th {
+                width: 15.385rem;
+                text-align: center;
+                background-color: #EEF0F2;
+            }
+
+            td { padding: 1rem 2rem; }
+        }
+    }
+
+    .up-file-list {
+        display: flex;
+        align-items: center;
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            min-height: 22px;
+            padding: .1rem .5rem;
+            margin: .5rem;
+            background: #ebebeb;
+        }
+
+        button {
+            padding: 0;
+            margin-left: .5rem;
+            margin-right: -.5rem;
+
+            i { color: #dc3545; }
+        }
+    }
+
+    .form-group { margin: 0; }
+
+    .edit-area {
+        min-height: 23.077rem;
+        width: 100%;
+    }
+
+    .context-area {
+        min-height: 15.385rem;
+        width: 100%;
+        border: 1px solid #ced4da;
+
+        > div {
+            padding: 1rem;
+            max-height: 46.154rem;
+        }
+    }
+
+    .conimg-area {
+        margin-top: -1px;
+        min-height: 15.385rem;
+        border: 1px solid #ced4da;
+
+        > div {
+            padding: 1rem;
+            min-height: 15.385rem;
+        }
+
+        ul {
+            display: flex;
+            margin-left: -1rem;
+            max-width: 138.462rem;
+            width: 100%;
+
+            li {
+                display: inline-flex;
+                margin-left: 1rem;
+    
+                img {
+                    width: 23.077rem;
+                    max-width: 23.077rem;
+                    border: 1px solid #dee2e6;
+                    border-radius: 5px;
+                }
+    
+                button {
+                    margin-top: auto;
+                    margin-left: 1rem;
+
+                    i { margin-right: 0; }
+                }
+            }
+
+        }
+    }
+
+    .comment-area {
+        display: flex;
+        align-items: center;
+
+        textarea {
+            margin-right: 1rem;
+            min-height: 4.615rem;
+        }
+
+        button { margin-left: .3rem; }
+    }
+}

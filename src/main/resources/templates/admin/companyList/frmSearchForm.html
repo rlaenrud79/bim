@@ -1,0 +1,40 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="card content-header-area" th:object="${searchCompanyVO}">
+    <div class="col-lg-12">
+
+      <div class="form-group">
+        <label th:text="#{admin.company_list.search_work}">공종</label>
+        <select class="custom-select" id="workId" th:field="*{workId}">
+          <option th:utext="#{admin.company_list.works_select}" value="0" >::선택::</option>
+          <option th:each="work : ${works}" th:value="${work.id}" th:utext="${work.getLocaleName()}">공종명</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label th:text="#{admin.company_list.search_date_type}">회사명</label>
+        <input type="text"
+               id="companyName"
+               th:field="*{companyName}"
+               class="form-control"
+               th:placeholder="#{admin.company_list.search_text_placeholder}">
+        <input type="hidden" id="sortProp" name="sortProp" th:field="*{sortProp}">
+      </div>
+
+      <div class="bim-btn-group">
+        <button id="btnSearch"
+                type="button"
+                class="btn bg-gradient-primary">
+          <i class="fas fa-search"></i>
+          <span th:text="#{admin.company_list.btn_search}">검색</span>
+        </button>
+        <button id="btnInit"
+                type="button"
+                class="btn bg-gradient-primary">
+          <i class="fas fa-sync-alt"></i>
+          <span th:text="#{admin.company_list.btn_init}">초기화</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</form>

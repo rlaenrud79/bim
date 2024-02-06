@@ -1,0 +1,49 @@
+  <article id="mySnapShotFileList" th:fragment="mySnapShotFileList()">
+  <header><span th:text="#{contents.modeling_view.my_snap_shot_file_list}">Snap Shot 도면 리스트</span>
+    <button type="button"
+            th:if="${mySnapShot!=null}"
+            class="btn bg-gradient-success btn-xs"
+            data-toggle="modal"
+            data-target="#mySnapShotUploadFile"
+            th:data-my-snap-shot-id="${mySnapShot?.id}"
+            th:text="#{contents.modeling_view.btn_add_snap_shot_file}">도면추가
+    </button>
+  </header>
+  <div class="scroll-area-v">
+    <table class="table">
+      <thead>
+      <tr>
+        <th id="mySnapShotName" class="text-center" colspan="3" th:text="${mySnapShot?.title}">Snap Shot 명 : 상부 거더 1 좌측 뷰</th>
+      </tr>
+      <tr>
+        <th class="text-center" th:text="#{contents.modeling_view.snap_shot_file_list.title_name}">도면명</th>
+        <th class="text-center" th:text="#{contents.modeling_view.snap_shot_file_list.title_add_date}">등록일자</th>
+        <th class="text-center" th:text="#{contents.modeling_view.snap_shot_file_list.title_delete}">삭제</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="mySnapShotFile : ${mySnapShotFiles}">
+        <td>
+          <a  th:id="btnMySnapShotFile_ + ${mySnapShotFile.id}"
+              href="#" role="button"
+              th:data-id="${mySnapShotFile.id}"
+              th:data-ext="${mySnapShotFile.originFileNameExt}"
+              th:data-file-path="${mySnapShotFile.filePath}">
+            <span class="text-over-dot" th:text="${mySnapShotFile.originFileName}">도면명 1111.pdf</span>
+          </a>
+        </td>
+        <td class="text-center">
+          <small th:text="${#temporals.format(mySnapShotFile.writeEmbedded.writeDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021.07.15</small>
+        </td>
+        <td class="text-center">
+          <button type="button"
+                  th:data-id="${mySnapShotFile.id}"
+                  th:data-my-snap-shot-id="${mySnapShot.id}"
+                  class="btn bg-gradient-danger btn-xs deleteMySnapShotFile"
+                  th:text="#{contents.modeling_view.btn_delete_snap_shot_file}">삭제</button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

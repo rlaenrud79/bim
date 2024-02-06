@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/user/contentHeader :: contentHeader()"></div>
+
+
+      <div class="content">
+        <form id="frmUser">
+          <div class="form" th:object="${user}">
+             <input th:type="hidden" th:field="*{id}">
+             <div class="grid">
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.user_id}">아이디</span><small class="req-ico">*</small> </strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="hidden" id="isCheckedEmail" value="false">
+                  <input type="email" class="form-control wid-300" th:placeholder="#{admin.user.page.input_email_id}" th:field="*{email}" th:disabled="${user.edit}">
+                  <button th:if="${user.regist}" type="button" id="checkEmail" class="btn-b" th:text="#{admin.user.page.check_id_duplication}">중복 체크</button>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.rank}">직급</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" class="form-control" th:field="*{rank}" th:placeholder="#{admin.user.page.input_rank}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.password}">비밀번호</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <div th:if="${user.regist}" class="form-group wid-lg">
+                    <input  type="password" th:field="*{password}" class="form-control wid-lg" minlength="4" maxlength="20" th:placeholder="#{admin.user.page.input_password_english_and_number}">
+                  </div>
+                  <div th:if="${user.edit}" class="form-group flex al-center gap-10">
+                    <button type="button" id="initPassword" class="btn-b" th:text="#{admin.user.page.init_password}">초기화</button>
+                    <p class="s-txt" th:text="#{admin.user.page.temp_password_initialize}">초기화하면 임시비밀번호로 변경됩니다.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.address}">주소</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" class="form-control" th:field="*{address}" th:placeholder="#{admin.user.page.input_address}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.user_name}">성명</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" class="form-control" th:placeholder="#{admin.user.page.input_user_name}" th:field="*{userName}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.phone_no}">전화번호</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" class="form-control" th:field="*{phoneNo}" th:placeholder="${telNoPlaceholder}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.mobile_no}">휴대전화 번호</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" class="form-control" th:field="*{mobileNo}" th:placeholder="${mobileNoPlaceholder}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.site_responsible}">현장 책임자 여부</span></strong>
+                </div>
+                <div class="fm-txt txt-bo">
+                  <div class="radio-set">
+                    <input type="radio" id="site_responsible_true" name="responsible" value="true" th:checked="*{responsible}">
+                    <label for="site_responsible_true" th:text="#{admin.user.page.responsible}">책임자</label>
+                  </div>
+                  <div class="radio-set">
+                    <input type="radio" id="site_responsible_false" name="responsible" value="false" th:checked="!*{responsible}">
+                    <label for="site_responsible_false" th:text="#{admin.user.page.responsible_not}">책임자 아님</label>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.company}">회사</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <select class="custom-select" id="companyId" name="companyId" th:value="${user.company?.id}">
+                    <option value="">[[#{admin.user.page.selection}]]</option>
+                    <option th:each="company : ${companies}" th:text="${company.name}" th:value="${company.id}" th:selected="${company.id == user.company?.id}" th:data-works="${company.worksString}" th:data-role="${company.roleType}">Value 2</option>
+                  </select>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.user_enabled}">활성여부</span></strong>
+                </div>
+                <div class="fm-txt txt-ip">
+                  <div class="radio-set">
+                    <input type="radio" id="user_enabled_true" name="enabled" value="1" th:checked="${user.enabled == 1}">
+                    <label for="user_enabled_true" th:text="#{admin.user.page.user_enabled_true}">YES</label>
+                  </div>
+                  <div class="radio-set">
+                    <input type="radio" id="user_enabled_false" name="enabled" value="0" th:checked="${user.enabled != 1}">
+                    <label for="user_enabled_false" th:text="#{admin.user.page.user_enabled_false}">NO</label>
+                  </div>
+                </div>
+                <p class="s-txt" th:text="#{admin.user.page.can_login_active}">활성화 해야 서비스를 사용 할 수 있습니다.</p>
+              </div>
+              <div class="fm-section col4">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.work}">공종</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt txt-ip">
+                  <input type="hidden" id="works" name="works" th:value="${user.worksString}">
+                  <div class="align-items-center mt-4 d-none" th:each="workName,index : ${workNames}" th:id="${'d-ctrl-'+workName.work.id}">
+                    <div class="form-group mr-5">
+                      <div class="check-set">
+                        <input type="checkbox" class="itemCheck" th:id="${'workName_'+index.index}" th:value="${workName.work.id}">
+                        <label th:for="${'workName_'+index.index}" th:text="${workName.name}">부대공</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col6">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.role}">권한</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt ">
+                  <div id="roleList" class="grid txt-ip wid-lg" style="align-items: center;">
+                    <input type="hidden" id="roles" name="roles" th:value="${user.rolesString}">
+                    <div class="d-flex align-items-center mt-4" th:if="${#lists.size(roleNames)} > 0" th:each="roleName,index : ${roleNames}">
+                      <div class="form-group mr-5">
+                        <th:block sec:authorize="hasAuthority('PARTNER')">
+                          <span class="check-set" th:with="isDisabled=${(roleName.role.id==1 or roleName.role.id==3 or roleName.role.id==4 or roleName.role.adminSystem)?true:false}">
+                            <input type="checkbox" class="itemCheck" th:id="${'roleName_'+index.index}" th:value="${roleName.role.id}" th:disabled="${isDisabled}">
+                            <label th:for="${'roleName_'+index.index}" th:text="${roleName.name}">공종 관리자</label>
+                          </span>
+                        </th:block>
+                        <th:block sec:authorize="!hasAuthority('PARTNER')">
+                          <span class="check-set">
+                            <input type="checkbox" class="itemCheck" th:id="${'roleName_'+index.index}" th:value="${roleName.role.id}" th:disabled="${roleName.role.adminSystem}">
+                            <label th:for="${'roleName_'+index.index}" th:text="${roleName.name}">공종 관리자</label>
+                          </span>
+                        </th:block>
+                      </div>
+                    </div>
+                    <div th:unless="${#lists.size(roleNames)} > 0">
+                      <div class="form-group mr-5">
+                        <span th:text="#{admin.user.page.empty_role_names}">지정할 수 있는 권한이 없습니다. 관리자에게 문의하세요</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col6">
+                <div class="fm-tit">
+                  <strong><i class="ico-require"></i><span th:text="#{admin.user.page.photo}">사진</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <!--
+                  <div class="user-panel">
+                    <div class="image">
+                      <img th:src="${#strings.isEmpty(user.photoPath) ? '/dist/img/no_user_photo.png' : user.photoPath}"
+                           onerror="this.src='/dist/img/no_user_photo.png'"
+                           class="user-img" alt="User Image">
+                    </div>
+                  </div>
+                  -->
+                  <div th:replace="/common/fileUploader :: singleFileUploader('uploadFile')"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script>
+  let _telNoPattern = [[${telNoPattern}]];
+  let _mobileNoPattern = [[${mobileNoPattern}]];
+</script>
+<script th:inline="javascript">
+  $(function () {
+
+    const $this = $(this);
+    const imgFileExtension = [[${imgFileExtension}]];
+
+    $this.find("#goList").on("click", function () {
+      location.href="/admin/userList";
+    });
+
+    $this.find("#initPassword").on("click", function () {
+      showConfirm([[#{admin.user.page.password_init}]],[[#{admin.user.page.initialize_password}]], function() {
+
+        reqPut("/adminApi/initPassword/"+$this.find("#id").val()
+                , {}
+                , function(data){
+                  if(data.result) {
+                    // showErrorAlert([[#{admin.user.page.password_init}]], data.message);
+                    alert(data.message);
+                    //toastr.success(data.message);
+                  } else {
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+      });
+    });
+
+    $this.find("#email").on("keydown", function () {
+      $this.find("#isCheckEmail").val(false);
+    });
+
+    $this.find("input[id^='workName_']").on("change", function () {
+      let works = getCheckedValues($this.find("#workList"), false);
+      $this.find("#works").val(works);
+    });
+
+    $this.find("input[id^='roleName_']").on("change", function () {
+      let roles = getCheckedValues($this.find("#roleList"), false);
+      $this.find("#roles").val(roles);
+    });
+
+    $this.find("#checkEmail").on("click", function () {
+      let email = $this.find("#email").val();
+      if (validateEmail(email)) {
+
+        reqGet("/adminApi/checkEmail/" + email
+                , function (data) {
+                  if (data.result) {
+                    $this.find("#isCheckedEmail").val(true);
+                    //toastr.success(data.message);
+                    alert(data.message);
+                  } else {
+                    $this.find("#email").val("");
+                    $this.find("#isCheckedEmail").val(false);
+                    //toastr.warning(data.message);
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }, 'json');
+      } else {
+        alert([[#{admin.user.page.email_type_is_incorrect}]]);
+        return;
+      }
+    });
+
+    $this.find("#postUser").on("click", function () {
+      if (validate()) {
+        let param = JSON.stringify($this.find("#frmUser").serializeObject())
+
+        reqPostJSON("/adminApi/user"
+                , param
+                , function (data) {
+                  if(data.result) {
+                    //toastr.success(data.message);
+
+                    //if ($("#uploadFile" + "s").find(".devo_file_list").length == 0 && $("#accountStampFile" + "s").find(".devo_file_list").length == 0) {
+                    //  location.href="/admin/user/"+data.returnId;
+                    //} else {
+                      $this.find("#id").val(data.returnId);
+                      //$("#uploadFile").dmUploader("start");
+                      startFileUpload();
+                    //}
+                  }
+                  else alert(data.message);
+                }
+                ,  function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                });
+      }
+    });
+
+    $this.find("#putUser").on("click", function () {
+      if (validateUserInfo()) {
+        let param = JSON.stringify($this.find("#frmUser").serializeObject())
+
+        reqPutJSON("/adminApi/user"
+                , param
+                , function (data) {
+                  if(data.result) {
+                    alert(data.message);
+                    if ($("#uploadFile" + "s").find(".devo_file_list").length > 0 || $("#accountStampFile" + "s").find(".devo_file_list").length > 0) {
+                      //$("#uploadFile").dmUploader("start");
+                      startFileUpload();
+                    }
+                  }
+                  else alert(data.message);
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }
+        );
+      }
+    });
+
+    function validateUserInfo(){
+      if (isEmpty("#userName", [[#{admin.user.page.input_user_name}]])) return false;
+      if (isEmpty("#mobileNo", [[#{admin.user.page.input_mobile_no}]])) return false;
+      if (!checkMobileNo(_mobileNoPattern, $this.find("#mobileNo").val().trim())) {
+        alert([[#{admin.user.page.input_mobile_number_pattern_incorrect}]] + "(" + $this.find("#mobileNo").attr("placeholder") + ")" );
+        return false;
+      }
+
+      let telNo = $this.find("#phoneNo").val().trim();
+      if (telNo != "" && !checkTelNo(_telNoPattern, telNo)) {
+        alert([[#{admin.user.page.input_phone_number_pattern_incorrect}]] + "(" + $this.find("#phoneNo").attr("placeholder") + ")");
+        return false;
+      }
+
+      if (isEmpty("#companyId", [[#{admin.user.page.select_company}]])) return false;
+
+      let roleType = $this.find("#companyId option:selected").data("role");
+      if(roleType == "PARTNER") if (isEmpty("#works", [[#{admin.user.page.check_work_one_more}]])) return false;
+
+      if (isEmpty("#roles", [[#{admin.user.page.check_role_one_more}]])) return false;
+
+      return true;
+    }
+
+    function validate() {
+      let email = $this.find("#email").val();
+      if (!validateEmail(email)) {
+        alert([[#{admin.user.page.email_type_is_incorrect}]]);
+        return false;
+      }
+
+      if ($this.find("#isCheckedEmail").val() == 'false') {
+        alert([[#{admin.user.page.check_email_duplication}]]);
+        return false;
+      }
+
+      let password = $this.find("#password").val();
+      if (password.length < 4 || password.length > 20) {
+        alert([[#{admin.user.page.input_password_from_four_to_twenty_length}]]);
+        return false;
+      }
+
+      if (isBlank(password)) {
+        alert([[#{admin.user.page.input_password_no_empty}]]);
+        return false;
+      }
+
+      if (!isContainCharacter(password, true, true, false)) {
+        alert([[#{admin.user.page.input_password_with_english_and_number}]]);
+        return false;
+      }
+
+      if(!validateUserInfo()) return false;
+
+      return true;
+    }
+
+    $this.find("#companyId").on("change",function (){
+      let $scope = $this.find("#workList");
+
+      checkAllOrNoting($scope,".itemCheck" ,false);
+
+      $scope.find("div[id^='d-ctrl-']").each(function (index,item) {
+        $(item).removeClass("d-flex");
+      })
+
+      let roleType = $this.find("#companyId option:selected").data("role");
+      if(roleType=="PARTNER") $("#worksEssentialMark").removeClass("d-none");
+      else $("#worksEssentialMark").addClass("d-none");
+
+      controlDisplayOption($scope,$this.find("#companyId option:selected").data("works"));
+    });
+
+    function isEmpty(selectorId, message) {
+      if ($this.find(selectorId).val().trim() == "") {
+        alert(message);
+        return true;
+      }
+      return false
+    }
+
+    let accountPhotoFileUploaderExtraData = function () {
+      return {
+        "id": $this.find("#id").val(),
+        "fileUploadUIType": "ACCOUNT_PHOTO_FILE",
+        "makeVersion": true,
+        "executeHoopsConverter" : false
+      }
+    }
+
+    let completeUploadFile = function (obj) {
+      if ($(obj)[0].id === "uploadFile" && $("#accountStampFile" + "s").find(".devo_file_list").length > 0) $("#accountStampFile").dmUploader("start");
+      else {
+        //$('#modalAddGisungReport').modal('hide');
+        PageFunction.resetAndSearch();
+      }
+      location.href="/admin/user/"+$this.find("#id").val();
+    }
+
+    makeSingleUploaderScript("#uploadFile"
+            , accountPhotoFileUploaderExtraData
+            , 5000000000
+            , imgFileExtension.split("||")
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function accountStampFileUploaderExtraData() {
+      return {
+        "id": $this.find("#id").val(),
+        "fileUploadUIType": "ACCOUNT_STAMP_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#accountStampFile"
+            , accountStampFileUploaderExtraData
+            , 5000000000
+            , imgFileExtension.split("||")
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+    function init(){
+      controlDisplayOption($this.find("#workList"),$this.find("#companyId option:selected").data("works"));
+      setCheckedValues($this.find("#workList"),$this.find("#works").val());
+      setCheckedValues($this.find("#roleList"),$this.find("#roles").val());
+    }
+
+    init();
+  });
+</script>
+</body>
+
+</html>

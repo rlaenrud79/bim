@@ -1,0 +1,142 @@
+<!-- 모달 - 이슈등록 -->
+<!-- modal-dialog modal-xl -->
+<form id="frmCoWorkIssue" th:object="${coWorkIssue}">
+  <input type="hidden" th:field="*{id}"/>
+  <input type="hidden" name="coWorkId" th:value="*{coWork.id}"/>
+  <input type="hidden" th:field="*{contents}"/>
+  <input type="hidden" id="coWorkIssueJoiner" name="joinerIds"/>
+  <div class="content add-coworkissue">
+    <div class="table-responsive">
+      <table class="table">
+        <caption th:text="#{co_work.modal.add_co_work_issue.issue_information}">이슈정보</caption>
+        <tbody>
+        <tr>
+          <th><span th:text="#{co_work.modal.add_co_work_issue.issue_title}">제목</span> <small class="keysmall">(<span>*</span>)</small></th>
+          <td colspan="3">
+            <div class="form-group w-75">
+              <input type="text" th:field="*{title}" class="form-control" th:placeholder="#{co_work.modal.add_co_work_issue.input_issue_title}"/>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.modal.add_co_work_issue.issue_joiner}">대상자</span> <small class="keysmall">(<span>*</span>)</small></th>
+          <td colspan="3">
+            <div th:include="common/modal/searchMultiUser::load()" class="dual-subject-list"></div>
+          </td>
+        </tr>
+        <tr>
+          <th th:text="#{co_work.modal.add_co_work_issue.issue_request_date}">완료 요구일자</th>
+          <td>
+            <div class="form-group from-date w-25">
+              <div class="input-group">
+                <input type="text" class="form-control" th:field="*{requestDate}" readonly/>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.modal.add_co_work_issue.issue_priority}">중요도</span> <small class="keysmall">(<span>*</span>)</small></th>
+          <td>
+            <div class="form-group w-25">
+              <select class="custom-select" th:field="*{priority}">
+                <option th:value="NONE" th:text="#{co_work.modal.add_co_work_issue.issue_priority_select}">선택</option>
+                <option th:value="EMERGENCY" th:text="#{co_work.modal.add_co_work_issue.issue_priority_ultra}">긴급</option>
+                <option th:value="HIGH" th:text="#{co_work.modal.add_co_work_issue.issue_priority_high}">상</option>
+                <option th:value="MIDDLE" th:text="#{co_work.modal.add_co_work_issue.issue_priority_middle}">중</option>
+                <option th:value="LOW" th:text="#{co_work.modal.add_co_work_issue.issue_priority_low}">하</option>
+              </select>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.modal.add_co_work_issue.issue_status}">상태</span> <small class="keysmall">(<span>*</span>)</small></th>
+          <td colspan="3">
+            <div class="form-group clearfix">
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="rStatus1" name="status" value="WRITE" th:checked="*{isStatus('WRITE')}"/>
+                <label for="rStatus1" th:text="#{co_work.modal.add_co_work_issue.issue_status_write}">작성중</label>
+              </div>
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="rStatus2" name="status" value="REQUEST" th:checked="*{isStatus('REQUEST')}"/>
+                <label for="rStatus2" th:text="#{co_work.modal.add_co_work_issue.issue_status_request}">의뢰</label>
+              </div>
+              <div class="icheck-primary d-inline pr-3">
+                <input type="radio" id="rStatus3" name="status" value="GOING" th:checked="*{isStatus('GOING')}"/>
+                <label for="rStatus3" th:text="#{co_work.modal.add_co_work_issue.issue_status_going}">진행중</label>
+              </div>
+              <div class="icheck-primary d-inline">
+                <input type="radio" id="rStatus4" name="status" value="COMPLETE" th:checked="*{isStatus('COMPLETE')}"/>
+                <label for="rStatus4" th:text="#{co_work.modal.add_co_work_issue.issue_status_complete}">완료</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{co_work.modal.add_co_work_issue.issue_content}">내용</span> <small class="keysmall">(<span>*</span>)</small></th>
+          <td colspan="3">
+            <div th:replace="common/editor/page :: load()"></div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="btn-footer">
+    <button id="btnPostCoWorkIssue" type="button" th:data-type="${coWorkIssue.id > 0 ? 'update' : 'insert' }" class="btn bg-gradient-success" th:text="#{co_work.modal.add_co_work_issue.save_issue}">등록</button>
+  </div>
+</form>
+<script th:replace="common/modal/searchMultiUser::script()"></script>
+<div th:include="common/editor/page :: script()"></div>
+<script>
+  $(document).ready(function () {
+    const $this = $("#coWorkIssueItem");
+    $this.css("overflow", "auto");
+
+    $this.find("#requestDate").datepicker(datepickerFormat);
+
+    $this.find("#btnPostCoWorkIssue").on("click", function () {
+      let title = $this.find("#title").val();
+      if (title.trim() == "") {
+        showErrorAlert("[[#{co_work.modal.add_co_work_issue.save_issue}]]", "[[#{co_work.modal.add_co_work_issue.input_issue_title}]]");
+        $this.find("#title").focus();
+        return false;
+      }
+
+      if (!setSelectedUser()) return false;
+
+      let priority = $this.find("#priority").val();
+      if (priority == "NONE") {
+        showErrorAlert("[[#{co_work.modal.add_co_work_issue.save_issue}]]", "[[#{co_work.modal.add_co_work_issue.select_priority}]]");
+        $this.find("#priority").focus();
+        return false;
+      }
+
+      if (CommonEditor.isEmpty()) {
+        showErrorAlert("[[#{co_work.modal.add_co_work_issue.save_issue}]]", "[[#{co_work.modal.add_co_work_issue.input_issue_contents}]]");
+        return false;
+      } else $this.find("#contents").val(CommonEditor.getInputData());
+
+      let type = $(this).data("type");
+      let param = $this.find("#frmCoWorkIssue").serializeObject();
+
+      reqPost("/coWork/saveCoWorkIssue"
+        , param
+        , (result) => {
+          toastr.success("[[#{co_work.modal.save_co_work_issue_success}]]");
+
+          if (type == "insert") {
+            let rowCount = parseInt($("#issueCount").html());
+            $("#issueCount").html(++rowCount);
+          }
+
+          $('#issueArea').html(result);
+          $this.modal("hide")
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    });
+
+    CommonEditor.setInputData("[[${coWorkIssue.contents}]]");
+  })
+</script>

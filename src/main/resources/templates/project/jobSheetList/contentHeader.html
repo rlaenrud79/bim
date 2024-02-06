@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{project.job_sheet_list.title_job_sheet_list}"> 공사일지 관리</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <form id="frmSearchForm" th:replace="project/jobSheetList/frmSearchForm :: frmSearchForm()"/>
+    </div>
+
+    <a href="#none" id="btnAdd" class="btn btn-color1"><span th:text="#{project.job_sheet_list.btn_add}">신규등록</span></a>
+  </div>
+</div><!--// header-->

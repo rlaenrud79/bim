@@ -1,0 +1,30 @@
+<!--
+<!doctype html>
+↑상단에 반드시 DTD가 선언되어있는 곧에서 불리워져야 합니다!!
+-->
+
+<link type="text/css" href="/new_web/jQueryUI/datePicker/themes/base/ui.all.css" rel="stylesheet" />
+
+<script type="text/javascript" src="/Current_jQuery/jquery-1.3.2.js"></script>
+<script type="text/javascript" src="/new_web/jQueryUI/datePicker/ui/ui.core.js"></script>
+<script type="text/javascript" src="/new_web/jQueryUI/datePicker/ui/ui.datepicker.js"></script>
+<script type="text/javascript" src="/new_web/jQueryUI/datePicker/ui/ui.datepicker-ko.js"></script>
+
+<link type="text/css" href="/new_web/jQueryUI/datePicker/ui/demos.css" rel="stylesheet" />
+
+<script type="text/javascript">
+$(function() {
+	$('#datepicker').datepicker({
+		changeMonth: true,
+		changeYear: true,
+		yearRange: '1998:2020'
+	});		
+});
+//$("#datepicker").datepicker($.datepicker.regional['ko']);
+</script>
+
+<div class="demo"><!-- demo -->
+<p>Date:
+  <input type="text" id="datepicker">
+</p>
+</div><!-- End demo -->

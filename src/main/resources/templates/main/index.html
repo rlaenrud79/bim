@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+
+      <div class="header">
+        <div class="header-left">
+          <h2>Today <span th:text="${todayWeekString}" class="txt-color-blue ml-10">2023-12-16 (수)</span></h2>
+        </div>
+        <div class="header-right">
+          <th:block th:if="${nowForecastDTO eq null}">
+            <div class="in-weather">
+              <p>현재 날씨 정보를 가져오지 못했습니다.</p>
+            </div>
+          </th:block>
+          <th:block th:unless="${nowForecastDTO eq null}" th:object="${nowForecastDTO}">
+          <div class="in-weather">
+            <span><i class="wico-night"></i>날씨 <strong th:text="*{getSkyStatus('text')}">맑음</strong></span>
+            <span><img src="/dist/img/sample/in-wd-ico1.png" alt="">온도 <strong>[[*{t1h}]]°</strong></span>
+            <span><img src="/dist/img/sample/in-wd-ico2.png" alt="">습도 <strong th:text="|*{reh}%|">80%</strong></span>
+            <span><img src="/dist/img/sample/in-wd-ico3.png" alt="">바람 <strong th:text="|*{getWindVector()}풍|">남서풍</strong><strong th:text="|*{wsd}m/s|">0m/s</strong></span>
+            <!--<span><img src="/dist/img/sample/in-wd-ico3.png" alt="">미세먼지 <strong>나쁨</strong></span>-->
+          </div>
+          </th:block>
+        </div>
+      </div><!--// header-->
+
+
+      <div class="dashboard">
+        <div class="dash-notice">
+          <h2 th:text="${projectName}">고속국도 400호선 양평~이천간 건설공사 (제4공구)</h2>
+          <div class="dash-notice-slide">
+            <div class="box" th:each="item, index : ${mainNotices}">
+              <strong>공지</strong>
+              <a th:href="|/coWork/notificationView?noticeId=${item.id}|">
+                <span th:text="${item.title}">고속국도 400호선 양평~이천간 건설공사(제4공구) 공지</span>
+                <span class="date" th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2023-12-12</span>
+              </a>
+            </div>
+          </div>
+        </div><!--//dash-notice-->
+        <script>
+          $('.dash-notice-slide').slick({
+            vertical: true,
+            arrows:false,
+            dots:false,
+            autoplay:true,
+            infinite: true
+          })
+        </script>
+
+        <div class="date-state">
+          <dl>
+            <dt>착공일 <span th:text="${projectStartDate}">2021-09-01</span></dt>
+            <dd>공사시작 후 <strong th:text="${durationDate}" class="counter-num" data-start="0" th:data-end="${durationDate}" data-duration="80">150</strong>일 지났습니다.</dd>
+          </dl>
+          <dl>
+            <dt>완공일 <span th:text="${projectEndDate}">2021-09-01</span></dt>
+            <dd>공사 완료가 <strong th:text="${remindDate}" class="counter-num" data-start="0" th:data-end="${remindDate}" data-duration="80">4231</strong>일 남았습니다.</dd>
+          </dl>
+        </div><!--//date-state-->
+
+        <div class="work-state">
+          <dl>
+            <dt>전체 진행률</dt>
+            <dd><em class="counter-num" data-start="0" th:data-end="${processAvg}" data-duration="80"></em>%</dd>
+          </dl>
+          <div class="work-rate">
+            <div class="txt-rate">
+              <span>0%</span>
+              <span>100%</span>
+            </div>
+            <div class="graph">
+              <div class="bg"><div class="bar"></div></div>
+              <div class="marker"></div>
+            </div>
+            <div class="txt-date">
+              <span th:text="|착공 ${projectStartDate}|">착공 2020-01-20</span>
+              <span th:text="|완공 ${projectEndDate}|">완공 2025-01-20</span>
+            </div>
+          </div>
+          <div class="btn-box">
+            <a href="#" class="btn-state-toggle">공정현황 보기</a>
+          </div>
+
+          <div class="dash-table">
+<!--            <h2><i class="tit-dot"></i>공정 진행률</h2>-->
+            <ul>
+              <li>
+                <th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+                <div class="gp-box" id="piechart_total" style="width:150px;height:150px;"></div>
+                </th:block>
+                <th:block th:unless="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+                  <div class="gp-box" style="width:150px;height:150px;">
+                    <img src="/dist/img/gp-img.png" alt="">
+                  </div>
+                </th:block>
+                <p>계</p>
+                <!--<img src="/dist/img/sample/in-gp-img1.png">-->
+              </li>
+              <th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+                <li th:each="row, info : ${workAmounts}">
+                  <th:block th:if="${row.totalAmount > 0 or row.progressAmountSum > 0}">
+                  <div class="gp-box" th:id="|piechart_work0${(info.index+1)}|" style="width:150px;height:150px;"></div>
+                  </th:block>
+                  <th:block th:unless="${row.totalAmount > 0 or row.progressAmountSum > 0}">
+                    <div class="gp-box" style="width:150px;height:150px;">
+                    <img src="/dist/img/gp-img.png" alt="">
+                    </div>
+                  </th:block>
+                  <!--<img src="/dist/img/sample/in-gp-img2.png">-->
+
+                  <p id="btnSubProcess" th:data-id="${(info.index+1)}" th:text="${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}">토공</p>
+                  <th:block th:if="${row.processItemDepthList != null && row.processItemDepthList != '' && row.processItemDepthList.size() > 0}">
+                    <div class="section divSubProcess" th:id="|divSubProcess${(info.index+1)}|">
+                      <div class="status">
+                        <div class="text-center">
+                          <th:block th:each="row2, info : ${row.processItemDepthList}">
+                            <th:block th:if="${info.index > 0}">
+                              <br>
+                            </th:block>
+                            <span th:text="|ㆍ ${row2[0]}|">토공</span> : <span th:text="|${#numbers.formatDecimal(row2[2], 1, 'COMMA', 2, 'POINT')}%|">%</span>
+                          </th:block>
+                        </div>
+                      </div>
+                    </div>
+                  </th:block>
+                </li>
+              </th:block>
+            </ul>
+            <div class="tit-box">
+              단위 (백만원)
+            </div>
+            <div class="">
+              <table class="table">
+                <tbody>
+                <tr>
+                  <th rowspan="2">구분</th>
+                  <th colspan="4">전체</th>
+                  <th colspan="7">당해년도</th>
+                  <th colspan="5">실시누계</th>
+                </tr>
+                <tr>
+                  <th>계</th>
+                  <th>전년까지</th>
+                  <th>당해년도</th>
+                  <th>내년이월</th>
+                  <th>계획</th>
+                  <th>실시</th>
+                  <th>대비</th>
+                  <th>기성</th>
+                  <th>대비</th>
+                  <th>공정률</th>
+                  <th>기성률</th>
+                  <th>계획</th>
+                  <th>실시</th>
+                  <th>대비</th>
+                  <th>기성</th>
+                  <th>대비</th>
+                </tr>
+                <th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+                  <tr>
+                    <th>계</th>
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.totalAmount / 1000000), 1, 'COMMA')}">216,070,368,431</span></td><!-- 전체 계 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.prevAmount / 1000000), 1, 'COMMA')}">29,450,000,000</span></td> <!-- 전체 전년까지 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.amount / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> <!-- 전체 당해년도 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger(((workAmountTotal.totalAmount - workAmountTotal.prevAmount - workAmountTotal.amount) / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> <!-- 전체 내년이월 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workPlanAmountSum / 1000000), 1, 'COMMA')}">216,070,368,431</span></td> <!-- 당해년도 계획 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.todayAmount / 1000000), 1, 'COMMA')}">29,450,000,000</span></td> <!-- 당해년도 실시 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 실시 대비 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTotal.paidCost / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> <!-- 당해년도 기성 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountPaidCostContrastSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 기성 대비 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountYearTodayAmount, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 공정률 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountYearPaidCost, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 기성률 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workPlanAmountSum2 / 1000000), 1, 'COMMA')}"></span></td> <!-- 누적 계획 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountTodaySum / 1000000), 1, 'COMMA')}">1,005,971,800</span></td> <!-- 누적 실시 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastTodaySum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 누적 실시 대비 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((workAmountPaidCostSum / 1000000), 1, 'COMMA')}"></span></td> <!-- 누적 기성 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(workAmountContrastPaidCostSum, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 누적 실시 대비 -->
+                  </tr>
+                  <tr th:each="row, info : ${workAmounts}">
+                    <th th:text="|${(info.index+1)}. ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}|">1. 토공</th>
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.totalAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 전체 계 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.prevAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 전체 전년까지 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.amount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 전체 당해년도 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger(((row.totalAmount - row.prevAmount - row.amount) / 1000000), 1, 'COMMA')}">45,000,000,000</span></td> <!-- 전체 내년이월 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.workPlanAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 당해년도 계획 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.progressAmount / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 당해년도 실시 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.progressRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> <!-- 당해년도 실시 대비 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.paidCost / 1000000), 1, 'COMMA')}">12,941,990,175</span></td> <!-- 당해년도 기성 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.paidCostRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> <!-- 당해년도 기성 대비 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.yearProgressAmount, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 공정률 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.yearPaidCost, 1, 'COMMA', 2, 'POINT')}%|">45,000,000,000</span></td> <!-- 당해년도 기성률 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.workPlanAmountSum / 1000000), 1, 'COMMA')}"></span></td> <!-- 누적 계획 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.progressAmountSum / 1000000), 1, 'COMMA')}">47,620,168</span></td> <!-- 누적 실시 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.progressSumRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> <!-- 누적 실시 대비 -->
+                    <td class="text-right"><span th:text="${#numbers.formatInteger((row.paidCostSum / 1000000), 1, 'COMMA')}"></span></td> <!-- 누적 기성 -->
+                    <td class="text-right"><span th:text="|${#numbers.formatDecimal(row.paidCostSumRate, 1, 'COMMA', 2, 'POINT')}%|">12,941,990,175</span></td> <!-- 누적 기성 대비 -->
+                  </tr>
+                </th:block>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div><!--//work-state-->
+        <script>
+          $('.btn-state-toggle').on('click',function(){
+            $(this).toggleClass('on');
+            $('.dash-table').slideToggle();
+          });
+        </script>
+
+
+
+
+        <div class="graph-state">
+          <section>
+            <div class="tit-box">
+              <h3>공사일지 현황</h3>
+              <!--
+              <div class="legend">
+                <span>실적</span>
+                <span>계획</span>
+              </div>
+              -->
+            </div>
+            <div class="graph-box" id="job_sheet_status">
+
+            </div>
+          </section>
+          <section>
+            <div class="tit-box">
+              <h3>기성 현황</h3>
+              <!--
+              <div class="legend">
+                <span>실적</span>
+                <span>계획</span>
+              </div>
+              -->
+            </div>
+            <div class="graph-box" id="gisun_status">
+              <!--<img src="/dist/img/graph.jpg" alt="">-->
+            </div>
+          </section>
+        </div><!--//graph-state-->
+
+        <div class="section">
+          <section class="model">
+            <div class="tit-box">
+              <h3>모델화면 <small>3D로 실제 공사화면을 확인하실 수 있습니다. </small></h3>
+              <!--
+                <select>
+                  <option>2023.08</option>
+                  <option>2023.08</option>
+                </select>-->
+            </div>
+            <div class="model-img">
+              <img src="/dist/img/model-img.jpg" alt="">
+            </div>
+            <div class="model-txt">
+              <p>고속국도 400호선 양평~이천간 건설공사(제4공구) </p>
+              <a href="/mainModel/index" target="_blank">전체 모델 보기</a>
+            </div>
+          </section>
+          <section class="counter">
+            <div class="count-member">
+              <div class="tit-box">
+                <h3>투입인력</h3>
+                <!--
+                <select>
+                  <option>2023.08</option>
+                  <option>2023.08</option>
+                </select>-->
+              </div>
+              <div class="graph-box">
+                <div class="section1">
+                  <div class="txt">
+                    <span th:text="${prevDateString}">2023년 08월 08일</span>
+                    <strong>[[${workerSum}]][[#{admin.company_update.card_body_user_cnt_unit}]]</strong>
+                  </div>
+                  <div class="img">
+                    <img src="/dist/img/ico-dash-worker.png" alt="">
+                  </div>
+                </div>
+                <div class="section2">
+                  <h4>투입인력 TOP 5</h4>
+                  <ul>
+                    <li th:each="item, index : ${workerList}">
+                      <span th:text="${item.name}">보통인부</span>
+                      <span>[[${#numbers.formatInteger(item.amount, 1, 'COMMA')}]][[#{admin.company_update.card_body_user_cnt_unit}]]</span>
+                    </li>
+                    <!--
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    -->
+                  </ul>
+                </div>
+              </div>
+            </div><!--//count-member-->
+            <div class="count-equipment">
+              <div class="tit-box">
+                <h3>장비현황</h3>
+                <!--
+                <select>
+                  <option>2023.08</option>
+                  <option>2023.08</option>
+                </select>-->
+              </div>
+              <div class="graph-box">
+                <div class="section1">
+                  <div class="txt">
+                    <span th:text="${prevDateString}">2023년 08월 08일</span>
+                    <strong>[[${deviceSum}]][[#{admin.company_update.card_body_tool_cnt_unit}]]</strong>
+                  </div>
+                  <div class="img">
+                    <img src="/dist/img/ico-dash-tool.png" alt="">
+                  </div>
+                </div>
+                <div class="section2">
+                  <h4>장비 TOP 5</h4>
+                  <ul>
+                    <li th:each="item, index : ${deviceList}">
+                      <span th:text="${item.name}">보통인부</span>
+                      <span>[[${#numbers.formatInteger(item.amount, 1, 'COMMA')}]][[#{admin.company_update.card_body_tool_cnt_unit}]]</span>
+                    </li>
+                    <!--
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    <li>
+                      <span>보통인부</span>
+                      <div class="graph">
+                        <div class="bg"></div>
+                        <div class="bar"></div>
+                      </div>
+                      <span>20명</span>
+                    </li>
+                    -->
+                  </ul>
+                </div>
+              </div>
+            </div><!--//count-equipment-->
+          </section>
+        </div><!--//section-->
+
+
+        <div id="scheduleDiv" class="schedule"  th:replace="main/schedule :: load()"/>
+
+      </div><!--// dashboard-->
+
+
+    </div>
+  </div>
+</div>
+
+<th:block th:replace="layout/popup :: modal('calendarPopup',${todayWeekString}, 'popup-md')"></th:block>
+
+
+<script th:inline="javascript">
+  var chartGisungData = [[${gisungChartData}]];
+  var chartJobSheetData = [[${jobSheetChartData}]];
+</script>
+
+<th:block th:if="${workAmounts != null && workAmounts != '' && workAmounts.size() > 0}">
+  <script th:inline="javascript">
+    let workAmountTotalAmount = [[${workAmountTotal.totalAmount}]];
+    let workAmountTotalTodayAmount = [[${workAmountTodaySum}]];
+    var chartDataWorkTotal = [{"title":"","id":"piechart_total","data":[workAmountTotalAmount,workAmountTotalTodayAmount],"categories":["전체 계", "실시"],"colors":['#B6B6B6', '#E8964E']}];
+    let chartId = "";
+    let rowAmount = 0;
+    let rowTodayAmount = 0;
+    let chartDataWork = [];
+    let bun = 0;
+    let color = ["#86C246","#51AF8B","#51AF8B","#4D7E95","#3471B0","#7061AF","#7061AF","#AB67BF"];
+  </script>
+  <th:block th:each="row, info : ${workAmounts}">
+    <th:block th:if="${row.totalAmount > 0 or row.progressAmountSum > 0}">
+    <script th:inline="javascript">
+      chartId = "piechart_work0[[${(info.index+1)}]]";
+      rowAmount = [[${row.totalAmount}]];
+      rowTodayAmount = [[${row.progressAmountSum}]];
+      bun = [[${info.index}]];
+      chartDataWork[bun] = [{"title":"","id":chartId,"data":[rowAmount,rowTodayAmount],"categories":["전체 계", "실시"],"colors":['#B6B6B6', color[bun]]}];
+    </script>
+    </th:block>
+    <th:block th:unless="${row.totalAmount > 0 or row.progressAmountSum > 0}">
+      <script th:inline="javascript">
+      bun = [[${info.index}]];
+      chartDataWork[bun] = [];
+      </script>
+    </th:block>
+  </th:block>
+</th:block>
+<script type="text/javascript" src="/dist/js/chart.js"></script>
+<script src="/dist/js/pages/mainChart.js"></script>
+<script src="/dist/js/pages/main.js"></script>

@@ -1,0 +1,78 @@
+<!-- 모달 - 승인 -->
+<div class="content approve-jobsheet">
+  <table class="table">
+    <tbody>
+    <tr>
+      <th class="text-center"><span th:text="#{project.modal.approve_job_sheet.grantor}"> 결재자</span></th>
+      <td>
+        <div class="d-flex align-items-center">
+          <div th:replace="/common/userInfo :: userInfo(${jobSheetGrantor.accountDTO})"></div>
+          <p class="ml-4 mr-auto" th:text="|${jobSheetGrantor.grantor.userName} (${jobSheetGrantor.grantor.company.companyRole.companyRoleName} / ${jobSheetGrantor.grantor.company.name}) |">이결재 (발주사 / 한국 발주) </p>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th class="text-center"><span th:text="#{project.modal.approve_job_sheet.description}"> 의견</span></th>
+      <td>
+        <div class="form-group">
+          <textarea class="form-control" id="approveDescription" th:placeholder="#{project.modal.approve_job_sheet.description_placeholder}" ></textarea>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="btn-footer">
+  <button type="button" id="btnApprove" class="btn bg-gradient-success"><span th:text="#{project.modal.approve_job_sheet.btn_approve}"> 승인</span></button>
+</div>
+
+<script>
+  (function ($) {
+    var o = {
+      init: function () {
+        $.nfx.click("#btnApprove", function () {
+          if (confirm("[[#{project.job_sheet_view.confirm_job_sheet_approve}]]")) {
+            o.approveJobSheet();
+          }
+        });
+      },
+
+      setApproveJobSheetData: function() {
+        return JSON.stringify({
+          "id": jobSheetGrantorId,
+          "jobSheetId": jobSheetId,
+          "description": $('#approveDescription').val()
+        })
+      },
+
+      approveJobSheet: function() {
+        reqPostJSON('/projectApi/approveJobSheet', o.setApproveJobSheetData(),
+                function (data) {
+                  if (!data.result) {
+                    alert(data.message);
+                  } else {
+                    alert(data.message);
+                    o.moveListPage();
+                  }
+                },
+                function (xhr) {
+                  alert(xhr.responseJSON.message);
+                }
+        );
+      },
+
+      moveListPage: function() {
+        window.location.href = "/project/jobSheetList?keepCondition=true"
+      },
+    };
+
+    $( document ).ready(function() {
+      $.extend($.nfx, {
+        form: document.FRM
+      });
+
+      o.init();
+    });
+
+  })(jQuery);
+</script>

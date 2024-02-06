@@ -1,0 +1,2398 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<!--<link rel="stylesheet" href="/dist/css/bim-style/bim-style.css">-->
+
+<!-- dhtmlx-spreadsheet -->
+<link rel="stylesheet" href="/plugins/dhtmlx-spreadsheet_4.1.2/spreadsheet.css?v=4.1.2">
+<link rel="stylesheet" href="/plugins/dhtmlx-spreadsheet_4.1.2/common/index.css?v=4.1.2">
+<link rel="stylesheet" href="/plugins/dhtmlx-spreadsheet_4.1.2/common/spreadsheet.css?v=4.1.2">
+<!-- dhtmlx-grid,chart,tree -->
+<link rel="stylesheet" href="/plugins/dhtmlx-suite_7.2.3/suite.css?v=7.2.3">
+
+<body style="overflow: hidden">
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="content-header" th:replace="process/index/contentHeader :: contentHeader()"/>
+
+            <div class="content">
+                <section class="">
+                    <div class="container-fluid">
+                        <div class="con-procfile">
+                            <div class="col-lg-12">
+                                <div class="card content-header-area">
+                                    <div class="col-lg-12">
+                                        <div class="btn-group mr-2" role="toolbar">
+                                            <button id="btnExecuteCodeValidate" type="button" class="btn">
+                                                <p th:text="#{process.index.btn_execute_code_validation}">검증실행</p>
+                                            </button>
+                                            <button id="btnSelectVersion" type="button" class="btn">
+                                                <p th:text="#{process.index.btn_select_version}">저장버전조회</p>
+                                            </button>
+                                            <button id="btnUploadProcessItemFile" type="button" class="btn pop-open-btn" data-modal="#processExcelUpload">
+                                                <p th:text="#{process.index.btn_upload_excel}">공정파일 업로드</p>
+                                            </button>
+                                        </div>
+                                        <div id="divCodeValidateArea" th:replace="process/index/codeValidateArea :: codeValidateArea()"/>
+                                    </div>
+                                </div>
+
+                                <div class="card content-body-area">
+                                    <div class="card-body gantt-area">
+                                        <div id="divGanttMenu" th:replace="process/index/ganttMenuArea :: ganttMenuArea()"/>
+                                        <div id="divGantt" style="margin-top:10px; height: calc(100vh - 350px);"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.container-fluid -->
+
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('modalSaveVersionList', #{process.modal_title.save_version_list}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalProcessFileUpload', #{process.modal_title.modal_process_file_upload}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalStartValidate', #{process.modal_title.modal_start_validate}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalResultCodeValidation', #{process.modal_title.modal_result_code_validation}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalCostDetail', #{process.modal_title.modal_cost_detail}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalProcessAdd', #{process.simulation.page.process_category_management}, 'popup-lg')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalProcessItemAdd', #{process.simulation.page.process_management}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('processExcelUpload', #{process.index.btn_upload_excel}, 'popup-sm')"></th:block> <!-- 공정파일 업로드 팝업 -->
+<!-- modal end -->
+
+
+<div id="generalDataLoadingProc" th:replace="process/modal/generalDataLoadingProc :: generalDataLoadingProc()"/>
+<div id="processingProc" th:replace="process/modal/processingProc :: processingProc()"/>
+<div id="uploadProgress" th:replace="process/modal/uploadProgress :: uploadProgress()"/>
+<div id="processingCodeValidation" th:replace="process/modal/processingCodeValidation :: processingCodeValidation()"/>
+
+<!-- jQuery -->
+<!--<script src="/plugins/jquery/jquery.min.js"></script>-->
+<!-- jQuery UI 1.11.4 -->
+<script src="/plugins/jquery-ui/jquery-ui.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- ChartJS -->
+<!--  <script src="/plugins/chart.js/Chart.min.js"></script>-->
+<!-- Sparkline -->
+<!--  <script src="/plugins/sparklines/sparkline.js"></script>-->
+<!-- JQVMap -->
+<!--  <script src="/plugins/jqvmap/jquery.vmap.min.js"></script>-->
+<!--  <script src="/plugins/jqvmap/maps/jquery.vmap.usa.js"></script>-->
+<!-- jQuery Knob Chart -->
+<script src="/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- daterangepicker -->
+
+<!--  <script src="/plugins/daterangepicker/daterangepicker.js"></script>-->
+<!-- Tempusdominus Bootstrap 4 -->
+<!--  <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>-->
+<!-- date lib moment.js -->
+<script src="/plugins/moment/moment.min.js"></script>
+<!-- Summernote -->
+<script src="/plugins/summernote/summernote-bs4.min.js"></script>
+<script th:if="${#strings.toString(#locale) != 'en'}" th:src="|/plugins/summernote/lang/summernote-#{common.editor.locale_language}.min.js|"></script>
+<!-- DOM purify -->
+<script src="/plugins/dompurify/purify.min.js"></script>
+<!-- overlayScrollbars -->
+<script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/dist/js/adminlte.js"></script>
+<!-- Toastr -->
+<script src="/plugins/toastr/toastr.min.js"></script>
+<!-- html2canvas -->
+<script src="/plugins/html2canvas/html2canvas.min.js"></script>
+<!-- jsPDF -->
+<script src="/plugins/jsPDF/jspdf.umd.min.js"></script>
+
+<script src="/dist/js/eModal.js"></script>
+<script src="/dist/js/reload.js"></script>
+<script src="/dist/js/jquery.dm-uploader.min.js"></script>
+<script src="/dist/js/fileUploader.js"></script>
+<script src="/dist/js/html2PDF.js"></script>
+<script th:replace="common/alertLayer::script()"></script>
+<script th:replace="layout/sidebar :: script()"></script>
+<script>
+    $("#btnLogOut").on("click", function(){
+        sessionStorage.clear();
+    });
+
+    reloadComponent("/common/alertLayer", "#liAlertLayer", "");
+    // 채팅영역 비활성(채팅서버 계정 확인 에러 다수 발생)
+    // reloadComponent("/common/chattingLayer", "#liChattingLayer", "");
+
+    // 발주처 계정 여부 확인 > 채팅 알림 삭제
+    if($("#liChattingLayer").length > 0){
+        if(isEmployer)  $("#liChattingLayer").remove();
+    }
+
+
+
+
+</script>
+<style>
+    .modal-div-right-label {
+        float: left;
+        margin-top: 5px;
+    }
+    .modal-card-right-select {
+        float: left;
+        margin-left: 10px;
+    }
+    .modal-card-right-button {
+        float: right;
+        margin-left: 10px;
+    }
+</style>
+
+
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.js"></script>
+<script src="/plugins/dhtmlx-gantt_ultimate_7.1.4/api.js"></script>
+<script src="/dist/js/common-gantt.js"></script>
+<script src="/plugins/XLSX/xlsx.js"></script>
+<script src="/plugins/fileDragAndDrop/jquery.ezdz.js"></script>
+<script src="/dist/js/classStack.js"></script>
+
+<link href="/plugins/dhtmlx-gantt_ultimate_7.1.4/dhtmlxgantt.css" rel="stylesheet" type="text/css"/>
+<link href="/dist/css/common-gantt.css" rel="stylesheet" type="text/css"/>
+<link href="/plugins/fileDragAndDrop/jquery.ezdz.css" rel="stylesheet" type="text/css"/>
+<style>
+    .hide_project_progress_drag .gantt_task_progress_drag {
+        visibility: hidden;
+    }
+</style>
+<script th:inline="javascript">
+    let _holidayClassifiedWorkDTOs = [[${holidayClassifiedWorkDTOs}]];
+</script>
+<script>
+
+    let PageFunction = {};
+
+    $(document).ready(function () {
+        let _this = $(this);
+
+        let _projectStartDate = "[[${projectStartDate}]]";
+        let _projectEndDate = "[[${projectEndDate}]]";
+        let _locale = "[[${#locale}]]";
+        let _fileText = "[[#{process.modal.process_file_upload.message_excel_format}]]";
+        let _openDivUploadFile = false;
+        let _openDivSaveNewVersion = false;
+        let _endParse = false;
+        let _rows = {};
+        let _workId = 0;
+
+        // excel upload param
+        let _executeBatchIdx = 0;
+        let _totalExecuteCnt = 0;
+        let _batchSize = 1000;
+        let _newProcessInfoId = 0;
+        let _works = [];
+        let _taskVOs = [];
+        let _taskLinkVOs = [];
+        let _excelJsonData = "";
+
+        let _putProcessItemParentId = false;
+        let _putProcessItemLinkPredecessorId = false
+
+        let _isError = false;
+        let _errorMessage = "";
+
+        let _autoSchedulingTaskVOs = [];
+        let _isBatchAutoScheduling = false;
+
+        let _savedProcessItemId = 0;
+        let _savedProcessItemLinkId = 0;
+
+        let _costViewTaskId = 0;
+        let _showCostDetailButton = [[${showCostDetailButton}]];
+        let idParentBeforeDeleteTask = 0;
+        let start_time = {};
+        let end_time = {};
+
+        $('.knob').knob();
+        $('input[type="file"]').ezdz({text: _fileText});
+        $("#moveToDate").datepicker({
+            dateFormat: 'yy-mm-dd',
+            showOn: "button",
+            buttonImage: "/dist/img/calendar-alt-regular.svg",
+            minDate: moment(_projectStartDate).format("YYYY-MM-DD"),
+            maxDate: moment(_projectEndDate).format("YYYY-MM-DD"),
+            defaultDate: moment().format("YYYY-MM-DD")
+        });
+
+
+        let initGlobalObject = function () {
+            _rows = {};
+            _taskVOs = [];
+            _excelJsonData = "";
+            _isError = false;
+            _errorMessage = "";
+        }
+
+        let isNotActivityMoveTask = function (task) {
+            if (typeof (task.parent) === "undefined" || task.parent === 0) return true;
+            let parentTask = gantt.getTask(task.parent);
+            if (parentTask.$rendered_type !== "task") return true;
+            return false;
+        }
+
+        let isActivityTask = function (task) {
+            if (task.$rendered_type === "task") return true;
+            return false;
+        }
+
+        // region function LightBox
+        let ganttLightBoxTimeFormat = function (_locale) {
+            if (_locale === "en") return ["%m", "%d", "%Y"];
+            if (_locale === "zh") return ["%Y", "%m", "%d"];
+            return ["%Y", "%m", "%d"];
+        }
+
+        let excelUploadDateFormat = function (_locale) {
+            //if (_locale === "en") return RegExp(/^(0[1-9]|1[012])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/);
+            if (_locale === "en") return RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
+            if (_locale === "zh") return RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
+            return RegExp(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/);
+        }
+
+        let setLightBoxWork = function () {
+            $.each(_works, function (index, item) {
+                gantt.config.lightbox["customType_sections"].find(function (element) {
+                    return element.name === "work"
+                }).options.push({key: item.workId, label: item.workName});
+            });
+        }
+
+        // endregion function LightBox
+
+        // region function menu button
+
+        let enabledAutoScheduling = function () {
+            gantt.config.auto_scheduling = true;
+            $("#btnToggleAutoScheduling").removeClass("btn-gray-off");
+            $("#btnToggleAutoScheduling").addClass("btn-gray-on");
+        }
+
+        let disabledAutoScheduling = function () {
+            gantt.config.auto_scheduling = false;
+            $("#btnToggleAutoScheduling").addClass("btn-gray-off");
+            $("#btnToggleAutoScheduling").removeClass("btn-gray-on");
+        }
+
+        let disabledCriticalPath = function () {
+            gantt.config.highlight_critical_path = false;
+            $("#btnToggleCriticalPath").addClass("btn-gray-off");
+            $("#btnToggleCriticalPath").removeClass("btn-gray-on");
+            gantt.render();
+        }
+
+        let enabledCriticalPath = function () {
+            gantt.config.highlight_critical_path = true;
+            $("#btnToggleCriticalPath").removeClass("btn-gray-off");
+            $("#btnToggleCriticalPath").addClass("btn-gray-on");
+            gantt.render();
+        }
+
+        let disabledFullScreen = function () {
+            gantt.ext.fullscreen.getFullscreenElement().classList.remove("gantt-fullscreen");
+        }
+
+        let enabledFullScreen = function () {
+            gantt.ext.fullscreen.getFullscreenElement().classList.add("gantt-fullscreen");
+        }
+
+        // endregion function menu button
+
+        // region function do process
+
+        let getCodeValidateState = function () {
+            reqGet('/processApi/getCodeValidateStatus'
+                , function (data) {
+                    return data.result;
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "json");
+        }
+
+        let executeSaveNowVersion = function () {
+            showProcessingProc();
+
+            reqPostJSON('/processApi/newVersion'
+                , JSON.stringify({description: $("#newVersionDescription").val()})
+                , function () {
+                    hideProcessingProc();
+                    reloadPage()
+                }
+                , function (xhr) {
+                    hideProcessingProc();
+                    setTimeout(function () {
+                        showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                    }, 1000);
+                });
+        }
+
+        let showProcessingProc = function () {
+            $('#processingProc').removeClass('display-none');
+        }
+
+        let hideProcessingProc = function () {
+            $('#processingProc').addClass('display-none');
+        }
+
+        let showGeneralDataLoadingProc = function () {
+            $('#generalDataLoadingProc').removeClass('display-none');
+        }
+
+        let hideGeneralDataLoadingProc = function () {
+            $('#generalDataLoadingProc').addClass('display-none');
+        }
+
+        let showProcessingCodeValidation = function () {
+            $("#processingCodeValidation").removeClass('display-none');
+            $("#processingCodeValidation").show();
+        }
+
+        let hideProcessingCodeValidation = function () {
+            $("#processingCodeValidation").addClass('display-none');
+            $("#processingCodeValidation").hide();
+        }
+
+        // endregion function do process
+
+        // region function Action
+        let getWorks = function () {
+            reqGet('/processApi/getUseWorkAll'
+                , function (data) {
+                    if (data.result) {
+                        _works = $.parseJSON(data.model);
+                        setLightBoxWork();
+                    } else showErrorAlert("ALERT", "[[#{system.process_service.post_process_file.error_no_use_work}]]");
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "json");
+        }
+
+        let openDivSaveNewVersion = function () {
+            _openDivSaveNewVersion = true;
+
+            // $("#btnSaveNowVersion").removeClass("btn-color1");
+            // $("#btnSaveNowVersion").addClass("");
+            $("#divSaveNewVersion").show();
+        }
+
+        let closeDivSaveNewVersion = function () {
+            _openDivSaveNewVersion = false;
+
+            $("#newVersionDescription").val("");
+            // $("#btnSaveNowVersion").addClass("btn-color1");
+            // $("#btnSaveNowVersion").removeClass("");
+            $("#divSaveNewVersion").hide();
+        }
+
+        let initFileElement = function () {
+            $("#file").val("");
+            $("#mBtnRemoveFile").hide();
+            $("#mBtnUploadFile").hide();
+            $("#fileText").parent().removeClass("ezdz-enter").removeClass("ezdz-accept");
+            $("#fileText").text(_fileText);
+        }
+
+        let openDivUploadFile = function () {
+            _openDivUploadFile = true;
+            // $("#btnUploadProcessFile").removeClass("btn-color2");
+            // $("#btnUploadProcessFile").addClass("");
+            $("#divUploadExcel").show();
+        }
+
+        let closeDivUploadFile = function () {
+            _openDivUploadFile = false;
+            // $("#btnUploadProcessFile").addClass("btn-color2");
+            // $("#btnUploadProcessFile").removeClass("");
+            $("#divUploadExcel").hide();
+        }
+
+        let checkExcelFileSize = function (object, maxSize) {
+            if (object.files[0].size > maxSize) return false;
+            return true;
+        }
+
+        // endregion function Action
+
+        // region function costDetailButton
+
+        let showCostDetailButton = function () {
+            if (_showCostDetailButton == false) gantt.getGridColumn("cost_detail").hide = true
+        }
+
+        // endregion function costDetailButton
+
+        // region function related getExcelJsonData
+
+        let checkOnlyOneTaskAtRow = function (arrayTaskVOKey) {
+            let cntTask = 0;
+
+            $.each(arrayTaskVOKey, function (index, item) {
+                if (item.match(new RegExp("task", "i"))) cntTask++;
+            })
+
+            if (cntTask > 1) return false;
+            return true;
+        }
+
+        let getContinuousEmptyRowCount = function (taskKeyName, continuousEmptyTask) {
+            if (typeof (taskKeyName) === 'string') {
+                if (taskKeyName.match(new RegExp("task", "i"))) continuousEmptyTask = 0;
+                else continuousEmptyTask++;
+            } else continuousEmptyTask++;
+            return continuousEmptyTask;
+        }
+
+        let getRowNum = function (taskVO, item) {
+            taskVO.rowNum = item.rowNum;
+        }
+
+        let getTaskName = function (taskVO, item, taskKeyName) {
+            taskVO.taskName = item[taskKeyName];
+        }
+
+        let getTaskDepth = function (taskVO, taskKeyName) {
+            taskVO.taskDepth = taskKeyName.replace(/task/i, "");
+        }
+
+        let checkWorkId = function (taskVO) {
+            let _work = _works.find(x => x.workName === taskVO.taskName);
+
+            if (taskVO.taskDepth === "1" && typeof (_work) === 'undefined') {
+                return false;
+            }
+            return true;
+        }
+
+        let getWorkId = function (taskVO) {
+            if (taskVO.taskDepth === "1") {
+                _workId = _works.find(x => x.workName === taskVO.taskName).workId;
+            }
+            taskVO.work = {id: _workId};
+        }
+
+        let getTaskFullPath = function (curDepth, taskVO, stack) {
+            if (curDepth < taskVO.taskDepth) {
+                stack.push(taskVO.taskName);
+            } else {
+                for (let idx = 0; idx <= (curDepth - taskVO.taskDepth); idx++) {
+                    stack.pop();
+                }
+                stack.push(taskVO.taskName);
+            }
+            taskVO.taskFullPath = stack.getAll();
+        }
+
+        let getPhasingCodes = function (taskVOKey, taskVO, item) {
+            let idx = taskVOKey.indexOf("phasingcodes");
+            if(idx < 0) {
+                taskVO.phasingCode = "";
+                return;
+            }
+
+            if (typeof (taskVOKey[idx]) === 'string') {
+                taskVO.phasingCode = item["Phasing Codes"];
+            }
+            else taskVO.phasingCode = item["Phasing Codes"];
+        }
+
+        let getDuration = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("duration");
+            if(idx < 0) {
+                taskVO.duration = 0;
+                return;
+            }
+            if (typeof (taskVOKey[idx]) === 'string') {
+                let tmpDuration = Number(item["Duration"]);
+                if (typeof (tmpDuration) === 'number') taskVO.duration = tmpDuration;
+                else taskVO.duration = 0;
+            }
+            else taskVO.duration = 0;
+        }
+
+        let checkDateFormat = function(taskVOKey, item){
+
+            let regex  = excelUploadDateFormat();
+
+            let plannedStartIdx = taskVOKey.indexOf("plannedstart");
+            let plannedEndIdx = taskVOKey.indexOf("plannedend");
+
+            if((typeof (taskVOKey[plannedStartIdx]) === 'undefined' && typeof (taskVOKey[plannedEndIdx]) === 'string')
+                || (typeof (taskVOKey[plannedStartIdx]) === 'string' && typeof (taskVOKey[plannedEndIdx]) === 'undefined')){
+                return false;
+            }
+
+            if (($.trim(item["Planned Start"]) === "" && $.trim(item["Planned End"]) !== "")
+                || ($.trim(item["Planned Start"]) !== "" && $.trim(item["Planned End"]) === "")){
+                return false;
+            }
+
+            if (typeof (taskVOKey[plannedStartIdx]) === 'string'
+                && $.trim(item["Planned Start"]) !== ""
+                && !regex.test($.trim(item["Planned Start"]))){
+                    return false;
+            }
+            if (typeof (taskVOKey[plannedEndIdx]) === 'string'
+                && $.trim(item["Planned End"]) !== ""
+                && !regex.test($.trim(item["Planned End"]))){
+                    return false;
+            }
+            return true;
+        }
+
+        let getPlannedStart = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("plannedstart");
+            if(idx < 0) {
+                taskVO.plannedStartDate = "";
+                return;
+            }
+            if (typeof (taskVOKey[idx]) === 'string') {
+                let tmpPlannedStart = moment(item["Planned Start"]).format("YYYY-MM-DD");
+                if (typeof (tmpPlannedStart) === 'string') taskVO.plannedStartDate = tmpPlannedStart;
+                else taskVO.plannedStartDate = "";
+            }
+            else taskVO.plannedStartDate = "";
+        }
+
+        let getPlannedEnd = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("plannedend");
+            if(idx < 0) {
+                taskVO.plannedEndDate = "";
+                return;
+            }
+            if (typeof (taskVOKey[idx]) === 'string' ) {
+                let tmpPlannedEnd = moment(item["Planned End"]).format("YYYY-MM-DD");
+                if (typeof (tmpPlannedEnd) === 'string') taskVO.plannedEndDate = tmpPlannedEnd;
+                else taskVO.plannedEndDate = "";
+            }
+            else taskVO.plannedEndDate = "";
+        }
+
+        let getCurDepthAtPhasingCodeUndefined = function (curDepth, taskVO, taskDepthRowNum) {
+            curDepth = taskVO.taskDepth;
+            taskDepthRowNum[taskVO.taskDepth] = taskVO.rowNum;
+            if (taskVO.taskDepth > 1) taskVO.parentRowNum = taskDepthRowNum[curDepth - 1];
+
+            return curDepth;
+        }
+
+        let getCurDepthAtPhasingCodeString = function (taskVO, curDepth, taskDepthRowNum) {
+            if (typeof (taskVO.phasingCode) === 'string') {
+                curDepth = taskVO.taskDepth;
+                taskVO.parentRowNum = taskDepthRowNum[curDepth - 1];
+            }
+            return curDepth;
+        }
+
+        let getSelectedPredecessorValue = function (fsType) {
+
+            if ("FS" === fsType.toUpperCase()) return 0
+            if ("SS" === fsType.toUpperCase()) return 1
+            if ("FF" === fsType.toUpperCase()) return 2
+            if ("SF" === fsType.toUpperCase()) return 3
+            return -1;
+        }
+
+        let getTaskLinkVOs = function (tmpFsCodes, tmpFses, tmpFsDuration, _taskLinkVOs, taskVO) {
+            let tmpTaskLinkVo = {};
+            _taskLinkVOs = [];
+
+            for (let idx = 0; idx < tmpFsCodes.length; idx++) {
+
+                if( getSelectedPredecessorValue(tmpFses[idx].toUpperCase()) < 0) {
+                    _isError = true;
+                    return false;
+                }
+
+                // 속도 이슈 발생할 수 있음(전체에서 해당 페이징코드 있는지 여부믈 매번 조회)
+                if( _rows.filter(element => tmpFsCodes[idx] === element["Phasing Codes"]).length == 0) {
+                    _isError = true;
+                    return false;
+                }
+
+                tmpTaskLinkVo.predecessor = tmpFsCodes[idx];
+                tmpTaskLinkVo.predecessorType = tmpFses[idx].toUpperCase();
+                tmpTaskLinkVo.predecessorValue = getSelectedPredecessorValue(tmpTaskLinkVo.predecessorType);
+                tmpTaskLinkVo.predecessorDuration = tmpFsDuration[idx];
+                tmpTaskLinkVo.predecessorId = 0;
+
+                _taskLinkVOs.push(tmpTaskLinkVo);
+                taskVO.processItemLinks = _taskLinkVOs;
+            }
+        }
+
+        let getOnlyFileName = function (filePath) {
+            let fileValue = filePath.split("\\");
+            return fileValue[fileValue.length - 1];
+        }
+
+        let selectGanttTaskType = function (duration, plannedStart, phasingCode) {
+            if (phasingCode !== '' && typeof (phasingCode) !== 'undefined') {
+                return "TASK";
+            }
+            if ((phasingCode === '' || typeof (phasingCode) === 'undefined')
+                && ((plannedStart === "" || typeof (plannedStart) === 'undefined'))) {
+                return "PROJECT";
+            }
+            if ((phasingCode === '' || typeof (phasingCode) === 'undefined')
+                && (plannedStart !== "" && typeof (plannedStart) !== 'undefined')
+                && (plannedStart !== "" && typeof (plannedStart) !== 'undefined' && duration == 0)) {
+                return "MILESTONE";
+            }
+            return "TASK";
+        }
+
+        let getTaskDescription = function (taskVO) {
+            taskVO.description = "";
+        }
+
+        let getTaskValidate = function (taskVO) {
+            taskVO.validate = "NONE";
+        }
+
+        let taskProgressTarget = function (taskVO) {
+            taskVO.progressTarget = true;
+        }
+
+        let getTaskProgressRate = function (taskVO) {
+            taskVO.progressRate = "0.00";
+        }
+
+        let getTaskType = function (taskVO) {
+            taskVO.ganttTaskType = selectGanttTaskType(taskVO.duration, taskVO.plannedStartDate, taskVO.phasingCode);
+        }
+
+        let getGanttOpen = function (taskVO) {
+            //taskVO.ganttOpen = taskVO.taskDepth == 1 ? true : false;
+            taskVO.ganttOpen = false;
+        }
+
+        let getGanttHolder = function (taskVO) {
+            taskVO.ganttHolder = "";
+        }
+
+        let getGanttSortNo = function (taskVO) {
+            taskVO.ganttSortNo = taskVO.rowNum;
+        }
+
+        let getTaskStartDateAndEndDate = function (taskVO) {
+            taskVO.startDate = taskVO.plannedStartDate;
+            taskVO.endDate = taskVO.plannedEndDate;
+        }
+
+        let getParentId = function (taskVO) {
+            taskVO.parentId = 0;
+        }
+
+        let getTmpFsCode = function (taskVOKey, tmpFsCodes, item) {
+            let idx = taskVOKey.indexOf("fscodes");
+            if(idx < 0) return tmpFsCodes;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                if(item["FS Codes"].indexOf(",") >= 0) tmpFsCodes = item["FS Codes"].split(",");
+                else tmpFsCodes.push(item["FS Codes"]);
+            }
+
+            return tmpFsCodes;
+        }
+
+        let getTmpFses = function (taskVOKey, tmpFses, item) {
+            let idx = taskVOKey.indexOf("fs");
+            if(idx < 0) return tmpFses;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                if(item["FS"].indexOf(",") >= 0) tmpFses = item["FS"].split(",");
+                else tmpFses.push(item["FS"]);
+            }
+            return tmpFses;
+        }
+
+        let getTmpFsDuration = function (taskVOKey, item, tmpFsDuration) {
+            let idx = taskVOKey.indexOf("fsdur");
+            if(idx < 0) return tmpFsDuration;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                if (typeof (item["FS Dur"]) === 'string') {
+                    if(item["FS Dur"].indexOf(",") >= 0) tmpFsDuration = item["FS Dur"].split(",");
+                    else tmpFsDuration.push(item["FS Dur"]);
+                }
+                if (typeof (item["FS Dur"]) === 'number') tmpFsDuration.push(item["FS Dur"]);
+            }
+            return tmpFsDuration;
+        }
+
+        let getFirstCountFormula = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("formula");
+            if(idx < 0) taskVO.firstCountFormula = "";
+            if (typeof (taskVOKey[idx]) === 'string') taskVO.firstCountFormula = item["Formula"];
+            else taskVO.firstCountFormula = "";
+        }
+
+        let getFirstCount = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("quantity");
+            if(idx < 0) taskVO.firstCount = 0;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                taskVO.firstCount = Number(item["Quantity"].replaceAll(",", ""));
+                if (typeof (taskVO.firstCount) !== 'number') taskVO.firstCount = 0;
+            }
+            else taskVO.firstCount = 0;
+        }
+
+        let getFirstCountUnit = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("unit");
+            if(idx < 0) taskVO.firstCountUnit = "";
+            if (typeof (taskVOKey[idx]) === 'string') {
+                taskVO.firstCountUnit = item["Unit"];
+            }
+            else taskVO.firstCountUnit = "";
+        }
+
+        let getComplexUnitPrice = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("objectunitcost");
+            if(idx < 0) taskVO.complexUnitPrice = 0;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                taskVO.complexUnitPrice = Number(item["Object unit cost"].replaceAll(",", ""));
+                if (typeof (taskVO.complexUnitPrice) !== 'number') taskVO.complexUnitPrice = 0;
+            }
+            else taskVO.complexUnitPrice = 0;
+        }
+
+        let getCost = function (taskVOKey, item, taskVO) {
+            let idx = taskVOKey.indexOf("basecost");
+            if(idx < 0) taskVO.cost = 0;
+            if (typeof (taskVOKey[idx]) === 'string') {
+                taskVO.cost = Number(item["Base cost"].replaceAll(",", ""));
+                if (typeof (taskVO.cost) !== 'number') taskVO.cost = 0;
+            }
+            else taskVO.cost = 0;
+        }
+
+        let getTaskStatus = function (taskVO) {
+            taskVO.taskStatus = "REG";
+        }
+
+        let getExcelJsonData = function () {
+            _isError = false;
+            _taskVOs = [];
+            _taskLinkVOs = [];
+
+            let continuousEmptyTask = 0;
+            let taskDepthRowNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let curDepth = 0;
+            let stack = new Stack();
+
+            $.each(_rows, function (index, item) {
+
+                let taskVO = {};
+
+                let tmpFsCodes = [];
+                let tmpFses = [];
+                let tmpFsDuration = [];
+
+                let taskVOKey = Object.keys(item);
+                taskVOKey.forEach(function(el, index){
+                    taskVOKey[index] = taskVOKey[index].replaceAll(" ", "").toLowerCase();
+                });
+
+                // check one more task
+                if (!checkOnlyOneTaskAtRow(taskVOKey)) {
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_max_task_duplicate}]]" + " : Line " + (item.rowNum + 1);
+                    _isError = true;
+                    return false;
+                }
+
+                let taskKeyName = taskVOKey[1];
+
+                // region check empty rows
+                continuousEmptyTask = getContinuousEmptyRowCount(taskKeyName, continuousEmptyTask);
+                if (continuousEmptyTask >= 10) return false;
+                if (continuousEmptyTask > 0) return true;
+                // endregion check empty rows
+
+                getRowNum(taskVO, item);
+                getTaskName(taskVO, item, taskKeyName);
+                getTaskDepth(taskVO, taskKeyName);
+                getTaskFullPath(curDepth, taskVO, stack);
+
+                if (Number.isNaN(Number(taskVO.taskDepth))) {
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_task_depth_no_number}]]" + " : Line " + (taskVO.rowNum + 1);
+                    _isError = true;
+                    return false;
+                }
+
+                if (!checkWorkId(taskVO)) {
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_on_work_id}]]" + " : Line " + (item.rowNum + 1);
+                    _isError = true;
+                    return false;
+                }
+                getWorkId(taskVO);
+                getPhasingCodes(taskVOKey, taskVO, item);
+                getDuration(taskVOKey, item, taskVO);
+
+                if(!checkDateFormat(taskVOKey, item)){
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_date_format}]]" + " : Line " + (item.rowNum + 1);
+                    _isError = true;
+                    return false;
+                }
+
+                getPlannedStart(taskVOKey, item, taskVO);
+                getPlannedEnd(taskVOKey, item, taskVO);
+
+                // region check task depth
+                if (typeof (taskVO.phasingCode) === 'undefined' || taskVO.phasingCode === "") {
+
+                    if (taskVO.taskDepth >= taskDepthRowNum.length) {
+                        _errorMessage = "[[#{process.modal.process_file_upload.error_max_task_depth_over}]]" + " : Line " + (taskVO.rowNum + 1);
+                        _isError = true;
+                        return false;
+                    }
+
+                    curDepth = getCurDepthAtPhasingCodeUndefined(curDepth, taskVO, taskDepthRowNum);
+                }
+
+                curDepth = getCurDepthAtPhasingCodeString(taskVO, curDepth, taskDepthRowNum);
+
+                getTaskDescription(taskVO);
+                getTaskValidate(taskVO);
+                taskProgressTarget(taskVO);
+                getTaskProgressRate(taskVO);
+                getTaskType(taskVO);
+                getGanttOpen(taskVO);
+                getGanttHolder(taskVO);
+                getGanttSortNo(taskVO);
+                getTaskStartDateAndEndDate(taskVO);
+                getParentId(taskVO);
+                // endregion check task depth
+                tmpFsCodes = getTmpFsCode(taskVOKey, tmpFsCodes, item);
+                tmpFses = getTmpFses(taskVOKey, tmpFses, item);
+                tmpFsDuration = getTmpFsDuration(taskVOKey, item, tmpFsDuration);
+
+                if ((tmpFsCodes.length === 0 && tmpFses.length > 0 && tmpFsDuration.length > 0)
+                        || (tmpFsCodes.length > 0 && tmpFses.length === 0 && tmpFsDuration.length > 0)
+                        || (tmpFsCodes.length > 0 && tmpFses.length > 0 && tmpFsDuration.length === 0)
+                        || (tmpFsCodes.length === 0 && tmpFses.length === 0 && tmpFsDuration.length > 0)
+                        || (tmpFsCodes.length === 0 && tmpFses.length > 0 && tmpFsDuration.length === 0)
+                        || (tmpFsCodes.length > 0 && tmpFses.length === 0 && tmpFsDuration.length === 0)){
+                    _isError = true;
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_no_exist_fs_data}]]" + " : Line " + (taskVO.rowNum + 1);
+                    return false;
+                }
+
+                if((tmpFsCodes[0] === "" && tmpFses[0] !== "" &&  tmpFsDuration[0] !== "")
+                    || (tmpFsCodes[0] !== "" && tmpFses[0] === "" &&  tmpFsDuration[0] !== "")
+                    || (tmpFsCodes[0] !== "" && tmpFses[0] !== "" &&  tmpFsDuration[0] === "")
+                    || (tmpFsCodes[0] === "" && tmpFses[0] === "" &&  tmpFsDuration[0] !== "")
+                    || (tmpFsCodes[0] === "" && tmpFses[0] !== "" &&  tmpFsDuration[0] !== "")
+                    || (tmpFsCodes[0] !== "" && tmpFses[0] !== "" &&  tmpFsDuration[0] === "")) {
+                    _isError = true;
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_no_exist_fs_data}]]" + " : Line " + (taskVO.rowNum + 1);
+                    return false;
+                }
+
+                if (tmpFsCodes.length == tmpFses.length && tmpFses.length == tmpFsDuration.length) {
+                    getTaskLinkVOs(tmpFsCodes, tmpFses, tmpFsDuration, _taskLinkVOs, taskVO);
+                    if(_isError) {
+                        _errorMessage = "[[#{process.modal.process_file_upload.error_no_valid_fs_type_codes}]]" + " : Line " + (taskVO.rowNum + 1);
+                        return false;
+                    }
+                } else {
+                    _isError = true;
+                    _errorMessage = "[[#{process.modal.process_file_upload.error_no_match_fs_data}]]" + " : Line " + (taskVO.rowNum + 1);
+                    return false;
+                }
+
+                getFirstCountFormula(taskVOKey, item, taskVO);
+                getFirstCount(taskVOKey, item, taskVO);
+                getFirstCountUnit(taskVOKey, item, taskVO);
+                getComplexUnitPrice(taskVOKey, item, taskVO);
+                getCost(taskVOKey, item, taskVO);
+
+                getTaskStatus(taskVO);
+
+                _taskVOs.push(taskVO);
+            });
+
+            if (_isError) return false;
+
+            return _taskVOs;
+        }
+
+        // endregion function related getExcelJsonData
+
+        // region excel file upload
+
+        let reloadPage = function () {
+            location.reload();
+        }
+
+        let initUploadProgress = function () {
+            $("#divUploadPercent").removeClass("upload-percent-up");
+            $("#divUploadPercent").addClass("upload-percent-under");
+        }
+
+        let showUploadProgress = function () {
+            $('#uploadProgress').removeClass('display-none');
+
+            initUploadProgress()
+            displayProcessPercent("0");
+            showMessageOnStandBy();
+        }
+
+        let hideUploadProgress = function () {
+            $('#uploadProgress').addClass('display-none');
+        }
+
+        let showMessageOnStandBy = function () {
+            let messageString = "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_stand_by_1}]]" + "</span>";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_going_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_arrangement_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_data_loading_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_0}]]";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let showMessageOnGoing = function () {
+            let messageString = "[[#{process.modal.upload_progress.status_stand_by_0}]]";
+            messageString += " ▶ " + "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_on_going_1}]]" + "</span>";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_arrangement_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_data_loading_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_0}]]";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let showMessageOnArrangement = function () {
+            let messageString = "[[#{process.modal.upload_progress.status_stand_by_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_going_0}]]";
+            messageString += " ▶ " + "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_on_arrangement_1}]]" + "</span>";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_data_loading_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_0}]]";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let showMessageOnDataLoading = function () {
+            let messageString = "[[#{process.modal.upload_progress.status_stand_by_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_going_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_arrangement_0}]]";
+            messageString += " ▶ " + "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_on_data_loading_1}]]" + "</span>";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_0}]]";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let showMessageOnAutoSchedulingProc = function () {
+            let messageString = "[[#{process.modal.upload_progress.status_stand_by_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_going_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_arrangement_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_data_loading_0}]]";
+            messageString += " ▶ " + "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_on_auto_scheduling_1}]]" + "</span>";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_0}]]";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let showMessageOnAutoSchedulingDBProc = function () {
+            let messageString = "[[#{process.modal.upload_progress.status_stand_by_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_going_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_arrangement_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_data_loading_0}]]";
+            messageString += " ▶ " + "[[#{process.modal.upload_progress.status_on_auto_scheduling_1}]]";
+            messageString += " ▶ " + "<span style=\'color:red;\'>" + "[[#{process.modal.upload_progress.status_on_auto_scheduling_db_proc_1}]]" + "</span>";
+
+            $("#divUploadStatus").html(messageString);
+        }
+
+        let getNowProgress = function (executeCnt, taskVOs) {
+            if(taskVOs.length == 0) return 100;
+            return Math.round(executeCnt / taskVOs.length * 100);
+        }
+
+        let displayProcessPercent = function (nowProgress) {
+            $("#divUploadBar").width(nowProgress + "%");
+            $("#divUploadPercent").html(nowProgress + "%");
+        }
+
+        let convertProgressClass50percent = function (nowProgress) {
+            if (nowProgress > 50) {
+                $("#divUploadPercent").removeClass("upload-percent-under");
+                $("#divUploadPercent").addClass("upload-percent-up");
+            }
+        }
+
+        let checkFinishPutParentIdAndPredecessorId = function () {
+            if (_putProcessItemParentId && _putProcessItemLinkPredecessorId) {
+                _isBatchAutoScheduling = true;
+                _autoSchedulingTaskVOs = [];
+                getSchedule(true);
+            }
+        }
+
+        let putProcessItemParentIdAjax = function () {
+            reqPut('/processApi/putProcessItemParentId'
+                , {newProcessInfoId: _newProcessInfoId}
+                , ""
+                , function (xhr) {
+                    hideUploadProgress();
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }
+                , function () {
+                    _putProcessItemParentId = true;
+                    checkFinishPutParentIdAndPredecessorId();
+                });
+        }
+
+        let putProcessItemLinkPredecessorIdAjax = function (tmpTaskVos) {
+
+            reqPut('/processApi/putProcessItemLinkPredecessorId'
+                , {newProcessInfoId: _newProcessInfoId}
+                , ""
+                , function (xhr) {
+                    hideUploadProgress();
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }
+                , function () {
+                    _putProcessItemLinkPredecessorId = true;
+                    checkFinishPutParentIdAndPredecessorId();
+                });
+        }
+
+        let callIsCurrentVersion = function () {
+
+            reqPut('/processApi/putIsCurrentVersion'
+                , {
+                    newProcessInfoId: _newProcessInfoId,
+                    isAddNewFile: true
+                }
+                , function (data) {
+                    if (!data.result) {
+                        hideUploadProgress();
+                        showErrorAlert("ALERT", data.message);
+                    }
+                }
+                , function (xhr) {
+                    hideUploadProgress();
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }
+                , function () {
+                    showMessageOnArrangement();
+                    _putProcessItemParentId = false;
+                    _putProcessItemLinkPredecessorId = false;
+                    let ajax1 = putProcessItemParentIdAjax();
+                    let ajax2 = putProcessItemLinkPredecessorIdAjax();
+                    return $.when(ajax1, ajax2).done(function (data, text, jqXHR) {
+
+                    });
+                }
+            );
+        }
+
+        let postProcessItemAjax = function (tmpTaskVos) {
+
+            return reqPostJSON('/processApi/postProcessFileProcessItems'
+                , JSON.stringify({
+                    newProcessInfoId: _newProcessInfoId,
+                    processItems: tmpTaskVos
+                })
+                , ""
+                , ""
+                , function () {
+                    _totalExecuteCnt = _totalExecuteCnt + tmpTaskVos.length;
+                    let nowProgress = getNowProgress(_totalExecuteCnt, _taskVOs);
+
+                    displayProcessPercent(nowProgress);
+                    convertProgressClass50percent(nowProgress);
+
+                    if (nowProgress == 0) showMessageOnStandBy();
+                    if (nowProgress > 0 && nowProgress < 100) showMessageOnGoing();
+                    if (nowProgress >= 100) callIsCurrentVersion();
+                }
+            );
+        }
+
+        let makeTmpBatchTaskVOs = function (taskVOs, nextPos, curPos) {
+            let tmpTaskVOs = [];
+            if (nextPos >= taskVOs.length) tmpTaskVOs = taskVOs.slice(curPos, taskVOs.length);
+            else tmpTaskVOs = taskVOs.slice(curPos, nextPos);
+
+            for (let idx = 0; idx < tmpTaskVOs.length; idx++) {
+                tmpTaskVOs[idx].processInfo = {id: _newProcessInfoId};
+            }
+            return tmpTaskVOs;
+        }
+
+        let executeBatchUploadAjaxCall = function () {
+            let curPos = (_executeBatchIdx) * _batchSize
+            let nextPos = (_executeBatchIdx + 1) * _batchSize;
+            let tmpBatchTaskVOs = makeTmpBatchTaskVOs(_taskVOs, nextPos, curPos);
+
+            postProcessItemAjax(tmpBatchTaskVOs);
+
+            return $.when(tmpBatchTaskVOs).done(function (data, text, jqXHR) {
+                _executeBatchIdx++;
+                if (nextPos <= _taskVOs.length) executeBatchUploadAjaxCall()
+            });
+        }
+
+        let postProcessInfoAjax = function () {
+            reqPost('/processApi/postProcessFileProcessInfo'
+                , {uploadFileName: getOnlyFileName($("#file").val())}
+                , function (data) {
+                    if (data.result) {
+                        _newProcessInfoId = data.returnId;
+                        initExecuteBatchIdxAndTotalExecuteCnt();
+                        executeBatchUploadAjaxCall("post_process_item");
+                    } else showErrorAlert("ALERT", data.message);
+                }
+                , function (xhr) {
+                    hideUploadProgress();
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        let sendProcessInfoAndProcessItem = function () {
+            postProcessInfoAjax();
+        }
+
+        let executeUploadFile = function () {
+            showUploadProgress();
+            sendProcessInfoAndProcessItem();
+        }
+
+        // endregion excel file upload
+
+        // region excel upload auto schedule
+
+        let getPredecessorType = function (type) {
+            if (type === "0") return "FS";
+            if (type === "1") return "SS";
+            if (type === "2") return "FF";
+            if (type === "3") return "SF";
+            return "NONE";
+        }
+
+        function getGanttTaskType(data) {
+            if (data.type === "" || typeof (data.type) === "undefined") return "TASK";
+            return data.type.toUpperCase();
+        }
+
+        let getCreateTaskData = function (data) {
+            return {
+                entity: "TASK",
+                processItem: {
+                    processInfo: {
+                        id: 0,
+                    },
+                    taskName: data.text,
+                    taskDepth: 0,
+                    ganttTaskType: "",
+                    phasingCode: data.phasingCode,
+                    startDate: getTaskDate(data.start_date),
+                    endDate: getTaskDate(data.end_date),
+                    duration: data.duration,
+                    progressTarget: true,
+                    progressRate: 0.00,
+                    ganttOpen: false,
+                    parentId: Number(data.parent),
+                    work: {
+                        id: (data.workId === null || typeof (data.workId) === "undefined") ? 0 : data.workId,
+                    },
+                    ganttTaskType: getGanttTaskType(data),
+                    taskStatus: "REG",
+                    validate: "NONE",
+                    ganttSortNo: 0
+                }
+            };
+        }
+
+        let getCreateLinkData = function (data) {
+            let sourceTask = gantt.getTask(data.source);
+            let targetTask = gantt.getTask(data.target);
+
+            return {
+                entity: "LINK",
+                processItemLink: {
+                    processItem: {
+                        id: typeof (targetTask.savedProcessItemId) !== "undefined" ? targetTask.savedProcessItemId : targetTask.id
+                    },
+                    predecessorId: typeof (sourceTask.savedProcessItemId) !== "undefined" ? sourceTask.savedProcessItemId : sourceTask.id,
+                    predecessorType: getPredecessorType(data.type),
+                    predecessorValue: data.type,
+                    predecessorDuration: data.lag
+                }
+            };
+        }
+
+        let getCreateTaskOrLinkData = function (entity, data) {
+            if (entity.toUpperCase() === "TASK") return getCreateTaskData(data);
+            if (entity.toUpperCase() === "LINK") return getCreateLinkData(data);
+            return {};
+        }
+
+        let getUpdateTaskData = function (data) {
+            return {
+                entity: "TASK",
+                localIndex: data.target === "next:null" ? 0 : gantt.getTask(data.id).$local_index,
+                processItem: {
+                    processInfo: {
+                        id: typeof (data.processId) === "undefined" ? 0 : data.processId,
+                    },
+                    id: typeof (data.savedProcessItemId) !== "undefined" ? data.savedProcessItemId : data.id,
+                    taskName: data.text,
+                    taskDepth: data.taskDepth,
+                    ganttTaskType: data.type.toUpperCase(),
+                    phasingCode: data.phasingCode,
+                    startDate: getTaskDate(data.start_date),
+                    endDate: getTaskDate(data.end_date),
+                    ganttSortNo: gantt.getTask(data.id).ganttSortNo,
+                    duration: data.duration,
+                    progressRate: Math.round(data.progress * 100) / 100.0,
+                    ganttOpen: data.open,
+                    parentId: data.parent == 0 ? 0 : ( typeof(gantt.getTask(data.parent).savedProcessItemId) === 'undefined' ? Number(data.parent) :  Number(gantt.getTask(data.parent).savedProcessItemId)),
+                }
+            };
+        }
+
+        let getUpdateLinkData = function (data) {
+            let sourceTask = gantt.getTask(data.source);
+            let targetTask = gantt.getTask(data.target);
+
+            return {
+                entity: "LINK",
+                processItemLink: {
+                    id: typeof (data.savedProcessItemLinkId) !== "undefined" ? data.savedProcessItemLinkId : data.id,
+                    processItem: {
+                        id: typeof (targetTask.savedProcessItemId) !== "undefined" ? targetTask.savedProcessItemId : targetTask.id
+                    },
+                    predecessorId: typeof (sourceTask.savedProcessItemId) !== "undefined" ? sourceTask.savedProcessItemId : sourceTask.id,
+                    predecessorType: getPredecessorType(data.type),
+                    predecessorValue: data.type,
+                    predecessorDuration: data.lag
+                }
+            };
+        }
+
+        let getUpdateTaskOrLinkData = function (entity, data) {
+            if (entity.toUpperCase() === "TASK") return getUpdateTaskData(data);
+            if (entity.toUpperCase() === "LINK") return getUpdateLinkData(data);
+            return {};
+        }
+
+        let getDeleteTaskData = function (id) {
+            return {
+                entity: "task",
+                id: (typeof (_savedProcessItemId) !== "undefined" && _savedProcessItemId !== 0) ? _savedProcessItemId : id
+            }
+        }
+
+        let getDeleteLinkData = function (id) {
+            return {
+                entity: "LINK",
+                id: (typeof (_savedProcessItemLinkId) !== "undefined" && _savedProcessItemLinkId !== 0) ? _savedProcessItemLinkId : id
+            }
+        }
+
+        let getDeleteTaskOrLinkData = function (entity, id) {
+            if (entity.toUpperCase() === "TASK") return getDeleteTaskData(id);
+            if (entity.toUpperCase() === "LINK") return getDeleteLinkData(id);
+            return {};
+        }
+
+        let createTaskOrLink = function (entity, data) {
+
+            reqPostJSON("/processApi/ganttData"
+                , JSON.stringify(getCreateTaskOrLinkData(entity, data))
+                , function (res) {
+                    if (res.result && entity.toUpperCase() === "TASK") {
+
+                        let model = $.parseJSON(res.model);
+                        let getTask = gantt.getTask(data.id);
+
+                        getTask.savedProcessItemId = model.id;
+                        getTask.text = model.taskName;
+                        getTask.parent = gantt.getTask(data.id).parent ? gantt.getTask(data.id).parent : model.parentId;
+                        gantt.moveTask(data.id, gantt.getTaskBy(task => task.parent == getTask.parent).length - 1, getTask.parent);
+                        gantt.refreshTask(data.id);
+
+                        reloadComponent("/process/divCodeValidateArea", "#divCodeValidateArea", "");
+                    } else if (res.result && entity.toUpperCase() == "LINK") {
+
+                        let model = $.parseJSON(res.model);
+                        let getLink = gantt.getLink(data.id);
+                        getLink.savedProcessItemLinkId = model.id;
+
+                        gantt.refreshLink(data.id);
+                    } else {
+                        gantt.undo();
+                    }
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        let updateTaskOrLink = function (entity, data) {
+            reqPutJSON("/processApi/ganttData"
+                , JSON.stringify(getUpdateTaskOrLinkData(entity, data))
+                , function (res) {
+                    if (res.result && entity.toUpperCase() === "TASK") {
+                        gantt.refreshTask(data.id);
+                    } else if (res.result && entity.toUpperCase() === "LINK") {
+                        gantt.refreshLink(data.id);
+                    } else {
+                    }
+                }
+                , function (error) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        let deleteTaskOrLink = function (entity, id) {
+            reqDeleteJSON("/processApi/ganttData"
+                , JSON.stringify(getDeleteTaskOrLinkData(entity, id))
+                , function (res) {
+                    if (res.result && entity.toUpperCase() === "TASK") {
+                        //gantt.refreshTask(id);
+                        reloadComponent("/process/divCodeValidateArea", "#divCodeValidateArea", "");
+                    } else if (res.result && entity.toUpperCase() === "LINK") {
+                        // gantt.refreshLink();
+                    } else {
+                    }
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+        }
+
+        let completeAutoSchedule = function () {
+            hideUploadProgress();
+            _isBatchAutoScheduling = false;
+        }
+
+        let putTasksAfterAutoSchedule = function (tmpAutoSchedulingTasks) {
+            reqPutJSON('/processApi/ganttDataAfterAutoSchedule'
+                , JSON.stringify({processItems: tmpAutoSchedulingTasks})
+                , ""
+                , ""
+                , function () {
+                    _totalExecuteCnt = _totalExecuteCnt + tmpAutoSchedulingTasks.length;
+
+                    let nowProgress = getNowProgress(_totalExecuteCnt, _autoSchedulingTaskVOs);
+                    displayProcessPercent(nowProgress);
+                    convertProgressClass50percent(nowProgress);
+                    if (nowProgress >= 100) completeAutoSchedule();
+                });
+        }
+
+        let executeBatchUpdateTasksAjaxCall = function () {
+
+            let curPos = (_executeBatchIdx) * _batchSize;
+            let nextPos = (_executeBatchIdx + 1) * _batchSize;
+            let tmpAutoSchedulingTasks = makeTmpBatchTaskVOs(_autoSchedulingTaskVOs, nextPos, curPos);
+            putTasksAfterAutoSchedule(tmpAutoSchedulingTasks);
+
+            return $.when(tmpAutoSchedulingTasks).done(function (data, textStatus, jqXHR) {
+                _executeBatchIdx++;
+                if (nextPos <= _autoSchedulingTaskVOs.length) executeBatchUpdateTasksAjaxCall();
+            });
+        }
+
+        let initExecuteBatchIdxAndTotalExecuteCnt = function () {
+            _executeBatchIdx = 0;
+            _totalExecuteCnt = 0;
+        }
+
+        let getTaskDate = function (date) {
+            if (typeof (date) === 'string') date = new Date(date);
+            let tmpYear = date.getFullYear();
+            let tmpMonth = date.getMonth() + 1;
+            let tmpDate = date.getDate();
+            let tmpMonthString = "";
+            let tmpDateString = "";
+
+            if (tmpMonth >= 10) tmpMonthString = tmpMonth;
+            else tmpMonthString = "0" + tmpMonth;
+
+            if (tmpDate >= 10) tmpDateString = tmpDate;
+            else tmpDateString = "0" + tmpDate;
+
+            return `${tmpYear}-${tmpMonthString}-${tmpDateString}`;
+        }
+
+        // endregion excel upload auto schedule
+
+        // region dynamic progress
+
+        let calculateSummaryProgress = function (task) {
+            if (task.type != gantt.config.types.project)
+                return task.progress;
+            var totalToDo = 0;
+            var totalDone = 0;
+            gantt.eachTask(function (child) {
+                if (child.type != gantt.config.types.project) {
+                    totalToDo += child.duration;
+                    totalDone += (child.progress || 0) * child.duration;
+                }
+            }, task.id);
+            if (!totalToDo) return 0;
+            else return totalDone / totalToDo;
+        }
+
+        let refreshSummaryProgress = function (id, submit) {
+            if (!gantt.isTaskExists(id))
+                return;
+
+            var task = gantt.getTask(id);
+            var newProgress = calculateSummaryProgress(task);
+
+            if (newProgress !== task.progress) {
+                task.progress = newProgress;
+
+                if (!submit) {
+                    gantt.refreshTask(id);
+                } else {
+                    gantt.updateTask(id);
+                }
+            }
+
+            if (!submit && gantt.getParent(id) !== gantt.config.root_id) {
+                refreshSummaryProgress(gantt.getParent(id), submit);
+            }
+        }
+
+        // endregion dynamic progress
+
+        // region initiating & data loading
+
+        let executeAutoScheduling = function () {
+            showMessageOnAutoSchedulingProc();
+
+            setTimeout(function () {
+                gantt.autoSchedule();
+            }, 1000);
+        }
+
+        let refreshGantt = function (model) {
+            gantt.clearAll();
+            todayMarker(gantt);
+            gantt.parse(model);
+            gantt.render();
+
+            gantt.ext.zoom.setLevel("year");
+            $("#moveToDate").val(moment().format("YYYY-MM-DD"));
+            showDate(gantt, moment().format("YYYY-MM-DD"));
+        }
+
+        let getSchedule = function (isUpload) {
+            if (isUpload) showMessageOnDataLoading(); // 업로드 후 데이터 로딩
+            else showGeneralDataLoadingProc(); // 일반 데이터 로딩
+
+            reqGet("/processApi/ganttDataInit"
+                , function (res) {
+                    if (res.result) {
+                        //console.log("res.model", JSON.parse(res.model));
+                        refreshGantt(res.model);
+                        reloadComponent("/process/divCodeValidateArea", "#divCodeValidateArea", "");
+
+                        if (!isUpload) hideGeneralDataLoadingProc();
+                        else if (isUpload && !gantt.config.auto_scheduling) hideUploadProgress();
+                        else executeAutoScheduling();
+                    }
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "json");
+        }
+
+        let init = function () {
+
+            initHoliday(gantt);
+            $("#btnToggleAutoScheduling").click();
+            getSchedule(false);
+            getWorks();
+            showCostDetailButton();
+
+
+            if (getCodeValidateState()) {
+                showProcessingCodeValidation();
+                return;
+            }
+        }
+
+        // endregion initiating & data loading
+
+        // region gantt config
+
+        const formatter = gantt.ext.formatters.durationFormatter({enter: "day", store: "day", short: true, format: "day"});
+        const linksFormatter = gantt.ext.formatters.linkFormatter({durationFormatter: formatter});
+
+        const textEditor = {type: "text", map_to: "text"};
+        const dateEditor = {
+            type: "date"
+            , map_to: "start_date"
+            , min: new Date(moment(_projectStartDate).format("YYYY-MM-dd"))
+            , max: new Date(moment(_projectEndDate).format("YYYY-MM-dd"))
+        };
+        const durationEditor = {type: "number", map_to: "duration", min: 0, max: 10000};
+        const predecessorEditor = {type: "predecessor", map_to: "auto", formatter: linksFormatter};
+
+        gantt.plugins({
+            auto_scheduling: true,
+            marker: true,
+            fullscreen: true,
+            critical_path: true,
+            tooltip: true,
+            undo: true
+        });
+
+        // endregion gantt config
+
+        // region specifying the date format
+
+        gantt.i18n.setLocale(getGanttLocale(_locale));               // gantt language en/kr/cn
+        gantt.config.date_format = getGanttConfigDateFormat(_locale);          // date format
+        gantt.config.task_date = getGanttConfigDateFormat(_locale);          // date format
+        //gantt.config.start_date = new Date(_projectStartDate);        // 프로젝트 시작일로 맞춤
+        //gantt.config.end_date = new Date(_projectEndDate);            // 프로젝트 종료일로 맞춤
+        gantt.config.show_tasks_outside_timescale = false;    //
+        gantt.config.min_column_width = 40;
+        gantt.config.scale_height = 20 * 3;
+        gantt.config.row_height = 30;
+
+
+        // endregion specifying the date format
+
+        // region holiday & holiday color setting
+        gantt.config.work_time = true;
+        gantt.templates.timeline_cell_class = function (task, date) {
+            if (!gantt.isWorkTime({date: date, task: task})) return "HOLIDAY";
+            return "";
+        };
+        // endregion holiday & holiday color setting
+
+        // region gantt layout
+        gantt.config.columns = [
+            {name: "wbs", label: "[[#{process.index.gantt_column.wbs}]]", min_width: 50, width: 50, resize: true, template: gantt.getWBSCode},
+            {name: "text", label: "[[#{process.index.gantt_column.task_name}]]", tree: true, min_width: 180, width: 200, resize: true, editor: textEditor},
+            {name: "start_date", label: "[[#{process.index.gantt_column.start_date}]]", align: "center", width: 100, resize: true, editor: dateEditor},
+            {name: "duration", label: "[[#{process.index.gantt_column.duration}]]", align: "center", width: 40, resize: true, editor: durationEditor},
+            {name: "progress", label: "[[#{process.index.gantt_column.progress}]]", align: "center", width: 40, resize: true, template: i=>`${(Math.round(i.progress*100)/100).toFixed(2)}%`},
+            {
+                name: "predecessors", label: "[[#{process.index.gantt_column.predecessors}]]", align: "center", width: 80, resize: true, editor: predecessorEditor
+                , template: function (task) {
+                    let links = task.$target;
+                    let labels = [];
+                    for (let i = 0; i < links.length; i++) {
+                        let link = gantt.getLink(links[i]);
+                        labels.push(linksFormatter.format(link));
+                    }
+                    return labels.join(", ");
+                }
+            },
+            {name: "add", width: 40},
+            {
+                name: "cost_detail", label: "[[#{process.index.gantt_column.cost_detail}]]", align: "center", width: 80, resize: false
+                , hide: false
+                , template: function (task) {
+                    if (!isActivityTask(task)) return "";
+
+                    return "<button id='viewCostDetail_" + task.id + "' type='button' className='btn btn-gray-off' data-id='" + task.id + "'>"
+                        + "<i class='fas fa-eye'></i>"
+                        + "</button>";
+                }
+            },
+            {
+                name: "model_viewer", label: "[[#{process.index.gantt_column.model}]]", align: "center", width: 80, resize: false
+                , hide: false
+                , template: function (task,task2) {
+                    return (task.type !== "task")?"": "<button id='modelViewer_" + task.id + "' type='button' className='btn btn-gray-off' data-id='" + task.id + "'>"
+                        + "<i class='fas fa-layer-group'></i>"
+                        + "</button>";
+                }
+            }
+        ];
+
+        gantt.config.layout = {
+            css: "gantt_container",
+            cols: [
+                {
+                    width: 300,
+                    min_width: 300,
+                    rows: [
+                        {view: "grid", scrollX: "gridScroll", scrollable: true, scrollY: "scrollVer"},
+                        {view: "scrollbar", id: "gridScroll", group: "horizontal"}
+                    ]
+                },
+                {resizer: true, width: 1},
+                {
+                    rows: [
+                        {view: "timeline", scrollX: "scrollHor", scrollY: "scrollVer"},
+                        {view: "scrollbar", id: "scrollHor", group: "horizontal"}
+                    ]
+                },
+                {view: "scrollbar", id: "scrollVer"}
+            ]
+        };
+
+        // endregion gantt layout
+
+        // region lightbox layer setting
+
+        gantt.config.lightbox.sections = [
+            {name: "type", type: "typeselect", map_to: "type"},
+            {
+                name: "parent", type: "parent", map_to: "parent", allow_root: false, focus: true,
+                filter: function (id, task) {
+                    if (task.$level >= 1 && task.$rendered_type !== "task") return true;
+                    else return false;
+                },
+                template: function (start, end, ev) {
+                    if (ev.$level >= 1 && ev.$rendered_type !== "task") return ev.$wbs + " " + ev.text;
+                    else return null;
+                }
+            },
+            {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
+            {name: "phasing_code", height: 30, map_to: "phasingCode", type: "textarea"},
+            {name: "progress", height: 30, map_to: "progress", type: "textarea"},
+            {name: "time", type: "duration", map_to: "auto", time_format: ganttLightBoxTimeFormat(_locale)}
+        ];
+
+        gantt.config.lightbox["project_sections"] = [
+            {name: "type", type: "typeselect", map_to: "type"},
+            {
+                name: "parent", type: "parent", allow_root: "true", map_to: "parent",
+                filter: function (id, task) {
+                    if (task.$level >= 1 && task.$rendered_type !== "task") return true;
+                    else return false;
+                },
+                template: function (start, end, ev) {
+                    if (ev.$level >= 0 && ev.$rendered_type !== "task") return ev.$wbs + " " + ev.text;
+                    return null;
+                }
+            },
+            {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
+            {name: "time", type: "duration", map_to: "auto", time_format: ganttLightBoxTimeFormat(_locale)}
+        ];
+
+        gantt.config.lightbox["milestone_sections"] = [
+            {name: "type", type: "typeselect", map_to: "type"},
+            {
+                name: "parent", type: "parent", allow_root: "true", map_to: "parent",
+                filter: function (id, task) {
+                    if (task.$level >= 1 && task.$rendered_type !== "task") return true;
+                    else return false;
+                },
+                template: function (start, end, ev) {
+                    if (ev.$level >= 0 && ev.$rendered_type !== "task") return ev.$wbs + " " + ev.text;
+                    return null;
+                }
+            },
+            {name: "description", height: 30, map_to: "text", type: "textarea", focus: true},
+            {name: "time", type: "duration", map_to: "auto", time_format: ganttLightBoxTimeFormat(_locale)}
+        ];
+
+        gantt.config.types["customType"] = "work";
+
+        gantt.locale.labels['type_' + "customType"] = "[[#{process.index.light_box.types.type_work}]]";
+
+        gantt.config.lightbox["customType_sections"] = [
+            {name: "type", type: "typeselect", map_to: "type"},
+            {name: "work", height: 30, map_to: "workId", type: "select", options: []},
+            {name: "time", type: "duration", map_to: "auto", time_format: ganttLightBoxTimeFormat(_locale)}
+        ];
+
+        // endregion lightbox layer setting
+
+        // region gantt functionality setting
+        gantt.config.auto_scheduling = false;                      // enables auto scheduling
+        gantt.config.auto_scheduling_strict = true;               // enables the auto scheduling mode, in which tasks will always be rescheduled to the earliest possible date
+        gantt.config.auto_scheduling_initial = false;             // defines whether gantt will do auto-scheduling on data loading/parsing
+        gantt.config.auto_scheduling_compatibility = true;        // disables usage of time constraints for tasks
+        gantt.config.schedule_from_end = false;
+        gantt.config.smart_rendering = true;
+        gantt.config.sort = false;
+        gantt.config.branch_loading = true;                     // task별 동적 로딩
+        gantt.config.branch_loading_property = "hasChild";
+        gantt.config.order_branch = true;
+        gantt.config.order_branch_free = true;
+        gantt.config.undo = true;
+        gantt.config.redo = true;
+        gantt.config.undo_steps = 10;
+        gantt.config.undo_actions = {
+            update: "update",
+            remove: "remove",
+            add: "add"
+        }
+        gantt.config.undo_types = {
+            link: "link",
+            task: "task"
+        }
+        gantt.config.highlight_critical_path = false;
+        // endregion gantt functionality setting
+
+        // region initializing gantt
+
+        gantt.templates.task_class = function(start, end, task) {
+            if (task.type == gantt.config.types.project || task.type == gantt.config.types.milestone)
+                return "hide_project_progress_drag";
+        }
+
+
+        gantt.ext.zoom.init(zoomConfig(gantt, _locale));
+        gantt.init("divGantt");
+
+        // endregion  initializing gantt
+
+        // region gantt event
+
+        gantt.attachEvent("onParse", function () {
+            gantt.eachTask(function (task) {
+                task.progress = calculateSummaryProgress(task);
+            });
+        });
+
+        gantt.attachEvent("onAfterTaskUpdate", function (id) {
+            refreshSummaryProgress(gantt.getParent(id), true);
+        });
+
+        gantt.attachEvent("onTaskDrag", function (id) {
+            refreshSummaryProgress(gantt.getParent(id), false);
+        });
+        gantt.attachEvent("onAfterTaskAdd", function (id) {
+            refreshSummaryProgress(gantt.getParent(id), true);
+        });
+
+        gantt.attachEvent("onBeforeTaskDelete", function (id) {
+            idParentBeforeDeleteTask = gantt.getParent(id);
+        });
+        gantt.attachEvent("onAfterTaskDelete", function () {
+            refreshSummaryProgress(idParentBeforeDeleteTask, true);
+        });
+
+        gantt.attachEvent("onBeforeUndo", function (action) {
+            return true;
+        });
+
+        gantt.attachEvent("onAfterUndo", function (action) {
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeRedo", function (action) {
+            return true;
+        });
+
+        gantt.attachEvent("onAfterRedo", function (action) {
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeRedoStack", function (action) {
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeUndoStack", function (action) {
+            if (typeof (action.commands[0].type) === "undefined") return false;
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeLightbox", function (id) {
+            let task = gantt.getTask(id);
+            return true;
+        });
+
+        gantt.attachEvent("onLightboxSave", function (id, task, is_new) {
+
+            if (task.parent == 0 && (task.type.toUpperCase() === "TASK"
+                || task.type.toUpperCase() === "PROJECT"
+                || task.type.toUpperCase() === "MILESTONE")) {
+                showErrorAlert("ALERT", "[[#{process.index.gantt_column.error_on_parent_task}]]");
+                return false;
+            }
+
+            if(task.progress > 100) {
+                showErrorAlert("ALERT", "[[#{process.index.gantt_column.error_progress_over_100}]]");
+                return false;
+            }
+            if(task.progress < 0) {
+                showErrorAlert("ALERT", "[[#{process.index.gantt_column.error_progress_over_0}]]");
+                return false;
+            }
+
+            return true;
+        });
+
+        gantt.attachEvent("onLightboxCancel", function (id) {
+            return true;
+        });
+
+        gantt.attachEvent("onLightboxDelete", function (id) {
+            return true;
+        });
+
+        gantt.attachEvent("onAfterTaskAutoSchedule", function (task, new_date, constraint, predecessor) {
+            if (_isBatchAutoScheduling) {
+                let tmpTask = {};
+                tmpTask.processId = task.processId;
+                tmpTask.id = task.id;
+                tmpTask.taskName = task.text;
+                tmpTask.startDate = getTaskDate(task.start_date);
+                tmpTask.endDate = getTaskDate(task.end_date);
+                tmpTask.duration = task.duration;
+                tmpTask.ganttTaskType = task.type.toUpperCase();
+                tmpTask.progressRate = task.progress;
+                tmpTask.ganttOpen = task.open;
+                tmpTask.ganttHolder = task.holder;
+                tmpTask.phasingCode = task.phasingCode;
+                tmpTask.taskDepth = task.taskDepth;
+
+                _autoSchedulingTaskVOs.push(tmpTask);
+            }
+        });
+
+        gantt.attachEvent("onAfterAutoSchedule", function (taskId, updatedTasks) {
+            if (_isBatchAutoScheduling) {
+                initExecuteBatchIdxAndTotalExecuteCnt();
+                displayProcessPercent("0");
+                initUploadProgress();
+                showMessageOnAutoSchedulingDBProc();
+                executeBatchUpdateTasksAjaxCall();
+            }
+        });
+
+        gantt.attachEvent("onTaskCreated", function (task) {
+            if (!isNotActivityMoveTask(task)) showErrorAlert("ALERT", "[[#{process.index.add_task.error_cannot_add_task_under_task}]]");
+            return false;
+        })
+
+        gantt.attachEvent("onBeforeTaskUpdate", function (id, new_item) {
+            if (_isBatchAutoScheduling) return false;
+        });
+
+        gantt.attachEvent("onBeforeTaskDelete", function (id, item) {
+            _savedProcessItemId = gantt.getTask(id).savedProcessItemId;
+            return true;
+        });
+
+        gantt.attachEvent("onBeforeLinkDelete", function (id, item) {
+            _savedProcessItemLinkId = gantt.getLink(id).savedProcessItemLinkId;
+            return true;
+        });
+
+        gantt.attachEvent("onCollapse", function () {
+            disabledFullScreen();
+            $("#btnToggleFullScreen").addClass("btn-gray-off");
+            $("#btnToggleFullScreen").removeClass("btn-gray-on");
+        });
+
+        gantt.attachEvent("onExpand", function () {
+            enabledFullScreen();
+            $("#btnToggleFullScreen").removeClass("btn-gray-off");
+            $("#btnToggleFullScreen").addClass("btn-gray-on");
+        });
+
+        gantt.attachEvent("onBeforeRowDragEnd", function (id, parent, tindex) {
+            let task = gantt.getTask(id);
+            let parentTask = gantt.getTask(task.parent);
+
+            if (parentTask.$rendered_type === "task") {
+                showErrorAlert("ALERT", "[[#{process.index.add_task.error_cannot_add_task_under_task}]]");
+                return false;
+            }
+            if (parentTask.workId !== gantt.getTask(id).workId) {
+                showErrorAlert("ALERT", "[[#{process.index.add_task.error_cannot_move_other_work_id}]]");
+                return false;
+            }
+            return true;
+        });
+
+        // endregion gantt event
+
+        // region initializing dataProcessor
+        let dp = gantt.createDataProcessor({
+            task: {
+                create: function (data) {
+                    //console.log("task - create", data);
+                    if (!_isBatchAutoScheduling) createTaskOrLink("TASK", data);
+                },
+                update: function (data, id) {
+                    //console.log("task - update");
+                    if (!_isBatchAutoScheduling) updateTaskOrLink("TASK", data);
+                },
+                delete: function (id) {
+                    //console.log("task - delete", id);
+                    if (!_isBatchAutoScheduling) deleteTaskOrLink("TASK", id);
+                }
+            },
+            link: {
+                create: function (data) {
+                    //console.log("link - create");
+                    if (!_isBatchAutoScheduling) createTaskOrLink("link", data);
+                },
+                update: function (data, id) {
+                    //console.log("link - update");
+                    if (!_isBatchAutoScheduling) updateTaskOrLink("link", data);
+                },
+                delete: function (id) {
+                    //console.log("link - delete", id);
+                    if (!_isBatchAutoScheduling) deleteTaskOrLink("link", id);
+                }
+            }
+        });
+
+        // endregion initializing dataProcessor
+
+        // region collapse and expand event
+
+        _this.on("click", "#btnCollapseAll", function () {
+            gantt.eachTask(function (task) {
+                task.$open = false;
+            });
+            gantt.render();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnExpendAll", function () {
+            gantt.eachTask(function (task) {
+                task.$open = true;
+            });
+            gantt.render();
+            hideTooltip($(this));
+        });
+
+        // endregion collapse and expand event
+
+        // region undo and redo event
+
+        _this.on("click", "#btnUnDo", function () {
+            gantt.undo();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnReDo", function () {
+            gantt.redo();
+            hideTooltip($(this));
+        });
+
+        // endregion undo and redo event
+
+        // region toggle auto scheduling and critical path and full screen event
+
+        _this.on("click", "#btnToggleAutoScheduling", function () {
+            if (gantt.config.auto_scheduling) disabledAutoScheduling();
+            else enabledAutoScheduling();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnToggleCriticalPath", function () {
+            if (gantt.config.highlight_critical_path) disabledCriticalPath();
+            else enabledCriticalPath();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnToggleFullScreen", function () {
+            if (gantt.getState().fullscreen) gantt.ext.fullscreen.collapse();
+            else gantt.ext.fullscreen.expand();
+            hideTooltip($(this));
+        });
+
+        // endregion toggle auto scheduling and critical path and full screen event
+
+        // region zoom event
+
+        _this.on("click", "#btnZoomFit", function () {
+            gantt.ext.zoom.setLevel("year");
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnZoomOut", function () {
+            gantt.ext.zoom.zoomOut();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnZoomIn", function () {
+            gantt.ext.zoom.zoomIn();
+            hideTooltip($(this));
+        });
+
+        // endregion zoom event
+
+        // region export event
+        _this.on("click", "#btnExportExcel", function () {
+            window.open("/processApi/exportProcessExcel");
+            hideTooltip($(this));
+        });
+
+        // endregion export event
+
+        // region version event
+
+        _this.on("click", "#btnSelectVersion", function () {
+            modalShowAndDraggable('#modalSaveVersionList');
+            hideTooltip($(this));
+        });
+
+        _this.on('show.bs.modal', '#modalSaveVersionList', function () {
+            reqGet("/processModal/getSaveVersionList"
+                , function (data) {
+                    $('#modalSaveVersionList').find('.modal-body').html(data);
+                    refreshTooltip();
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalSaveVersionList', function () {
+            $("#mBtnExecuteVersionSearch").off("click");
+            $("#mBtnInitVersionSearch").off("click");
+            $("button[id='btnSelect_']").off("click");
+
+            $('#modalSaveVersionList').find('.modal-body').html('');
+            refreshTooltip();
+        });
+
+        _this.on("click", "#btnSaveNowVersion", function () {
+
+            if (_openDivSaveNewVersion) closeDivSaveNewVersion();
+            else openDivSaveNewVersion();
+
+            initGlobalObject();
+            closeDivUploadFile();
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#mBtnSaveNewVersion", function () {
+            if ($("#newVersionDescription").val() === "") {
+                showErrorAlert("ALERT", "[[#{process.index.save_new_version.error_no_description}]]");
+                return false;
+            }
+            showConfirm("[[#{system.common.confirm.title}]]", "[[#{process.index.confirm_save_now_version}]]", executeSaveNowVersion);
+        });
+
+        // endregion version event
+
+        // region execute code validation event
+        let executeCodeValidate = function () {
+
+            showProcessingCodeValidation();
+
+            reqPutJSON('/processApi/putCodeValidate'
+                , {}
+                , function () {
+                    hideProcessingCodeValidation();
+                    reloadComponent("/process/divCodeValidateArea", "#divCodeValidateArea", "");
+                }
+                , function (xhr) {
+                    hideProcessingCodeValidation();
+                    setTimeout(function () {
+                        showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                    }, 1000);
+                });
+        }
+
+        _this.on("click", "#btnExecuteCodeValidate", function () {
+            hideTooltip($(this));
+            showConfirm("[[#{system.common.confirm.title}]]", "[[#{process.index.confirm_validate_code}]]", executeCodeValidate);
+        });
+
+        _this.on('show.bs.modal', '#modalStartValidate', function () {
+            reqGet("/processModal/startValidate"
+                , function (data) {
+                    $('#modalStartValidate').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalStartValidate', function () {
+            $("#mBtnProcConfirm").off("click");
+            $('#modalStartValidate').find('.modal-body').html('');
+            refreshTooltip();
+        });
+
+        // endregion execute code validation event
+
+        // region view code validation
+        _this.on("click", "#btnViewCodeValidate", function () {
+            modalShowAndDraggable('#modalResultCodeValidation');
+            hideTooltip($(this));
+        });
+
+        _this.on('show.bs.modal', '#modalProcessingCodeValidation', function () {
+            reqGet("/processModal/processingCodeValidation"
+                , function (data) {
+                    $('#modalProcessingCodeValidation').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalProcessingCodeValidation', function () {
+            $('#modalProcessingCodeValidation').find('.modal-body').html('');
+            refreshTooltip();
+        });
+
+        _this.on('show.bs.modal', '#modalResultCodeValidation', function () {
+            reqGet("/processModal/resultCodeValidation"
+                , function (data) {
+                    $('#modalResultCodeValidation').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalResultCodeValidation', function () {
+            $("#pageSize").off("change");
+            $("#mBtnExecuteResultSearch").off("click");
+            $("#mBtnInit").off("click");
+            $("#btnPagePrevious").off("click");
+            $("a[id^='btnPageNo_']").off("click");
+            $("#btnPageNext").off("click");
+            $("#mBtnExcelDownLoad").off("click");
+            $('#modalResultCodeValidation').find('.modal-body').html('');
+            refreshTooltip();
+        });
+
+        // endregion view code validation
+
+        // region file upload event
+        _this.on("click", "#btnUploadProcessFile", function () {
+            if (_openDivUploadFile) {
+                initFileElement();
+                initGlobalObject();
+                closeDivUploadFile();
+            } else {
+                initGlobalObject();
+                openDivUploadFile();
+            }
+            closeDivSaveNewVersion()
+            hideTooltip($(this));
+        });
+
+        // endregion file upload event
+
+        // region move date event
+        _this.on("click", "#btnMoveSelectedDay", function () {
+            showDate(gantt, moment($("#moveToDate").val()).format("YYYY-MM-DD"));
+            hideTooltip($(this));
+        });
+
+        _this.on("click", "#btnMoveToday", function () {
+            showDate(gantt, moment().format("YYYY-MM-DD"));
+            hideTooltip($(this));
+        });
+
+        // endregion move date event
+
+        // region costDetail event
+        _this.on("click", "button[id^='viewCostDetail_']", function () {
+            _costViewTaskId = $(this).data("id");
+            modalShowAndDraggable('#modalCostDetail');
+        });
+        
+        _this.on("click", "button[id^='modelViewer_']", function () {
+        	var id = $(this).data("id");
+            window.open("/contents/modelingViewByProcessItemId/" + gantt.getTask(id).id);
+        });
+
+        _this.on('show.bs.modal', '#modalCostDetail', function () {
+
+            reqGet("/processModal/costDetail/" + _costViewTaskId
+                , function (data) {
+                    $('#modalCostDetail').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalResultCodeValidation', function () {
+            refreshTooltip();
+        });
+
+        // endregion costDetail event
+
+        // region etc event
+        _this.on("change", "#file", function (e) {
+
+            showProcessingProc();
+
+            _endParse = false;
+            _rows = {};
+
+            let input = e.target;
+            let reader = new FileReader();
+
+            if (input.files[0] == undefined) {
+                showErrorAlert("ALERT", "[[#{common.file_upload.error_undefined}]]");
+                return false;
+            }
+
+            if (!checkExcelFileSize(input, 5000000000)) {
+                showErrorAlert("ALERT", "[[#{common.file_upload.error_file_size}]]");
+                return false;
+            }
+
+            reader.onload = function () {
+                let data = reader.result;
+                let workBook = XLSX.read(data, {type: 'binary', cellDates: true, dateNF: 'YYYY-MM-DD'});
+
+                workBook.SheetNames.forEach(function (sheetName, index) {
+                    _rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName], {raw: false});
+                });
+                _endParse = true;
+            };
+
+            reader.readAsBinaryString(input.files[0]);
+
+            let timer = setInterval(function () {
+                if (_endParse) {
+                    hideProcessingProc();
+                    $("#mBtnRemoveFile").show();
+                    $("#mBtnUploadFile").show();
+                    clearInterval(timer);
+                }
+            }, 1000);
+
+        });
+
+        _this.on("click", "#mBtnRemoveFile", function () {
+            initFileElement();
+            initGlobalObject();
+        });
+
+        _this.on("click", "#mBtnUploadFile", function (e) {
+
+            _excelJsonData = getExcelJsonData();
+
+            if (!_excelJsonData && _errorMessage != "") {
+                showErrorAlert("ALERT", _errorMessage);
+                return false;
+            }
+
+            if ($("#file").val() === "") {
+                showErrorAlert("ALERT", "[[#{process.modal.process_file_upload.error_no_upload_file}]]");
+                return false;
+            }
+
+            showConfirm("[[#{system.common.confirm.title}]]", "[[#{process.modal.process_file_upload.confirm_upload_file}]]", executeUploadFile);
+        });
+
+        _this.on("click", "#mBtnDownTemplateFile", function () {
+            modalShowAndDraggable('#modalDownloadFile');
+        });
+
+        _this.on('show.bs.modal', '#modalDownloadFile', function () {
+            reqGet("/commonModal/processTemplatefileDownload"
+                , function (data) {
+                    $('#modalDownloadFile').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "html");
+        });
+
+        _this.on('hide.bs.modal', '#modalDownloadFile', function () {
+            $("#modalDownloadFile").off("click");
+            $('#modalDownloadFile').find('.modal-body').html('');
+            refreshTooltip();
+        });
+
+        _this.on("click", "#btnAdd", function () {
+            reqGet("/processModal/addProcessItem"
+                , function (data) {
+                    $('#modalProcessAdd').find('.popup-con').html(data);
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseText).error);
+                }, "html");
+        });
+
+        _this.on("click", "#btnUploadProcessItemFile", function () {
+            const params = {};
+            const callback = function (data) {
+                $('#processExcelUpload').find('.popup-con').html(data);
+            };
+
+            $.nfx.ajaxGet(params, 'html', callback, `/processModal/addProcessItemExcelUpload`);
+        });
+
+        // endregion etc event
+
+        init();
+
+        PageFunction.reloadPage = reloadPage;
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        // $('#btnToggleFullScreen').click(function () {
+        //     $('.gantt-area').toggleClass('ganttFull');
+        //     if ($('.gantt-area').hasClass('ganttFull')) ;
+        // });
+
+        //풀화면
+        const fullscreenButton = document.getElementById('btnToggleFullScreen');
+        let isFullscreen = false;
+        fullscreenButton.addEventListener('click', () => {
+            const docElm = document.documentElement;
+            if (!isFullscreen) {
+                // 풀화면으로 전환
+                if (docElm.requestFullscreen) {
+                    docElm.requestFullscreen();
+                } else if (docElm.mozRequestFullScreen) {
+                    docElm.mozRequestFullScreen();
+                } else if (docElm.webkitRequestFullscreen) {
+                    docElm.webkitRequestFullscreen();
+                } else if (docElm.msRequestFullscreen) {
+                    docElm.msRequestFullscreen();
+                }
+                isFullscreen = true;
+            } else {
+                // 풀화면 종료
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                isFullscreen = false;
+            }
+        });
+
+
+        // 계정정보(account) 테이블 > 프로젝트관리자(isRoleAdminProject) 체크(true/false)
+        const isRoleAdminProject = [[${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject}]];
+
+        if(!isRoleAdminProject) 	setSimpleLayout();
+    });
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" id="" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <div class="popup-tit"><span th:text="${title}">검증/비교</span>
+                <small>* 보라색 표기가 변경된 값입니다.</small>
+            </div>
+            <!--
+            <div class="gisung-count-set">
+                <div class="section">
+                    <th:block th:if="${compareResult != null and compareResult.toString().equals('AP')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_add}">이곳에 검증 문구가 노출됩니다.</span>
+                        <div class="check-set">
+                            <input type="checkbox" id="searchCompareResult" name="searchCompareResult" value="AP">
+                            <label for="searchCompareResult" th:text="#{gisung.index.detail.check_process_item_add}">실적 100% 공정만 보기</label>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${compareResult != null and compareResult.toString().equals('AP')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_complete}">이곳에 검증 문구가 노출됩니다.</span>
+                        <div class="check-set">
+                            <input type="checkbox" id="searchCompareResult" name="searchCompareResult" value="AP">
+                            <label for="searchCompareResult" th:text="#{gisung.index.detail.check_process_item_add}">실적 100% 공정만 보기</label>
+                        </div>
+                    </th:block>
+                </div>
+            </div>
+            -->
+            <div class="btn-box">
+                <!--<a href="#none" id="btnSelTargetSave" class="btn btn-color1">선택 적용</a>-->
+                <a href="#none" id="btnAllTargetSave" class="btn btn-color-violet">전체 적용</a>
+                <a href="#none" class="btn close">취소</a>
+            </div>
+            <button type="button" class="close close-btn">팝업닫기</button>
+        </div><!--//popup_top-->
+        <div class="popup-con">
+        </div>
+    </div><!--//popup_content-->
+    <script th:inline="javascript">
+        let updatingCompare = false;
+        $(document).ready(function() {
+            $('.scroll-wrap').overlayScrollbars({});
+        });
+
+    </script>
+</div><!--// popup-wrap-->
+

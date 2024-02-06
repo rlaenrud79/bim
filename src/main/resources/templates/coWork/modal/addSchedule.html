@@ -1,0 +1,149 @@
+<!-- 모달 - 일정 상세 등록  -->
+<div class="content schedule-add" xmlns="http://www.w3.org/1999/html">
+  <table class="table" th:object="${scheduleVO}">
+    <tr>
+      <th>
+        <span th:text="#{co_work.modal.add_schedule.term}">기간</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group from-date">
+          <div class="input-group">
+            <input type="text" class="form-control" id="startDate" th:field="*{startDate}" readonly>
+            <span> ~ </span>
+            <input type="text" class="form-control" id="endDate" th:field="*{endDate}" readonly>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{co_work.modal.add_schedule.title}">일정명</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+      <td>
+        <div class="form-group">
+          <input type="text"
+                 id="title" name="title"
+                 class="form-control"
+                 th:field="*{title}"
+                 th:placeholder="#{co_work.modal.add_schedule.title_placeholder}">
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{co_work.modal.add_schedule.schedule_type}">일정 구분</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group">
+          <select class="custom-select" id="selectType" th:field="*{selectType}">
+            <option value="" th:utext="#{co_work.modal.add_schedule.select_type_null}">::선택::</option>
+            <option th:each="scheduleType : ${scheduleTypes}"
+                    th:value="${scheduleType.code}"
+                    th:utext="${scheduleType.getLocaleName()}" >공휴일
+            </option>
+          </select>
+        </div>
+      </td>
+    </tr>
+
+    <tr>
+      <th>
+        <span th:text="#{co_work.modal.add_schedule.description}">설명</span>
+      </th>
+      <td>
+        <div class="form-group w-100">
+          <textarea id="description"
+                    th:field="*{description}"
+                    class="form-control"
+                    rows="5" maxlength="1024"
+                    th:placeholder="#{co_work.modal.add_schedule.description_placeholder}"></textarea>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="btn-footer">
+  <button id="mBtnAdd" type="button" class="btn bg-gradient-success" th:text="#{co_work.modal.add_schedule.btn_add}">저장</button>
+</div>
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+
+    // datepicker init
+    $("#startDate, #endDate").datepicker(datepickerFormat);
+
+    function getSendData() {
+      return JSON.stringify({
+        "title": $("#title").val(),
+        "startDate": $("#startDate").val(),
+        "endDate": $("#endDate").val(),
+        "selectType": $("#selectType").val(),
+        "description": $("#description").val()
+      });
+    }
+
+    let executeAdd = function () {
+      reqPostJSON('/coWorkApi/postSchedule'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            toastr.success(data.message);
+            PageFunction.selectedYearMonth = $("#startDate").val().substr(0, 7);
+            $("#modalScheduleAdd").modal("hide");
+          } else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on('change', '#startDate', function () {
+      let startDate = $(this).val();
+      let endDate = $("#endDate").val();
+
+      if (moment(startDate).isAfter(endDate)) $("#endDate").val($(this).val());
+    });
+
+    _this.on('change', '#endDate', function () {
+      let startDate = $("#startDate").val();
+      let endDate = $(this).val();
+
+      if (moment(endDate).isBefore(startDate)) $("#startDate").val($(this).val());
+    });
+
+    _this.on('click', '#mBtnAdd', function () {
+
+      if ($('#startDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_schedule.error_no_start_date}]]");
+        return;
+      }
+
+      if ($('#endDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_schedule.error_no_end_date}]]");
+        return;
+      }
+
+      if (moment($("#endDate").val()).isBefore( $("#startDate").val())) {
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_schedule.error_end_before_start_date}]]");
+        return;
+      }
+
+        if ($('#title').val() == "") {
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_schedule.error_no_title}]]");
+        return;
+      }
+
+      if ($('#selectType').val() == "") {
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_schedule.error_no_select_type}]]");
+        return;
+      }
+
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.modal.add_schedule.confirm_add_schedule}]]", executeAdd);
+    });
+  });
+</script>

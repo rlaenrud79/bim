@@ -1,0 +1,57 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="print-page print-write page-fl">
+        <div class="cover-list">
+            <h2 class="font-neo">표지 목록</h2>
+            <ul>
+                <li>
+                    <div class="txt-box">
+                        <button type="button" class="add-btn font-neo btnCoverAdd"><span>+</span>신규등록</button>
+                    </div>
+                </li>
+
+                <li th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungCover}">
+                    <div class="txt-box">
+                        <p class="txt1" th:text="${item.title}">기성검사원<small th:text="${item.subTitle}">(양평~이천 4공구)</small></p>
+                        <p class="txt2" th:text="${item.date}">2023.04</p>
+                        <p class="txt3" th:text="${item.projectName}">고속국도 제400호선 양평~이천간 건설공사 (제4차)</p>
+                    </div>
+                    <div class="btn-box">
+                        <button type="button" class="btn-xs btn-color2 btnCoverModify" th:data-id="${item.id}">
+                            <span> 선택</span>
+                        </button>
+                        <button type="button" class="btn-xs btnCoverDelete" th:data-id="${item.id}">
+                            <span> 삭제</span>
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card-body cover-edit">
+            <h2 class="font-neo">표지 작성</h2>
+            <section class="page cover-ty1">
+                <div class="title">
+                    <h2>
+                        <input id="gisungCoverId" name="gisungCoverId" type="hidden" value="0">
+                        <input id="documentNo" name="documentNo" type="hidden" th:value="9">
+                        <input type="text" name="title" id="title" class="wid-m mb-10" placeholder="제목"><br><small><input type="text" name="sub_title" id="sub_title" class="wid-m" placeholder="소제목"></small>
+                    </h2>
+                </div>
+                <div class="date">
+                    <input type="text" name="date" id="date" placeholder="날짜">
+                </div>
+                <div class="txt">
+                    <input type="text" name="project_name" id="project_name" placeholder="공사명">
+                </div>
+            </section>
+
+            <div class="btn-box">
+                <a href="#none" class="btn btn-color2" id="btnWriteGisungItem" th:data-gisung-id="${gisung.id}">저장</a>
+                <a href="#none" class="btn btn-color1" id="btnDownloadPRINT" data-modal="#modalPrintGisungItem">인쇄하기</a>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>

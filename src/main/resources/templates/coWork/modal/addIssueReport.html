@@ -1,0 +1,91 @@
+<div class="content add-coworkissue-report">
+    <table class="table">
+        <caption th:text="#{co_work.modal.add_issue_report.report_contents}">작업내용</caption>
+        <tbody>
+            <tr>
+                <th><span th:text="#{co_work.modal.add_issue_report.contents}">내용</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                    <div th:replace="common/editor/page :: load()"></div>
+                </td>
+            </tr>
+            <tr>
+                <th th:text="#{co_work.modal.add_issue_report.attach_file}">파일 첨부</th>
+                <td>
+                  <div th:replace="/common/fileUploader :: multiFileUploader('issueReportFileUpload')"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="btn-footer">
+    <button id="mBtnAddIssueReport" type="button" class="btn bg-gradient-success" th:text="#{co_work.modal.add_issue_report.btn_add}">등록</button>
+</div>
+<div th:include="common/editor/page :: script()"></div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script>
+  $(document).ready(function () {
+
+    let _this = $("#modalAddIssueReport");
+    let _this_issueId = [[${issueId}]];
+    let _this_issueReportId = 0;
+    let _issueFileExtension = '[[${issueFileExtension}]]';
+
+    function getSendData() {
+      return JSON.stringify({
+        "issueId": _this_issueId,
+        "contents": CommonEditor.getInputData()
+      });
+    }
+
+    let executeAddIssueReport = function () {
+      reqPostJSON('/coWorkApi/postIssueReport'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            if ($("#issueReportFileUpload" + "s").find(".devo_file_list").length > 0) {
+              _this_issueReportId = data.returnId;
+              $("#issueReportFileUpload").dmUploader("start");
+            }
+            else completeUploadFile();
+          }
+          else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on("click", "#mBtnAddIssueReport", function (){
+      if(CommonEditor.getInputData() == "<p><br></p>"  || CommonEditor.isEmpty()){
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_issue_report.error_no_contents}]]");
+        return;
+      }
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.modal.add_issue_report.confirm_add_issue_report}]]", executeAddIssueReport);
+    });
+
+    let completeUploadFile = function () {
+      reloadComponent("/coWork/issueViewCardReportBody", "#divCardReportBody", "issueId=" + _this_issueId + "&" + PageFunction.setParam());
+      toastr.success('[[#{co_work.modal.add_issue_report.message_success}]]');
+      $("#modalAddIssueReport").modal("hide");
+    }
+
+    let issueReportFileExtraData = function () {
+      return {
+        "id": _this_issueReportId,
+        "fileUploadUIType": "ISSUE_REPORT",
+        "makeVersion": false,
+        "executeHoopsConverter" : false
+      }
+    }
+
+    makeMultiUploaderScript("#issueReportFileUpload"
+      , issueReportFileExtraData
+      , 5000000000
+      , _issueFileExtension.split("||")
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+
+  });
+</script>

@@ -1,0 +1,28 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+    <div class="search-box" th:object="${searchVO}">
+        <input type="hidden" id="sortProp" value="">
+        <section>
+            <select th:field="*{roleId}">
+                <option th:value="${0}" th:text="#{admin.user_list.page.role_select}">:: 권한 ::</option>
+                <option th:each="roleName : ${roleNames}" th:value="${roleName.role.id}" th:text="${roleName.name}">Value 2</option>
+            </select>
+            <select th:field="*{workId}">
+                <option th:value="${0}" th:text="#{admin.user_list.page.work_select}">:: 공종 ::</option>
+                <option th:each="workName : ${workNames}" th:value="${workName.work.id}" th:text="${workName.name}">Value 2</option>
+            </select>
+            <select th:field="*{companyId}">
+                <option th:value="${0}" th:text="#{admin.user_list.page.company_select}">:: 회사 ::</option>
+                <option th:each="company : ${companies}" th:value="${company.id}" th:text="${company.name}">Value 2</option>
+            </select>
+        </section>
+        <section>
+            <input type="hidden" name="searchType" id="searchType" value="ALL">
+            <input type="text" th:field="*{searchText}" placeholder="성명 또는 아이디 입력">
+        </section>
+        <section>
+            <a href="#none" id="searchUser" class="btn btn-color2"><span th:text="#{admin.user_list.page.search}">검색</span></a>
+<!--            <a href="#none" id="resetSearchCondition" class="btn"><span th:text="#{admin.user_list.page.initialize}">초기화</span></a>-->
+        </section>
+    </div>
+
+</form>

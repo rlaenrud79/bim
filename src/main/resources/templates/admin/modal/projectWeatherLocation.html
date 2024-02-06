@@ -1,0 +1,84 @@
+<!-- 모달 - 날씨 좌표 설정  -->
+<div class="content weather-cood-inate">
+  <table class="table">
+    <caption>지역 선택</caption>
+    <tbody>
+    <tr id="region1Area" th:replace="admin/modal/weatherRegionSelect :: load('1',${region1s}, ${region1Name})"></tr>
+    <tr id="region2Area" th:replace="admin/modal/weatherRegionSelect :: load('2',${region2s}, ${region2Name})"></tr>
+    <tr id="region3Area" th:replace="admin/modal/weatherRegionSelect :: load('3',${region3s}, '')"></tr>
+    </tbody>
+  </table>
+  <table class="table mt-3">
+    <caption>좌표 정보</caption>
+    <tbody>
+    <tr>
+      <th>X 좌표</th>
+      <td id="weather_x">○○○○○</td>
+    </tr>
+    <tr>
+      <th>Y 좌표</th>
+      <td id="weather_y">○○○○○</td>
+    </tr>
+    <tr>
+      <th>중장기 날씨 예보 지역 코드</th>
+      <td id="long_forecast_region_code">○○○○○</td>
+    </tr>
+    <tr>
+      <th>중장기 기온 예보 지역 코드</th>
+      <td id="long_temperature_region_code">○○○○○</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<div class="btn-footer">
+  <button id="setWeatherLocationPoint" type="button" class="btn bg-gradient-success">확인</button>
+</div>
+<script th:inline="javascript">
+  $(function () {
+    const $this = $("#projectWeatherLocation");
+
+    let setWeatherXY = (thisElement) => {
+      let $selectedRegion = $(thisElement).find("option:selected");
+
+      $this.find("#weather_x").html($selectedRegion.data("weather-x"));
+      $this.find("#weather_y").html($selectedRegion.data("weather-y"));
+      $this.find("#long_forecast_region_code").html($selectedRegion.data("weather-long-forecast-region-code"));
+      $this.find("#long_temperature_region_code").html($selectedRegion.data("weather-long-temperature-region-code"));
+
+      return $selectedRegion.text();
+    }
+
+    $this.find("#region1,#region2").on("change", function () {
+      let step = $(this).data("step");
+      let region1Name = step == "1"? setWeatherXY(this) : $("#region1Area").find("option:selected").text();
+      let region2Name = step == "2"? setWeatherXY(this) : "";
+      let queryString = "region1Name="+region1Name+"&region2Name="+region2Name;
+
+      includeComponent('/adminModal/projectWeatherLocation', queryString, "#projectWeatherLocation .modal-body")
+    });
+
+    $this.find("#region3").on("change", function () {
+      setWeatherXY(this);
+    });
+
+    $this.find("#setWeatherLocationPoint").on("click", function() {
+      let weatherX = $this.find("#weather_x").html();
+      let weatherY = $this.find("#weather_y").html();
+      let longForecastRegionCode = $this.find("#long_forecast_region_code").html();
+      let longTemperatureRegionCode = $this.find("#long_temperature_region_code").html();
+
+      if(isNaN(weatherX) || isNaN(weatherY)) {
+        showErrorAlert("ALERT",[[#{admin.modal.project_weather_location.validation_weather_location_point}]]);
+        return false;
+      }
+
+      $("#weatherX").val(weatherX);
+      $("#weatherY").val(weatherY);
+      $("#longForecastRegionCode").val(longForecastRegionCode);
+      $("#longTemperatureRegionCode").val(longTemperatureRegionCode);
+      $(".weatherLocationString").html(`X: ${weatherX} | Y: ${weatherY} [${longForecastRegionCode} | ${longTemperatureRegionCode}]`);
+
+      $this.modal('hide');
+    });
+  })
+</script>

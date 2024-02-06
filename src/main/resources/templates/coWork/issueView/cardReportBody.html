@@ -1,0 +1,48 @@
+<div id="divCardReportBody" class="card-body" th:fragment="cardReportBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div th:if="${issueItem.issueReports.size > 0}" class="col-12">
+    <h2 class="list-title"><i class="far fa-list-alt"></i> <span th:text="#{co_work.issue_view.card_report}">작업내용</span></h2>
+    <div class="table-responsive mt-4" th:each="issueReport, index : ${issueItem.issueReports}">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th th:text="#{co_work.issue_view.card_issue_body_writer_write_date}">작성자 / 작성일시</th>
+          <td>
+            <div class="d-flex align-items-center">
+              <div th:replace="/common/userInfoAtField :: userInfoAtField(${issueReport.accountDTO})">작성자</div>
+              &nbsp;&nbsp;&nbsp; / &nbsp;&nbsp;&nbsp;
+              <div th:text="${#temporals.format(issueReport.handleDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.05.03 11:00</div>
+            </div>
+          </td>
+
+          <th th:text="#{co_work.issue_view.card_report_file}">첨부파일</th>
+          <td>
+            <ul>
+              <li th:each="issueReportFile : ${issueReport.issueReportFiles}">
+                <a  th:id="btnIssueReportFile_ + ${issueReportFile.id}"
+                    href="#" role="button"
+                    th:data-id="${issueReportFile.id}"
+                    th:data-ext="${issueReportFile.originFileNameExt}"
+                    th:data-file-path="${issueReportFile.filePath}"
+                    th:classappend="${issueReportFile.isImage} ? 'zoom-in-image'"
+                    th:data-is-image="${issueReportFile.isImage}"
+                    th:src="${issueReportFile.filePath}">
+                  <span class="text-over-dot" th:text="${issueReportFile.originFileName}">도면명 1111.pdf</span>
+                </a>
+              </li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="4" class="px-0 py-0">
+            <div class="context-area">
+              <div class="scroll-area-v">
+                <div th:replace="common/editor/preview :: load('contents-preview-report-' + ${index.index + 1}, ${issueReport.contents})"></div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

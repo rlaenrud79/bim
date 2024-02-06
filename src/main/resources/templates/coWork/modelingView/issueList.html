@@ -1,0 +1,33 @@
+<article id="issueList" th:fragment="load()">
+  <header>
+    <span th:text="#{co_work.modeling_view.page.issue_list}">이슈목록</span>
+    <button th:if="${isGoing}" type="button" class="btn bg-gradient-success btn-xs" data-type="add" data-toggle="modal" data-target="#coWorkIssueItem" th:text="#{co_work.modeling_view.page.issue_add}">이슈추가</button>
+  </header>
+
+  <div class="scroll-area-v">
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.issue_title}">제목</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.issue_writer}">작성자</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.issue_complete_request_date}">완료요구<br>일자</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.issue_status}">상태</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="issue : ${issues}" th:data-id="${issue.id}">
+        <td>
+          <a href="#">
+            <span th:id="${ 'issueArea_'+ issue.id}" class="text-over-dot issueItem" th:text="${issue.title}">휴무일 공지(2021.05.05)</span>
+          </a>
+        </td>
+        <td class="text-center">
+          <div th:replace="/common/userInfo :: userInfo(${issue.writeEmbedded.accountDTO})"></div>
+        </td>
+        <td class="text-center" th:text="${#temporals.format(issue.requestDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+        <td class="text-center" th:text="#{${issue.status.getMessageProperty()}}">작성중</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

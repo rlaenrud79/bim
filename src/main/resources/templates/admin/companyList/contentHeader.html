@@ -1,0 +1,9 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{admin.company_list.title_company}">관계사 목록</h2>
+  </div>
+  <div class="header-right">
+    <a href="#none" id="btnExcelDownload" class="btn btn-color4"><span th:text="#{admin.company_list.btn_excel_download}">엑셀 다운로드</span></a>
+    <a href="#none" id="btnAdd" class="btn btn-color1 pop-open-btn" data-modal="#modalAddGisung"><span th:text="#{admin.company_list.btn_add}">등록</span></a>
+  </div>
+</div>

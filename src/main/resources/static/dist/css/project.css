@@ -1,0 +1,54 @@
+.period-table {
+  width: 100%; display: flex; justify-content: space-between; font-size: 11px;
+}
+
+.board-add table.task-table tbody th,
+.board-add table.task-table tbody td {
+  min-width: unset;
+  width: unset;
+  padding: 0.2rem;  
+}
+table.task-table th {
+  background: #eef0f2;
+}
+table.task-table th, table.task-table td {
+  padding: 0.2rem;
+  border-left: 1px solid #dee2e6;
+  border:1px solid #dee2e6;
+  text-align: center;
+}
+table.task-table th:last-child, table.task-table td:last-child {
+  border-right: 1px solid #dee2e6;
+}
+.task-table {
+  width:100%;
+}
+.task-table input {
+  padding: 0;
+  text-align: right;
+}
+.task-table input:read-only {
+  background: none;
+  border:0;
+}
+
+.period-table {
+  width: 100%; display: flex; justify-content: start; font-size: 14px; gap:5px; background: #c7c7c7; padding:0.7rem 1.5rem 0 1.5rem;
+}
+.board-view table.task-table tbody th {
+  min-width: unset;
+  width: unset;
+}
+
+table.table-process-item {
+  width: 98%;
+}
+
+table.table-process-item tr td {
+  padding: 0;
+}
+
+table.table-process-item .btnDel {
+  font-weight: bold; color: red; border: none;
+}
+

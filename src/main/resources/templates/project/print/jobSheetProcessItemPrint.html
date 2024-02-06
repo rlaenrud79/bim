@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<link rel="stylesheet" href="/dist/css/print.css">
+
+<body style="overflow: visible">
+<!--공정 인쇄 팝업-->
+<div class="print-page2 pg-detail print-write">
+    <section>
+        <h1>[[${jobSheetProcessItem.taskFullPath}]]</h1>
+        <div class="write-date">
+            <strong>작성일자 :</strong>
+            <span th:text="|${#strings.substring(jobSheetProcessItem.grantDate, 0, 4)}.|">2023.</span>
+            <span th:text="|${#strings.substring(jobSheetProcessItem.grantDate, 5, 7)}.|">03.</span>
+            <span th:text="|${#strings.substring(jobSheetProcessItem.grantDate, 8, 10)}.|">01.</span>
+            <!--<span th:text="${'(' + #dates.dayOfWeekName(jobSheetProcessItem.grantDate) + ')'}">(수)</span>-->
+        </div>
+
+
+        <div class="tb-colgroup">
+            <div class="col2">
+                <div class="title">
+                    <h2>공정이미지</h2>
+                </div>
+                <div class="img g-img">
+                    <img th:src="${jobSheetProcessItem.mySnapShotSource}">
+                    <th:block th:if="${jobSheetProcessItem.mySnapShotId != null}">
+                    </th:block>
+                </div>
+            </div>
+            <div class="col2">
+                <div class="title">
+                    <h2>객체정보</h2>
+                </div>
+                <table class="table ty-basic">
+                    <colgroup>
+                        <col style="width:15%">
+                        <col style="width:15%">
+                        <col style="width:70%">
+                    </colgroup>
+                    <tbody>
+                    <tr class="tb-head">
+                        <th colspan="2">구분</th>
+                        <th>데이터</th>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">공사</th>
+                        <th>객체이름</th>
+                        <td>[[${jobSheetProcessItem.exchangeIds}]]</td>
+                    </tr>
+                    <tr>
+                        <th>작업분류</th>
+                        <td>[[${jobSheetProcessItem.taskFullPath}]]</td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <th>재료</th>
+                        <td></td>
+                    </tr>
+                    -->
+                    <tr>
+                        <th rowspan="3">공정</th>
+                        <th>공정명</th>
+                        <td>[[${jobSheetProcessItem.taskName}]]</td>
+                    </tr>
+                    <tr>
+                        <th>기간</th>
+                        <td>[[${jobSheetProcessItem.startDate}]] ~ [[${jobSheetProcessItem.endDate}]]</td>
+                    </tr>
+                    <tr>
+                        <th>진행률</th>
+                        <td th:if="${jobSheetProcessItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate / jobSheetProcessItem.getDuration()}]]%</td>
+                        <td th:unless="${jobSheetProcessItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate}]]%</td>
+                    </tr>
+                    <tr>
+                        <th rowspan="3">내역</th>
+                        <th>대표수량</th>
+                        <td>[[${jobSheetProcessItem.processItem.firstCount}]]</td>
+                    </tr>
+                    <tr>
+                        <th>복합단가</th>
+                        <td th:text="${#numbers.formatInteger(jobSheetProcessItem.processItem.complexUnitPrice, 3, 'COMMA')}">1,189,162,853</td>
+                    </tr>
+                    <tr>
+                        <th>공사비용</th>
+                        <td th:text="${#numbers.formatInteger(jobSheetProcessItem.processItem.cost, 3, 'COMMA')}">1,189,162,853</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="title">
+            <h2>인원현황</h2>
+        </div>
+        <table class="table ty-basic">
+            <colgroup>
+                <col style="width:10%" span="10">
+            </colgroup>
+            <tbody>
+            <th:block th:each="row, info : ${jobSheetProcessItemWorkers}">
+                <th:block th:if="${info.index == 0}">
+                    <tr>
+                </th:block>
+                <th:block th:if="${info.index > 0} and ${info.index % 5 == 4}">
+                    </tr>
+                    <tr>
+                </th:block>
+                <th>[[${row.workerName}]]</th>
+                <td class="txt-cnt">[[${row.workerAmount}]]</td>
+            </th:block>
+            <th:blcock th:with="workerCnt=${5 - (#arrays.length(jobSheetProcessItemWorkers) % 5)}">
+                <th:blcock th:if="${workerCnt > 0}">
+                    <th:block th:each="i : ${#numbers.sequence(0, 5 - workerCnt)}">
+                        <th></th>
+                        <td class="txt-cnt"></td>
+                    </th:block>
+                </th:blcock>
+            </th:blcock>
+            <th:blcock th:if="${#arrays.length(jobSheetProcessItemWorkers) == 0}">
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+            </th:blcock>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="title">
+            <h2>장비현황</h2>
+        </div>
+        <table class="table ty-basic">
+            <colgroup>
+                <col style="width:10%" span="10">
+            </colgroup>
+            <tbody>
+            <th:block th:each="row, info : ${jobSheetProcessItemDevices}">
+                <th:block th:if="${info.index == 0}">
+                    <tr>
+                </th:block>
+                <th:block th:if="${info.index > 0} and ${info.index % 5 == 4}">
+                    </tr>
+                    <tr>
+                </th:block>
+                <th>[[${row.deviceName}]]</th>
+                <td class="txt-cnt">[[${row.deviceAmount}]]</td>
+            </th:block>
+            <th:blcock th:with="deviceCnt=${5 - (#arrays.length(jobSheetProcessItemDevices) % 5)}">
+                <th:blcock th:if="${deviceCnt > 0}">
+                    <th:block th:each="i : ${#numbers.sequence(0, 5 - deviceCnt)}">
+                        <th></th>
+                        <td class="txt-cnt"></td>
+                    </th:block>
+                </th:blcock>
+            </th:blcock>
+            <th:blcock th:if="${#arrays.length(jobSheetProcessItemDevices) == 0}">
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+                <th></th>
+                <td class="txt-cnt"></td>
+            </th:blcock>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="title">
+            <h2>세부내역</h2>
+        </div>
+        <table class="table">
+            <colgroup>
+                <col style="width:15%">
+                <col style="width:30%">
+                <col style="width:5%">
+                <col style="width:15%">
+                <col style="width:5%">
+                <col style="width:15%">
+                <col style="width:15%">
+            </colgroup>
+            <tbody>
+            <tr class="tb-head">
+                <th colspan="2">상세공종</th>
+                <th colspan="4">수량</th>
+                <th>공사비</th>
+            </tr>
+            <tr class="tb-head">
+                <th>코드</th>
+                <th>명</th>
+                <th>대표</th>
+                <th>ⓐ값</th>
+                <th>단위</th>
+                <th>ⓑ단가</th>
+                <th>ⓐ*ⓑ</th>
+            </tr>
+            <tr th:each="row, info : ${processItemCostDetail}">
+                <td class="txt-cnt">[[${row.code}]]</td>
+                <td class="txt-left">[[${row.name}]]</td>
+                <td class="txt-cnt">
+                    <th:block th:if="${row.isFirst}">
+                        <input type="checkbox" disabled="" th:checked="true">
+                    </th:block>
+                    <th:block th:unless="${row.isFirst}">
+                        <input type="checkbox" disabled="" th:checked="false">
+                    </th:block>
+                </td>
+                <td class="txt-cnt">[[${#numbers.formatDecimal(row.count, 1, 'COMMA', 3, 'POINT')}]]</td>
+                <td>[[${row.unit}]]</td>
+                <td>[[${#numbers.formatInteger(row.unitPrice, 1, 'COMMA')}]]</td>
+                <td>[[${#numbers.formatInteger(row.cost, 1, 'COMMA')}]]</td>
+            </tr>
+            <tr>
+                <td class="txt-cnt">집계</td>
+                <td class="txt-cnt">[[${#arrays.length(processItemCostDetail)}]]</td>
+                <td colspan="4"><span class="txt-color-blue">[[${totalText}]]</span></td>
+                <td>[[${#numbers.formatInteger(#aggregates.sum(processItemCostDetail.![cost]), 1, 'COMMA')}]]</td>
+            </tr>
+            </tbody>
+        </table>
+
+    </section><!---//section-->
+</div><!--//page-->
+<!--// 공정 인쇄 팝업-->
+
+</body>
+
+</html>
+
+<script type="text/javascript">
+    window.print();
+</script>

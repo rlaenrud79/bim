@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/companyAdd/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+
+        <div id="divCardBody" th:replace="admin/companyAdd/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    let _this = $(this);
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+
+    let executeAdd = function () {
+      reqPostJSON('/adminApi/postCompany'
+        , JSON.stringify({
+          "companyName": $("#companyName").val(),
+          "telNo" : $("#telNo").val(),
+          "companyRoleId" : $("#companyRoleId").val(),
+          "isDisplay" : $("input:radio[id=\'isDisplay_Y\']").is(':checked') ? true : false,
+          "isEnabled" : $("input:radio[id=\'status_REG\']").is(':checked') ? true : false,
+          "isHead" : $("input:radio[name=\'roleType\']:checked").val(),
+          "companyWorks" :  _checkedWorkCnt > 0 ?_selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",") : []
+        })
+        , function (data) {
+          if (data.result) {
+            //toastr.success(data.message);
+            alert(data.message);
+            $("#btnGotoList").click();
+          }
+          else{
+            //toastr.error(data.message);
+            alert(data.message);
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on('click', '#btnGotoList', function() {
+      window.open("/admin/companyList");
+    });
+
+    _this.on('click', '#btnAddRole', function() {
+      window.open("/admin/companyRoleList");
+    });
+
+    _this.on('click', '#btnAddWork', function() {
+      window.open("/admin/workList");
+    });
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('click', '#btnAddCompany', function() {
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      if ($("#companyName").val() == "") {
+        alert("[[#{admin.company_add.error_no_company_name}]]");
+        return;
+      }
+
+      if ($("#telNo").val() == "") {
+        alert("[[#{admin.company_add.error_no_tel_no}]]");
+        return;
+      }
+
+      if (!checkTelNo( [[${telNoPattern}]], $("#telNo").val())) {
+        alert("[[#{admin.company_add.error_no_regex_tel_no}]]");
+        return;
+      }
+
+      if ($("#companyRoleId").val() == "0") {
+        alert("[[#{admin.company_add.error_no_company_role}]]");
+        return;
+      }
+
+      $(".itemCheck").each(function (index, item) {
+        if ($(this).is(':checked')) {
+          _checkedWorkCnt++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+      console.log("aaa", $("input:radio[name=\'roleType\']:checked").val());
+      console.log("_checkedWorkCnt", _checkedWorkCnt);
+      if($("input:radio[name=\'roleType\']:checked").val() !== 0 && _checkedWorkCnt == 0) {
+        alert("[[#{admin.company_update.error_no_company_works}]]");
+        return;
+      }
+
+      //showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.company_add.confirm_add_company}]]", executeAdd);
+      if (confirm("[[#{admin.company_add.confirm_add_company}]]")) {
+        executeAdd();
+      }
+    });
+  });
+</script>
+</body>
+
+</html>

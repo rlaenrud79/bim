@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="${jobSheet.title}"> 공사일지 관리</h2>
+  </div>
+  <div class="header-right">
+    <a href="#none" class="btn btn-color1" th:if="${isWriter and isWriting}" id="btnMoveEditPage"><span th:text="#{project.job_sheet_view.header_btn_move_edit_page}">수정</span></a>
+    <a href="#none" class="btn btn-color2" th:if="${isWriter and isWriting}" id="btnDelete" th:data-job-sheet-id="*{id}"><span th:text="#{project.job_sheet_view.header_btn_delete}">삭제</span></a>
+    <a href="#none" class="btn" id="btnMoveListPage"><span th:text="#{project.job_sheet_view.header_btn_move_list_page}">목록</span></a>
+    <a href="#none" class="btn pop-open-btn" th:if="${isGrantor and isGoing}" id="openDenyJobSheetModal" data-modal="#modalDenyJobSheet"><span th:text="#{project.job_sheet_view.header_btn_deny}">반려</span></a>
+    <a href="#none" class="btn pop-open-btn" th:if="${isGrantor and isGoing}" id="openApproveJobSheetModal" data-modal="#modalApproveJobSheet"><span th:text="#{project.job_sheet_view.header_btn_approve}">승인</span></a>
+  </div>
+</div><!--// header-->

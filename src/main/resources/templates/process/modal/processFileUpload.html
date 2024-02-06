@@ -1,0 +1,91 @@
+<!-- 모달 - 공정파일업로드 -->
+
+<script>
+
+  $(document).ready(function () {
+
+    let _this = $("#modalProcessFileUpload");
+
+    let excelJsonData = "";
+
+    let closeThis = function (){
+      _this.modal("hide");
+    }
+
+    let checkExcelFileSize = function (object, maxSize){
+      if(object.files[0].size > maxSize) return false;
+      return true;
+    }
+
+    let executeUploadFile = function () {
+      console.log("excelJsonData",
+        excelJsonData.replaceAll("Phasing Codes", "phasingCode")
+          .replaceAll("Planned Start", "plannedStart")
+          .replaceAll("Planned End", "plannedEnd")
+          .replaceAll("FS Codes", "fsCode")
+          .replaceAll("FS Dur", "fsDur"));
+    }
+
+    _this.on("change", "#file", function(e){
+
+      PageFunction.showProcessingProc();
+
+      let endParse = false;
+      excelJsonData = "";
+
+      let input = e.target;
+      let reader = new FileReader();
+
+      if(input.files[0] == undefined) {
+        showErrorAlert("ALERT", "[[#{common.file_upload.error_undefined}]]");
+        return false;
+      }
+
+      if(!checkExcelFileSize(input, 5000000000)) {
+        showErrorAlert("ALERT", "[[#{common.file_upload.error_file_size}]]");
+        return false;
+      }
+
+      reader.onload = function () {
+        let data = reader.result;
+        let workBook = XLSX.read(data, { type: 'binary', cellDates: true });
+
+        workBook.SheetNames.forEach(function (sheetName, index) {
+          let rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName]);
+          excelJsonData += JSON.stringify(rows);
+        });
+
+        endParse = true;
+      };
+
+      reader.readAsBinaryString(input.files[0]);
+
+      let timer = setInterval(function() {
+        if(endParse) {
+          PageFunction.hideProcessingProc();
+          clearInterval(timer);
+        }
+      }, 1000);
+
+    });
+
+    _this.on("click", "#mBtnUploadFile", function (e) {
+
+      if ($("#file").val() === "") {
+        showErrorAlert("ALERT", "[[#{process.modal.process_file_upload.error_no_upload_file}]]");
+        return false;
+      }
+      if(excelJsonData === "") {
+        showErrorAlert("ALERT", "[[#{process.modal.process_file_upload.error_no_data}]]");
+        return false;
+      }
+
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{process.modal.process_file_upload.confirm_upload_file}]]", executeUploadFile);
+    });
+
+    let completeUploadFile = function (obj) {
+      closeThis();
+    }
+
+  });
+</script>

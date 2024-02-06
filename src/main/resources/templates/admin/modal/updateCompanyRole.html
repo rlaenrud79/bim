@@ -1,0 +1,149 @@
+<div th:object="${companyRole}" class="form">
+  <div class="grid">
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_company_role.sort_no}">순번</span><small class="req-ico">*</small></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="hidden"
+               id="companyRoleId"
+               th:field="*{id}">
+        <input type="number"
+               id="sortNo"
+               th:field="*{sortNo}"
+               th:placeholder="#{admin.modal.update_company_role.sort_no_placeholder}">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_company_role.role_name_en}">영어</span><small class="req-ico">*</small></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="companyRoleNameEN"
+               name="companyRoleNameEN"
+               th:placeholder="#{admin.modal.update_company_role.company_role_name_en_placeholder}"
+               th:value="${companyRoleNameEN}"
+               maxlength="1024">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_company_role.role_name_ko}">한글</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="companyRoleNameKO"
+               name="companyRoleNameKO"
+               th:placeholder="#{admin.modal.update_company_role.company_role_name_ko_placeholder}"
+               th:value="${companyRoleNameKO}"
+               maxlength="1024">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_company_role.role_name_zh}">중국어</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="companyRoleNameZH"
+               name="companyRoleNameZH"
+               th:placeholder="#{admin.modal.update_company_role.company_role_name_zh_placeholder}"
+               th:value="${companyRoleNameZH}"
+               maxlength="1024">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="btn-box">
+  <a href="#none" id="mBtnUpdate" class="btn btn-color1" th:text="#{admin.modal.update_company_role.btn_update}">수정</a>
+  <a href="#none" id="mBtnDelete" class="btn" th:text="#{admin.modal.update_company_role.btn_delete}">삭제</a>
+  <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+
+<script>
+  $(document).ready(function () {
+    let _this = $("#modalCompanyRoleUpdate");
+    let updating = false;
+
+    _this.on('click', '#mBtnDelete', function () {
+      if (updating) {
+        return;
+      }
+
+      updating = true;
+      if (confirm("[[#{admin.modal.update_company_role.confirm_delete_company_role}]]")) {
+        deleteCompanyRole();
+      }
+    });
+
+    _this.on('click', '#mBtnUpdate', function () {
+      if (updating) {
+        return;
+      }
+
+      updating = true;
+      if ($("#sortNo").val() == "") {
+        alert("[[#{admin.modal.update_company_role.error_no_sort_no}]]");
+        return;
+      }
+
+      if ($("#companyRoleNameEN").val() == "") {
+        alert("[[#{admin.modal.update_company_role.error_no_company_role_name_en}]]");
+        return;
+      }
+
+      if (confirm("[[#{admin.modal.update_company_role.confirm_update_company_role}]]")) {
+        updateCompanyRole();
+      }
+    });
+
+    function deleteCompanyRole() {
+      reqPost('/adminApi/putDisabledCompanyRole'
+        , {"companyRoleId": $("#companyRoleId").val()}
+        , function (data) {
+          if (data.result) {
+            reloadComponent("/admin/companyRoleListCardBody", "#divCardBody", "");
+            alert(data.message);
+            $(".close").click();
+          } else {
+            alert(data.message);
+            $(".close").click();
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function updateCompanyRole() {
+      reqPostJSON('/adminApi/putCompanyRole'
+        , setSendData()
+        , function (data) {
+          if (data.result) {
+            reloadComponent("/admin/companyRoleListCardBody", "#divCardBody", "");
+            //toastr.success(data.message);
+            $(".close").click();
+          } else {
+            //toastr.error(data.message);
+            $(".close").click();
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function setSendData() {
+      return JSON.stringify({
+        "id": $("#companyRoleId").val(),
+        "sortNo": $("#sortNo").val(),
+        "companyRoleNames": [
+          {"languageCode": "EN", "name": $("#companyRoleNameEN").val()},
+          {"languageCode": "KO", "name": $("#companyRoleNameKO").val()},
+          {"languageCode": "ZH", "name": $("#companyRoleNameZH").val()}
+        ]
+      });
+    }
+  });
+</script>

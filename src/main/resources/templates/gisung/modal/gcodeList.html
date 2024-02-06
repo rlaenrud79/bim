@@ -1,0 +1,92 @@
+
+<div class="board-top" th:replace="common/pagingSizeSelectBox :: type3(${list.size()})" /><!--//board-top-->
+<div class="board-list">
+    <div class="scroll-wrap sc-table">
+        <table class="table tbCodeDetail">
+            <tbody>
+            <input type="hidden" name="gisungId" th:value="${gisungId}">
+            <tr class="sticky-th">
+                <th rowspan="2">
+                    <div class="check-set">
+                        <input type="checkbox" id="gcodeItemCheck">
+                        <label for="gcodeItemCheck"></label>
+                    </div>
+                </th>
+                <th rowspan="2">No</th>
+                <th rowspan="2">공종명</th>
+                <th rowspan="2">공종코드</th>
+                <th rowspan="2">코드</th>
+                <th rowspan="2">코드명</th>
+                <th rowspan="2">단위</th>
+                <th rowspan="2">ⓐ 대표수량</th>
+                <th rowspan="2">ⓑ 수량</th>
+                <th rowspan="2">ⓒ 단가</th>
+                <th>공사비</th>
+                <th colspan="2">전회기성</th>
+                <th colspan="2">금회기성</th>
+                <th colspan="2">누적기성</th>
+                <th colspan="2">잔여기성금액</th>
+            </tr>
+            <tr class="sticky-th-two">
+                <th>ⓐ * ⓑ * ⓒ</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>수량</th>
+                <th>금액</th>
+                <th>수량</th>
+                <th>금액</th>
+            </tr>
+            <tr class="tb-style-total sticky-th-three">
+                <th colspan="8">총계</th>
+                <th th:data-value="${sumTotalCount}" th:text="${#numbers.formatInteger(sumTotalCount, 1, 'COMMA')}">5,861,670</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalUnitPrice, 1)}" th:text="${#numbers.formatInteger(sumTotalUnitPrice, 1, 'COMMA')}">15.00</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalCost, 1)}" th:text="${#numbers.formatInteger(sumTotalCost, 1, 'COMMA')}">879,250</th>
+                <th th:data-value="${sumTotalPaidProgressCount}" th:text="${#numbers.formatDecimal(sumTotalPaidProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalPaidProgressCost, 1)}" th:text="${#numbers.formatInteger(sumTotalPaidProgressCost, 1, 'COMMA')}">879,250</th>
+                <th th:data-value="${sumTotalProgressCount}" th:text="${#numbers.formatDecimal(sumTotalProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalProgressCost, 1)}" th:text="${#numbers.formatInteger(sumTotalProgressCost, 1, 'COMMA')}">879,250</th>
+                <th th:text="${#numbers.formatDecimal(sumTotalSumProgressCount, 1, 'COMMA', 2, 'POINT')}">30.00</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalSumProgressCost, 1)}" th:text="${#numbers.formatInteger(sumTotalSumProgressCost, 1, 'COMMA')}">1,758,501</th>
+                <th th:text="${#numbers.formatDecimal(sumTotalRemindProgressCount, 1, 'COMMA', 2, 'POINT')}">70.00</th>
+                <th th:data-value="${#numbers.formatInteger(sumTotalRemindProgressCost, 1)}" th:text="${#numbers.formatInteger(sumTotalRemindProgressCost, 1, 'COMMA')}">4,103,169</th>
+            </tr>
+            <th:block th:if="${list == null or list.size() == 0}">
+                <tr>
+                    <td colspan="19" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+                </tr>
+            </th:block>
+            <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+                <td id="progressCheckbox">
+                    <div class="check-set">
+                        <input type="checkbox" th:id="|itemGcodeCheck${index.index}|" name="item_code_no" class="gcode-list-item-checkbox" th:data-no="${item.id}" th:value="${item.id}">
+                        <label th:for="|itemGcodeCheck${index.index}|"></label>
+                    </div>
+                </td>
+                <td th:text="${(index.index+1)}">1</td>
+                <td th:text="${item.taskName}">00000</td>
+                <td th:text="${item.phasingCode}">00000</td>
+                <td id="code" th:text="${item.code}">00000</td>
+                <td class="txt-left" id="name" th:text="${item.name}">철근콘크리트타설/펌프카/보통(S15, 100m3. 이하)</td>
+                <td id="unit" th:text="${item.unit}">M3</td>
+                <td th:text="${item.isFirst}">1,146</td>
+                <td id="count" th:data-value="${item.count}" th:text="${#numbers.formatInteger(item.count, 1, 'COMMA')}">170,605,932</td>
+                <td id="unitPrice" th:data-value="${#numbers.formatInteger(item.unitPrice, 1)}" th:text="${#numbers.formatInteger(item.unitPrice, 1, 'COMMA')}">16,603</td>
+                <td id="cost" th:data-value="${#numbers.formatInteger(item.cost, 1)}" th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}">1,146</td>
+                <td id="paidProgressCount" th:data-value="${item.paidProgressCount}" th:text="${#numbers.formatDecimal(item.paidProgressCount, 1, 'COMMA', 2, 'POINT')}">3,629,913</td>
+                <td id="paidCost" th:data-value="${#numbers.formatInteger(item.paidCost, 1)}" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}">284.32</td>
+                <td id="progressCountInput">
+                    <input type="hidden" id="processItemId" name="processItemId" class="form-control" placeholder="" th:value="${item.processItemId}">
+                    <input type="text" id="progressCount" name="progressCount" class="form-control input-box-xs progress-count" placeholder="" th:value="${item.progressCount}">
+                </td>
+                <td id="progressCost" th:data-value="${#numbers.formatInteger(item.progressCost, 1)}" th:text="${#numbers.formatInteger(item.progressCost, 1, 'COMMA')}"></td>
+                <td id="sumProgressCount" th:text="${#numbers.formatDecimal(item.sumProgressCount, 1, 'COMMA', 2, 'POINT')}"></td>
+                <td id="sumProgressCost" th:data-value="${#numbers.formatInteger(item.sumProgressCost, 1)}" th:text="${#numbers.formatInteger(item.sumProgressCost, 1, 'COMMA')}">426.48</td>
+                <td id="remindProgressCount" th:text="${#numbers.formatDecimal(item.remindProgressCount, 1, 'COMMA', 2, 'POINT')}">10,889,740</td>
+                <td id="remindProgressCost" th:data-value="${#numbers.formatInteger(item.remindProgressCost, 1)}" th:text="${#numbers.formatInteger(item.remindProgressCost, 1, 'COMMA')}">6,681.52</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

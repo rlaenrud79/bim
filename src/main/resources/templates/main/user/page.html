@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/doc/articles/springsecurity.html">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('main')"></nav>
+    <aside th:replace="layout/common :: aside('main','myInfo')"></aside>
+
+    <!-- contents area  -->
+    <main role="main" class="content-wrapper admin-content board-add">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div>
+                <h1>
+                    <i class="nav-icon fas fa-user-cog"></i> <span th:text="#{main.user.page.my_info_update}">내 정보 수정</span>
+                </h1>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/main/index"><i class="fas fa-home"></i> <span th:text="#{admin.user.page.nav_home}">HOME</span></a></li>
+                    <li class="breadcrumb-item active" th:text="#{main.user.page.my_info_update}">내 정보 수정</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- /.contents area -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="con-user-add">
+                    <div class="col-lg-12">
+                        <div class="card content-body-area">
+                            <div class="card-header">
+                                <div class="col-12">
+                                    <div class="bim-btn-group">
+                                        <button type="button" class="btn bg-gradient-warning" id="putUser">
+                                            <i class="fas fa-plus"></i> <span th:text="#{admin.user.page.nav_user_update}">수정</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <form id="frmUser">
+                                    <div class="col-12">
+                                        <h2 class="list-title">
+                                            <i class="far fa-list-alt"></i> <span th:text="#{admin.user.page.user_information}">사용자 정보</span>
+                                        </h2>
+                                        <div class="table-resposive">
+                                            <table class="table" th:object="${user}">
+                                                <input th:type="hidden" th:field="*{id}">
+                                                <input th:type="hidden" id="isChangePassword" name="isChangePassword" th:value="false">
+
+                                                <tbody>
+                                                <tr>
+                                                    <th th:text="#{admin.user.page.user_id}">아이디</th>
+                                                    <td th:text="*{email}">12345@abcd.com</td>
+                                                    <th th:text="#{admin.user.page.company}">회사</th>
+                                                    <td th:text="*{company.name}">abc회사</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.password}">비밀번호</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="form-group w-75">
+                                                                <input type="password" th:field="*{password}" class="form-control" minlength="4" maxlength="20" th:placeholder="#{admin.user.page.input_password_english_and_number}">
+                                                                <button type="button" id="initPassword" class="btn"><i class="fas fa-times-circle"></i></button>
+                                                            </div>
+                                                        </div>
+                                                        <span th:text="#{main.user.page.input_password_for_updating_with_new_password}">비밀번호 변경 시에만 새 비밀번호와 함께 입력해주세요.</span>
+                                                    </td>
+                                                    <th th:text="#{admin.user.page.site_responsible}">현장 책임자 여부</th>
+                                                    <td>
+                                                        <span th:if="*{responsible}" th:text="#{admin.user.page.responsible}">책임자</span>
+                                                        <span th:unless="*{responsible}" th:text="#{admin.user.page.responsible_not}">책임자 아님</span>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{main.user.page.new_password}">새 비밀번호</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                    <td>
+                                                        <div class="form-group w-75">
+                                                            <input type="password" name="newPassword" id="newPassword" class="form-control" minlength="4" maxlength="20" th:placeholder="#{admin.user.page.input_password_english_and_number}">
+                                                            <button type="button" id="initNewPassword" class="btn"><i class="fas fa-times-circle"></i></button>
+                                                        </div>
+                                                    </td>
+                                                    <th th:text="#{admin.user.page.work}">공종</th>
+                                                    <td th:text="*{workNamesString}">교량공,포장공</td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.user_name}">성명</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                    <td>
+                                                        <div class="form-group w-50">
+                                                            <input type="text" class="form-control" th:placeholder="#{admin.user.page.input_user_name}" th:field="*{userName}">
+                                                        </div>
+                                                    </td>
+                                                    <th th:text="#{admin.user.page.rank}">직급</th>
+                                                    <td>
+                                                        <div class="form-group w-75">
+                                                            <input type="text" class="form-control" th:field="*{rank}" th:placeholder="#{admin.user.page.input_rank}">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.mobile_no}">휴대전화 번호</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                    <td>
+                                                        <div class="form-group w-50">
+                                                            <input type="text" class="form-control" th:field="*{mobileNo}" th:placeholder="${mobileNoPlaceholder}">
+                                                        </div>
+                                                    </td>
+                                                    <th th:text="#{admin.user.page.phone_no}">전화번호</th>
+                                                    <td>
+                                                        <div class="form-group w-50">
+                                                            <input type="text" class="form-control" th:field="*{phoneNo}" th:placeholder="${telNoPlaceholder}">
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.address}">주소</span></th>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <input type="text" class="form-control" th:field="*{address}" th:placeholder="#{admin.user.page.input_address}">
+                                                        </div>
+                                                    </td>
+                                                    <th th:text="#{admin.user.page.role}">권한</th>
+                                                    <td th:text="*{roleNamesString}">사용자,관리자</td>
+                                                </tr>
+                                                <tr>
+                                                    <th th:text="#{admin.user.page.photo}">사진</th>
+                                                    <td colspan="3">
+                                                        <div class="d-flex align-items-start flex-wrap">
+                                                            <div class="user-panel d-flex mr-4">
+                                                                <div class="image">
+                                                                    <img th:src="${#strings.isEmpty(user.photoPath) ? '/dist/img/no_user_photo.png' : user.photoPath}"
+                                                                         onerror="this.src='/dist/img/no_user_photo.png'"
+                                                                         class="w-100 img-circle" alt="User Image">
+                                                                </div>
+                                                            </div>
+                                                            <div th:replace="/common/fileUploader :: singleFileUploader('uploadFile')"></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <br/><br/>
+                                    <div class="col-12">
+                                        <h2 class="list-title">
+                                            <i class="far fa-list-alt"></i> <span th:text="#{admin.user.page.job_sheet_basic_info_set}">공사일지 기본 정보 설정</span>
+                                        </h2>
+                                        <div class="table-resposive">
+                                            <table class="table" th:object="${user}">
+                                                <tbody>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.input_grantor}"> 결재자</span></th>
+                                                    <td>
+                                                        <div class="d-flex d-flex align-items-center justify-content-between">
+                                                            <div id="divUserInfoAtField"
+                                                                 class="user-panel d-none"
+                                                                 data-toggle="tooltip"
+                                                                 data-placement="bottom"
+                                                                 data-html="true">
+                                                                <div class="image">
+                                                                    <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                                </div>
+                                                            </div>
+
+                                                            <div th:if="${user.accountGrantors.size > 0}" class="savedGrantor">
+                                                                <div th:replace="/common/userInfo :: userInfo(${accountGrantor.accountDTO})"></div>
+                                                            </div>
+                                                            <p th:if="${user.accountGrantors.size} > 0" class="ml-1 mr-auto savedGrantor" th:text="|${accountGrantor.userName} (${accountGrantor.company.companyRole.companyRoleName} / ${accountGrantor.company.name}) |">이결재 (발주사 / 한국 발주)</p>
+                                                            <p th:if="${user.accountGrantors.size} == 0" id="pSelectUserGrantor" class="mr-auto"><span th:text="#{admin.user.page.select_grantor}"> 결재자를 지정하세요.</span></p>
+                                                            <input type="hidden" id="userGrantorId" name="userGrantorId" th:value="${accountGrantor.id}">
+                                                            <button id="btnSearchUserGrantor" type="button" class="btn bg-gradient-primary my-2"><span th:text="#{admin.user.page.btn_grantor}"> 결재자 지정</span></button>
+                                                        </div>
+                                                    </td>
+                                                    <th><span th:text="#{admin.user.page.input_reference}"> 참조자</span></th>
+                                                    <td>
+                                                        <div class="d-flex d-flex align-items-center justify-content-between">
+                                                            <div id="divUserInfoAtFields" class="d-none">
+                                                                <div class="user-panel"
+                                                                     data-toggle="tooltip"
+                                                                     data-placement="bottom"
+                                                                     data-html="true">
+                                                                    <div class="image">
+                                                                        <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div th:if="${user.accountReferences.size > 0}" class="d-flex align-items-center mb-2 savedReferences" th:each="item, index : ${accountReferences}">
+                                                                <div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div>
+                                                                <p class="ml-2 mr-auto" th:text="|${item.userName} (${item.company.companyRole.companyRoleName} / ${item.company.name})|">김참조 (발주사 / 한국 발주)</p>
+                                                            </div>
+                                                            <p th:if="${user.accountReferences.size == 0}" id="pSelectUserReferences" class="mr-auto"><span th:text="#{admin.user.page.select_reference}"> 참조자를 지정하세요.</span></p>
+                                                            <input type="hidden" id="userReferencesIds" name="userReferencesIds">
+                                                            <button id="btnSearchUserReferences" type="button" class="btn bg-gradient-primary my-2"><span th:text="#{admin.user.page.btn_reference}"> 참조자 지정</span></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th><span th:text="#{admin.user.page.get_job_sheet_template}"> 템플릿 가져오기</span></th>
+                                                    <td colspan="3">
+                                                        <div class="form-group w-50">
+                                                            <select id="selectedTemplate" name="selectedTemplate" class="custom-select">
+                                                                <option value="0"><span th:text="#{admin.user.page.select_job_sheet_template}"> :: 공사 현황 템플릿을 선택하세요 ::</span></option>
+                                                                <option th:each="item : ${jobSheetTemplateList}" th:value="${item.getId()}" th:text="${item.getTitle()}" th:selected="${item.id == user.jobSheetTemplateId}"></option>
+                                                            </select>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" id="upperMenu" name="upperMenu" value="21"/> <!--/* form submit 클릭 시 상단 메뉴 설정 정보(각 메뉴의 합산 값)를 세팅한다. */-->
+                                    <input type="hidden" id="sideMenu" name="sideMenu" value="0"/> <!--/* form submit 클릭 시 사이드 메뉴 설정 정보(각 메뉴의 합산 값)를 세팅한다. */-->
+                                </form>
+                                <!--/* 상단 메뉴 설정 START */-->
+                                <!--2023.02.22 상단 메뉴 기능 일부 미사용으로 일부 주석 처리(자료관리,공정관리,내역관리)-->
+                                <br/><br/>
+                                <div class="col-12">
+                                    <div>
+                                        <h2 class="list-title">
+                                            <i class="far fa-list-alt"></i> <span th:text="#{upper.menu.setting}">상단 메뉴 설정</span>
+                                        </h2>
+                                    </div>
+                                    <div class="table-resposive">
+                                        <table class="table">
+                                            <tbody>
+                                            <tr>
+                                                <th th:text="#{layout.common.project}">사업관리</th>
+                                                <td>
+                                                    <span class="icheck-primary">
+                                                        <input type="checkbox" id="chkSummary" class="itemCheck" value="1"/><label for="chkSummary" th:text="#{upper.menu.summary}">개요</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkDailywork" class="itemCheck" value="2"/><label for="chkDailywork" th:text="#{upper.menu.dailywork}">일지</label>
+                                                    </span>
+                                                </td>
+
+                                                <th th:text="#{layout.common.coWork}">협업관리</th>
+                                                <td>
+                                                    <span class="icheck-primary">
+                                                        <input type="checkbox" id="chkCowork" class="itemCheck" value="16"/><label for="chkCowork" th:text="#{upper.menu.cowork}">협업</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkIssue" class="itemCheck" value="32"/><label for="chkIssue" th:text="#{upper.menu.issue}">이슈</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkNotice" class="itemCheck" value="64"/><label for="chkNotice" th:text="#{upper.menu.notice}">공지</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkPost" class="itemCheck" value="128"/><label for="chkPost" th:text="#{upper.menu.post}">게시</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkCalendar" class="itemCheck" value="256"/><label for="chkCalendar" th:text="#{upper.menu.calendar}">달력</label>
+                                                    </span>
+                                                </td>
+
+                                                <!--
+                                                <th th:text="#{layout.common.contents}">자료관리</th>
+                                                <td>
+                                                    <span class="icheck-primary">
+                                                        <input type="checkbox" id="chkModeling" class="itemCheck" value="4"/><label for="chkModeling" th:text="#{upper.menu.modelling}">모델</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkDocument" class="itemCheck" value="8"/><label for="chkDocument" th:text="#{upper.menu.document}">문서</label>
+                                                    </span>
+                                                </td>
+                                                -->
+                                            </tr>
+                                            <tr>
+                                                <!--
+                                                <th th:text="#{layout.common.coWork}">협업관리</th>
+                                                <td>
+                                                    <span class="icheck-primary">
+                                                        <input type="checkbox" id="chkCowork" class="itemCheck" value="16"/><label for="chkCowork" th:text="#{upper.menu.cowork}">협업</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkIssue" class="itemCheck" value="32"/><label for="chkIssue" th:text="#{upper.menu.issue}">이슈</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkNotice" class="itemCheck" value="64"/><label for="chkNotice" th:text="#{upper.menu.notice}">공지</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkPost" class="itemCheck" value="128"/><label for="chkPost" th:text="#{upper.menu.post}">게시</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkCalendar" class="itemCheck" value="256"/><label for="chkCalendar" th:text="#{upper.menu.calendar}">달력</label>
+                                                    </span>
+                                                </td>
+                                                -->
+                                                <!--
+                                                <th th:text="#{layout.common.process}">공정관리</th>
+                                                <td>
+                                                    <span  sec:authorize="hasAnyRole('ROLE_ADMIN_PROCESS')">
+                                                        <span class="icheck-primary">
+                                                            <input type="checkbox" id="chkProcess" class="itemCheck" value="512"/><label for="chkProcess" th:text="#{upper.menu.process}">공정</label>
+                                                        </span>
+                                                        <span class="icheck-primary ml-5">
+                                                            <input type="checkbox" id="chkSimulation" class="itemCheck" value="1024"/><label for="chkSimulation" th:text="#{upper.menu.simulation}">시연</label>
+                                                        </span>
+                                                    </span>
+                                                </td>
+                                                -->
+                                            </tr>
+                                            <!--
+                                            <tr>
+                                                <th th:text="#{layout.common.cost}">내역관리</th>
+                                                <td>
+                                                    <span class="icheck-primary" sec:authorize="hasAnyRole('ROLE_ADMIN_ESTIMATE')">
+                                                        <input type="checkbox" id="chkBreakdown" class="itemCheck" value="2048"/><label for="chkBreakdown" th:text="#{upper.menu.breakdown}">내역</label>
+                                                    </span>
+                                                </td>
+                                                <th></th>
+                                                <td></td>
+                                            </tr>
+                                            -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!--/* 상단 메뉴 설정 END  */-->
+                                <!--/* 사이드 메뉴 설정 START */-->
+                                <!--2023.02.22 사이드 메뉴 접기 기능 미사용으로 주석 처리(이동근)-->
+                                <!--
+                                <br/><br/>
+                                <div class="col-12">
+                                    <div>
+                                        <h2 class="list-title">
+                                            <i class="far fa-list-alt"></i> <span th:text="#{side.menu.folding_setting}">사이드 메뉴 접기</span>
+                                        </h2>
+                                        <div>
+                                            <table class="table">
+                                                <tr>
+                                                    <th th:text="#{side.menu.folding_setting}">사이드 메뉴 접기</th>
+                                                    <td>
+                                                    <span class="icheck-primary">
+                                                        <input type="checkbox" id="chkLeftSideFolding" class="itemCheck" value="1"/><label for="chkLeftSideFolding" th:text="#{side.menu.folding_left}">왼쪽 메뉴 접기</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkRightSideFolding" class="itemCheck" value="2"/><label for="chkRightSideFolding" th:text="#{side.menu.folding_right}">오른쪽 메뉴 접기</label>
+                                                    </span>
+                                                    <span class="icheck-primary ml-5">
+                                                        <input type="checkbox" id="chkLowerSideFolding" class="itemCheck" value="4"/><label for="chkLowerSideFolding" th:text="#{side.menu.folding_lower}">아래쪽 메뉴 접기</label>
+                                                    </span>
+                                                </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </main>
+    <script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+    <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<th:block th:replace="layout/modal :: modal('modalSearchJobSheetGrantor', #{common.modal_title.search_job_sheet_grantor}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalSearchJobSheetReferences', #{common.modal_title.search_job_sheet_references}, 'modal-xl')"></th:block>
+
+<div th:include="layout/common :: script()"></div>
+<script>
+    let _telNoPattern = [[${telNoPattern}]];
+    let _mobileNoPattern = [[${mobileNoPattern}]];
+</script>
+<script th:inline="javascript">
+    $(function () {
+
+        const $this = $(this);
+        const imgFileExtension = [[${imgFileExtension}]];
+        const svrSumUpperMenu = [[${user.upperMenu}]]; // 상단 메뉴 설정 값
+        const svrSumSideMenu =  [[${user.sideMenu}]]; // 사이드 메뉴 설정 값
+
+        setUpperMenu(svrSumUpperMenu);
+        setSideMenu(svrSumSideMenu);
+
+        $this.find("#initPassword").on("click", function () {
+            $this.find("#password").val("");
+        });
+
+        $this.find("#initNewPassword").on("click", function () {
+            $this.find("#newPassword").val("");
+        });
+
+        $this.find("#putUser").on("click", function () {
+            if (validateUserInfo()) {
+                getSumUpperMenu();
+                getSumSideMenu();
+                let param = JSON.stringify($this.find("#frmUser").serializeObject())
+
+                reqPutJSON("/mainApi/user"
+                    , param
+                    , function (data) {
+                        if (data.result) {
+                            toastr.success(data.message);
+                            if ($("#uploadFile" + "s").find(".devo_file_list").length > 0) {
+                                $("#uploadFile").dmUploader("start");
+                            } else location.reload();
+                        } else toastr.error(data.message);
+                    }
+                    , function (xhr) {
+                        showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                    });
+            }
+        });
+
+        function validateUserInfo() {
+            $this.find("#isChangePassword").val(false);
+            let password = $this.find("#password").val();
+            let newPassword = $this.find("#newPassword").val();
+
+            if (password.trim() == '' && newPassword.trim() != '') {
+                showErrorAlert([[#{admin.user.page.user_save}]], [[#{main.user.page.input_password_to_change}]]);
+                return false;
+            }
+
+            if (password.trim() != '' && newPassword.trim() == '') {
+                showErrorAlert([[#{admin.user.page.user_save}]], [[#{main.user.page.input_new_password_to_change}]]);
+                return false;
+            }
+
+            if (password.trim() != '' && newPassword.trim() != '') {
+                if (password.length < 4 || password.length > 20) {
+                    showErrorAlert([[#{admin.user.page.user_save}]], [[#{admin.user.page.input_password_from_four_to_twenty_length}]]);
+                    return false;
+                }
+                /*
+                if (!isContainCharacter(password, true, true, false)) {
+                    showErrorAlert([[#{admin.user.page.user_save}]], [[#{admin.user.page.input_password_with_english_and_number}]]);
+                    return false;
+                }
+                */
+                if (newPassword.length < 4 || newPassword.length > 20) {
+                    showErrorAlert([[#{admin.user.page.user_save}]], [[#{main.user.page.input_new_password_from_four_to_twenty_length}]]);
+                    return false;
+                }
+
+                if (!isContainCharacter(newPassword, true, true, false)) {
+                    showErrorAlert([[#{admin.user.page.user_save}]], [[#{main.user.page.input_new_password_with_english_and_number}]]);
+                    return false;
+                }
+
+                $this.find("#isChangePassword").val(true);
+            }
+
+            if (isEmpty("#userName", [[#{admin.user.page.input_user_name}]])) return false;
+            if (isEmpty("#mobileNo", [[#{admin.user.page.input_mobile_no}]])) return false;
+            if (!checkMobileNo(_mobileNoPattern, $this.find("#mobileNo").val().trim())) {
+                showErrorAlert([[#{admin.user.page.user_save}]], [[#{admin.user.page.input_mobile_number_pattern_incorrect}]] + "(" + $this.find("#mobileNo").attr("placeholder") + ")");
+                return false;
+            }
+
+            let telNo = $this.find("#phoneNo").val().trim();
+            if (telNo != "" && !checkTelNo(_telNoPattern, telNo)) {
+                showErrorAlert([[#{admin.user.page.user_save}]], [[#{admin.user.page.input_phone_number_pattern_incorrect}]] + "(" + $this.find("#phoneNo").attr("placeholder") + ")");
+                return false;
+            }
+
+            return true;
+        }
+
+        function getSumUpperMenu(){
+            let sumUpperMenu = 0;
+            if( $this.find("#chkSummary").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkSummary").val() ); }
+            if( $this.find("#chkDailywork").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkDailywork").val() ); }
+            if( $this.find("#chkModeling").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkModeling").val() ); }
+            if( $this.find("#chkDocument").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkDocument").val() ); }
+            if( $this.find("#chkCowork").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkCowork").val() ); }
+            if( $this.find("#chkIssue").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkIssue").val() ); }
+            if( $this.find("#chkNotice").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkNotice").val() ); }
+            if( $this.find("#chkPost").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkPost").val() ); }
+            if( $this.find("#chkCalendar").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkCalendar").val() ); }
+            if( $this.find("#chkProcess").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkProcess").val() ); }
+            if( $this.find("#chkSimulation").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkSimulation").val() ); }
+            if( $this.find("#chkBreakdown").prop("checked") ){ sumUpperMenu += parseInt( $this.find("#chkBreakdown").val() ); }
+            $this.find("#upperMenu").val(sumUpperMenu);
+        }
+
+        function getSumSideMenu(){
+            let sumSideMenu = 0;
+            if( $this.find("#chkLeftSideFolding").prop("checked")) { sumSideMenu += parseInt($this.find("#chkLeftSideFolding").val());}
+            if( $this.find("#chkRightSideFolding").prop("checked")) { sumSideMenu += parseInt($this.find("#chkRightSideFolding").val());}
+            if( $this.find("#chkLowerSideFolding").prop("checked")) { sumSideMenu += parseInt($this.find("#chkLowerSideFolding").val());}
+            $this.find("#sideMenu").val(sumSideMenu);
+        }
+
+        function setUpperMenu (svrSumUpperMenu){
+            $this.find("#upperMenu").val(svrSumUpperMenu);
+            if( (svrSumUpperMenu & 1) === 1 ) { $this.find("#chkSummary").prop("checked", true); }
+            if( (svrSumUpperMenu & 2) === 2 ) { $this.find("#chkDailywork").prop("checked", true); }
+            if( (svrSumUpperMenu & 4) === 4 ) { $this.find("#chkModeling").prop("checked", true); }
+            if( (svrSumUpperMenu & 8) === 8 ) { $this.find("#chkDocument").prop("checked", true); }
+            if( (svrSumUpperMenu & 16) === 16 ) { $this.find("#chkCowork").prop("checked", true); }
+            if( (svrSumUpperMenu & 32) === 32 ) { $this.find("#chkIssue").prop("checked", true); }
+            if( (svrSumUpperMenu & 64) === 64 ) { $this.find("#chkNotice").prop("checked", true); }
+            if( (svrSumUpperMenu & 128) === 128 ) { $this.find("#chkPost").prop("checked", true); }
+            if( (svrSumUpperMenu & 256) === 256 ) { $this.find("#chkCalendar").prop("checked", true); }
+            if( (svrSumUpperMenu & 512) === 512 ) { $this.find("#chkProcess").prop("checked", true); }
+            if( (svrSumUpperMenu & 1024) === 1024 ) { $this.find("#chkSimulation").prop("checked", true); }
+            if( (svrSumUpperMenu & 2048) === 2048 ) { $this.find("#chkBreakdown").prop("checked", true); }
+        }
+        function setSideMenu(svrSumSideMenu){
+            $this.find("#sideMenu").val(svrSumSideMenu);
+            if( (svrSumSideMenu & 1) === 1) { $this.find("#chkLeftSideFolding").prop("checked", true); }
+            if( (svrSumSideMenu & 2) === 2) { $this.find("#chkRightSideFolding").prop("checked", true); }
+            if( (svrSumSideMenu & 4) === 4) { $this.find("#chkLowerSideFolding").prop("checked", true); }
+        }
+
+        function isEmpty(selectorId, message) {
+            if ($this.find(selectorId).val().trim() == "") {
+                showErrorAlert([[#{admin.user.page.user_save}]], message);
+                return true;
+            }
+            return false
+        }
+
+        let accountPhotoFileUploaderExtraData = function () {
+            return {
+                "id": $this.find("#id").val(),
+                "fileUploadUIType": "ACCOUNT_PHOTO_FILE",
+                "makeVersion": true,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeSingleUploaderScript("#uploadFile"
+            , accountPhotoFileUploaderExtraData
+            , 5000000000
+            , imgFileExtension.split("||")
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , function () {
+                location.reload();
+            }
+        );
+
+        // grantor
+        function setGrantorSendData() {
+            return "&userId=" + $("#userGrantorId").val();
+        }
+
+        $(this).on('click', '#btnSearchUserGrantor', function (e) {
+            modalShowAndDraggable("#modalSearchJobSheetGrantor");
+        });
+
+        $(this).on('show.bs.modal', '#modalSearchJobSheetGrantor', function () {
+            const params = "formElementIdForUserId=userGrantorId&formElementIdForModal=modalSearchJobSheetGrantor&searchUserFilter=Y";
+
+            reqGet(`/commonModal/searchSingleUser?${params}`, function (data) {
+                $('#modalSearchJobSheetGrantor').find('.modal-body').html(data);
+                refreshTooltip();
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalSearchJobSheetGrantor', function () {
+
+            if ($("#userGrantorId").val() === "" || $("#userGrantorId").val() === "0") return false;
+            reloadComponent("/common/userInfoAtField", "#divUserInfoAtField", setGrantorSendData());
+
+            $("#mIsSearchRoleAdminProject").off("click");
+            $("#mIsSearchRoleAdminWork").off("click");
+            $("#mSearchText").off("keyup");
+            $("button[id^='mBtnSelect_']").off("click")
+            $("#pSelectUserGrantor").hide();
+            $("#modalSearchJobSheetGrantor").find('.modal-body').html('');
+
+            $('.savedGrantor').addClass('d-none');
+            $('#divUserInfoAtField').removeClass('d-none');
+        });
+
+        // references
+        function setReferencesSendData() {
+            return "&userIds=" + $("#userReferencesIds").val();
+        }
+
+        $(this).on('click', '#btnSearchUserReferences', function (e) {
+            modalShowAndDraggable("#modalSearchJobSheetReferences");
+        });
+
+        $(this).on('show.bs.modal', '#modalSearchJobSheetReferences', function () {
+            let params = "formElementIdForUserIds=userReferencesIds";
+            params += "&formElementIdForModal=modalSearchJobSheetReferences";
+            params += "&searchUserFilter=Y";
+            params += "&referenceSelected=N";
+
+            reqGet("/commonModal/searchMultiUser?" + params, function (data) {
+                $('#modalSearchJobSheetReferences').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalSearchJobSheetReferences', function () {
+            if ($("#userReferencesIds").val() === "") return false;
+
+            $("#isSearchRoleAdminProject").off("click");
+            $("#isSearchRoleAdminWork").off("click");
+            $("#searchText").off("keyup");
+            $("button[id^='mBtnSelectUser']").off("click");
+            $("button[id^='mBtnRemoveSelectUser']").off("click");
+            $("#modalSearchJobSheetReferences").find('.modal-body').html('');
+            $("#pSelectUserReferences").hide();
+
+            reloadComponent("/common/userInfoAtFields", "#divUserInfoAtFields", setReferencesSendData());
+
+            $(".savedReferences").each(function (idx, elem) {
+                $(elem).removeClass('d-flex').addClass('d-none');
+            });
+
+            $('#divUserInfoAtFields').removeClass('d-none');
+        });
+    });
+</script>
+</body>
+
+</html>

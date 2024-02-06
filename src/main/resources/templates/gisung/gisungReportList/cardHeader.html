@@ -1,0 +1,13 @@
+<div class="card-header" th:fragment="cardHeader()">
+  <div class="col-12">
+    <div class="form-group">
+      <label th:text="#{contents.document_list.select_list_count}">목록 개수</label>
+      <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+    </div>
+    <div class="bim-btn-group">
+      <button type="button" class="btn bg-gradient-info" data-toggle="modal" data-target="#modalAddGisungReport">
+        <i class="fas fa-plus"></i><span th:text="#{contents.document_list.btn_open_add_modal}"> 등록</span>
+      </button>
+    </div>
+  </div>
+</div>

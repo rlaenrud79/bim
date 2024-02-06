@@ -1,0 +1,18 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <span class="popup-tit" th:text="${title}">나의 스냅샷</span>
+            <button type="button" class="close close-btn">팝업닫기</button>
+        </div><!--//popup_top-->
+        <div class="popup-con scroll-wrap">
+        </div><!--//popup_con-->
+
+    </div><!--//popup_content-->
+</div><!--// popup-wrap-->
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+
+</script>

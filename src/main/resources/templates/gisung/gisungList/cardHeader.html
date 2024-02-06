@@ -1,0 +1,9 @@
+<div class="board-top" th:fragment="cardHeader()">
+  <div class="total-num"><span th:utext="#{common.total_list_count(${totalCount})}">총 <strong>100</strong>건</span></div>
+    <ul>
+      <li>
+        <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+      </li>
+    </ul>
+  </div><!--//board-top-->
+</div>

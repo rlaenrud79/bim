@@ -1,0 +1,19 @@
+<div id="divBulletinViewLikesUserList" th:fragment="likesUserList(list)">
+  <div class="d-inline-flex" th:each="item, index : ${list}">
+    <div th:replace="/common/userInfo :: userInfo(${item.writeEmbedded.accountDTO})"></div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('.user-img').each(function () {
+      $(this).on('mouseenter', function () {
+        if ($(this).find('.bubble span').text()) {
+          $(this).addClass('on');
+        }
+      });
+      $(this).on('mouseout', function () {
+        $(this).removeClass('on');
+      });
+    });
+  });
+</script>

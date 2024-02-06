@@ -1,0 +1,29 @@
+<!-- Modal -->
+<div th:fragment="load(id,title,size)" class="modal fade" id="modalCommon" th:id="${id}" tabindex="-1" role="dialog" aria-labelledby="modalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" th:classappend='${size}' role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle" th:text="${title}">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div th:if="${#strings.equalsIgnoreCase(id,'zoomInImage')}" th:replace="common/modal/zoomInImage :: load()" class="img-zoom-view">
+          <figure>
+            <img id="commonModalZoomInImage" src="/dist/img/temp/1000x800.png">
+          </figure>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCloseLayer" type="button" class="btn btn-secondary" data-dismiss="modal" th:text="#{layout.modal.close}">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:fragment="modalCodeLoder()" class="modalcodeloder">
+  <div class="loader-box">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+</div>

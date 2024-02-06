@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="coWork/freeboardAdd/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+
+        <div id="divCardBody" th:replace="coWork/freeboardAdd/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+    let _newNoticeId = 0;
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+    let _notificationFileExtension = '[[${notificationFileExtension}]]';
+
+    function getSendData() {
+      return JSON.stringify({
+        "title": $("#title").val(),
+        "contents": $("#contents").val(), //CommonEditor.getInputData(),
+        "isPopup": $("input:radio[id=\'isPopup_true\']").is(':checked') ? true : false,
+        "startDate": $("#startDateDay").val() + " " + $("#startDateHour").val() + ":" + $("#startDateMin").val() + ":00",
+        "endDate": $("#endDateDay").val() + " " + $("#startEndHour").val() + ":" + $("#startEndMin").val() + ":00",
+        "noticeWorkIds": _selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",")
+      });
+    }
+
+    let executeAdd = function () {
+      reqPostJSON('/coWorkApi/postNotification'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            if ($("#noticeFileUpload" + "s").find(".devo_file_list").length > 0) {
+              _newNoticeId = data.returnId;
+              $("#noticeFileUpload").dmUploader("start");
+            }
+            else completeUploadFile();
+          }
+          else toastr.error(data.message);
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on('click', '#btnGotoList', function() {
+      location.href = "/coWork/notificationList";
+    });
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('click', "#isPopup_false", function(){
+      $("#startDateDay").val("");
+      $("#startDateHour").val("");
+      $("#startDateMin").val("");
+      $("#endDateDay").val("");
+      $("#startEndHour").val("");
+      $("#startEndMin").val("");
+
+      $("#startDateDay, #endDateDay").datepicker("destroy");
+      $("#startDateHour, #startDateMin" ).attr('disabled', 'true');
+      $("#startEndHour, #startEndMin" ).attr('disabled', 'true');
+    });
+
+    _this.on('click', "#isPopup_true", function(){
+      $("#startDateDay, #endDateDay").datepicker(datepickerFormat);
+      $("#startDateHour, #startDateMin" ).removeAttr('disabled', 'disabled');
+      $("#startEndHour, #startEndMin" ).removeAttr('disabled', 'disabled');
+    });
+
+    _this.on('click', '#btnAddNotification', function() {
+
+      let startDate = $("#startDateDay").val() + " " + $("#startDateHour").val() + ":" + $("#startDateMin").val() + ":00";
+      let endDate = $("#endDateDay").val() + " " + $("#startEndHour").val() + ":" + $("#startEndMin").val() + ":00";
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      if ($("#title").val() == "") {
+        alert("[[#{co_work.notification_add.error_no_title}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+        && ($("#startDateDay").val() == "" || $("#startDateHour").val() == "" || $("#startDateMin").val() == "")) {
+        alert("[[#{co_work.notification_add.error_no_start_date}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+        && ($("#endDateDay").val() == "" || $("#startEndHour").val() == "" || $("#startEndMin").val() == "")) {
+        alert("[[#{co_work.notification_add.error_no_end_date}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+          && (moment(endDate).isBefore(moment(startDate)))){
+        alert("[[#{co_work.notification_add.error_date_end_before_start}]]");
+        return;
+      }
+
+      $(".itemCheck").each(function (index, item) {
+        if($(this).is(':checked')) {
+          _checkedWorkCnt ++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+
+      if(_checkedWorkCnt == 0) {
+        alert("[[#{co_work.notification_add.error_no_target_works}]]");
+        return;
+      }
+
+      //if(CommonEditor.getInputData() == "<p><br></p>"  || CommonEditor.isEmpty()){
+      if ($("#title").val() == "") {
+        alert("[[#{co_work.notification_add.error_no_contents}]]");
+        return;
+      }
+      //showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.notification_add.confirm_add_notification}]]", executeAdd);
+      if (confirm("[[#{co_work.notification_add.confirm_add_notification}]]")) {
+        executeAdd();
+      }
+    });
+
+    let completeUploadFile = function () {
+      //toastr.success('[[#{co_work.notification_add.message_success}]]');
+      $("#btnGotoList").click();
+    }
+
+    let noticeFileExtraData = function () {
+      return {
+        "id": _newNoticeId,
+        "fileUploadUIType": "NOTIFICATION_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter" : false
+      }
+    }
+
+    makeMultiUploaderScript("#noticeFileUpload"
+      , noticeFileExtraData
+      , 5000000000
+      , _notificationFileExtension.split("||")
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+  });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,207 @@
+<div class="board-top" th:replace="common/pagingSizeSelectBox :: type3(${gisungProcessItemlist.size()})" /><!--//board-top-->
+<div class="board-list">
+    <div class="scroll-wrap sc-table">
+        <table class="table">
+            <tbody>
+            <tr class="sticky-th">
+                <th th:text="#{common.modal.search_single_user.list_title_no}">No</th>
+                <th th:text="#{gisung.index.page.phasing_name}">공정명</th>
+                <th th:text="#{gisung.index.page.phasing_code}">공정코드</th>
+                <th th:text="#{gisung.index.page.cost_detail}">복합단가</th>
+                <th th:text="#{gisung.index.page.total_cost}">전체 공사비(원)</th>
+                <th><span th:text="#{gisung.index.page.job_sheet}">실적</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.paid_cost}">전회기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.progress_cost}">금회기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.sum_progress_cost}">누적기성</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+                <th><span th:text="#{gisung.index.page.remind_progress_cost}">잔액기성금액</span><br><span th:text="#{gisung.index.page.cost}">공사비(원)</span> <span class="txt-color4" th:text="#{gisung.index.page.rate_text}">(진행률)</span></th>
+            </tr>
+            <tr class="tb-style-total sticky-th-two2">
+                <th class="txt-cnt" colspan="4"><b><span th:text="#{gisung.index.page.total_count}">총계</span></b></th>
+                <th th:text="${#numbers.formatInteger(sumTaskCost, 1, 'COMMA')}">105,305,208</th>
+                <th><span th:text="${#numbers.formatInteger((sumTodayProgressAmount), 1, 'COMMA')}">42,122,082</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumTodayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span th:text="${#numbers.formatInteger(sumPaidCost, 1, 'COMMA')}">0</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumPaidProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(0%)</span></th>
+                <th>
+                    <input id="sumTaskCost" name="sumTaskCost" type="hidden" th:value="${#numbers.formatInteger(sumTaskCost, 1)}">
+                    <input id="sumPaidProgressRate" name="sumPaidProgressRate" type="hidden" th:value="${sumPaidProgressRate}">
+                    <input id="sumPaidCost" name="sumPaidCost" type="hidden" th:value="${#numbers.formatInteger(sumPaidCost, 1)}">
+                    <span id="sumCost" th:text="${#numbers.formatInteger((sumCost), 1, 'COMMA')}"></span> <span class="txt-color4" id="sumProgressRate" th:text="|(${#numbers.formatDecimal((sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span>
+                </th>
+                <th><span id="sumPaidCostTxt" th:text="${#numbers.formatInteger((sumPaidCost+sumCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((sumPaidProgressRate+sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumAfterPaidCostTxt" th:text="${#numbers.formatInteger((sumTaskCost-sumPaidCost-sumCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumAfterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-sumPaidProgressRate-sumProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+            </tr>
+            <tr class="tb-style-total-after sticky-th-three2">
+                <th class="txt-cnt" colspan="4"><b>총계</b></th>
+                <th th:text="${#numbers.formatInteger(sumTaskCost, 1, 'COMMA')}">105,305,208</th>
+                <th><span th:text="${#numbers.formatInteger((sumTodayProgressAmount), 1, 'COMMA')}">42,122,082</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumTodayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span th:text="${#numbers.formatInteger(sumPaidCost, 1, 'COMMA')}">0</span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(sumPaidProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(0%)</span></th>
+                <th><span id="sumCompareCost" th:text="${#numbers.formatInteger((sumCompareCost), 1, 'COMMA')}"></span> <span class="txt-color4" id="sumCompareProgressRate" th:text="|(${#numbers.formatDecimal((sumCompareProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumComparePaidCostTxt" th:text="${#numbers.formatInteger((sumPaidCost+sumCompareCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumComparePaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((sumPaidProgressRate+sumCompareProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+                <th><span id="sumCompareAfterPaidCostTxt" th:text="${#numbers.formatInteger((sumTaskCost-sumPaidCost-sumCompareCost), 1, 'COMMA')}">0</span> <span class="txt-color4" id="sumCompareAfterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-sumPaidProgressRate-sumCompareProgressRate), 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></th>
+            </tr>
+            <th:block th:if="${gisungProcessItemlist == null or gisungProcessItemlist.size() == 0}">
+                <tr>
+                    <td colspan="10" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+                </tr>
+            </th:block>
+            <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungProcessItemlist}">
+                <th:block th:if="${item.phasingCode != ''}">
+            <tr>
+                <td th:text="${index.index}">1</td>
+                <td class="txt-left">
+                    <input type="hidden" name="item_compare_no" th:data-no="${item.id}" th:value="${item.id}">
+                    <b><span th:text="${item.taskName}">강상분기점1교_교대공_A1_말뚝</span></b>
+                </td>
+                <td th:text="${item.phasingCode}">2023</td>
+                <td><button type="button" class="btn-xs btn-bo3 btnCompareCostDetail" data-modal="#compareCostDetail" th:data-id="${item.id}" th:data-task-name="${item.taskName}" th:text="${#numbers.formatInteger(item.complexUnitPrice, 1, 'COMMA')}">209,064</button></td>
+                <td th:text="${#numbers.formatInteger(item.taskCost, 1, 'COMMA')}">2000</td>
+                <td><span th:text="${#numbers.formatInteger((item.todayProgressAmount), 1, 'COMMA')}"></span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal(item.todayProgressRate, 1, 'COMMA', 2, 'POINT')}%)|">(40.00%)</span></td>
+                <td><span id="paidCostText" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}"></span> <span class="txt-color4" id="paidProgressRateText" th:text="|(${#numbers.formatDecimal(item.paidProgressRate*100, 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                <td>
+                    <span th:text="${#numbers.formatInteger((item.cost), 1, 'COMMA')}"></span>
+                    <input id="id" name="id" type="hidden" th:value="${item.id}">
+                    <input id="taskCost" name="taskCost" type="hidden" th:value="${item.taskCost}">
+                    <input id="afterPaidProgressRate" name="afterPaidProgressRate" type="hidden" th:value="${(100-item.paidProgressRate*100)}">
+                    <input id="afterPaidCost" name="afterPaidCost" type="hidden" th:value="${#numbers.formatInteger((item.taskCost-item.paidCost), 1)}">
+                    <input id="paidProgressRate" name="paidProgressRate" type="hidden" th:value="${(item.paidProgressRate)}">
+                    <input id="paidCost" name="paidCost" type="hidden" th:value="${item.paidCost}">
+                    <input id="progressRate" name="progressRate" type="hidden" th:value="${(item.progressRate)}">
+                    <input id="cost" name="cost" type="hidden" th:value="${item.cost}">
+                    <span class="txt-color4" th:text="|(${#numbers.formatDecimal((item.progressRate)*100, 1, 'COMMA', 2, 'POINT')}%)|"></span>
+                </td>
+                <td><span id="sumPaidCostTxt" th:text="${#numbers.formatInteger((item.paidCost+item.cost), 1, 'COMMA')}"></span>
+                    <span class="txt-color4" id="sumPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((item.paidProgressRate*100+item.progressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                <td><span id="afterPaidCostTxt" th:text="${#numbers.formatInteger((item.taskCost-item.paidCost-item.cost), 1, 'COMMA')}"></span>
+                    <span class="txt-color4" id="afterPaidProgressRateTxt" th:text="|(${#numbers.formatDecimal((100-item.paidProgressRate*100-item.progressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span>
+                </td>
+            </tr>
+            <tr class="tb-style-after">
+                <td></td>
+                <td colspan="6" class="txt-left">
+                    <th:block th:if="${item.compareResult.toString().equals('AP')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_AP}">이곳에 검증 문구가 노출됩니다.</span>
+                    </th:block>
+                    <th:block th:if="${item.compareResult.toString().equals('DW') or item.compareResult.toString().equals('OV')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_DW}">이곳에 검증 문구가 노출됩니다.</span>
+                    </th:block>
+                </td>
+                <td><span th:text="${#numbers.formatInteger((item.compareCost), 1, 'COMMA')}"></span> <span class="txt-color4" th:text="|(${#numbers.formatDecimal((item.compareProgressRate)*100, 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                <td><span th:text="${#numbers.formatInteger((item.paidCost+item.compareCost), 1, 'COMMA')}"></span>
+                    <span class="txt-color4" th:text="|(${#numbers.formatDecimal((item.paidProgressRate*100+item.compareProgressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span></td>
+                <td><!--<span th:text="${(item.taskCost-(item.paidCost+item.compareCost)) >= -0.5} ? '0' : ${#numbers.formatInteger((item.taskCost-(item.paidCost+item.compareCost)), 1, 'COMMA')}"></span>-->
+                    <span th:text="${#numbers.formatInteger((item.taskCost-(item.paidCost+item.compareCost)), 1, 'COMMA')}"></span>
+                    <span class="txt-color4" th:text="|(${#numbers.formatDecimal((100-item.paidProgressRate*100-item.compareProgressRate*100), 1, 'COMMA', 2, 'POINT')}%)|"></span>
+            </tr>
+                </th:block>
+                <th:block th:unless="${item.phasingCode != ''}">
+                    <tr class="tb-style-cate">
+                        <td></td>
+                        <td class="txt-left">
+                            <div class="tb-cate-list">
+                                <span th:text="${item.cate1Name}">교량공</span>
+                                <span th:text="${item.cate2Name}">교량공사</span>
+                                <span th:text="${item.cate3Name}">강상분기점1교</span>
+                                <span th:text="${item.cate4Name}">교대공</span>
+                                <span th:text="${item.cate5Name}">A1</span>
+                            </div>
+                        </td>
+                        <td class="text-center" colspan="10"></td>
+                    </tr>
+                </th:block>
+            </th:block>
+
+            </tbody>
+        </table><!--// table-->
+    </div>
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        let _this = $("#taskComparisonPopup");
+        var gisungId = [[${gisung.id}]];
+
+        $('#compareItemCheck').click(function() {
+            $(".compare-list-item-checkbox").prop("checked",($(this).prop("checked")));
+        });
+
+        _this.on('click', '#btnSelTargetSave', function () {
+            if (updatingCompare) {
+                return;
+            }
+
+            updatingCompare = true;
+            if ($(".compare-list-item-checkbox:checkbox:checked").length > 0) {
+                if (confirm("[[#{admin.modal.add_gisung.confirm_modify_sel_setting}]]")) {
+                    updateTargetSetting();
+                }
+            } else {
+                updatingCompare = false;
+                alert("[[#{admin.modal.add_gisung.check_gisung_sel_setting}]]");
+            }
+        });
+
+        _this.on('click', '#btnAllTargetSave', function () {
+            if (updatingCompare) {
+                return;
+            }
+
+            updatingCompare = true;
+            if (confirm("[[#{admin.modal.add_gisung.confirm_modify_all_setting}]]")) {
+                $(".compare-list-item-checkbox").prop("checked",true);
+                updateTargetSetting();
+            }
+        });
+
+        $('.scroll-wrap').overlayScrollbars({});
+
+        _this.on('click', '#searchCompareResult', function () {
+            if (updatingCompare) {
+                return;
+            }
+
+            updatingCompare = true;
+            let searchCompareResult = $("#searchCompareResult").is(":checked") ? "AP" : "";
+            reqGet(`/gisung/gisungCompareList?id=${gisungId}&searchCompareResult=${searchCompareResult}`, function (data) {
+                updatingCompare = false;
+                $('#taskComparisonPopup').find('.popup-con').html(data);
+            });
+        });
+    });
+
+    function updateTargetSetting() {
+        reqPostJSON('/gisungApi/putGisungTarget'
+            , setSendData()
+            , function (data) {
+                if (data.result) {
+                    $(".close").click();
+                    //reloadComponent("/gisung/gisungListCardBody", "#divCardBody", "");
+                    location.href = "/gisung/jobSheetList?id="+gisungId;
+                    //toastr.success(data.message);
+                } else {
+                    updatingCompare = false;
+                    alert(data.message);
+                }
+            }
+            , function (xhr) {
+                updatingCompare = false;
+                alert($.parseJSON(xhr.responseJSON).error);
+            }
+        );
+    }
+
+    function setSendData() {
+        return JSON.stringify({
+            "id": gisungId,
+            "gisungProcessItemIds": getInputValues("item_compare_no"),
+        });
+    }
+
+    function getInputValues(nm) {
+        let vals = [];
+        $("input[name=" + nm + "]").map(function (i, el) {
+            //if ($(el).is(":checked")) {
+                vals.push(el.value + "");
+            //}
+        });
+        return vals;
+    }
+</script>

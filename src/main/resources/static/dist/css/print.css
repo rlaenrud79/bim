@@ -1,0 +1,194 @@
+body {padding:0; margin:0; width: 100%; height: 100%; -webkit-print-color-adjust:exact !important;  print-color-adjust:exact !important;}
+* {box-sizing: border-box; -moz-box-sizing: border-box;}
+
+/*기성문서*/
+.print-page {font-family: 'NanumMyeongjo', '맑은 고딕', 'Malgun Gothic', sans-serif; font-weight: bold; }
+.print-page section { margin:0 auto 40px auto; width:100%; min-height:297mm; padding:15mm 10mm;  page-break-before: always; border:1px solid #ddd; position: relative;}
+.print-page .txt-cnt {text-align: center !important;}
+.print-page .txt-left {text-align: left !important;}
+.print-page .txt-right {text-align: right !important;}
+.print-page .ph-20 {padding-top:20px!important; padding-bottom:20px!important;}
+.print-page .ph-50 {padding-top:50px!important; padding-bottom:50px!important;}
+.print-page .wid-s {width: 30% !important;}
+.print-page .wid-m {width: 60% !important;}
+
+.print-page .bg-grey td {background: #ccc !important;}
+.print-page .bg-yellow {background: #fff000 !important;}
+.print-page {color:#000;}
+.print-page p {line-height: 1.8;}
+.print-page h1 {font-size: 20pt; text-align: center; padding:0 0 30px 0; font-weight: bold; }
+.print-page h3 {font-size: 10pt; font-weight: bold; margin-bottom: 10px; color:#000;}
+
+.print-page .pg-ty1 .title {text-align: center;}
+.print-page .pg-ty1 h2 {font-size: 19pt; font-weight: bold; margin-bottom:50px; border-bottom:4px double #000; padding:0 20px 5px 20px; display: inline-block; letter-spacing: 20px;}
+.print-page .pg-ty1 .file-btm {position: absolute; bottom: 10mm; left: 10mm;}
+.print-page .pg-ty1 .file-btm dl {padding-left: 50px; position: relative;}
+.print-page .pg-ty1 .file-btm dl dt {position: absolute; top:0; left: 0;}
+.print-page .pg-ty1 .file-btm dl dd {margin-bottom: 5px; display: flex; gap:5px;}
+.print-page .pg-ty1 .btm-txt {text-align: center; font-size: 15pt; font-weight: bold; letter-spacing: 10px; margin-top:50px; display: flex; justify-content: center; gap:10px;}
+.print-page .pg-ty1 .btm-txt input[type="text"] {width: 80%;}
+
+.print-page .sign-box {display: flex; justify-content: flex-end; margin-bottom: 30px;}
+.print-page .sign-box table {width:170px; }
+.print-page .sign-box table tr td {border:1px solid #333; text-align: center; padding:3px;}
+
+.print-page .cover-ty1 {display: flex; justify-content: space-between; align-items: center; flex-direction: column; font-size: 20pt; font-weight: bold;}
+.print-page .cover-ty1 .title { text-align: center; padding:30px 0;}
+.print-page .cover-ty1 .title h2 {font-size: 30pt; font-weight: bold; line-height: 1; color:#000; letter-spacing: 20px;}
+.print-page .cover-ty1 .title h2 small {font-size: 18pt; font-weight: normal; letter-spacing: 0; margin-top:20px;}
+
+.print-page .cover-ty2 {display: flex; justify-content: space-between; align-items: center; flex-direction: column; font-size: 20pt; font-weight: bold;}
+.print-page .cover-ty2 .title { text-align: center; padding:30px 0;}
+.print-page .cover-ty2 .title h2 {font-size: 30pt; font-weight: bold; line-height: 1; color:#000; letter-spacing: 10px;}
+.print-page .cover-ty2 .title h2 small {font-size: 18pt; margin-top:20px; display: block;}
+
+.print-page .list-ty1 {text-align: center;}
+.print-page .list-ty1 .title h2 {font-size: 25pt; font-weight: bold; text-align: center; margin-bottom: 80px; margin-top:20px; color:#000; letter-spacing: 20px;}
+.print-page .list-ty1 ul {display: inline-block; position: absolute; top:50%; left: 50%; transform:translate(-50%,-50%); height:140mm; display: flex; flex-direction: column; list-style: none; padding:0; margin:0; gap:5%;}
+.print-page .list-ty1 ul li {font-size: 18pt; text-align: left; letter-spacing: 5px; white-space: nowrap;}
+.print-page .table-ty {text-align: center;}
+.print-page .table-ty .title h2 {font-size:13pt; font-weight: bold; text-align: center; margin-bottom: 10px; text-decoration: underline;}
+.print-page .tb-top {display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; font-size: 10pt;}
+.print-page .tb-top h3 {margin-bottom: 0;}
+
+/*---------- Table ----------*/
+.print-page table {width:100%; border-collapse: collapse;}
+.print-page tr td,
+.print-page tr th {text-align: left; padding:6px; white-space: normal; vertical-align: top !important; background: none!important; font-size: 11pt;}
+.print-page .table {width:100%;  position: relative; margin-bottom: 30px; border-left: 1px solid #ccc; word-break: break-all; border-top:2px solid #000; }
+.print-page .table tr th {border-bottom: 1px solid #ccc !important; border-right: 1px solid #ccc !important; padding:0px 4px; vertical-align: middle; line-height: 1.5; font-size: 6pt; text-align: right; white-space: normal;}
+.print-page .table tr td {position: relative; text-align: right; border-bottom: 1px solid #ccc !important; border-right: 1px solid #ccc !important; padding:0px 4px; vertical-align: middle; line-height: 1.5; font-size: 6pt; text-align: right; white-space: normal;}
+.print-page .table tr td.depth2 {padding-left: 12px;}
+.print-page .table tr.border td {border:2px solid #000;	font-weight: bold;}
+.print-page .table tr th { 	text-align: center; background: #eee !important; font-weight: bold;}
+
+/*공사일지*/
+.print-page2 section { width:100%; min-height:297mm; padding:5mm; position:relative; page-break-before: always; }
+.print-page2 {font-family: 'NanumMyeongjo', '맑은 고딕', 'Malgun Gothic', sans-serif; font-weight: bold; }
+.print-page2 h1 {font-size: 20pt; text-align: center; padding:0 0 30px 0; font-weight: bold; color:#000; letter-spacing: 10px;}
+.print-page2 h2 {font-size: 12pt; font-weight: bold; margin-bottom: 10px}
+.print-page2 h3 {font-size: 10pt; font-weight: bold; margin-bottom: 10px; margin-top:15px; text-align: left;}
+.print-page2 .txt-cnt {text-align: center !important;}
+.print-page2 .txt-left {text-align: left !important;}
+.print-page2 .write-date {text-align: right; margin-bottom: 10px; font-size: 10pt;}
+.print-page2 .img img {width: 100%;}
+.print-page2 .g-img img {border:1px solid #ddd;}
+.print-page2 .g-img p {margin-top:10px;}
+
+/*---------- Table ----------*/
+.print-page2 .table {width:100%;  position: relative; margin-bottom: 30px; border-left: 1px solid #ddd; word-break: break-all;  border-top:2px solid #000;  page-break-inside:auto; table-layout: fixed; border-collapse: collapse; margin-bottom: 30px !important;}
+.print-page2 .table tr td,
+.print-page2 .table tr th {border-bottom: 1px solid #ddd!important; border-right: 1px solid #ddd!important; padding:5px; vertical-align: middle; line-height: 1.5; height: 30px; font-size: 8pt; white-space: normal;}
+.print-page2 .table tr { page-break-inside:avoid; page-break-after:auto }
+.print-page2 .table tr.no-break { page-break-inside:inherit; page-break-after:inherit;}
+.print-page2 .table tr td { position: relative; text-align: right; }
+.print-page2 .table tr th { text-align: left; color:#000; background: #eee !important; font-weight: 600}
+.print-page2 .table tr.tb-head th {text-align: center}
+.print-page2 .table .s-txt {position: absolute; top:50%; right: 5px; transform: translateY(-50%)}
+.print-page2 .table.ty-basic tr td {text-align: left;}
+.print-page2 .table.ty-basic tr th {text-align: center;}
+.print-page2 .tb-colgroup {display: flex; justify-content: space-between; gap:30px;}
+.print-page2 .tb-colgroup .col2 {width: 50%;}
+.print-page2.pg-detail section {height: auto;}
+.print-page2.pg-detail h1 {font-size: 18pt; letter-spacing: 0;}
+
+
+/*print*/
+@page {
+    size: A4;
+    margin: 0;
+}
+@media print{
+    .print-page section { width:210mm; height:297mm;  page-break-before: always; padding:15mm 10mm;}
+    .print-page2 section { width:210mm; min-height:297mm; page-break-before: always; padding:10mm 5mm;  }
+}
+
+.modal-body .print-page section {border:1px solid #ccc; padding:25mm 10mm;}
+#modalPrintJobSheet .modal-dialog {width:210mm !important;}
+#modalPrintJobSheetDetail .modal-dialog {width:210mm !important;}
+
+/*인쇄 작성*/
+.print-page.print-write section,
+.print-page2.print-write section {width:210mm;}
+.print-write input[type="text"] {background: #fff; border:1px solid #ccc; width: 100%; height: 30px; padding:0 10px; }
+.print-write .btn-control {display: flex; gap:5px;}
+.print-write .btn-control a {width: 30px; height: 30px; background: #1aa4b9; text-align: center; position: relative;}
+.print-write .btn-control a:after,
+.print-write .btn-control a:before {content: ''; display: block; width: 10px; height: 2px; position: absolute; top:50%; left: 50%; transform:translate(-50%,-50%); background: #fff;}
+.print-write .btn-control a:before {transform: translate(-50%,-50%) rotate(90deg)}
+.print-write .btn-control .btn-remove:before {display: none;}
+.print-write .btn-box {max-width: 210mm; margin:30px auto 0 auto; text-align: right; font-family:'NanumSquareNeo' !important; }
+.print-write table {border:0;}
+.print-write table tr th,
+.print-write .table tr th {width: auto; min-width: inherit; text-align: left !important;}
+.print-write table tr td,
+.print-write table tr th {padding:8px 6px !important; word-break: break-all;}
+.print-write .table tr td,
+.print-write .table tr th {padding:8px 6px !important; font-size: 11px;}
+.print-write table tr td table tr td {padding:8px 2px !important;}
+.print-write .table tr td .perc {position:absolute; top:50%; right: 10px; transform:translateY(-50%) }
+
+.print-write .tb-tab {display: flex; margin:10px 0; gap:5px;}
+.print-write .tb-tab a {padding:8px 12px; background: #eee; border-radius: 6px; color:#333;}
+.print-write .tb-tab a.on {background: #17a2b8; color:#fff;}
+.print-write .tb-tab-con {display: none;}
+.print-write .tb-tab-con.on {display: block;}
+.print-write .tb-tab-con tr th {text-align: center !important;}
+
+.print-write table tr .txt-cnt {text-align: center !important;}
+
+.print-write .pg-ty1 h2 {letter-spacing: 17px;}
+
+.print-write-tab {margin:0; box-shadow: none; border-bottom-left-radius: 0; border-bottom-right-radius: 0; display: block; }
+.print-write-tab .tab-box {max-width: 210mm; margin:0 auto; justify-content: flex-start !important; margin-top:20px; }
+.print-write-tab .tab-box button {border:0; background: none; font-size: 1.2em; padding:10px 20px; border:1px solid #ccc; margin-left: -1px;}
+.print-write-tab .tab-box button.on {background: #1aa4b9; color:#fff; border-color:#1aa4b9}
+
+.print-write .page.cover-ty1 input[type="text"] {text-align: center; height: 45px;}
+
+.print-write.page-fl {display: flex; align-items: self-start; gap:1%}
+.print-write .cover-list {width: 50%;  padding-top:50px;}
+.print-write .cover-list h2 {font-size: 1.8em;  width: 50%; margin-bottom: 13px;}
+.print-write .cover-list > ul {display: flex;  gap:1%; flex-wrap: wrap; }
+.print-write .cover-list > ul > li {width:195px; position: relative; margin-bottom: 10px;}
+.print-write .cover-list > ul > li img {width: 100%;}
+.print-write .cover-list > ul > li .txt-box {text-align: center; padding:20px 10px; display: flex; flex-direction: column; justify-content: space-between; border:1px solid #ddd; height: 280px;}
+.print-write .cover-list > ul > li .txt-box .txt1 small {display: block;}
+.print-write .cover-list > ul > li .txt-box p {font-size: 0.1vw;}
+.print-write .cover-list > ul > li .txt-box .txt1 {font-size: 0.8vw; font-weight: bold;}
+.print-write .cover-list > ul > li .txt-box .txt1 small {font-size: 0.3vw;}
+.print-write .cover-list > ul li .summary {display: block;}
+.print-write .cover-list > ul li .summary ul {padding:0px 20px 0 20px; text-align: left;}
+.print-write .cover-list > ul li .summary ul li {}
+.print-write .cover-list > ul > li .btn-box {margin:10px 0 0 0;}
+.print-write .cover-list > ul > li .add-btn {position: absolute; top:45%; left: 50%; transform:translate(-50%,-50%); border:0; background: none;}
+.print-write .cover-list > ul li .add-btn span {border:1px solid #ccc; font-size: 2.3em; border-radius: 100px; width: 70px; height: 70px; line-height: 70px; text-align: center; background: #fff; color:#666; display: block; margin-bottom: 10px;}
+
+.print-write .list-ty1 ul {width:80%;}
+.print-write .list-ty1 ul li {margin-bottom: 25px;}
+
+.print-write .sign-box table {width: 250px;}
+
+/*기성인쇄안내*/
+.btn-help-txt {width: 100px;}
+.white-sp-disable {white-space: inherit !important;}
+.bim-btn-group .gisung-print-step-wrap button {min-width: 50px;}
+.gisung-print-step-wrap {display: flex; justify-content: space-between; align-items: end; padding:3px; white-space: nowrap;}
+.gisung-print-step {display: flex; justify-content: space-between; align-items: end;  width: 70% }
+.gisung-print-step > button {border:0; background: none; text-align: left; position: relative; padding:0; }
+.gisung-print-step button:last-of-type:after,
+.gisung-print-step button:last-of-type:before {display: none;}
+
+.gisung-print-step .ico-step {content: ''; border:7px solid transparent; border-left: 8px solid #ccc; width: 0; height: 0; display: inline-block; margin:0 0 9px 6px; vertical-align: middle;  }
+/*
+.gisung-print-step button:before {content: ''; width:20px; height: 20px; background: #fff; border:1px solid #ccc; display: inline-block; margin:0 0 0 5px; vertical-align: middle; position: absolute; top:50%; right: -25px; transform: translateY(-50%); border-radius: 100px;}*/
+.gisung-print-step button strong {display: block; margin-bottom: 1px;  color:#18a2b8; padding:2px; font-size: 0.8rem;}
+.gisung-print-step button span {display: inline-block; }
+.gisung-print-btn {margin-left: 20px; }
+.gisung-help-txt {position:absolute; top:16px; left: 10px; color:#f00;}
+
+.gisung-btn-disable { background: #ccc; position: relative;}
+.gisung-btn-disable:before {content: '이전 단계 저장 후 가능합니다.'; display: none; position: absolute; top:-70px; left: -40px; background: #f7cf58; padding:10px; width: 130px; border-radius: 4px;}
+.gisung-btn-disable:after {content: ''; display:none; position: absolute; top:-16px; left: 11px; border:10px solid transparent; border-top: 10px solid #f7cf58;}
+.gisung-btn-disable:hover:before,
+.gisung-btn-disable:hover:after {display: block;}

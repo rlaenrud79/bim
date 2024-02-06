@@ -1,0 +1,15 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="search-box">
+    <input type="hidden" id="sortProp" value="">
+    <section>
+      <select id="searchWorkId" class="custom-select">
+        <option value="0" th:text="#{contents.document_list.select_work_type}">:: 공종 ::</option>
+        <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:text="${item.workNameLocale}"></option>
+      </select>
+    </section>
+    <section>
+      <a href="#none" id="btnSearchWorkAmount" class="btn btn-color2"><span th:text="#{contents.document_list.btn_search_document}">검색</span></a>
+<!--      <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.document_list.btn_reset_search_condition}">초기화</span></a>-->
+    </section>
+  </div>
+</form>

@@ -1,0 +1,43 @@
+<!-- 모달 - 관련 이슈 -->
+<!-- modal-dialog modal-lg -->
+<div class="content issueList">
+  <div class="scroll-area-v">
+    <table class="table">
+      <caption th:text="#{co_work.modal.co_work_issue_list.title}">이슈 리스트</caption>
+      <thead>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_no}">No</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_subject}">제목</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_writer}">작성자</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_request_date}">완료요구일자</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_priority}">중요도</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_issue_list.list_title_status}">상태</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item, index : ${coWorkIssues}"
+          th:classappend="${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject && item.isRequestOrGoing}
+                              ? 'bg-info' : (${item.isOwner(#session.getAttribute('scopedTarget.userInfo')?.id) && item.isRequestOrGoing}
+                              ? 'bg-success' : (${item.isIncludedUser(#session.getAttribute('scopedTarget.userInfo')?.id) && item.isRequestOrGoing}
+                              ? 'bg-danger'))">
+        <td class="text-center" th:text="${index.index + 1}">6</td>
+        <td>
+          <div class="table-text-cont">
+            <a th:id="aTitle_+${index.index}" href="#"
+               th:data-id="${item.id}"
+               th:data-co-work-id="__${coWorkId}__">
+              <span class="text-over-dot" th:text="${item.title}">휴무일 공지(2021.05.05)</span>
+            </a>
+          </div>
+        </td>
+        <td class="text-center">
+          <div th:replace="/common/userInfo :: userInfo(${item.writeEmbedded.accountDTO})"></div>
+        </td>
+        <td class="text-center" th:text="${#temporals.format(item.requestDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+        <td class="text-center" th:text="#{${item.priority.getMessageProperty()}}">긴급</td>
+        <td class="text-center" th:text="#{${item.status.getMessageProperty()}}">작성중</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

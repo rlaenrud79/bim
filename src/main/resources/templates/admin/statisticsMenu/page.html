@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+  <div th:replace="layout/common :: preLoader()"></div>
+  <nav th:replace="layout/common :: navigation('admin')"></nav>
+  <aside th:replace="layout/common :: aside('admin','statisticsMenu')"></aside>
+
+  <!-- contents area  -->
+  <main role="main" class="content-wrapper admin-content board-list">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div>
+        <h1><i class="nav-icon far fa-chart-bar"></i> [[#{admin.statistics_menu.page.menu_access}]]</h1>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/main/index"><i class="fas fa-home"></i> HOME</a></li>
+          <li class="breadcrumb-item" th:text="#{admin.statistics_menu.page.administrator}">관리자</li>
+          <li class="breadcrumb-item" th:text="#{admin.statistics_menu.page.statistics}">통계</li>
+          <li class="breadcrumb-item active" th:text="#{admin.statistics_menu.page.menu_access}">화면</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- /.contents area -->
+    <section class="content">
+      <div class="container-fluid">
+        <div class="con-statistics-menu">
+          <div class="col-lg-12">
+            <form action="/admin/statisticsMenu" method="get">
+              <div class="card content-header-area">
+                <div class="col-lg-12">
+                  <div class="form-group from-date" th:object="${statistics}">
+                    <label th:text="#{admin.statistics_menu.page.period}">접속일자</label>
+                    <div class="input-group">
+                      <input type="text" th:field="*{startDate}" class="form-control" readonly/>
+                      <span> ~ </span>
+                      <input type="text" th:field="*{endDate}" class="form-control" readonly/>
+                    </div>
+                  </div>
+
+                  <div class="bim-btn-group">
+                    <button type="button" class="btn bg-gradient-info setDate" data-day="-7" th:text="#{admin.statistics.page.seven_day}">7일</button>
+                    <button type="button" class="btn bg-gradient-info setDate" data-day="-30" th:text="#{admin.statistics.page.one_month}">30일</button>
+                    <button type="button" class="btn bg-gradient-info setDate" data-day="-180" th:text="#{admin.statistics.page.six_month}">180일</button>
+                    <button type="submit" class="btn bg-gradient-primary">
+                      <i class="fas fa-search"></i> [[#{admin.statistics.page.search}]]
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <div class="card content-body-area">
+              <div class="card-header">
+                <h3 class="card-title" th:text="#{admin.statistics_menu.page.menu_access_statistics}">화면 접속 통계</h3>
+              </div>
+              <div class="card-body">
+                <section class="dhx_sample-container">
+                  <div id="chart" style="width: 100%; padding: 20px"></div>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.container-fluid -->
+    </section>
+    <!-- /.content -->
+  </main>
+
+  <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<div th:include="layout/common :: script()"></div>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js?v=7.2.3"></script>
+<link rel="stylesheet" href="/plugins/dhtmlx-suite_7.2.3/suite.css?v=7.2.3">
+<script th:inline="javascript">
+  $(function () {
+    const $this = $(this);
+
+    $this.find("#startDate,#endDate").datepicker(datepickerFormat);
+
+    $this.find("button.setDate").on("click", function () {
+      let date = $this.find("#endDate").val();
+      let day = $(this).data("day");
+      let startDate = calculateDate(date, "day", day);
+      $this.find("#startDate").val(startDate);
+    });
+
+    const config = {
+      type  : "bar",
+      css   : "dhx_widget--bg_white dhx_widget--bordered",
+      scales: {
+        "bottom": {
+          size: 100,
+          text: "name",
+          scaleRotate: -45
+        },
+        "left"  : {
+          maxTicks: 10,
+          max     : [[${statistics.max}]],
+          min     : 0
+        }
+      },
+      series: [
+        {
+          id   : "A",
+          value: "count",
+          color: "#81C4E8",
+          fill : "#81C4E8",
+          tooltipTemplate: tooltipTemplate
+        }
+      ],
+      legend: {
+        series: ["A"],
+        halign: "right",
+        valign: "top"
+      }
+    };
+    const chart = new dhx.Chart("chart", config);
+    chart.data.parse(JSON.parse([[${statistics.data}]]));
+
+    function tooltipTemplate(p) {
+      return [[#{admin.statistics_menu.page.page}]] + ": " + p[1] + " <br> " + [[#{admin.statistics_menu.page.access_count}]] + ": " + p[0];
+    }
+  });
+</script>
+</body>
+
+</html>

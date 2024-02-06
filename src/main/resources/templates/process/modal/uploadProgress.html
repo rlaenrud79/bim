@@ -1,0 +1,26 @@
+<!-- 모달 - 처리중 -->
+<!-- modal-dialog modal-sm -->
+<div id="uploadProgress" class="wrap-loading modal display-none" th:fragment="uploadProgress()">
+
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLongTitle" th:text="#{process.modal_title.modal_upload_progress}">Modal title</h5>
+      </div>
+      <div class="modal-body">
+        <div class="content processing" >
+          <p th:utext="#{process.modal.upload_progress.proc_message}">
+            현재 공정 자료 업로드중입니다. 작업이 끝날때까지 기다리시기 바랍니다.<br>
+            다른 작업을 할 경우 오류가 발생할 수 있습니다.
+          </p>
+          <div class="upload-progress">
+            <div id="divUploadBar" class="upload-bar"></div>
+            <div id="divUploadPercent" class="upload-percent-under">0%</div>
+          </div>
+          <div id="divUploadStatus" class="upload-status"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+

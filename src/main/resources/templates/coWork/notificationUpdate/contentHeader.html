@@ -1,0 +1,13 @@
+<div id="divContentHeader" class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{co_work.notification_update.title_notification_update}">공지 수정</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+    </div>
+    <a href="#none" id="btnGoToList" class="btn btn-color4"><span th:text="#{co_work.notification_view.btn_goto_list}">목록으로</span></a>
+    <a href="#none" id="btnGoToView" class="btn btn-color2" th:data-id="${noticeItem.id}"
+       th:if="${(#session.getAttribute('scopedTarget.userInfo')?.id == noticeItem.writeEmbedded.writer.id or isRoleAdminProject)}"><span th:text="#{co_work.notification_update.btn_goto_view}">조회</span></a>
+    <a href="#none" id="btnUpdateNotification" class="btn btn-color1" th:data-id="${noticeItem.id}"><span th:text="#{co_work.notification_update.btn_update_notification}">수정</span></a>
+  </div>
+</div>

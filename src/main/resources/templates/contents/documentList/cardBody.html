@@ -1,0 +1,85 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+  <!--추가-->
+  <div class="tab-nav-round mb-20">
+    <ul>
+      <li class="on"><button type="button" class="tab" data-document-category-id="0" th:text="#{admin.modal.add_schedule.work_all}">전체</button></li>
+      <th:block th:each="item, index : ${documentCategoryDTOs}">
+        <li><button type="button" class="tab" th:text="${item.name}" th:data-document-category-id="${item.id}">전체</button></li>
+      </th:block>
+    </ul>
+    <!--
+    <button class="btn bg-gradient-info" data-toggle="" data-target="">
+      <span>공정추가</span>
+    </button>
+    -->
+    <!--                <div class="check-set ml-30">-->
+    <!--                  <input type="checkbox" class="form-check" id="editMode">-->
+    <!--                  <label for="editMode" th:text="#{cost.index.page.edit_mode}">수정 모드</label>-->
+    <!--                </div>-->
+  </div><!--//sub-tab-->
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="table-wrap">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th>
+            <div class="check-set">
+              <input type="checkbox" id="itemCheck">
+              <label for="itemCheck"></label>
+            </div>
+          </th>
+          <th th:text="#{contents.document_list.list_title_no}">No</th>
+          <th th:text="#{contents.document_list.list_title_title}">문서명</th>
+          <th th:text="#{contents.document_list.list_title_work}">공종</th>
+          <th th:text="#{contents.document_list.list_title_file_name}">파일명</th>
+          <th th:text="#{contents.document_list.list_title_description}">파일설명</th>
+          <th th:text="#{contents.document_list.list_title_size}">크기</th>
+          <th th:text="#{contents.document_list.list_title_writer}">작성일자</th>
+          <th th:text="#{contents.document_list.list_title_delete}">삭제</th>
+        </tr>
+        <th:block th:if="${totalCount == null or totalCount == 0}">
+          <tr>
+            <td colspan="9" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+          </tr>
+        </th:block>
+        <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+          <td>
+            <div class="check-set">
+              <input type="checkbox" th:id="|itemCheck${index.index}|" name="item_no[]" class="list-item-checkbox" th:data-no="${item.id}" th:value="${item.id}">
+              <label th:for="|itemCheck${index.index}|"></label>
+            </div>
+          </td>
+          <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td><a th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-document-id="${item.id}"
+                 href="#"
+                 data-modal="#modalAddDocument" class="tb-tit openUpdateModal pop-open-btn">
+            <span class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span></a>
+            <span th:unless="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+          </td>
+          <td>
+            <span th:data-work-id="${item.workId}" th:text="${item.workNameLocale}"> 터널-구간1</span>
+          </td>
+          <td><a th:if="${item.originFileName != null and item.originFileName != ''}" th:data-file-id="${item.fileId}"
+                 href="#"
+                 class="download-attach-file">
+            <span class="text-over-dot" th:text="${item.originFileName}">교량 구간 A01 공사 계획서</span></a>
+          </td>
+          <td><span th:if="${item.fileSizeMegaByteUnit != null and item.fileSizeMegaByteUnit != ''}" th:text="|${item.fileSizeMegaByteUnit} MB|">62.5 MB</span></td>
+          <td>
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2023-05-15 10:49:21</td>
+          <td>
+            <a href="#none" id="btnDeleteDocument" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-document-id="${item.id}" class="btn-xs"><span th:text="#{contents.document_list.btn_delete_document}">삭제</span></a>
+          </td>
+        </tr>
+        </tbody>
+      </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div class="btn-area">
+      <a href="#none" class="btn-xs btn-del-sel">선택삭제</a>
+    </div>
+    <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+</div>

@@ -1,0 +1,71 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="table-wrap">
+    <table class="table">
+      <colgroup>
+        <col style="width:5%">
+        <col style="width:5%">
+        <col>
+        <col style="width:10%" span="7">
+      </colgroup>
+      <tbody>
+      <tr>
+        <th>
+          <div class="check-set">
+            <input type="checkbox" id="itemCheck">
+            <label for="itemCheck"></label>
+          </div>
+        </th>
+        <th><span th:text="#{project.job_sheet_list.list_title_no}">No</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_title}">제목</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_report_date}">보고일자</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_writer}">보고자</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_grantor}">결재자</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_reference}">참조자</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_status}">상태</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_write_date}">등록일시</span></th>
+        <th><span th:text="#{project.job_sheet_list.list_title_work}">작업</span></th>
+      </tr>
+      <th:block th:if="${totalCount == null or totalCount == 0}">
+        <tr>
+          <td colspan="10" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+        <td>
+          <div class="check-set" th:if="${(userInfoId == item.writerDTO.userId or isRoleAdminProject) and #strings.toString(item.status) == 'WRITING'}">
+            <input type="checkbox" th:id="|itemCheck${index.index}|" name="item_no[]" class="list-item-checkbox" th:data-no="${item.id}" th:value="${item.id}">
+            <label th:for="|itemCheck${index.index}|"></label>
+          </div>
+        </td>
+        <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+        <td><a th:href="@{/project/jobSheetView(id=${item.id})}" class="tb-tit" th:text="${item.title}">6월 28일 실적보고</a></td>
+        <td th:text="${#temporals.format(item.getReportDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2023-06-29</td>
+        <td>
+          <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+        </td>
+        <td>
+          <div th:replace="/common/userInfo :: userInfo(${item.grantorDTO})"></div>
+        </td>
+        <td>
+          <a href="#none" class="openReferenceModal pop-open-btn" data-modal="#modalJobSheetReferences" data-target="" th:data-reference-count="${item.getReferenceCount()}" th:data-job-sheet-id="${item.getId()}">
+            <span th:text="${item.getReferenceCount()}"></span>
+          </a>
+        </td>
+        <td th:classappend="${#strings.toString(item.status) == 'GOING' or #strings.toString(item.status) == 'COMPLETE'} ? 'complete'" th:text="${#messages.msg(item.status.getMessageProperty())}">승인</td>
+        <td th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2023-06-29 04:01</td>
+        <td>
+          <a th:href="@{/project/jobSheetView(id=${item.id})}" class="btn-xs">관리</a>
+          <a href="#none" th:if="${(userInfoId == item.writerDTO.userId or isRoleAdminProject) and #strings.toString(item.status) == 'WRITING'}" id="listBtnDelete" th:data-job-sheet-id="${item.id}" class="btn-xs" th:text="#{project.job_sheet_list.list_btn_delete}">삭제</a>
+        </td>
+      </tr>
+      </tbody>
+    </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div class="btn-area">
+      <a href="#none" class="btn-xs btn-del-sel">선택삭제</a>
+    </div>
+    <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+</div><!--// board-list-->

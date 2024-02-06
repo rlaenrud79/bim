@@ -1,0 +1,100 @@
+/// BIM ACCOUNT
+
+.login-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background: #0250c5;
+    background: linear-gradient(to bottom,#0250c5,#d43f8d);
+    position: relative;
+    z-index: 1;
+
+    &::before {
+        content: "";
+        display: block;
+        position: absolute;
+        z-index: -1;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: url('/dist/img/bim-login-bg.webp');
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .login-logo {
+        font-family: 'roboto';
+
+        strong {
+            font-weight: 900;
+            font-size: 3rem;
+            color: #fff;
+            letter-spacing: -2px;
+        }
+    }
+
+    .card {
+        border-radius: 15px;
+
+        .login-card-body {
+            padding-bottom: 2rem;
+            border-radius: 15px;
+
+            > .form-group {
+                margin: 2rem 0;
+
+                .custom-select {
+                    padding: .375rem 1.75rem .375rem 1.5rem;
+                    width: 100%;
+                    height: calc(3rem + 1px);
+                    font-weight: 900;
+                    letter-spacing: 5px;
+                    border: 1px solid var(--blue);
+                    border-radius: 50px!important;
+                }
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+                margin: 0 0 1.5rem;
+    
+                label {
+                    margin-bottom: .5rem;
+                    color: #212529;
+                }
+    
+                .form-control { height: calc(3rem + 1px); }
+    
+                .input-group-text {
+                    padding: .375rem 1rem;
+                    width: 41px;
+    
+                    .fa-lock { font-size: 14px; }
+                }
+            }
+
+            .btn {
+                margin-top: 1rem;
+                padding: 1rem;
+            }
+        }
+    }
+}
+
+$bg-width: 50px;
+$bg-height: 50px;
+
+/* Animations */
+// @keyframes bg-scrolling-reverse {
+//     100% { background-position: $bg-width $bg-height; }
+// }
+// @keyframes bg-scrolling {
+//     0% { background-position: $bg-width $bg-height; }
+// }

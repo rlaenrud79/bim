@@ -1,0 +1,47 @@
+  <article id="snapShotFileList" th:fragment="snapShotFileList()">
+  <header>
+    <span th:text="#{co_work.modeling_view.page.snap_shot_modeling_file_list}">스냅샷 도면 리스트</span>
+    <button type="button"
+            th:if="${isGoing}"
+            class="btn bg-gradient-success btn-xs"
+            data-toggle="modal"
+            data-target="#snapShotUploadFile"
+            th:data-snap-shot-id="${snapShot.id}"
+            th:text="#{contents.modeling_view.btn_add_snap_shot_file}">도면추가
+    </button>
+  </header>
+  <div class="scroll-area-v">
+    <table class="table">
+      <thead>
+      <tr>
+        <th id="snapShotName" class="text-center" colspan="3" th:text="${snapShot.title}">Sanp Shot 명 : 상부 거더 1 좌측 뷰</th>
+      </tr>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.snap_shot_modeling_file_name}">도면명</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.snap_shot_modeling_file_write_date}">등록일자</th>
+        <th class="text-center" th:text="#{co_work.modeling_view.page.snap_shot_modeling_file_delete}">삭제</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="snapShotFile : ${snapShotFiles}">
+        <td>
+          <a href="javascript:void(0)" role="button"
+             th:data-id="${snapShotFile.id}"
+             th:data-ext="${snapShotFile.originFileNameExt}"
+             th:data-file-path="${snapShotFile.filePath}">
+            <span class="text-over-dot downloadSnapShotFile" th:text="${snapShotFile.originFileName}">도면명 1111.pdf</span>
+          </a>
+        </td>
+        <td class="text-center">
+          <small th:text="${#temporals.format(snapShotFile.writeEmbedded.writeDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021.07.15</small>
+        </td>
+        <td class="text-center">
+          <button th:if="${isGoing && snapShotFile.isOwner(#session.getAttribute('scopedTarget.userInfo')?.id)}" type="button" th:data-id="${snapShotFile.id}" class="btn bg-gradient-danger btn-xs deleteSnapShotFile" th:text="#{co_work.modeling_view.page.snap_shot_modeling_file_delete}">
+            삭제
+          </button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

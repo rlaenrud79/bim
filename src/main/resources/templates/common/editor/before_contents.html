@@ -1,0 +1,163 @@
+<div id="divEditor1" class="edit-area" th:fragment="load()">
+  <div id="summernote1"></div>
+  <!-- modals -->
+  <div class="container">
+    <div class="row mt-5">
+      <div class="col">
+        <th:block th:replace="layout/modal :: modal('modalEditorPreview', #{common.editor.modal_title.preview} , 'modal-xl')">편집내용 미리보기</th:block>
+      </div>
+    </div>
+  </div>
+</div>
+<div th:fragment="script()">
+  <script>
+    var beforeContentsEditor = {};
+
+    $(document).ready(function () {
+      const $summernote1 = $('#summernote1');
+
+      let enteredText, decoded, sanitized = null;
+
+      const previewButton = function (context) {
+        let ui = $.summernote.ui;
+        let button = ui.button({
+          contents: '<i class="far fa-eye fa-xl py-1"></i>',
+          click: function () {
+            $('#modalEditorPreview').appendTo(document.body);
+            modalShowAndDraggable('#modalEditorPreview');
+            openPreviewModal();
+          },
+        });
+        return button.render();
+      }
+
+      const resetButton = function (context) {
+        let ui = $.summernote.ui;
+        let button = ui.button({
+          contents: '<i class="far fa-trash-alt fa-xl py-1"></i>',
+          click: function () {
+            showConfirm("[[#{system.common.confirm.title}]]", "[[#{common.editor.confirm_reset}]]",
+              function () {
+                deleteInputData();
+              },
+              function () {
+                return false;
+              });
+          },
+        });
+        return button.render();
+      }
+
+      const settings = {
+        height: 400,
+        toolbar: [
+          // [groupName, [list of button]]
+          ['operation', ['undo', 'redo']],
+          ['fontsize', ['fontsize']],
+          ['style', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+          ['color', ['forecolor']],
+          ['table', ['table']],
+          ['para', ['paragraph']],
+          ['height', ['height']],
+          ['insert', ['picture', 'link']],
+          ['view', ['fullscreen', 'help']],
+          ['customButton', ['preview', 'reset']]
+        ],
+        // en 기본값: 공백
+        lang: "[[#{common.editor.locale_language}]]",
+        fontSizes: ['8', '9', '10', '11', '12', '13', '14', '16', '18', '20', '22', '24', '28', '30', '36', '50', '72'],
+        codeviewFilter: true,
+        codeviewIframeFilter: true,
+        maximumImageFileSize: 1048576,
+        disableDragAndDrop: false,
+        buttons: {
+          preview: previewButton,
+          reset: resetButton
+        },
+        tooltip:false,
+        dialogsInBody: true,
+        dialogsFade: false,
+
+        callbacks: {
+          onChange: function(contents, $editable) {
+            if(contents.length === 0) {
+              $summernote1.summernote('code', '<p><br></p>');
+            }
+          },
+        },
+      }
+
+      function getSanitizedText() {
+        resetValues();
+        enteredText = $summernote1.summernote('code');
+        decoded = decode(enteredText);
+        sanitized = DOMPurify.sanitize(decoded);
+        return encode(sanitized);
+      }
+
+      function decode(text) {
+        return $("<textarea/>").html(text).text();
+      }
+
+      function encode(text) {
+        const textArea = document.createElement('textarea');
+        textArea.innerText = text;
+        return textArea.innerHTML;
+      }
+
+      function resetValues() {
+        enteredText = null;
+        decoded = null;
+        sanitized = null;
+      }
+
+      function openPreviewModal() {
+        reqGet( '/commonModal/editorPreview'
+          , function (data) {
+            $('#modalEditorPreview').find('.modal-body').html(data);
+            $('#preview-area').html(decode(getSanitizedText()));
+          }
+          , function (error) {
+            console.log('error', error);
+          }
+          , 'html');
+      }
+
+      function isEmpty() {
+        const inputText = $summernote1.summernote('code');
+        const filteredContent = $(inputText).text().replace(/\s+/g, '');
+
+        return $summernote.summernote('isEmpty') || (filteredContent.length === 0 && inputText.length === 0);
+      }
+
+      function setInputData(text) {
+        // destroy 하지 않을 경우 값을 불러올 때마다 위로 한 줄이 입력됨.
+        $summernote1.summernote("destroy");
+        $summernote1.html(decode(text));
+        init();
+      }
+
+      function getInputData() {
+        return $summernote1.summernote('code');
+      }
+
+      function deleteInputData() {
+        $summernote1.summernote('code', '<p><br></p>');
+        resetValues();
+      }
+
+      function init() {
+        $summernote1.summernote(settings);
+      }
+
+      init();
+
+      // 외부 노출 함수
+      beforeContentsEditor.getInputData = getInputData;
+      beforeContentsEditor.setInputData = setInputData;
+      beforeContentsEditor.isEmpty = isEmpty;
+      beforeContentsEditor.deleteInputData = deleteInputData;
+    });
+  </script>
+</div>
+

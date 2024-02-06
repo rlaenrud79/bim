@@ -1,0 +1,133 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+    <div class="grid">
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.title}">문서명</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="text" id="title" name="title" th:value="${gisungPayment.title}" class="form-control" th:placeholder="#{contents.modal.add_gisung_payment.title_placeholder}">
+            </div>
+        </div>
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.attach_file}">파일첨부</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div th:replace="/common/fileUploader :: singleFileUploader('gisungPaymentFile')"></div>
+                <div class="d-flex align-items-center">
+                    <div class="up-file-list">
+                        <div class="badge badge-pill" th:each="item, index : *{gisungPayment.gisungPaymentFiles}"
+                             th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}">
+                            <a href="#" class="download-attach-file" th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}"><span th:text="${item.originFileName}">aaa.ppt</span></a>
+                            <a href="#none" th:data-file-id="${item.id}" class="btn btnDeleteFile"><span th:text="#{layout.modal.btn_delete}">삭제</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_gisung_payment.description}">파일 설명</span></strong>
+            </div>
+            <div class="fm-txt">
+                <textarea id="description" th:field="*{gisungPayment.description}" th:placeholder="#{contents.modal.add_gisung_payment.description_placeholder}"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-box">
+    <button type="button" id="btnAddGisungPayment" class="btn btn-color1">
+        <span th:text="#{layout.modal.btn_edit}"> 수정</span>
+    </button>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+    $(document).ready(function () {
+        let gisungPaymentId = [[${gisungPayment.id}]];
+
+        const $title = $("#title");
+        const $description = $("#description");
+        const documentFileExtension = '[[${gisungPaymentFileExtension}]]';
+        const allowFileExtList = documentFileExtension.split("||");
+
+        $('#btnAddGisungPayment').off('click').on('click', function () {
+            if ($title.val() === "") {
+                alert("[[#{contents.modal.add_gisung_payment.alert_title}]]");
+                return false;
+            }
+
+            /**
+            if ($('li.devo_file_list').length === 0) {
+                alert("[[#{contents.modal.add_gisung_payment.alert_attach_file}]]");
+                return false;
+            }
+             **/
+
+            if ($description.val() === "") {
+                alert("[[#{contents.modal.add_gisung_payment.alert_description}]]");
+                return false;
+            }
+
+            updateGisungPayment();
+        });
+
+        function updateGisungPayment() {
+            reqPutJSON('/gisungApi/putGisungPayment', setSendData(),
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        //toastr.success(data.message);
+                        //gisungPaymentId = data.returnId;
+                        startFileUpload();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            );
+        }
+
+        function setSendData() {
+            return JSON.stringify({
+                "id": gisungPaymentId + "",
+                "title": $title.val(),
+                "description": $description.val()
+            });
+        }
+
+        function startFileUpload() {
+            $("#gisungPaymentFile").dmUploader("start");
+        }
+
+        function completeUploadFile(obj) {
+            if ($(obj)[0].id === "gisungPaymentFile") {
+                $('.close').click();
+                reloadComponent("/gisung/gisungPaymentListCardBody", "#divCardBody", "");
+            }
+        }
+
+        function fileUploaderExtraData() {
+            return {
+                "id": gisungPaymentId,
+                "fileUploadUIType": "GISUNG_PAYMENT_FILE",
+                "makeVersion": false,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeSingleUploaderScript("#gisungPaymentFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+        );
+
+    });
+</script>

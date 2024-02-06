@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+          <div id="divContentHeader" class="header" th:replace="admin/companyList/contentHeader :: contentHeader()"></div>
+
+          <div class="content">
+            <input type="hidden" id="pageNo" value="">
+
+            <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+            <div id="divCardBody" th:replace="admin/companyList/cardBody :: cardBody()"/>
+
+          </div><!--// content-->
+        </div>
+    </div>
+</div>
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+    let _pageNo = 0;
+
+    let setSendData = function(page, pageSize) {
+      let param = "";
+
+      param += "page=" + page;
+      param += "&size=" + pageSize;
+      if (isObject($("#workId").val())) {
+          param += "&workId=" + $("#workId").val();
+      }
+    if (isObject($("#companyName").val())) {
+        param += "&companyName=" + $("#companyName").val();
+    }
+    if (isObject($("#sortProp").val())) {
+        param += "&sortProp=" + $("#sortProp").val();
+    }
+
+      return param;
+    }
+
+    let searchCompanyList = function() {
+      reloadComponent("/admin/companyListCardBody", "#divCardBody", setSendData(0, $("#pageSize").val()));
+    }
+
+    let initSearchCondition = function() {
+      $("#workId").val("0");
+      $("#companyName").val("");
+      $("#sortProp").val("");
+    }
+
+    _this.on('click', '#btnSearch', function () {
+      searchCompanyList();
+    });
+
+    _this.on('click', '#btnInit', function () {
+      initSearchCondition();
+      searchCompanyList();
+    });
+
+    _this.on('change', '#pageSize', function(){
+      searchCompanyList();
+    });
+
+    _this.on('click', '.sort', function () {
+      $("#sortProp").val($(this).data('sort'));
+      searchCompanyList();
+    });
+
+    _this.on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function() {
+      _pageNo = $(this).data("page-no");
+      reloadComponent("/admin/companyListCardBody", "#divCardBody", setSendData(_pageNo, $("#pageSize").val()));
+    });
+
+    _this.on('click', '#btnAdd', function(){
+      location.href="/admin/companyAdd";
+    });
+
+    _this.on('click', '#btnExcelDownload', function(){
+      window.open("/adminApi/companyListExcel?" + setSendData(0, 0));
+    });
+
+    _this.on('click', 'a[id^=\'aCompany_\']', function(){
+      let companyId = $(this).data("id");
+      location.href="/admin/companyUpdate?companyId=" + companyId + "&" + setSendData(_pageNo, $("#pageSize").val());
+    });
+
+      _this.on('click', '#btnDeleteCompany', function () {
+          if (confirm("[[#{admin.company_list.confirm_delete_company}]]")) {
+              deleteCompany($(this));
+          }
+      });
+
+      function deleteCompany(obj) {
+          reqDelete(`/adminApi/deleteCompany?id=${obj.data('company-id')}`,
+              function (data) {
+                  if (!data.result) {
+                      alert(data.message);
+                  } else {
+                      alert(data.message);
+                      searchCompanyList();
+                  }
+              },
+              function (xhr) {
+                  alert(xhr.responseJSON.message);
+              }
+          )
+      }
+  });
+</script>
+</body>
+
+</html>

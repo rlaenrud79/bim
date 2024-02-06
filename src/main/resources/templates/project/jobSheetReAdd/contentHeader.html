@@ -1,0 +1,15 @@
+<div id="divContentHeader" class="content-header" th:fragment="contentHeader()">
+  <div>
+    <h1><i class="nav-icon fas fa-book"></i><span th:text="#{project.job_sheet_re_add.title_job_sheet_re_add}"> 공사일지 등록</span></h1>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a th:href="@{/main/index}"><i class="fas fa-home"></i><span th:text="#{project.job_sheet_re_add.title_home}"> HOME</span></a>
+      </li>
+      <li class="breadcrumb-item">
+        <a th:href="@{/project/jobSheetList?keepCondition=false}"><span th:text="#{project.job_sheet_re_add.title_project_manage}"> 사업관리</span></a>
+      </li>
+      <li class="breadcrumb-item"><span th:text="#{project.job_sheet_re_add.title_job_sheet}"> 공사일지</span></li>
+      <li class="breadcrumb-item active"><span th:text="#{project.job_sheet_re_add.title_add}"> 등록</span></li>
+    </ol>
+  </div>
+</div>

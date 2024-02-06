@@ -1,0 +1,104 @@
+<div className="card-body" id="divCardBody" th:fragment="cardBody()">
+    <div class="print-page print-write">
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2>기성검사조서</h2>
+                </div>
+                <table>
+                    <colgroup>
+                        <col style="width:20%">
+                        <col style="width:80%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>1. 공사명 :</th>
+                        <td><input type="text"></td>
+                    </tr>
+                    <tr>
+                        <th>2. 기성금액 :</th>
+                        <td>￦ <input type="text" class="wid-s"> (금회 : ￦ <input type="text" class="wid-s">)</td>
+                    </tr>
+                    <tr>
+                        <th>3. 계약년월일 :</th>
+                        <td><div class="form-group from-date" style="margin:0 !important;"><input type="text" name="contractDate" id="contractDate" class="form-control" readonly></div></td>
+                    </tr>
+                    <tr>
+                        <th>4. 착공년원일 :</th>
+                        <td>
+                            <input type="text" name="constructionDate" id="constructionDate" class="form-control" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>5. 준공예정일 :</th>
+                        <td><input type="text" name="scheduleDate" id="scheduleDate" class="form-control" readonly></td>
+                    </tr>
+                    <tr>
+                        <th>6. 계약자 :</th>
+                        <td>
+                            <table id="contractTb">
+                                <tr>
+                                    <td><input type="text" name="company[]" id="company"></td>
+                                    <td><input type="text" name="position[]" id="position"></td>
+                                    <td><input type="text" name="name[]" id="name"></td>
+                                    <td>
+                                        <div class="btn-control">
+                                            <a href="#" class="btn-add btn-contract-add" title="추가"></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="ph-20">
+                            <p>상기 공사 기성부분 검사의 명을 받아 <input type="text" class="wid-xs">년 <input type="text" class="wid-xs">월 <input type="text" class="wid-xs">일 검사한 결과 별지 명세서와 같이 전 공사에 대하여 <input type="text" class="wid-xs">% 기성이 상위없음을 증명함</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="txt-right">
+                            <input type="text" class="wid-xs"> 년 <input type="text" class="wid-xs"> 월 <input type="text" class="wid-xs"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="txt-right">
+                            <table>
+                                <colgroup>
+                                    <col style="width:70%">
+                                    <col style="width:15%">
+                                    <col style="width:5%">
+                                </colgroup>
+                                <tr>
+                                    <th class="txt-right">검사원 :</th>
+                                    <td class="txt-right"><input type="text" name="inspector1"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                                <tr>
+                                    <th class="txt-right">검사원 :</th>
+                                    <td class="txt-right"><input type="text" name="inspector2"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="file-btm fileTb">
+                    <dl>
+                        <dt>첨부 :</dt>
+                        <dd>1.
+                            <input type="text" name="filename[]" id="filename[]">
+                            <div class="btn-control">
+                              <a href="#" class="btn-add" title="추가"></a>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+            </section><!--//section-->
+
+            <div class="btn-box">
+                <a href="#" class="btn bg-gradient-primary">확인</a>
+            </div>
+        </div>
+    </div>
+</div>

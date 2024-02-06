@@ -1,0 +1,55 @@
+<!-- 모달 - 파일 다운로드 -->
+<div id="divFileDownload" class="download-file">
+  <h3 th:text="#{common.modal.file_download.do_you_want_download_file}">다음 파일을 다운로드 하시겠습니까?</h3>
+  <table class="table mt-20">
+    <colgroup>
+      <col style="width:20%">
+      <col style="width:80%">
+    </colgroup>
+    <tr>
+      <th><p class="title" th:text="#{common.modal.file_download.file_name}">파일명</p></th>
+      <td>
+        <a id="aDownload"
+           th:if="${haveRightFileDownload}"
+           th:data-id="${fileDownloadInfoDTO.id}"
+           th:data-fileUploadUIType="${fileDownloadInfoDTO.fileDownloadUIType}"
+           th:text="${fileDownloadInfoDTO.fileName}">파일명 파일명.rvt</a>
+        <p th:if="${!haveRightFileDownload}">
+          <span th:text="${fileDownloadInfoDTO.fileName}">파일명 파일명.rvt</span>
+        </p>
+      </td>
+    </tr>
+    <tr th:if="${not #strings.isEmpty(fileDownloadInfoDTO.version)}">
+      <th><p class="title" th:text="#{common.modal.file_download.file_version}">버전</p></th>
+      <td><p th:text="${fileDownloadInfoDTO.version}">v_002</p></td>
+    </tr>
+    <tr>
+      <th><p class="title" th:text="#{common.modal.file_download.file_download_right}">다운로드 권한</p></th>
+      <td>
+        <p th:if="${haveRightFileDownload}" th:text="#{common.modal.file_download.have_file_download_right}">다운로드 권한 있음</p>
+        <p th:if="${!haveRightFileDownload}">
+          <span th:text="#{common.modal.file_download.no_have_file_download_right}">다운로드 권한 없음</span>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<div class="btn-box">
+
+  <a th:href="@{'/commonApi/downloadFile/' + ${fileDownloadInfoDTO.fileDownloadUIType} + '/' + ${fileDownloadInfoDTO.id}}"
+     target="_blank"
+     class="btn btn-color1"
+     th:if="${haveRightFileDownload and fileDownloadInfoDTO.fileDownloadUIType != T(com.devo.bim.model.enumulator.FileDownloadUIType).PROCESS_TEMPLATE }"
+     th:text="#{common.modal.file_download.btn_download}">다운로드</a>
+
+  <a href="/dist/file/process_template.xlsx"
+     target="_blank"
+     class="btn btn-color1"
+     th:if="${haveRightFileDownload and fileDownloadInfoDTO.fileDownloadUIType == T(com.devo.bim.model.enumulator.FileDownloadUIType).PROCESS_TEMPLATE }"
+     th:text="#{common.modal.file_download.btn_download}">다운로드</a>
+
+</div>
+<script th:if="${haveRightFileDownload}">
+  $(document).ready(function () {});
+</script>

@@ -1,0 +1,56 @@
+<article id="bimModelDetail" th:fragment="load()">
+  <div class="scroll-area-v">
+    <table class="table">
+      <tbody>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.model_name}">BIM 모델명</p>
+          <p id="modelName" th:text="${modeling?.modelName}">상부 거더에 대한 논의</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.work_name}">공정</p>
+          <p id="workName" th:text="${modeling?.workName}">터미널 1 구간</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.writer}">작성자</p>
+          <div id="userInfo">
+            <div th:if="${modeling.accountDTO != null}" th:replace="/common/userInfoAtField :: userInfoAtField(${modeling.accountDTO})"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.write_date}">업로드 일시</p>
+          <p id="uploadDate" th:text="${modeling?.writeDate}">2021.01.01 12:00:05</p>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.model_information}">BIM 모델 정보</p>
+          <div>
+            &#91; <span class="modelVersion" th:text="${modeling?.version}">v_002</span> &#93;
+            <a href="#">
+              <span class="text-over-dot" id="modelFileNameRvt" th:data-id="${modeling.id}" th:text="${modeling?.fileName}"> ultrai_tunnel-S01.rvt</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <p class="title" th:text="#{co_work.modeling_view.page.bim_model_detail.ifc_file}">IFC</p>
+          <div>
+            &#91; <span class="modelVersion" th:text="${modeling?.version}">v_002</span> &#93;
+            <a href="#">
+              <span class="text-over-dot" id="modelFileNameIfc" th:data-id="${modeling.id}" th:text="${modeling?.ifcFileName}"> ultrai_tunnel-S01.ifc</span>
+            </a>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</article>

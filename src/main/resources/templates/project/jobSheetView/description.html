@@ -1,0 +1,25 @@
+<div class="card content-body-area pdf_page" th:fragment="description()">
+  <div th:if="${not #strings.isEmpty(jobSheet.jobSheetGrantor.description) || #strings.equalsIgnoreCase(status, 'COMPLETE') || #strings.equalsIgnoreCase(status, 'REJECT')}" class="card-body">
+    <div class="col-12">
+      <h2 class="list-title">
+        <i class="far fa-list-alt"></i><span th:text="#{project.job_sheet_view.comment}"> 결재자 의견</span>
+      </h2>
+      <table class="table">
+        <tr>
+          <th><span th:if="${not #strings.isEmpty(jobSheet.jobSheetGrantor.description)}" th:text="${#temporals.format(jobSheet.jobSheetGrantor.grantDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021.04.15 15:00:26</span></th>
+          <td>
+            <div class="d-flex align-items-center">
+              <div th:replace="/common/userInfo :: userInfo(${jobSheet.jobSheetGrantor.accountDTO})"></div>
+              <div class="up-file-list">
+                <div class="badge badge-pill" th:if="${not #strings.isEmpty(jobSheet.jobSheetGrantor.description)}">
+                  <span th:text="${jobSheet.jobSheetGrantor.description}"> xxxxxxxxxxxxxxxxxxxxxxx.ppt </span>
+                  <button type="button" th:if="${isGrantor}" id="deleteDescription" class="btn"><i class="fas fa-times-circle"></i></button>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

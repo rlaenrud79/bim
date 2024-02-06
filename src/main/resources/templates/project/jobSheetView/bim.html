@@ -1,0 +1,119 @@
+<div class="card content-body-area pdf_page" th:fragment="bim()">
+  <div class="card-body">
+    <div class="col-12">
+      <h2 class="list-title">
+        <i class="far fa-arrow-alt-circle-right"></i><span th:text="#{project.job_sheet_view.bim}"> BIM 정보</span>
+      </h2>
+      <div class="table-responsive">
+        <table class="table">
+          <tbody>
+          <!--
+          <tr>
+            <th><span th:text="#{project.job_sheet_view.snap_shot}">스냅샷</span></th>
+            <td>
+              <div class="d-flex justify-content-center">
+                <div id="carouselControls" class="carousel slide" data-wrap="false" data-ride="carousel">
+                  <div class="carousel-inner">
+                    <div class="carousel-item text-center" th:each="item, index : ${jobSheet.jobSheetSnapShots}" th:classappend="${item.sortNo} == 1 ? active">
+                      <img class="d-block w-75 zoom-in-image" th:src="${item.source}" alt="First slide">
+	                  <button type="button" id="openViewPoint" th:data-view-point-id="${item.id}" class="btn bg-gradient-info mt-3">
+	                    <span th:text="#{project.job_sheet_view.btn_view_point}">VIEW</span>
+	                  </button>
+                    </div>
+                  </div>
+                  <a class="carousel-control-prev" href="#carouselControls" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  <a class="carousel-control-next" href="#carouselControls" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </div>
+              </div>
+            </td>
+          </tr>
+          -->
+          <tr>
+            <th><span th:text="#{project.job_sheet_view.input_progress}">공정별 진행률</span></th>
+            <td>
+              <div class="d-flex flex-column align-items-start w-100">
+                <div class="task-list">
+                  <div th:each="row, info : ${jobSheetProcessItems}">
+                    <div class="period-table">
+                      <div>기간:</div>
+                      <div>[[${row.processItem.startDate}]] ~ [[${row.processItem.endDate}]]([[${row.processItem.getDuration()}]] 일) <span class="exchange-id">[[${row.exchangeId}]]</span></div>
+                    </div>
+                    <div class="task-title">
+                      [[${row.taskFullPath}]]
+                    </div>
+                    <div class="task-element">
+                      <div class="task-rate">
+                        <div>진행률: (일 평균)</div>
+                        <div class="task-rate-num" th:if="${row.processItem.getDuration()} != 0">[[${row.afterProgressRate / row.processItem.getDuration()}]] (%)</div>
+                        <div class="task-rate-num" th:unless="${row.processItem.getDuration()} != 0">[[${row.afterProgressRate}]] (%)</div>
+                      </div>
+                      <input type="number" min="0" max="100" step="0.01" class="js-range-slider"
+                             name="js-range-slider" th:value="${row.afterProgressRate}" />
+                      <div class="input-group">
+                        <table class="task-table">
+                          <tr>
+                            <th colspan=3>실시량(원)</th><th colspan=3>진도(%)</th>
+                          </tr>
+                          <tr>
+                            <th>전일누계</th><th>금일</th><th>누계</th>
+                            <th>전일진도</th><th>금일진도</th><th>누계</th>
+                          </tr>
+                          <tr>
+                            <td>[[${row.beforeProgressAmount}]]</td>
+                            <td>[[${row.todayProgressAmount}]]</td>
+                            <td>[[${row.afterProgressAmount}]]</td>
+                            <td>[[${row.beforeProgressRate}]]</td>
+                            <td>[[${row.todayProgressRate}]]</td>
+                            <td>[[${row.afterProgressRate}]]</td>
+                          </tr>
+                        </table>
+                      </div>
+
+                      <div class="task-img-upload">
+                        <div classname="img">
+                          <img th:if="${row.mySnapShotSource != null}" th:src="${row.mySnapShotSource}">
+                          <img th:if="${row.mySnapShotSource == null}" src="/dist/img/no_image.png">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="task-option-add">
+                      <div class="task-option">
+                        <div class="title">인원 추가</div>
+                        <ul name="tblProcessWorker" class="table-process-item">
+                          <li th:each="item, info : ${row.worker}">
+                            <strong>[[${item.name}]]</strong>
+                            <span>[[${item.value}]]</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="task-option">
+                        <div class="title">장비 추가</div>
+                        <ul name="tblProcessDevice" class="table-process-item">
+                          <li th:each="item, info : ${row.device}">
+                            <strong>[[${item.name}]]</strong>
+                            <span>[[${item.value}]]</span>
+                          </li>
+                        </ul>
+                      </div>
+                      <div class="task-previous">
+                        <button type="button" class="btn btn-primary btnJobProcessItemPRINT" name="" th:data-process-item-id="${row.id}" th:text="#{project.job_sheet_view.header_btn_print}">PRINT</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

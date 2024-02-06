@@ -1,0 +1,46 @@
+<div id="divBulletinReply" class="card content-body-area" th:fragment="load(replies)">
+  <div class="card-body">
+    <div class="col-12">
+<!--      <div class="fm-tit">-->
+<!--        <strong><i class="ico-require"></i><span th:text="#{co_work.bulletin_view.reply}"> 댓글</span></strong>-->
+<!--      </div>-->
+      <div class="table-responsive">
+        <table class="reply-table">
+          <colgroup>
+            <col style="width:4%">
+            <col>
+            <col style="width:12%">
+          </colgroup>
+          <tbody>
+          <tr th:each="item, index : ${replies}">
+            <td class="text-center" width="100">
+              <div th:replace="/common/userInfo :: userInfo(${item.writeEmbedded.accountDTO})"></div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center">
+                <span class="mr-2" th:utext="${item.contents.replaceAll('\n', '<br/>')}"></span>
+                <button type="button" th:if="${item.isCurrentUserReply(userId) or isRoleAdminProject}" id="btnDeleteReply" th:data-reply-id="${item.id}" class="btn-delete-ico"></button>
+              </div>
+            </td>
+            <th><span th:text="${#temporals.format(item.writeEmbedded.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min_sec'))}"> 2021.04.16 15:00:26</span></th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('.user-img').each(function () {
+      $(this).on('mouseenter', function () {
+        if ($(this).find('.bubble span').text()) {
+          $(this).addClass('on');
+        }
+      });
+      $(this).on('mouseout', function () {
+        $(this).removeClass('on');
+      });
+    });
+  });
+</script>

@@ -1,0 +1,110 @@
+<div class="scroll-wrap sc-table-f">
+    <table class="table table-green">
+        <tbody>
+        <tr class="sticky-th">
+            <th rowspan="2">No</th>
+            <th rowspan="2">코드</th>
+            <th rowspan="2">공종명</th>
+            <th rowspan="2">단위</th>
+            <th rowspan="2">ⓐ 대표수량</th>
+            <th rowspan="2">ⓑ 수량</th>
+            <th rowspan="2">ⓒ 단가</th>
+            <th>공사비</th>
+            <th colspan="2">실적</th>
+            <th colspan="2">전회기성</th>
+            <th colspan="2">금회기성</th>
+            <th colspan="2">누적기성</th>
+            <th colspan="2">잔여기성금액</th>
+        </tr>
+        <tr class="sticky-th-two">
+            <th>ⓐ * ⓑ * ⓒ</th>
+            <th>수량</th>
+            <th>금액</th>
+            <th>수량</th>
+            <th>금액</th>
+            <th>수량</th>
+            <th>금액</th>
+            <th>수량</th>
+            <th>금액</th>
+            <th>수량</th>
+            <th>금액</th>
+        </tr>
+        <tr class="tb-style-total sticky-th-three">
+            <th colspan="3">총계</th>
+            <th colspan="4" th:text="${resultText}">5,861,670 = 5,861,670 / 1</th>
+            <th id="totalCost" th:text="${#numbers.formatInteger(totalCost, 1, 'COMMA')}">5,861,670</th>
+            <th th:text="${#numbers.formatDecimal(totalJobSheetProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th th:text="${#numbers.formatInteger(totalJobSheetProgressAmount, 1, 'COMMA')}">879,250</th>
+            <th th:text="${#numbers.formatDecimal(totalPaidProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th th:text="${#numbers.formatInteger(totalPaidCost, 1, 'COMMA')}">879,250</th>
+            <th id="totalProgressCount" th:text="${#numbers.formatDecimal(totalProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th id="totalProgressCost" th:text="${#numbers.formatInteger(totalProgressCost, 1, 'COMMA')}">879,250</th>
+            <th id="totalSumProgressCount" th:text="${#numbers.formatDecimal(totalSumProgressCount, 1, 'COMMA', 2, 'POINT')}">30.00</th>
+            <th id="totalSumProgressCost" th:text="${#numbers.formatInteger(totalSumProgressCost, 1, 'COMMA')}">1,758,501</th>
+            <th id="totalRemindProgressCount" th:text="${#numbers.formatDecimal(totalRemindProgressCount, 1, 'COMMA', 2, 'POINT')}">70.00</th>
+            <th id="totalRemindProgressCost" th:text="${#numbers.formatInteger(totalRemindProgressCost, 1, 'COMMA')}">4,103,169</th>
+        </tr>
+        <tr class="tb-style-total-after sticky-th-four">
+            <th colspan="3">총계</th>
+            <th colspan="4" th:text="${resultText}">5,861,670 = 5,861,670 / 1</th>
+            <th th:text="${#numbers.formatInteger(totalCost, 1, 'COMMA')}">5,861,670</th>
+            <th th:text="${#numbers.formatDecimal(totalJobSheetProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th th:text="${#numbers.formatInteger(totalJobSheetProgressAmount, 1, 'COMMA')}">879,250</th>
+            <th th:text="${#numbers.formatDecimal(totalPaidProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th th:text="${#numbers.formatInteger(totalPaidCost, 1, 'COMMA')}">879,250</th>
+            <th th:text="${#numbers.formatDecimal(totalCompareProgressCount, 1, 'COMMA', 2, 'POINT')}">15.00</th>
+            <th th:text="${#numbers.formatInteger(totalCompareProgressCost, 1, 'COMMA')}">879,250</th>
+            <th th:text="${#numbers.formatDecimal(totalSumCompareProgressCount, 1, 'COMMA', 2, 'POINT')}">30.00</th>
+            <th th:text="${#numbers.formatInteger(totalSumCompareProgressCost, 1, 'COMMA')}">1,758,501</th>
+            <th th:text="${#numbers.formatDecimal(totalRemindCompareProgressCount, 1, 'COMMA', 2, 'POINT')}">70.00</th>
+            <th th:text="${#numbers.formatInteger(totalRemindCompareProgressCost, 1, 'COMMA')}">4,103,169</th>
+        </tr>
+        <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+            <tr>
+            <td th:text="${(index.index+1)}">1</td>
+            <td><a href="#none" id="popCompareGisungCode" class="pop-open-btn" th:data-code="${item.code}"><span id="code" th:text="${item.code}">00000</span></a></td>
+            <td class="txt-left" id="name" th:text="${item.name}">철근콘크리트타설/펌프카/보통(S15, 100m3. 이하)</td>
+            <td id="unit" th:text="${item.unit}">M3</td>
+            <td th:text="${processItem.firstCount}">1,146</td>
+            <td id="count" th:data-value="${item.count}" th:text="${#numbers.formatInteger(item.count, 1, 'COMMA')}">170,605,932</td>
+            <td id="unitPrice" th:data-value="${#numbers.formatInteger(item.unitPrice, 1)}" th:text="${#numbers.formatInteger(item.unitPrice, 1, 'COMMA')}">16,603</td>
+            <td id="cost" th:data-value="${#numbers.formatInteger(item.cost, 1)}" th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}">1,146</td>
+            <td id="jobSheetProgressCount" th:text="${#numbers.formatDecimal(item.jobSheetProgressCount, 1, 'COMMA', 2, 'POINT')}">181,495,672</td>
+            <td id="jobSheetProgressAmount" th:data-value="${#numbers.formatInteger(item.jobSheetProgressAmount, 1)}" th:text="${#numbers.formatInteger(item.jobSheetProgressAmount, 1, 'COMMA')}">142.16</td>
+            <td id="paidProgressCount" th:data-value="${item.paidProgressCount}" th:text="${#numbers.formatDecimal(item.paidProgressCount, 1, 'COMMA', 2, 'POINT')}">3,629,913</td>
+            <td id="paidCost" th:data-value="${#numbers.formatInteger(item.paidCost, 1)}" th:text="${#numbers.formatInteger(item.paidCost, 1, 'COMMA')}">284.32</td>
+            <td th:text="${item.progressCount}">12</td>
+            <td id="progressCost" th:data-value="${#numbers.formatInteger(item.progressCost, 1)}" th:text="${#numbers.formatInteger(item.progressCost, 1, 'COMMA')}">12</td>
+            <td id="sumProgressCount" th:text="${#numbers.formatDecimal(item.sumProgressCount, 1, 'COMMA', 2, 'POINT')}">3,629,913</td>
+            <td id="sumProgressCost" th:data-value="${#numbers.formatInteger(item.sumProgressCost, 1)}" th:text="${#numbers.formatInteger(item.sumProgressCost, 1, 'COMMA')}">426.48</td>
+            <td id="remindProgressCount" th:text="${#numbers.formatDecimal(item.remindProgressCount, 1, 'COMMA', 2, 'POINT')}">10,889,740</td>
+            <td id="remindProgressCost" th:data-value="${#numbers.formatInteger(item.remindProgressCost, 1)}" th:text="${#numbers.formatInteger(item.remindProgressCost, 1, 'COMMA')}">6,681.52</td>
+        </tr>
+            <tr class="tb-style-after">
+                <td></td>
+                <td></td>
+                <td class="txt-left" colspan="10">
+                    <th:block th:if="${item.compareResult.toString().equals('AP')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_AP}">이곳에 검증 문구가 노출됩니다.</span>
+                    </th:block>
+                    <th:block th:if="${item.compareResult.toString().equals('DW') or item.compareResult.toString().equals('OV')}">
+                        <span class="tb-err-msg" th:text="#{gisung.index.detail.compare_result_DW}">이곳에 검증 문구가 노출됩니다.</span>
+                    </th:block>
+                </td>
+                <td th:text="${item.compareProgressCount}">12</td>
+                <td th:text="${#numbers.formatInteger(item.compareProgressCost, 1, 'COMMA')}">3,629,913</td>
+                <td th:text="${#numbers.formatDecimal(item.sumCompareProgressCount, 1, 'COMMA', 2, 'POINT')}">426.48</td>
+                <td th:text="${#numbers.formatInteger(item.sumCompareProgressCost, 1, 'COMMA')}">10,889,740</td>
+                <td th:text="${#numbers.formatDecimal(item.remindCompareProgressCount, 1, 'COMMA', 2, 'POINT')}">6,681.52</td>
+                <td th:text="${#numbers.formatInteger(item.remindCompareProgressCost, 1, 'COMMA')}">170,605,932</td>
+            </tr>
+        </th:block>
+        </tbody>
+    </table>
+</div>
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+</script>

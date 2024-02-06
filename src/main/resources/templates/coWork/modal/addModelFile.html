@@ -1,0 +1,65 @@
+<!-- 모달 - 도면 추가 / 등록 -->
+<div class="content upload-floor-plan">
+  <p class="mb-3" th:text="#{contents.modal.add_model_file.select_snap_shot_file}">첨부할 도면을 선택해 주세요.</p>
+
+  <table class="table">
+    <tbody>
+    <tr>
+      <th><span th:text="#{contents.modal.add_model_file.attach_file}">파일첨부</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+      <td>
+        <div th:replace="/common/fileUploader :: multiFileUploader('snapShotFileUpload')"></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<div class="btn-footer">
+  <button id="mBtnAddSnapShotFile" type="button" class="btn bg-gradient-success" th:text="#{contents.modal.add_model_file.btn_add_view_point_file}">등록</button>
+</div>
+<script>
+
+$(document).ready(function () {
+
+    let _this = $("#snapShotUploadFile");
+    let _snapShotFileExtension = '[[${snapShotFileExtension}]]';
+
+    _this.on("click", "#mBtnAddSnapShotFile", function (e) {
+
+      if ($("#snapShotFileUpload" + "s").find(".devo_file_list").length == 0) {
+        showErrorAlert("ALERT", "[[#{contents.modal.add_model_file.error_no_upload_file}]]");
+        return false;
+      }
+
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{contents.modal.add_model_file.confirm_add_modeling}]]", addSnapShotFile);
+    });
+
+    let addSnapShotFile = function () {
+      $("#snapShotFileUpload").dmUploader("start");
+    }
+
+    let completeUploadFile = function (obj) {
+      reloadComponentTabActive('/coWork/snapShotFileList/' + [[${coWorkSnapShotId}]], "#snapShotFileList", "modelIds=" + modelIds);
+      toastr.success("[[#{contents.modal.addModalFile.file_upload_success}]]");
+      $("#snapShotUploadFile").modal("hide");
+    }
+
+    let snapShotFileExtraData = function () {
+      return {
+        "id"                   : "[[${coWorkSnapShotId}]]",
+        "fileUploadUIType"     : "CO_WORK_SNAP_SHOT_MODEL_FILE",
+        "makeVersion"          : false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeMultiUploaderScript("#snapShotFileUpload"
+      , snapShotFileExtraData
+      , 5000000000
+      , _snapShotFileExtension.split("||")
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+  });
+</script>

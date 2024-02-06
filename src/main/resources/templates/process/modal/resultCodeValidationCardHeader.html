@@ -1,0 +1,8 @@
+<div id="divCardHeader" class="" th:fragment="cardHeader()">
+<!--  <label th:text="#{process.modal.result_code_validation.search_list_count}">목록 개수</label>-->
+  <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+  <button id="mBtnExcelDownLoad" type="button" class="btn-xs">
+    <span th:text="#{process.modal.result_code_validation.btn_excel_download}">엑셀 다운로드</span>
+  </button>
+
+</div>

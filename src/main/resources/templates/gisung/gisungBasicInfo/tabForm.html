@@ -1,0 +1,8 @@
+<form id="frmSearchForm" th:fragment="tabForm()">
+    <div class="card content-header-area print-write-tab">
+        <div class="tab-box">
+            <button type="button" th:class="(${no} == null or ${no} == 1) ? 'btn-tab on' : 'btn-tab'" data-document-no="1" th:text="#{layout.common.gisung.gisung_basic_document1}">기성검사조서</button>
+            <button type="button" th:class="(${no} != null and ${no} == 2) ? 'btn-tab on' : 'btn-tab'" data-document-no="2" th:text="#{layout.common.gisung.gisung_basic_document2}">기성부분 검사원</button>
+        </div>
+    </div>
+</form>

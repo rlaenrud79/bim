@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungAggregationList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <!--                        <div th:replace="gisung/gisungAggregationList/tabForm :: tabForm()"></div>-->
+                <div th:replace="${'gisung/gisungAggregationList/document'+no} :: contentForm()"></div>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    $("#year").val([[${selYear}]]);
+    let documentNo = [[${no}]];
+    let errorNoYear = [[#{admin.modal.add_gisung_aggregation.error_no_year}]];
+    let confirmAddGisungAggregation = [[#{admin.modal.add_gisung_aggregation.confirm_add_gisung_aggregation}]];
+</script>
+<script src="/dist/js/pages/gisungAggregation.js"></script>
+</body>
+
+</html>

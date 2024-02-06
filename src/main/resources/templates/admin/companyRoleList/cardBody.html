@@ -1,0 +1,64 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+
+    <div class="table-wrap">
+        <table class="table">
+            <colgroup>
+                <col style="width:5%">
+                <col>
+                <col style="width:10%" span="5">
+            </colgroup>
+            <tbody>
+            <tr>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_no}">No</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_role_name}">역할명</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_writer}">등록자</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_sort_no}">순서</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_rele_enabled}">사용여부</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_write_date}">등록일시</th>
+                <th class="text-center" th:text="#{admin.company_role_list.list_title_last_modify_date}">최종 수정 일시</th>
+            </tr>
+            <th:block th:if="${companyRoleDTOs == null or companyRoleDTOs.size() == 0}">
+                <tr>
+                    <td colspan="7" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+                </tr>
+            </th:block>
+            <tr th:id="trIndex_+${index.index}" th:each="item, index : ${companyRoleDTOs}">
+                <td th:text="${index.index + 1}">1</td>
+                <td>
+                    <a th:id="btnUpdate_+${index.index}"
+                       class="text-center pop-open-btn"
+                       th:data-id="${item.id}"
+                       role="button" data-modal="#modalCompanyRoleUpdate">
+                        <span class="text-over-dot" th:text="${#strings.isEmpty(item.roleNameLocale) ? item.roleName : item.roleNameLocale}">감리사</span>
+                    </a>
+                </td>
+                <td>
+                    <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+                </td>
+                <td>
+                    <div class="">
+                        <button th:id="btnForwardSortNo_+${index.index}"
+                                th:data-id="${item.id}"
+                                th:data-index="${index.index}"
+                                th:if="${minSortNo lt item.sortNo}"
+                                type="button"
+                                class="btnForwardSortNo">
+                        </button>
+<!--                        <span th:text="${item.sortNo}">1</span>-->
+                        <button th:id="btnBackwardSortNo_+${index.index}"
+                                th:data-id="${item.id}"
+                                th:data-index="${index.index}"
+                                th:if="${maxSortNo gt item.sortNo}"
+                                type="button"
+                                class="btnBackwardSortNo">
+                        </button>
+                    </div>
+                </td>
+                <td th:text="${item.roleEnabledString}">Y</td>
+                <td th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021-04-06 11:10</td>
+                <td th:text="${#temporals.format(item.lastModifyDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2023-05-15 10:49:21</td>
+            </tr>
+            </tbody>
+        </table><!--// table-->
+    </div><!--//table-wrap-->
+</div>

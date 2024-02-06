@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="gisung/gisungContractManagerList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <input type="hidden" id="pageNo" value="">
+                <div id="divCardBody" th:replace="gisung/gisungContractManagerList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_single_user}, '')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddGisungContractManager',#{layout.common.gisung.gisung_contract}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalUpdateGisungContractManager',#{contents.gisung_contract_list.modal_title_update}, 'popup-md')"></th:block>
+<!-- modal end -->
+
+<script type="text/javascript">
+    var confirmDeleteDocument = "[[#{contents.gisung_contract_list.confirm_delete_document}]]";
+</script>
+<script src="/dist/js/pages/gisungContractManager.js"></script>
+</body>
+
+</html>

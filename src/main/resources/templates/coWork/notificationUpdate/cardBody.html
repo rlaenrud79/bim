@@ -1,0 +1,126 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div th:object="${noticeItem}">
+
+      <div class="form">
+        <div class="grid">
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_update.card_body_notification_title}">제목</span></strong>
+            </div>
+            <div class="fm-txt">
+              <input type="text" id="title" name="title" class="form-control" th:field="*{title}" th:placeholder="#{co_work.notification_update.card_body_notification_title_place_holder}" maxlength="255">
+            </div>
+          </div>
+          <div class="fm-section col1">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_add.card_body_is_popup}">팝업여부</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="radio-set">
+                <input type="radio" id="isPopup_true" name="isPopup" value="true" th:checked="${noticeItem.isPopup}">
+                <label for="isPopup_true" th:text="#{co_work.notification_update.card_body_is_popup_yes}">YES</label>
+                <input type="radio" id="isPopup_false" name="isPopup" value="false" th:checked="${!noticeItem.isPopup}">
+                <label for="isPopup_false" th:text="#{co_work.notification_update.card_body_is_popup_no}">NO</label>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col5">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_update.card_body_is_popup_term}">팝업 게시일시</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="grid al-center gap-10">
+                <div class="input-date">
+                  <input type="date" class="form-control" id="startDateDay" name="startDateDay" th:value="${startDateDay}" readonly>
+                  <i class="ico"></i>
+                </div>
+                <select class="custom-select wid-s" id="startDateHour" name="startDateHour" th:disabled="${!noticeItem.isPopup}">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_hour_null}" th:selected="${#strings.equals(startDateHour, '')}">::선택::</option>
+                  <option th:each="hour : ${hourList}" th:value="${hour}" th:text="${hour}" th:selected="${#strings.equals(startDateHour, hour)}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_hour}">시</span>&nbsp;
+                <select class="custom-select wid-s" id="startDateMin" name="startDateMin" th:disabled="${!noticeItem.isPopup}">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_min_null}" th:select="${#strings.equals(startDateMin, '')}">::선택::</option>
+                  <option th:each="min : ${minList}" th:value="${min}" th:text="${min}" th:selected="${#strings.equals(startDateMin, min)}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_min}">분</span>
+                <span> ~ </span>
+                <div class="input-date">
+                  <input type="date" class="form-control" id="endDateDay" name="endDateDay" th:value="${endDateDay}" readonly>
+                  <i class="ico"></i>
+                </div>
+                <select class="custom-select wid-s" id="startEndHour" name="startEndHour" th:disabled="${!noticeItem.isPopup}">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_hour_null}" th:selected="${#strings.equals(endDateHour, '')}">::선택::</option>
+                  <option th:each="hour : ${hourList}" th:value="${hour}" th:text="${hour}" th:selected="${#strings.equals(endDateHour, hour)}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_hour}">시</span>&nbsp;
+                <select class="custom-select wid-s" id="startEndMin" name="startEndMin" th:disabled="${!noticeItem.isPopup}">
+                  <option value="" th:utext="#{co_work.notification_common.card_body_min_null}" th:select="${#strings.equals(endDateMin, '')}">::선택::</option>
+                  <option th:each="min : ${minList}" th:value="${min}" th:text="${min}" th:selected="${#strings.equals(endDateMin, min)}">00</option>
+                </select>
+                <span th:text="#{co_work.notification_common.card_body_min}">분</span>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_update.card_body_target_work}">대상</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div class="check-set">
+                <input type="checkbox" id="allCheck">
+                <label for="allCheck" th:text="#{co_work.notification_update.card_body_target_work_all}" th:checked="${isTotalWorksSelected}">전체</label>
+              </div>
+
+              <div class="form-group mr-3" th:each="work, index : ${works}">
+                <div class="check-set">
+                  <input type="checkbox" class="itemCheck"
+                         th:id="works_+${work.id}"
+                         th:name="works_+${work.id}"
+                         th:value="${work.id}"
+                         th:checked="${#lists.contains(noticeItem.noticeWorksIds, work.id)}">
+                  <label th:for="works_+${work.id}" th:text="${work.getLocaleName()}">교량공</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_update.card_body_attach_file}">파일첨부</span></strong>
+            </div>
+            <div class="fm-txt">
+              <div th:replace="/common/fileUploader :: multiFileUploader('noticeFileUpload')"></div>
+
+              <div class="up-file-list" >
+                <div class="badge badge-pill" th:each="attachFile, index : ${noticeItem.noticeFiles}" th:id="divFile_ + ${attachFile.id}">
+                  <a th:id="btnNoticeFile_ + ${attachFile.id}"
+                     href="#"
+                     th:data-id="${attachFile.id}"
+                     th:data-ext="${attachFile.originFileNameExt}"
+                     th:data-file-path="${attachFile.filePath}"
+                     th:classappend="${attachFile.isImage} ? 'zoom-in-image'"
+                     th:text="${attachFile.originFileName}"
+                     th:data-is-image="${attachFile.isImage}"
+                     th:src="${#strings.isEmpty(attachFile.filePath) and attachFile.isImage ? '/dist/img/no_image.png' : attachFile.filePath}">xxxxxxxxxxxxxxxxxxxxxxx.ppt</a>
+                  <a href="#none" class="btn-xs" th:id="btnDeleteNoticeFile_+${attachFile.id}"
+                     th:data-id="${attachFile.id}"><span th:text="#{layout.modal.btn_delete}">삭제</span></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="fm-section col6">
+            <div class="fm-tit">
+              <strong><i class="ico-require"></i><span th:text="#{co_work.notification_update.card_body_contents}">내용</span></strong>
+            </div>
+            <div class="fm-txt">
+              <!--              <div th:replace="common/editor/page :: load()"></div>-->
+              <textarea name="contents" id="contents" placeholder="내용을 입력하세요.">[[${noticeItem.contents}]]</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

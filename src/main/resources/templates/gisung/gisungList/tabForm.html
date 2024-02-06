@@ -1,0 +1,36 @@
+<div class="card-header" th:fragment="tabForm()">
+    <div class="col-12">
+        <div class="bim-btn-group">
+            <button type="button" class="btn bg-sky" id="btnMoveListPage">
+                <span th:text="#{project.job_sheet_add.btn_move_list_page}">
+                          목록으로</span>
+            </button>
+            <button type="button" class="btn bg-sky btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="1">
+                <span th:text="#{layout.common.gisung.gisung_basic_document1}">
+                          기성검사조서</span>
+            </button>
+            <button type="button" class="btn bg-sky btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="2">
+                <span th:text="#{layout.common.gisung.gisung_basic_document2}">
+                          기성부분 검사원</span>
+            </button>
+            <button type="button" class="btn bg-sky btn-tab" th:data-gisung-id="${gisung.id}" data-document-no="3">
+                <span th:text="#{layout.common.gisung.gisung_items}">
+                          기성부분내역서</span>
+            </button>
+            <button type="button" class="btn bg-sky" id="btnPreview">
+                <span> 미리보기</span>
+            </button>
+            <button type="button" class="btn bg-sky" id="btnWriteDocument">
+                <span th:text="#{project.job_sheet_add.btn_write}"> 저장</span>
+            </button>
+            <button id="btnUploadCostDetailFile" class="btn bg-gradient-info">
+                </i><span th:text="#{layout.common.gisung.upload_cost}">기성부분내역서 업로드</span>
+            </button>
+            <div id="divUploadExcel" style="display: none;">
+                <input type="file" id="file" name="files" class="form-control" th:placeholder="#{cost.modal.cost_detail_file_upload.file_placeholder}"/>
+                <button id="mBtnRemoveFile" type="button" class="btn bg-gradient-danger mr-2" th:text="#{cost.modal.cost_detail_file_upload.btn_delete_file}">파일 제거</button>
+                <button id="mBtnUploadFile" type="button" class="btn bg-gradient-success mr-2" th:text="#{cost.modal.cost_detail_upload.btn_upload_file}">업로드 시작</button>
+            </div>
+        </div>
+    </div>
+</div>

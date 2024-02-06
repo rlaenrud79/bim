@@ -1,0 +1,10 @@
+import { cellValue } from "../types";
+export declare function CONCATENATE(...rest: cellValue[]): string;
+export declare function LEFT(text: string, count: number): string;
+export declare function MID(text: string, start: number, count: number): string;
+export declare function RIGHT(text: string, count: number): string;
+export declare function LOWER(text: string): string;
+export declare function UPPER(text: string): string;
+export declare function PROPER(text: string): string;
+export declare function TRIM(text: string): string;
+export declare function LEN(text: cellValue): number;

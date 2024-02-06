@@ -1,0 +1,59 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+    <div class="board-top" th:replace="common/pagingSizeSelectBox :: type3(${modelingDTOs.size()})" /><!--//board-top-->
+    <div class="table-wrap">
+        <table class="table">
+            <colgroup>
+                <col style="width:5%">
+                <col>
+                <col style="width:10%" span="7">
+            </colgroup>
+            <tbody>
+            <tr>
+                <th th:text="#{contents.modeling_list.list_title_no}">No</th>
+                <th th:text="#{contents.modeling_list.list_title_model_name}">BIM 모델명</th>
+                <th th:text="#{contents.modeling_list.list_title_work}">토공</th>
+                <th th:text="#{contents.modeling_list.list_title_version}">버전</th>
+                <th th:text="#{contents.modeling_list.list_title_size}">크기</th>
+                <th th:text="#{contents.modeling_list.list_title_writer}">등록자</th>
+                <th th:text="#{contents.modeling_list.list_title_write_date}">업로드 일시</th>
+                <th th:text="#{contents.modeling_list.list_title_convert_status}">변환 상태</th>
+                <th th:text="#{contents.modeling_list.list_title_operation}">작업</th>
+            </tr>
+            <th:block th:if="${modelingDTOs == null or modelingDTOs.size() == 0}">
+                <tr>
+                    <td colspan="10" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+                </tr>
+            </th:block>
+            <tr th:each="item, index : ${modelingDTOs}">
+                <td th:text="${index.index + 1}">1</td>
+                <td><a th:id="btnDownloadModelFile_+${index.index}"
+                       href="#"
+                       th:data-id="${item.id}" class="tb-tit pop-open-btn" data-modal="#modalDownloadFile">
+                    <span class="text-over-dot" th:text="${item.fileName}">tunnel-S01.rvt</span></a>
+                </td>
+                <td th:text="${item.work.getLocaleName()}">토공</td>
+                <td th:text="${item.version}">v0001</td>
+                <td th:text="${item.fileSizeMegaByteUnit} + ' MB'">9.10 MB</td>
+                <td>
+                    <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+                    <!--<span class="user-img"><img src="../assets/img/common/ico-user.png" alt=""></span>-->
+                </td>
+                <td th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min_sec'))}">2023-05-15 10:49:21</td>
+                <td th:if="${item.isIfcConvertStatusEqNone}" th:text="#{contents.modeling_list.ifc_convert_status_none}">-</td>
+                <td th:if="${item.isIfcConvertStatusEqReady}" th:text="#{contents.modeling_list.ifc_convert_status_ready}">준비</td>
+                <td th:if="${item.isIfcConvertStatusEqRequest}" th:text="#{contents.modeling_list.ifc_convert_status_request}">변환 요청</td>
+                <td th:if="${item.isIfcConvertStatusEqConverting}" th:text="#{contents.modeling_list.ifc_convert_status_converting}">변환중</td>
+                <td th:if="${item.isIfcConvertStatusEqSuccess}" th:text="#{contents.modeling_list.ifc_convert_status_success}">변환 완료</td>
+                <td th:if="${item.isIfcConvertStatusEqFail}" th:text="#{contents.modeling_list.ifc_convert_status_fail}">변환 실패</td>
+                <td>
+                    <a href="#none"
+                       th:id="btnDelete_+${index.index}"
+                       th:data-id="${item.id}"
+                       th:if="${(#session.getAttribute('scopedTarget.userInfo')?.id  == item.writerDTO.userId or isRoleAdminProject)}"
+                       class="btn-xs"><span th:text="#{contents.modeling_list.btn_delete}">삭제</span></a>
+                </td>
+            </tr>
+            </tbody>
+        </table><!--// table-->
+    </div><!--//table-wrap-->
+</div><!--// board-list-->

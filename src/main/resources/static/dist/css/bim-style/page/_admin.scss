@@ -1,0 +1,98 @@
+/// BIM ADMIN
+
+// tree style
+.bim-tree {
+    margin: 2rem 1rem;
+
+    > li:nth-of-type(n + 2) { margin-top: 1.2rem; }
+
+    > li > p ~ ul { display: none; }
+    > li > p.open ~ ul { display: block; }
+
+    p {
+        font-size: 1rem;
+        font-weight: normal;
+        cursor: pointer;
+
+        i {
+            color: #007bff;
+            margin-right: .2rem;
+        }
+    }
+
+    li {
+        ul {
+            margin-top: .5rem;
+            padding-left: 1rem;
+            
+            li {
+                p {
+                    margin: .2rem 0;
+                    padding: .5rem .8rem;
+                    background-color: transparent;
+                    border-left: 3px solid transparent;
+                    border-radius: 0 15px 15px 0;
+                    width: 100%;
+                    transition: all .3s;
+                    font-weight: normal!important;
+
+                    &:hover,
+                    &.active {
+                        background-color: rgba(199, 199, 199, 0.2);
+                        border-left: 3px solid #007bff;
+                        border-radius: 0 5px 5px 0;
+                        font-weight: 500;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.admin-content {
+    .con-admin-overview {
+        display: flex;
+        flex-wrap: wrap;
+
+        .list-title {
+            justify-content: flex-start;
+            padding: 0;
+        }
+
+        table { height: 100%; }
+
+        > div {
+            &:nth-of-type(1) {
+                .content-body-area {
+                    &:nth-of-type(1) { height: calc(100vh / 2 - 200px); }
+                    &:nth-of-type(2) { height: calc(100vh / 2 - 230px); }
+                }
+            }
+            &:nth-of-type(2) {
+                .content-body-area {
+                    &:nth-of-type(2) {
+                        height: calc(100vh / 2 - 115px);
+                    }
+                }
+            }    
+        }
+
+        .content-body-area {
+            .card-header {
+                display: flex;
+                align-items: center;
+
+                button { margin-left: auto; }
+            }
+
+            .card-body {
+                display: flex;
+    
+                > div {
+                    margin: auto;
+                    width: 100%;
+                }
+            }
+        }
+    }
+}

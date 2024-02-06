@@ -1,0 +1,602 @@
+/// BIM MODAL
+
+.modal {
+    .modal-content { border: 1px solid transparent; }
+
+    .modal-header {
+        background-color: #6f42c1;
+
+        .modal-title {
+            color: #fff;
+            font-size: 1.2rem;
+
+            i { margin-right: .5rem; }
+        }
+
+        .close, .mailbox-attachment-close { color: #fff; opacity: 1; }
+    }
+
+    .modal-footer { display: none; }
+
+    .btn-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-top: 1rem;
+        
+        button {
+            margin-right: .3rem;
+            width: 80px;
+
+            &:last-child { margin-right: 0; }
+        }
+    }
+
+    h3 {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+        text-align: center;
+    }
+
+    .form-group {
+        margin: .1rem .5rem!important;
+    }
+
+    .edit-area {
+        min-height: 200px;
+        width: 100%;
+    }
+
+    .up-file-list {
+        display: flex;
+        align-items: center;
+        
+        .badge {
+            display: flex;
+            align-items: center;
+            min-height: 22px;
+            padding: .1rem .5rem;
+            margin: .5rem;
+            background: #ebebeb;
+        }
+
+        button {
+            padding: 0;
+            margin-left: .5rem;
+            margin-right: -.5rem;
+
+            i { color: #dc3545; }
+        }
+    }
+}
+
+
+.modal-body {
+    .content {
+        .header-option {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        table {
+            caption { font-weight: 600; background-color: #ececec; }
+        }
+
+        // 공지
+        &.notification-view {
+            .title {
+                margin-bottom: 1.5rem;
+
+                p {
+                    display: flex;
+                    align-items: center;
+                    
+                    &:nth-of-type(1) {
+                        font-size: 1.1rem;
+                        font-weight: 700;
+
+                        span { margin-right: .5rem; }
+                    }
+
+                    &:nth-of-type(2) { margin-top: .5rem; }
+                }
+            }
+
+            .scroll-area-v {
+                padding: 1rem;
+                max-height: 300px;
+                min-height: 300px;
+                border: 1px solid #dee2e6;
+            }
+
+            + .btn-footer {
+                > .form-group { margin-right: auto!important; }
+            }
+        }
+
+        // 이미지 확대
+        &.img-zoom-view {
+            overflow: hidden;
+
+            figure {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        // 사용자 검색
+        &.search-users {
+            .search-user-list {
+                > div {
+                    max-height: 500px;
+                }
+            }
+        }
+
+        // 뷰포인트 선택
+        &.select-view-point {
+            .header-option {
+                button {
+                    margin-left: auto;
+                    width: 80px;
+                }
+            }
+
+            > div.scroll-area-v {
+                max-height: 500px;
+            }
+        }
+
+
+        // 스냅샷 쉐어
+        &.snapshot-share {
+            > div {
+                max-height: 1000px;
+            }
+
+            ul {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 1rem 0;
+                width: 100%;
+    
+                li {    
+                    margin-bottom: 1rem;
+                    padding: 0 1.5rem;
+                    border-bottom: 1px solid #dee2e6;
+    
+                    &:last-child { border: none; }
+                    
+    
+                    img { width: 100%; }
+    
+                    > div {
+                        position: relative;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 1rem;
+    
+                        p { max-width: 70%; }
+    
+                        button {
+                            position: absolute;
+                            right: 0;
+                            width: 40px;
+                            font-weight: 600;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 스냅샷 추가
+        &.snapshot-add {
+            overflow: hidden;
+
+            > div {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #dee2e6;
+            }
+
+            + .btn-footer {
+                .form-group { width: 100%; }
+            }
+        }
+
+        // 참조자
+        &.view-references {
+            > div { max-width: 500px; }
+        }
+
+        // 승인 _ 반려
+        &.approve-jobsheet,
+        &.deny-jobsheet {
+            textarea {
+                min-height: 100px;
+            }
+        }
+
+        // 파일 다운로드
+        &.download-file {
+            ul {
+                li {
+                    display: flex;
+                    align-items: center;
+                    margin-top: -1px;
+                    border: 1px solid #dee2e6;
+
+                    p.title {
+                        flex: 0 0 20%;
+                        padding: .5rem 1rem;
+                        text-align: center;
+                        background-color: #EEF0F2;
+
+                        ~ a, ~ p {
+                            flex: 0 0 80%;
+                            padding: .5rem 1rem;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 결재자
+        &.search-single-approver {
+            .search-user-list {
+                > div {
+                    max-height: 500px;
+                }
+            }
+        }
+
+        // 큰 참조자
+        &.search-multi-references {}
+
+        // 참여대상자
+        &.cowork-joinerlist {
+            > div { max-height: 500px; }
+        }
+
+        // 관련 BIM 모델
+        &.cowork-modelinglist {
+            > div {
+                max-height: 500px;
+            }
+
+            .table-text-cont {
+                max-width: 300px;
+            }
+        }
+
+        // 관련이슈
+        &.issueList {
+            > div {
+                max-height: 500px;
+            }
+
+            .table-text-cont {
+                max-width: 400px;
+            }
+        }
+
+        // 이슈 등록
+        &.add-coworkissue {}
+
+        // 이슈 수정
+        &.update-coworkissue {}
+
+        // 도면 뷰어
+        &.floor-plan-view {
+            > div {
+                max-height: 800px;
+            }
+        }
+
+        // 일정상세
+        &.sechedule-view {
+            .context {
+                > div {
+                    min-height: 100px;
+                    max-height: 100px;
+                }
+            }
+        }
+
+        // 공정파일 업로드
+        &.upload-processfile {
+            + .btn-footer {
+                button { width: 100px; }
+            }
+        }
+
+        // 알림, 코드검증,
+        &.modal-notice,
+        &.processing-code-validation,
+        &.processing-validation,
+        &.processing-calculation {
+            p {
+                word-break: keep-all;
+                text-align: center;
+            }
+
+            + .btn-footer {
+                justify-content: center;
+                margin-top: 2.5rem;
+            }
+        }
+
+        // 코드검증 결과
+        &.result-Code-validate {
+            .form-group { margin: .5rem 1rem!important; }
+
+            .content-header-area {
+                > div {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    > p {
+                        padding: 1rem!important;
+
+                        b { margin: 1rem; }
+
+                        span {
+                            &.all {
+                                font-weight: 600;
+                            }
+
+                            &.success {
+                                font-weight: 600;
+                                color:  #6610f2;
+                            }
+
+                            &.fail {
+                                font-weight: 600;
+                                color:  #dc3545;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .content-body-area {
+                .card-header {
+                    > div {
+                        display: flex;
+                        align-items: center;
+                    }
+                }
+
+                .card-body {
+                    .scroll-area-v { max-height: 700px; }
+                }
+            }
+        }
+    }
+}
+
+
+
+// my view point
+.my-view-point {
+    .header-option {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+
+        input { width: 250px; }
+
+        button i { margin-right: .3rem; }
+    }
+
+    table {
+        caption { font-weight: 600; background-color: #ececec; }
+    }
+
+    .myviewpoint-list {
+        > div {
+            max-height: 335px;
+        }
+
+        table, .table {
+            td {
+                .form-group {
+                    margin-bottom: 0;
+                    
+                    input {
+                        &:disabled {
+                            border: 1px solid transparent;
+                            background-color: transparent;
+
+                            &::placeholder {
+                                color: #212529;
+                            }
+                        }
+                    }
+                }
+
+                button {
+                    margin: 0 .3rem;
+                    padding: .5rem 0rem;
+                    min-width: calc(100% / 4 - 18px);
+                    min-height: auto;
+                    height: auto;
+                    font-size: 1rem;
+
+                    i {
+                        display: inline-flex;
+                        margin: 0!important;
+                        font-size: 1rem;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// 오브젝트 검색
+.search-object {
+    .header-option {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+
+        input { width: 250px; }
+    }
+
+    table {
+        caption { font-weight: 600; background-color: #ececec; }
+    }
+
+    .search-object-list {
+        > div {
+            max-height: 335px;
+        }
+
+        td {
+            a {
+                display: block;
+                max-width: 400px;
+            }
+        }
+    }
+}
+
+
+
+.alert-modal {
+    .modal-dialog {
+        max-width: 350px;
+
+        .modal-content {
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 2001;
+            border: none;
+
+            .modal-header {
+                justify-content: center;
+                align-items: center;
+                padding: .5rem 1rem;
+                border-radius: 0;
+                background: #dc3545;
+        
+                button {
+                    position: absolute;
+                    top: .5rem;
+                    right: 1rem;
+                }
+            }
+
+            .modal-body {
+                text-align: center;
+                padding: 1.5rem 1rem;
+            }
+        
+            .modal-footer {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 0 1rem .5rem;
+                border: none;
+        
+                button { width: 6.154rem; }
+            }
+        }
+    }
+
+    &.show {
+        &::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+        }
+    }
+}
+
+
+/// modal code loder
+.modalcodeloder {
+    position: relative;
+    display: block;
+    height: 3.846rem;
+    margin: 2.5rem 2rem 2rem;
+
+    .loader-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        align-items: center;
+        transform: translate(-50%, -50%);
+    }
+
+    .loader-box span {
+        width: 0.615rem;
+        height: 3.846rem;
+        background: #007bff linear-gradient(180deg,#268fff,#007bff) repeat-x!important;
+        border-radius: 20px;
+        margin: 0 0.308rem;
+        animation: loading 1s infinite;
+    }
+
+    .loader-box span:nth-child(2) {
+        animation-delay: 0.1s;
+    }
+
+    .loader-box span:nth-child(3) {
+        animation-delay: 0.2s;
+    }
+
+    .loader-box span:nth-child(4) {
+        animation-delay: 0.3s;
+    }
+
+    .loader-box span:nth-child(5) {
+        animation-delay: 0.4s;
+    }
+
+    .loader-box span:nth-child(6) {
+        animation-delay: 0.5s;
+    }
+
+    .loader-box span:nth-child(7) {
+        animation-delay: 0.6s;
+    }
+
+    .loader-box span:nth-child(8) {
+        animation-delay: 0.7s;
+    }
+
+    .loader-box span:nth-child(9) {
+        animation-delay: 0.8s;
+    }
+
+    .loader-box span:nth-child(10) {
+        animation-delay: 0.9s;
+    }
+
+    @keyframes loading {
+        0% { height: 3.846rem; }
+        50% { height: 0px; }
+        100% { height: 3.846rem; }
+    }
+}

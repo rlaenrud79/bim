@@ -1,0 +1,96 @@
+/// BIM datapicker-reset
+
+.ui-datepicker {
+    * { font-family: 'Roboto'!important; }
+
+    &.ui-widget-content {
+        border: 1px solid #dee2e6!important;
+        border-radius: 15px;
+        background-color: #fff;
+        box-shadow: 0 .1rem 1rem 0 rgba(33, 40, 50, .3);
+        overflow: hidden;
+        
+        .ui-datepicker-header {
+            border: 0 solid #fff;
+            border-radius: 0;
+            font-size: 1.3rem;
+            font-weight: 900;
+            color: var(--blue);
+            background-color: transparent;
+
+            .ui-corner-all {
+                font-family: 'Font Awesome 5 Free'!important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                right: 2px;
+                top: 3px;
+                cursor: pointer;
+
+                &::after {
+                    content: '\f191';
+                    display: block;
+                    font-size: 1rem;
+                    color: var(--blue);
+                    transition: all .3s;
+                }
+
+                &:hover, &:focus {
+                    background: none!important;
+                    border: none!important;
+                    text-decoration: none;
+                    font-weight: 900;
+
+                    .ui-icon { background: none!important; }
+
+                    &::after {
+                        color: darken($color: #007bff, $amount: 10%);
+                    }
+                }
+
+                .ui-icon {
+                    display: none!important;
+                    background: none!important;
+                }
+                
+                &.ui-datepicker-prev { left: 0; }
+
+                &.ui-datepicker-next {
+                    top: 2px;
+                    transform: rotate(180deg);
+                }
+            }
+        }
+
+        .ui-datepicker-calendar {
+            margin: 0 0 .4em!important;
+
+            th span { color: var(--info)!important; }
+            td, td a { transition: all .3s; }
+
+            .ui-state-default, .ui-widget-content .ui-state-default,
+            .ui-widget-header .ui-state-default,
+            .ui-button, html .ui-button.ui-state-disabled:hover,
+            html .ui-button.ui-state-disabled:active {
+                padding: .3rem;
+                max-height: 28.36px;
+                border: 1px solid transparent;
+                border-radius: 50px;
+                background: #fff;
+                font-weight: 900;
+                color: #212529;
+                text-align: center;
+            }
+
+            td:hover .ui-state-default,
+            td:focus .ui-state-default, 
+            .ui-state-highlight,
+            .ui-widget-content .ui-state-highlight,
+            .ui-widget-header .ui-state-highlight {
+                border: 1px solid var(--blue)!important;
+                background: var(--blue)!important;
+                color: #fff!important;
+            }
+        }
+    }
+}

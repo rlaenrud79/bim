@@ -1,0 +1,110 @@
+<th:block th:replace="common/chattingList :: list()">
+</th:block>
+
+<script th:inline="javascript" th:fragment="script()">
+  $(document).ready(function () {
+
+    const chatServerHost = [[${@environment.getProperty('system.chatting_server.host')}]];
+    const chatServerPort = [[${@environment.getProperty('system.chatting_server.port')}]];
+    const chatServerSocketURL = `ws://${chatServerHost}:${chatServerPort}/websocket`;
+
+    const rocketChatId = [[${rocketChatId}]];
+    const rocketChatToken = [[${rocketChatToken}]];
+
+    const rocketChatSocket = new WebSocket(chatServerSocketURL);
+    const loginUniqId = `${rocketChatId}_login_${new Date().getTime()}`;
+    const streamNotifyUserUniqId = `${rocketChatId}_stream_user_${new Date().getTime()}`;
+
+    rocketChatSocket.onopen = () => {
+      tryConnect();
+    }
+
+    rocketChatSocket.onmessage = (e) => {
+      const recv = JSON.parse(e.data);
+
+      if (recv.msg === "ping") {
+        sendPong();
+
+      } else if (recv.msg === "connected") {
+        tryLogin();
+
+      } else if (recv.msg === "result" && recv.id === loginUniqId) {
+        subStreamNotifyUser();
+
+      } else if (recv.collection === "stream-notify-user" && recv.msg === "changed") {
+        refreshChatList();
+
+      } else if (recv.msg === "nosub") {
+        rocketChatSocket.close();
+      }
+    }
+
+    rocketChatSocket.onclose = (e) => {
+      if (e.wasClean) {
+        console.log(`[close] connection(code=${e.code} reason=${e.reason})`);
+      } else {
+        console.error(`[close] connection(code=${e.code} reason=${e.reason})`)
+      }
+    }
+
+    rocketChatSocket.onerror = (err) => {
+      console.error(`[error]: ${err.message}`)
+    }
+
+    const tryConnect = () => {
+      const connectRequest = {
+        "msg": "connect",
+        "version": "1",
+        "support": ["1", "pre2", "pre1"]
+      }
+      rocketChatSocket.send(JSON.stringify(connectRequest));
+    }
+
+    const sendPong = () => {
+      const pongRequest = {
+        "msg": "pong"
+      }
+      rocketChatSocket.send(JSON.stringify(pongRequest));
+    }
+
+    const tryLogin = () => {
+      const loginRequest = {
+        "msg": "method",
+        "method": "login",
+        "id": loginUniqId,
+        "params": [
+          {
+            "resume": rocketChatToken
+          }
+        ]
+      }
+      rocketChatSocket.send(JSON.stringify(loginRequest));
+    }
+
+    const subStreamNotifyUser = () => {
+      const subStreamUserRequest = {
+        "msg": "sub",
+        "id": streamNotifyUserUniqId,
+        "name": "stream-notify-user",
+        "params": [
+          rocketChatId + "/rooms-changed",
+          false
+        ]
+      }
+      rocketChatSocket.send(JSON.stringify(subStreamUserRequest));
+    }
+
+    function debounce(func, timeout = 300) {
+      let timer;
+      return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          func.apply(this, args);
+        }, timeout);
+      };
+    }
+
+    const refreshChatList = debounce(() => reloadComponent("/common/chattingList", "#liChattingLayer", ""));
+
+  });
+</script>

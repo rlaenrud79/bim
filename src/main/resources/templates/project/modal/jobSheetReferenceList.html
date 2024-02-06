@@ -1,0 +1,28 @@
+<!-- 모달 - 참조자 -->
+<div class="content view-references">
+  <div class="scroll-area-v">
+    <table class="table">
+      <caption th:text="#{project.modal.job_sheet_reference.title_result}">결과</caption>
+      <thead>
+      <tr>
+        <th class="text-center" width="100" th:text="#{project.modal.job_sheet_reference.title_no}">No</th>
+        <th class="text-center" width="100" th:text="#{project.modal.job_sheet_reference.title_photo}">사진</th>
+        <th class="text-center" width="100" th:text="#{project.modal.job_sheet_reference.title_name}">이름</th>
+        <th class="text-center" width="150" th:text="#{project.modal.job_sheet_reference.title_company}">소속</th>
+        <th class="text-center" width="100" th:text="#{project.modal.job_sheet_reference.title_rank}">직급</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item, index : ${references}">
+        <td class="text-center" th:text="${index.index + 1}">01</td>
+        <td class="text-center">
+          <div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div>
+        </td>
+        <td class="text-center" th:text="${item.reference.userName}">홍기사</td>
+        <td class="text-center" th:text="|${item.reference.company.companyRole.companyRoleName} / ${item.reference.company.name}|">발주사 / 한국 발주</td>
+        <td class="text-center" th:text="${item.reference.rank}">과장</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

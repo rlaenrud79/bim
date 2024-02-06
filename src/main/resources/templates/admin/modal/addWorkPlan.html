@@ -1,0 +1,153 @@
+<div class="form work-add">
+    <div class="grid">
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work}">공종</span></strong>
+            </div>
+            <div class="fm-txt">
+                <select id="workId" class="custom-select wid-lg">
+                    <option value="0" th:text="#{contents.modal.add_document.select_work}">:: 공종을 선택하세요 ::</option>
+                    <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:text="${item.workNameLocale}"></option>
+                </select>
+                <input type="hidden" id="selWorkId" name="selWorkId" th:if="${ptype=='edit'}" th:value="${workPlan.work.id}">
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_plan.year_month}">년월</span></strong>
+            </div>
+            <div class="fm-txt">
+                <select id="year" class="custom-select wid-m mr-5">
+                    <option value="" th:text="#{admin.modal.add_work_plan.select_year}">:: 년도를 선택하세요 ::</option>
+                    <option th:each="year : ${years}"
+                            th:value="${year}" th:selected="${#strings.equals(year, workPlan.year)}"
+                            th:text="${year}"></option>
+                </select>
+                <select id="month" class="custom-select wid-m">
+                    <option value="" th:text="#{admin.modal.add_work_plan.select_month}">:: 월을 선택하세요 ::</option>
+                    <option th:each="month : ${months}"
+                            th:value="${month}" th:selected="${#strings.equals(month, workPlan.month)}"
+                            th:text="${month}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_plan.month_rate}">계획월(%)</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="number"
+                       id="monthRate"
+                       name="monthRate"
+                       th:value="${workPlan.monthRate}"
+                       th:placeholder="#{admin.modal.add_work_plan.month_rate_placeholder}">
+                <input type="hidden" id="dayRate" name="dayRate" value="">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="btn-box">
+    <th:block th:if="${ptype == 'write'}">
+        <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_work_amount.btn_add}">등록</a>
+    </th:block>
+    <th:block th:if="${ptype == 'edit'}">
+        <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+    </th:block>
+    <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+<div th:include="common/workSelectOption :: script('workId')"></div>
+<script type="text/javascript">
+    (function ($) {
+        var o = {
+            workPlanId: '[[${workPlan.Id}]]',
+
+            init: function () {
+                $.nfx.click("#mBtnAdd", function () {
+                    if ($("#workId").val() == 0) {
+                        alert("[[#{admin.modal.add_work_plan.error_no_work_id}]]");
+                        return;
+                    }
+                    if ($("#year").val() === "") {
+                        alert("[[#{admin.modal.add_work_plan.error_no_year}]]");
+                        return;
+                    }
+                    if ($("#month").val() === "") {
+                        alert("[[#{admin.modal.add_work_plan.error_no_month}]]");
+                        return;
+                    }
+                    if ($("#monthRate").val() === "") {
+                        alert("[[#{admin.modal.add_work_plan.error_no_month_rate}]]");
+                        return;
+                    }
+
+                    if (o.workPlanId > 0) {
+                        if (confirm("[[#{admin.modal.update_work.confirm_update_work}]]")) {
+                            o.updateWorkPlan();
+                        }
+                    } else {
+                        if (confirm("[[#{admin.modal.add_work_plan.confirm_add_work}]]")) {
+                            o.addWorkPlan();
+                        }
+                    }
+                });
+            },
+
+            addWorkPlan: function() {
+                reqPostJSON('/adminApi/postWorkPlan'
+                    , o.setSendData()
+                    , function (data) {
+                        if (data.result) {
+                            $(".close").click();
+                            reloadComponent("/admin/workPlanCardBody", "#divCardBody", "");
+                            //toastr.success(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseJSON).error);
+                    }
+                );
+            },
+
+            updateWorkPlan: function() {
+                reqPostJSON('/adminApi/putWorkPlan'
+                    , o.setSendData()
+                    , function (data) {
+                        if (data.result) {
+                            $(".close").click();
+                            $('body').css('overflow', 'auto');
+                            reloadComponent("/admin/workPlanCardBody", "#divCardBody", "");
+                            //alert(data.message);
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseJSON).error);
+                    }
+                );
+            },
+
+            setSendData: function() {
+                return JSON.stringify({
+                    "id": o.workPlanId,
+                    "year": $("#year").val(),
+                    "month": $("#month").val(),
+                    "workId": parseInt($("#workId").val()),
+                    "monthRate": $("#monthRate").val(),
+                    "dayRate": parseInt($("#dayRate").val())
+                });
+            }
+        };
+
+        $( document ).ready(function() {
+            $.extend($.nfx, {
+                form: document.FRM
+            });
+
+            o.init();
+        });
+
+    })(jQuery);
+</script>

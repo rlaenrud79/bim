@@ -1,0 +1,213 @@
+<div class="form work-add" th:object="${work}">
+  <div class="grid">
+    <th:block th:if="${ptype == 'edit'}">
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.sort_no}">순번</span><small class="req-ico">*</small></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="hidden"
+               id="workId"
+               th:field="*{id}">
+        <input type="number"
+               id="sortNo"
+               name="sortNo"
+               th:field="*{sortNo}"
+               th:placeholder="#{admin.modal.add_work.sort_no_placeholder}">
+      </div>
+    </div>
+    </th:block>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work_up_id}">상위 공종</span></strong>
+      </div>
+      <div class="fm-txt">
+        <select class="custom-select" id="upId">
+          <option value="" th:utext="#{contents.modal.add_modeling.select_work}">::공종을 선택하세요::</option>
+          <option th:each="item : ${works}" th:value="${item.id}" th:selected="${item.id == work.upId}" th:text="${item.getLocaleName()}">공종명</option>
+        </select>
+      </div>
+    </div>
+    <th:block th:if="${ptype == 'write'}">
+      <div class="fm-section col3">
+      </div>
+    </th:block>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work_name_en}">영어</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="workNameEN"
+               name="workNameEN"
+               th:placeholder="#{admin.modal.add_work.work_name_en_placeholder}"
+               th:value="${workNameEN}"
+               maxlength="1024">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work_name_ko}">한글</span><small class="req-ico">*</small></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="workNameKO"
+               name="workNameKO"
+               th:placeholder="#{admin.modal.add_work.work_name_ko_placeholder}"
+               th:value="${workNameKO}"
+               maxlength="1024">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work_name_zh}">중국어</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="workNameZH"
+               name="workNameZH"
+               th:placeholder="#{admin.modal.add_work.work_name_zh_placeholder}"
+               th:value="${workNameZH}"
+               maxlength="1024">
+      </div>
+    </div>
+    <div class="fm-section col3">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work.work_name_jp}">일본어</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text"
+               id="workNameJP"
+               name="workNameJP"
+               th:placeholder="#{admin.modal.add_work.work_name_jp_placeholder}"
+               th:value="${workNameJP}"
+               maxlength="1024">
+      </div>
+    </div>
+  </div>
+</div>
+<div class="btn-box">
+  <th:block th:if="${ptype == 'write'}">
+    <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_work.btn_add}">등록</a>
+  </th:block>
+  <th:block th:if="${ptype == 'edit'}">
+    <a href="#none" id="mBtnUpdate" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+    <a href="#none" id="mBtnDelete" class="btn" th:text="#{admin.modal.update_work.btn_delete}">삭제</a>
+  </th:block>
+  <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+
+<script type="text/javascript">
+  (function ($) {
+    var o = {
+      workId: '[[${work.Id}]]',
+
+      init: function () {
+        $.nfx.click("#mBtnAdd", function () {
+          if ($("#workNameKO").val() === "") {
+            alert("[[#{admin.modal.add_work.error_no_work_name_ko}]]");
+            return;
+          }
+
+          if (confirm("[[#{admin.modal.add_work.confirm_add_work}]]")) {
+            o.addWork();
+          }
+        });
+
+        $.nfx.click("#mBtnUpdate", function () {
+          if ($("#workNameKO").val() === "") {
+            alert("[[#{admin.modal.update_work.error_no_work_name_ko}]]");
+            return;
+          }
+
+          if (confirm("[[#{admin.modal.update_work.confirm_update_work}]]")) {
+            o.updateWork();
+          }
+        });
+
+        $.nfx.click("#mBtnDelete", function () {
+          if (confirm("[[#{admin.modal.update_work.confirm_delete_work}]]")) {
+            o.deleteWork();
+          }
+        });
+      },
+
+      addWork: function() {
+        reqPostJSON('/adminApi/postWork'
+                , o.setSendData()
+                , function (data) {
+                  if (data.result) {
+                    $(".close").click();
+                    reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+                    alert(data.message);
+                  } else {
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }
+        );
+      },
+
+      updateWork: function() {
+        reqPostJSON('/adminApi/putWork'
+                , o.setSendData()
+                , function (data) {
+                  if (data.result) {
+                    $(".close").click();
+                    reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+                    alert(data.message);
+                  } else {
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }
+        );
+      },
+
+      deleteWork: function() {
+        reqPostJSON('/adminApi/putDisabledWork'
+                , {"workId": parseInt($("#workId").val())}
+                , function (data) {
+                  if (data.result) {
+                    $(".close").click();
+                    reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+                    alert(data.message);
+                  } else {
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }
+        );
+      },
+
+      setSendData: function() {
+        return JSON.stringify({
+          "workId": parseInt($("#workId").val()),
+          "sortNo": parseInt($("#sortNo").val()),
+          "upId": parseInt($("#upId").val()),
+          "workNames": [
+            {"languageCode": "EN", "name": $("#workNameEN").val()},
+            {"languageCode": "KO", "name": $("#workNameKO").val()},
+            {"languageCode": "ZH", "name": $("#workNameZH").val()},
+            {"languageCode": "JP", "name": $("#workNameJP").val()}
+          ]
+        });
+      }
+    };
+
+    $( document ).ready(function() {
+      $.extend($.nfx, {
+        form: document.FRM
+      });
+
+      o.init();
+    });
+
+  })(jQuery);
+</script>

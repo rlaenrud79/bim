@@ -1,0 +1,76 @@
+/// BIM dual-subject-list
+
+.dual-subject-list {
+    .dual-subject-header {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        .form-group { margin: .5rem 1rem; }
+    }
+
+    .dual-subject-body {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+
+        > div:not(.btn-dual-subject) {
+            padding: 1rem;
+            border: 1px solid #ced4da;
+            border-radius: .25rem;
+
+            > div {
+                min-height: 300px;
+                max-height: 350px;
+            }
+        }
+
+        table {
+            caption {
+                padding: 1rem;
+                font-size: 1.1rem;
+                background: #EEF0F2;
+            }
+
+            th { background-color: #fff; }
+
+            .icheck-primary {
+                margin: 0 auto!important;
+
+                label { margin: 0!important; }
+            }
+        }
+
+        .btn-dual-subject {
+            display: flex;
+            flex-direction: column;
+
+            button {
+                margin: .5rem auto;
+                width: 60px;
+
+                i {
+                    display: block;
+                    margin-top: 1rem;
+                    font-size: 1.5rem;
+                }
+            }
+
+            @media (max-width: 992px) {
+                flex-direction: row;
+                justify-content: center;
+
+                button {
+                    margin: .5rem;
+
+                    i {
+                        margin: .5rem auto;
+                        transform: rotate(90deg);
+                    }
+                }
+            }
+        }
+    }
+}

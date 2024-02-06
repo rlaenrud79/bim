@@ -1,0 +1,150 @@
+<th:block th:if="${jobSheetProcessItemCnt > 0}">
+    <!--공정 이전내역 불러오기 팝업-->
+    <div class="task-previous-popup">
+        <div class="prev-top">
+            <div class="title">
+                <strong>[[${jobSheetProcessItem.taskFullPath}]]</strong>
+            </div>
+            <th:block th:if="${!#lists.isEmpty(jobSheetProcessItems)}">
+                <div class="date">
+                    <span>날짜선택</span>
+                    <div class="input-group">
+                        <select name="selectedJobSheetProcessItem" id="selectedTemplate changeJobSheetProcessItemGrantDate" class="custom-select">
+                            <option th:each="row:${jobSheetProcessItems}"
+                                    th:value="${row.id}"
+                                    th:utext="|${#temporals.format(row.reportDate, #messages.msg('system.locale.dateformat.year_month_day'))}|">발주사</option>
+                        </select>
+                    </div>
+                </div>
+            </th:block>
+        </div><!--//prev-top-->
+        <div class="prev-list">
+            <div class="task-item">
+                <div class="task-opt">
+                    <div class="form-group">
+                        <div class="icheck-primary">
+                            <input type="checkbox" id="">
+                            <div>
+                                <label for="" id="reportDate" th:if="${jobSheetProcessItem.jobSheet != null and jobSheetProcessItem.jobSheet != ''}">[[${jobSheetProcessItem.jobSheet.reportDate}]]</label>
+                            </div>
+                        </div>
+                    </div>
+                </div><!--//task-opt-->
+                <div class="task-con">
+                    <section class="add-task">
+                        <div class="flex">
+                            <div class="tit-box flex">
+                                <div class="img">
+                                    <img th:if="${jobSheetProcessItem.mySnapShotSource != null and jobSheetProcessItem.mySnapShotSource != ''}" th:src="${jobSheetProcessItem.mySnapShotSource}">
+                                    <img th:if="${jobSheetProcessItem.mySnapShotSource == null or jobSheetProcessItem.mySnapShotSource == ''}" src="/dist/img/no_img.jpg">
+                                </div>
+                                <div class="tb-cate">
+                                    <span>[[${jobSheetProcessItem.cate3Name}]]</span>
+                                    <span>[[${jobSheetProcessItem.cate4Name}]]</span>
+                                    <span>[[${jobSheetProcessItem.taskName}]]</span>
+                                </div>
+                            </div>
+                            <div class="task-rate flex">
+                                <p><span th:text="#{process.modal.cost_detail.progress_rate}">진행률</span> : <strong>
+                                    <span th:if="${jobSheetProcessItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate / jobSheetProcessItem.getDuration()}]]%</span>
+                                    <span th:unless="${jobSheetProcessItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate}]]%</span>
+                                </strong> (<span th:text="#{project.job_sheet_view.day_average}">일 평균</span>)</p>
+                                <button type="button" class="toggle-btn"></button>
+                            </div>
+                        </div>
+
+                        <div class="task-con">
+                            <div class="grid">
+                                <div class="col4">
+                                    <div class="table-wrap">
+                                        <table class="table">
+                                            <tbody>
+                                            <tr>
+                                                <th colspan="3" th:text="#{project.job_sheet_view.amount_implementation}">실시량(원)</th>
+                                                <th colspan="3" th:text="#{project.job_sheet_view.progress}">진도(%)</th>
+                                            </tr>
+                                            <tr>
+                                                <td th:text="#{project.job_sheet_view.prev_amount}">전일누계</td>
+                                                <td th:text="#{project.job_sheet_view.today_amount}">금일누계</td>
+                                                <td th:text="#{project.job_sheet_view.total_amount}">누계</td>
+                                                <td th:text="#{project.job_sheet_view.prev_progress}">전일진도</td>
+                                                <td th:text="#{project.job_sheet_view.today_progress}">금일진도</td>
+                                                <td th:text="#{project.job_sheet_view.total_amount}">누계</td>
+                                            </tr>
+                                            <tr>
+                                                <td>[[${processItem.progressAmount}]]</td>
+                                                <td>0</td>
+                                                <td>[[${processItem.progressAmount}]]</td>
+                                                <td>[[${processItem.progressRate}]]</td>
+                                                <td>[[${jobSheetProcessItem.todayProgressRate}]]</td>
+                                                <td>[[${processItem.progressRate}]]</td>
+                                            </tr>
+                                            </tbody>
+                                        </table><!--// table-->
+                                    </div><!--//table-wrap-->
+                                </div>
+                                <div class="col2">
+                                    <div class="add-job grid">
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{common.modal_title.job_sheet_personal_management}">인원관리</span></strong>
+                                            </div>
+                                            <div class="fm-txt" th:if="${jobSheetProcessItem.worker ne null and jobSheetProcessItem.worker.size() > 0}">
+                                                <a href="#none" class="btn btn-color4 pop-open-btn btnWorkerTable" th:data-process-item-id="${jobSheetProcessItem.id}" data-modal="#taskMemberPopup">보기</a>
+                                                <p class="col6 fm-msg">[[${jobSheetProcessItem.worker[0].name}]] [[${jobSheetProcessItem.worker[0].value}]]명 외 <strong class="txt-color1">[[${jobSheetProcessItem.worker.size()-1}]]</strong>건</p>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{common.modal_title.job_sheet_equipment_management}">장비관리</span></strong>
+                                            </div>
+                                            <div class="fm-txt" th:if="${jobSheetProcessItem.device ne null and jobSheetProcessItem.device.size() > 0}">
+                                                <a href="#none" class="btn btn-color3 pop-open-btn btnDeviceTable" th:data-process-item-id="${jobSheetProcessItem.id}" data-modal="#taskMachinePopup">보기</a>
+                                                <p class="col6 fm-msg">[[${jobSheetProcessItem.device[0].name}]] [[${jobSheetProcessItem.device[0].value}]]개 외 <strong class="txt-color1">[[${jobSheetProcessItem.device.size()-1}]]</strong>건</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div><!--//task-con-->
+            </div><!--//task-item-->
+
+        </div><!--//prev-list-->
+    </div><!--//task-previous-popup-->
+
+    <div class="btn-box btn-bottom-sticky">
+        <a href="#none" class="btn btn-color1 btnProcessItemSet" th:text="#{common.modal.btn_save}">반영하기</a>
+        <a href="#none" class="btn btn-close" th:text="#{common.modal.btn_cancel}">닫기</a>
+    </div>
+
+
+    <!--// 공정 이전내역 불러오기 팝업-->
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(this).on('click', '.btnProcessItemSet', function (e) {
+                reqGet('/project/jobSheetProcessItemTable?itemBun='+[[${itemBun}]]+'&id='+[[${jobSheetProcessItem.id}]], function (data) {
+                    $("#jobSheetProcessItemList"+[[${itemBun}]]).html(data);
+                    $('#modalAddPrevJobSheetItem').find('.popup-con').html("");
+                    $('#modalAddPrevJobSheetItem').hide();
+                    //setTimeout(loadChange(), 100);
+                });
+            });
+
+            $(this).on('change','select[name=selectedJobSheetProcessItem]', function() {
+                reqGet('/project/addPrevJobSheetItem?itemBun='+[[${itemBun}]]+'&id='+[[${jobSheetProcessItem.processItem.id}]]+'&jobSheetId='+[[${jobSheetProcessItem.jobSheet.id}]]+'&jobSheetProcessItemId='+$(this).val(), function (data) {
+                    $('#modalAddPrevJobSheetItem').find('.popup-con').html(data);
+                });
+                //location.href = '/project/addPrevJobSheetItem?itemBun='+[[${itemBun}]]+'&id='+[[${jobSheetProcessItem.id}]]+'&jobSheetId='+[[${jobSheetProcessItem.jobSheet.id}]]+'&jobSheetProcessItemId='+$(this).val();
+            });
+        });
+
+        function loadChange() {
+            drawSlider();
+            $('input[name=todayProgressRate]').change();
+        }
+    </script>
+</th:block>
+

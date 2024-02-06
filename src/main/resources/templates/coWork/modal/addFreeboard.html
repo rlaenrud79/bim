@@ -1,0 +1,182 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form" th:object="${freeboard}">
+    <div class="grid">
+        <div class="fm-section col2">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{cowork.freeboard_list.list_title_title}">제목</span></strong>
+            </div>
+            <div class="fm-txt">
+                <th:block th:if="${ptype == 'edit'}">
+                    <input type="hidden"
+                           id="id"
+                           th:field="*{id}">
+                </th:block>
+                <input type="text" id="title" name="title" th:value="${freeboard.title}" th:placeholder="#{cowork.modal.add_freeboard.title_placeholder}">
+            </div>
+        </div>
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{cowork.modal.add_freeboard.attach_file}">파일첨부</span></strong>
+            </div>
+            <div class="fm-txt">
+                <div th:replace="/common/fileUploader :: singleFileUploader('freeboardFile')"></div>
+                <th:block th:if="${ptype == 'edit'}">
+                <div class="d-flex align-items-center">
+                    <div class="up-file-list">
+                        <div class="badge badge-pill" th:each="item, index : ${freeboard.freeboardFiles}">
+                            <a href="#" class="download-attach-file" th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}"><span th:text="${item.originFileName}"></span></a>
+                            <button type="button" th:data-file-id="${item.id}" class="btn btnDeleteFile"><i class="fas fa-save"></i></button>
+                        </div>
+                    </div>
+                </div>
+                </th:block>
+            </div>
+        </div>
+        <div class="fm-section col6">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{cowork.modal.add_freeboard.contents}">내용</span></strong>
+            </div>
+            <div class="fm-txt">
+                <th:block th:if="${ptype == 'write'}">
+                    <textarea id="contents" class="form-control" rows="5" th:placeholder="#{cowork.modal.add_freeboard.contents_placeholder}"></textarea>
+                </th:block>
+                <th:block th:if="${ptype == 'edit'}">
+                    <textarea id="contents" class="form-control" rows="5" th:text="${freeboard.contents}" th:placeholder="#{cowork.modal.add_freeboard.contents_placeholder}"></textarea>
+                </th:block>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="btn-box">
+    <th:block th:if="${ptype == 'write'}">
+        <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.add_work.btn_add}">등록</a>
+    </th:block>
+    <th:block th:if="${ptype == 'edit'}">
+        <a href="#none" id="mBtnUpdate" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+        <a href="#none" id="mBtnDelete" class="btn" th:text="#{admin.modal.update_work.btn_delete}">삭제</a>
+    </th:block>
+    <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+    let freeboardId = '[[${freeboard.id}]]';
+    const freeboardFileExtension = '[[${freeboardFileExtension}]]';
+    const allowFileExtList = freeboardFileExtension.split("||");
+
+    (function ($) {
+        var o = {
+
+            init: function () {
+                $.nfx.click("#mBtnAdd", function () {
+                    if ($("#title").val() == "") {
+                        alert("[[#{cowork.freeboard.error_no_title}]]");
+                        return;
+                    }
+                    if ($("#contents").val() == "") {
+                        alert("[[#{cowork.freeboard.error_no_contents}]]");
+                        return;
+                    }
+
+                    o.addFreeboard();
+                });
+
+                $.nfx.click("#mBtnDelete", function () {
+                    if (confirm("[[#{cowork.freeboard.confirm_delete_freeboard}]]")) {
+                        o.deleteFreeboard();
+                    }
+                });
+
+                $.nfx.click("#mBtnUpdate", function () {
+                    if ($("#title").val() == "") {
+                        alert("[[#{cowork.freeboard.error_no_title}]]");
+                        return;
+                    }
+
+                    if ($("#contents").val() == "") {
+                        alert("[[#{cowork.freeboard.error_no_contents}]]");
+                        return;
+                    }
+
+                    if (confirm("[[#{cowork.freeboard.confirm_update_freeboard}]]")) {
+                        o.updateFreeboard();
+                    }
+                });
+            },
+
+            addFreeboard: function() {
+                reqPostJSON('/coWorkApi/postFreeboard'
+                    , o.setSendData()
+                    , function (data) {
+                        if (!data.result) {
+                            alert(data.message);
+                        } else {
+                            alert(data.message);
+                            freeboardId = data.returnId;
+                            startFileUpload();
+                        }
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseJSON).error);
+                    }
+                );
+            },
+
+            deleteFreeboard: function() {
+                reqDelete('/coWorkApi/deleteFreeboard?id=' + parseInt($("#id").val())
+                    , {}
+                    , function (data) {
+                        if (data.result) {
+                            $(".close").click();
+                            reloadComponent("/coWork/freeboardCardBody", "#divCardBody", "");
+                            alert(data.message);
+                        }
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseJSON).error);
+                    });
+            },
+
+            updateFreeboard: function() {
+                reqPutJSON('/coWorkApi/putFreeboard'
+                    , o.setSendData()
+                    , function (data) {
+                        if (data.result) {
+                            if ($('li.devo_file_list').length > 0) {
+                                startFileUpload();
+                            } else {
+                                $(".close").click();
+                                reloadComponent("/coWork/freeboardCardBody", "#divCardBody", "");
+                                alert(data.message);
+                            }
+                        } else {
+                            alert(data.message);
+                        }
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseJSON).error);
+                    });
+            },
+
+            setSendData: function() {
+                return JSON.stringify({
+                    "id": freeboardId,
+                    "title": $("#title").val(),
+                    "contents": $("#contents").val()
+                });
+            }
+        };
+
+        $( document ).ready(function() {
+            $.extend($.nfx, {
+                form: document.FRM
+            });
+
+            o.init();
+        });
+
+    })(jQuery);
+
+
+</script>

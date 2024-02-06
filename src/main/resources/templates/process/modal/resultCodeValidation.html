@@ -1,0 +1,69 @@
+<!-- 모달 - 코드 검증 결과 -->
+<!-- modal-dialog modal-xl -->
+<div class="result-Code-validate">
+  <form id="frmSearchForm" th:replace="process/modal/resultCodeValidationSearchForm :: frmSearchForm()"/>
+
+  <div id="divCardCount" class="" th:replace="process/modal/resultCodeValidationCardCount :: cardCount()"/>
+  <div id="divCardHeader" class="" th:replace="process/modal/resultCodeValidationCardHeader :: cardHeader()"/>
+  <div id="divCardBody" class="" th:replace="process/modal/resultCodeValidationCardBody:: cardBody()" />
+</div>
+<script>
+  $(document).ready(function () {
+    const $this = $("#modalResultCodeValidation");
+    let _pageNo = 0;
+
+    let searchResultCodeValidationList = function() {
+      reloadComponent("/processModal/resultCodeValidationCardBody", "#divCardBody", setSendData(0, $("#pageSize").val()));
+    }
+
+    let initSearchCondition = function() {
+
+      $("#mSearchType").val("TASK_NAME");
+      $("#mSearchText").val("");
+      $("input:checkbox[id='isMSuccess']").prop('checked', false);
+      $("input:checkbox[id='isMFail']").prop('checked', false);
+      $("input:checkbox[id='isMNone']").prop('checked', false);
+      $("#pageSize").val("50");
+    }
+
+    let setSendData = function(page, pageSize) {
+      let param = "";
+
+      param += "page=" + page;
+      param += "&size=" + pageSize;
+      param += "&mSearchType=" + $("#mSearchType").val();
+      param += "&mSearchText=" + $("#mSearchText").val();
+      param += "&mSuccess=" + $("input:checkbox[id='isMSuccess']").is(":checked");
+      param += "&mFail=" + $("input:checkbox[id='isMFail']").is(":checked");
+      param += "&mNone=" + $("input:checkbox[id='isMNone']").is(":checked");
+
+      return param;
+    }
+
+    $this.on('change', '#pageSize', function(){
+      searchResultCodeValidationList();
+    });
+
+    $this.on('click', '#mBtnExecuteResultSearch', function () {
+      searchResultCodeValidationList();
+    });
+
+    $this.on('click', '#mBtnInit', function () {
+      initSearchCondition();
+      searchResultCodeValidationList();
+    });
+
+    $this.on('click', '#btnPagePrevious, a[id^=\'btnPageNo_\'], #btnPageNext', function() {
+      _pageNo = $(this).data("page-no");
+      reloadComponent("/processModal/resultCodeValidationCardBody", "#divCardBody", setSendData(_pageNo, $("#pageSize").val()));
+    });
+
+    $this.on('click', '#mBtnExcelDownLoad', function(){
+      window.open("/processApi/resultCodeValidationExcel?" + setSendData(0, 0));
+    });
+
+    /*scroll*/
+    $('.scroll-wrap').overlayScrollbars({ });
+
+  });
+</script>

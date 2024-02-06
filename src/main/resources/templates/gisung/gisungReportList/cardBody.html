@@ -1,0 +1,98 @@
+<div class="card-body" id="divCardBody" th:fragment="cardBody()">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table class="table data-table">
+        <thead>
+        <tr>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.document_list.list_title_no}"> No</span>
+          </th>
+          <th id="th_title" class="text-center" width="100">
+            <span th:text="#{contents.document_list.list_title_title}"> 문서명</span>
+            <span>
+                (
+                  <i data-sort="titleASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="titleDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+          </th>
+          <th id="th_fileName" class="text-center" width="100">
+            <span th:text="#{contents.document_list.list_title_file_name}"> 파일명</span>
+            <span>
+                (
+                  <i data-sort="fileNameASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="fileNameDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.document_list.list_title_size}"> 크기</span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.document_list.list_title_writer}"> 작성자</span>
+          </th>
+          <th id="th_writeDate" class="text-center" width="80">
+            <span th:text="#{contents.document_list.list_title_write_date}"> 작성일자</span>
+            <span>
+                (
+                  <i data-sort="writeDateASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="writeDateDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.document_list.list_title_delete}"> 삭제</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td>
+            <div class="table-text-cont">
+              <a href="#" class="openUpdateModal" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-report-id="${item.id}" data-toggle="modal" data-target="#modalUpdateGisungReport">
+                <span class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+              </a>
+              <span th:unless="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+            </div>
+          </td>
+          <td>
+            <div class="table-text-cont">
+              <a href="#" class="download-attach-file" data-file-id="${item.id}" data-file-upload-type="GISUNG_REPORT_SURVEY_FILE">
+                <span class="text-over-dot" th:text="${item.surveyOriginFileName}">교량 구간 A01 공사 계획서.doc</span>
+              </a>
+            </div>
+          </td>
+          <td class="text-center">
+            <span th:if="${not #strings.isEmpty(item.surveyOriginFileName)}" th:text="|${item.FileSizeMegaByteUnit} MB|"> 62.5 MB</span>
+          </td>
+          <td class="text-center">
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td class="text-center">
+            <span th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-05</span>
+          </td>
+          <td class="text-center">
+            <button type="button" id="btnDeleteGisungReport" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-report-id="${item.id}" class="btn btn-danger btn-sm">
+              <i class="fas fa-trash"></i> <span th:text="#{contents.document_list.btn_delete_document}">삭제</span>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- paging -->
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+
+  <script>
+    var currentSort = '[[${searchGisungReportVO.SortProp}]]';
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

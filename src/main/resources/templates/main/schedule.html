@@ -1,0 +1,239 @@
+<div id="scheduleDiv" class="schedule"  th:fragment="load()">
+    <div class="tit-box">
+        <h3>공정 스케줄</h3>
+    </div>
+    <div class="schedule-con">
+        <div class="left-box">
+            <div class="tab">
+                <button type="button" class="btn-schedule-tab" th:classappend="${tab=='J'} ? on" data-tab="J" th:data-date='${curDate}'>작업일지</button>
+                <button type="button" class="btn-schedule-tab" th:classappend="${tab=='P'} ? on" data-tab="P" th:data-date='${curDate}'>공정계획</button>
+            </div>
+            <div class="section">
+                <strong th:text="${todayWeekString}">2023년 12월 15일 (수)</strong>
+                <div class="control">
+                    <button type="button" class="btn-prevnext-date" th:data-date="${prevDate}"></button>
+                    <button type="button" class="btn-prevnext-date" th:data-date="${nextDate}"></button>
+                </div>
+            </div>
+            <div class="section">
+                <h4>주요이슈</h4>
+                <ul>
+                    <li th:each="item, index : ${processItemList}">
+                        <button type="button" class="pop-open-btn btnDayProcessItem" data-modal="#calendarPopup" th:data-date='${curDate}'><span th:text="${item.taskName}">해당 일의 주요 이슈 내용 노출</span></button>
+                    </li>
+                </ul>
+            </div>
+        </div><!--//left-box-->
+        <div class="right-box">
+            <div class="calendar" th:utext="${calendarHtml}">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>일</th>
+                        <th>월</th>
+                        <th>화</th>
+                        <th>수</th>
+                        <th>목</th>
+                        <th>금</th>
+                        <th>토</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-red">1</strong>
+                            </div>
+                            <ul>
+                                <li><button type="button" class="pop-open-btn" data-modal="#calendarPopup">항목2</button></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>2</strong>
+                            </div>
+                            <ul>
+                                <li><button type="button" class="pop-open-btn" data-modal="#calendarPopup">항목1</button></li>
+                                <li><button type="button" class="pop-open-btn" data-modal="#calendarPopup">항목2</button></li>
+                            </ul>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>3</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>4</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>5</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>6</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>7</strong>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-red">8</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>9</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>10</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>11</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>12</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>13</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>14</strong>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-red">15</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>16</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>17</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>18</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>19</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>20</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>21</strong>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-red">22</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>23</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>24</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>25</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>26</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>27</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>28</strong>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-red">29</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>30</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong>31</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-gray">1</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-gray">2</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-gray">3</strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="head">
+                                <strong class="txt-color-gray">4</strong>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!--//calendar-->
+        </div><!--//right-box-->
+    </div>
+</div><!--//schedule-->

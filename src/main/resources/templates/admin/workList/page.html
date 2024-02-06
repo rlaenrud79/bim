@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="admin/workList/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <input type="hidden" id="tmpWorkId" value="">
+        <input type="hidden" id="tmpTrIndex" value="">
+        <div id="divCardBody" class="card content-body-area" th:replace="admin/workList/cardBody :: cardBody()"/>
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalWorkAdd', #{admin.work_list.modal_title.add_work}, 'popup-md')"></th:block>
+<!-- modal end -->
+
+<script src="/dist/js/pages/work.js"></script>
+<script>
+  $(document).ready(function () {
+
+    $(this).on('click', 'button[id^="btnForwardSortNo_"]', function (e) {
+      $("#tmpWorkId").val($(this).attr("data-id"));
+      $("#tmpTrIndex").val($(this).attr("data-index"));
+      updateWorkSortNoASC();
+    });
+
+    $(this).on('click', 'button[id^="btnBackwardSortNo_"]', function (e) {
+      $("#tmpWorkId").val($(this).attr("data-id"));
+      $("#tmpTrIndex").val($(this).attr("data-index"));
+      updateWorkSortNoDESC();
+    });
+
+  });
+
+  function updateWorkSortNoASC() {
+    reqPost('/adminApi/putWorkSortNoASC'
+            , {"workId": parseInt($("#tmpWorkId").val()) }
+            , function (data) {
+              if (data.result) {
+                reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+                alert(data.message);
+              }
+            }
+            , function (xhr) {
+              alert($.parseJSON(xhr.responseJSON).error);
+            });
+  }
+
+  function updateWorkSortNoDESC() {
+    reqPost('/adminApi/putWorkSortNoDESC'
+            , { "workId": parseInt($("#tmpWorkId").val()) }
+            , function (data) {
+              if (data.result) {
+                reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+                alert(data.message);
+              }
+            }
+            , function (xhr) {
+              alert($.parseJSON(xhr.responseJSON).error);
+            });
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="search-box">
+    <input type="hidden" id="sortProp" value="">
+    <section>
+      <select id="searchType">
+        <option value="none" th:text="#{contents.gisung_list.select_search_type}">:: 선택 ::</option>
+        <option value="title" th:text="#{contents.gisung_list.select_title}">제목</option>
+      </select>
+      <input type="text" id="searchValue" name="searchValue" placeholder="검색어를 입력하세요.">
+    </section>
+    <section>
+      <p for="writerName" th:text="#{co_work.notification_list.writer_name}">작성자</p>
+      <input type="text" id="searchUserDisplayName" class="wid-s" name="searchUserDisplayName" th:placeholder="#{project.job_sheet_list.input_user_placeholder}" readonly placeholder="사용자를 입력하세요.">
+      <input type="hidden" id="searchUserId" name="searchUserId" >
+      <a href="#none" id="btnSearchUser" class="btn-b pop-open-btn" data-modal="#modalSearchSingleUser"><span th:text="#{project.job_sheet_list.btn_search_job_sheet}">검색</span></a>
+    </section>
+    <section>
+      <p th:text="#{contents.gisung_list.select_write_date}">작성일자</p>
+      <div class="input-date-wrap">
+        <div class="input-date">
+          <input type="date" id="startDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+        <small class="bar">-</small>
+        <div class="input-date">
+          <input type="date" id="endDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+      </div>
+    </section>
+    <section>
+      <a href="#none" id="btnSearchGisung" class="btn btn-color2"><span th:text="#{contents.gisung_list.btn_search_document}">검색</span></a>
+<!--      <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.gisung_list.btn_reset_search_condition}">초기화</span></a>-->
+    </section>
+  </div>
+</form>

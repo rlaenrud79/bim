@@ -1,0 +1,218 @@
+<!-- 모달 - 문서 등록  -->
+<div class="form">
+  <div class="grid">
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.title}">문서명</span></strong>
+      </div>
+      <div class="fm-txt">
+        <input type="text" id="title" name="title" th:field="${document.title}" th:placeholder="#{contents.modal.update_document.title_placeholder}">
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.category}">분류</span></strong>
+      </div>
+      <div class="fm-txt">
+        <select id="documentCategoryId" class="custom-select">
+          <option value="0" th:text="#{contents.modal.add_document.select_document_category}">:: 분류를 선택하세요 ::</option>
+          <option th:each="item, index : ${documentCategoryDTOs}" th:value="${item.id}" th:selected="${item.id == document.documentCategory.id}" th:text="${item.name}"></option>
+        </select>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.work}">공종</span></strong>
+      </div>
+      <div class="fm-txt">
+        <select id="workId" class="custom-select">
+          <option value="0" th:text="#{contents.modal.add_document.select_work}">:: 공종을 선택하세요 ::</option>
+          <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:selected="${item.id == document.work.id}" th:text="${item.workNameLocale}"></option>
+        </select>
+        <span id="documentWorkSecond"></span>
+      </div>
+    </div>
+    <div class="fm-section col6">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.attach_file}">파일첨부</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div th:replace="/common/fileUploader :: singleFileUploader('documentFile')"></div>
+        <div class="d-flex align-items-center">
+          <div class="up-file-list">
+            <div class="badge badge-pill" th:each="item, index : ${document.documentFiles}">
+              <a href="#" class="download-attach-file" th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}"><span th:text="${item.originFileName}"></span></a>
+              <button type="button" th:data-file-id="${item.id}" class="btn btnDeleteFile"><i class="fas fa-save"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fm-section col6">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{contents.modal.add_document.description}">파일 설명</span></strong>
+      </div>
+      <div class="fm-txt">
+        <textarea id="description" class="form-control" th:value="${document.description}" rows="5" th:placeholder="#{contents.modal.add_document.description_placeholder}">[[${document.description}]]</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="btn-box">
+  <button type="button" id="btnUpdateDocument" class="btn btn-color1">
+    <span th:text="#{layout.modal.btn_edit}"> 수정</span>
+  </button>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+  $(document).ready(function () {
+    const documentId = [[${document.Id}]];
+    const documentFileExtension = '[[${documentFileExtension}]]';
+    const allowFileExtList = documentFileExtension.split("||");
+
+    let _this = $("#modalAddDocument");
+    let updating = false;
+
+    const $title = $("#title");
+    const $description = $("#description");
+    const $workId = $("#workId");
+    const $documentCategoryId = $("#documentCategoryId");
+
+    _this.on('click', '#btnUpdateDocument', function () {
+      if (updating) {
+        return;
+      }
+
+      updating = true;
+      if ($title.val() === "") {
+        alert("[[#{contents.modal.update_document.alert_title}]]");
+        return false;
+      }
+
+      if ($documentCategoryId.val() === "0") {
+        alert("[[#{contents.modal.add_document.alert_document_category_id}]]");
+        return false;
+      }
+
+      if ($workId.val() === "0") {
+        alert("[[#{contents.modal.update_document.alert_work_id}]]");
+        return false;
+      }
+
+      if ($description.val() === "") {
+        alert("[[#{contents.modal.update_document.alert_description}]]");
+        return false;
+      }
+
+      if ($('li.devo_file_list').length > 0) {
+        if (confirm("[[#{contents.modal.update_document.alert_attach_file}]]")) {
+          updateDocument();
+        }
+      } else {
+        updateDocument();
+      }
+
+    });
+
+    _this.on('click', '.btnDeleteFile', function () {
+    //$(this).on('click', '.btnDeleteFile', function() {
+      if (updating) {
+        return;
+      }
+
+      updating = true;
+      if (confirm("[[#{contents.modal.update_document.confirm_delete_document_file}]]")) {
+        deleteDocumentFile($(this));
+      }
+    });
+
+
+    function deleteDocumentFile(obj) {
+      const fileId = obj.data('file-id');
+
+      reqDelete(`/contentsApi/deleteDocumentFile?id=${fileId}`,
+              function (data) {
+                if (!data.result) {
+                  alert(data.message);
+                } else {
+                  obj.parent().remove();
+                }
+              },
+              function (xhr) {
+                alert(xhr.responseJSON.message);
+              }
+      );
+    }
+
+    function updateDocument() {
+      reqPutJSON('/contentsApi/putDocument', setSendData(),
+              function (data) {
+                if (!data.result) {
+                  alert(data.message);
+                } else {
+                  //alert(data.message);
+                  if ($('li.devo_file_list').length > 0) {
+                    startFileUpload();
+                  } else {
+                    $(".close").click();
+                    reloadCardBody();
+                  }
+                }
+              },
+              function (xhr) {
+                alert(xhr.responseJSON.message);
+              }
+      );
+    }
+
+    function setSendData() {
+      let workId = "";
+      if (isObject($("#workSecondId").val())) {
+        workId = $("#workSecondId").val();
+      } else {
+        workId = $("#workId").val();
+      }
+      return JSON.stringify({
+        "id": documentId,
+        "title": $("#title").val(),
+        "workId": workId + "",
+        "description": $("#description").val(),
+        "documentCategoryId": $("#documentCategoryId").val() + ""
+      });
+    }
+
+    function startFileUpload() {
+      $("#documentFile").dmUploader("start");
+    }
+
+    function completeUploadFile(obj) {
+      if ($(obj)[0].id === "documentFile") {
+        $(".close").click();
+        PageFunction.resetAndSearch();
+      }
+    }
+
+    function fileUploaderExtraData() {
+      return {
+        "id": documentId,
+        "fileUploadUIType": "DOCUMENT_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter": false
+      }
+    }
+
+    makeSingleUploaderScript("#documentFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+    );
+
+  });
+
+</script>

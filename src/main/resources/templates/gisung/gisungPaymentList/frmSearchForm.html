@@ -1,0 +1,39 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+  <div class="search-box">
+    <input type="hidden" id="sortProp" value="">
+    <section>
+      <select id="searchType">
+        <option value="none" th:text="#{contents.gisung_payment_list.select_search_type}">선택</option>
+        <option value="title" th:text="#{contents.gisung_payment_list.select_title}">문서명</option>
+        <option value="fileName" th:text="#{contents.gisung_payment_list.select_file_name}">파일명</option>
+        <option value="description" th:text="#{contents.gisung_payment_list.select_description}">파일설명</option>
+        <option value="titleWithDescription" th:text="#{contents.gisung_payment_list.title_with_description}">제목+파일설명</option>
+      </select>
+      <input type="text" id="searchValue" name="searchValue" placeholder="검색어 입력" class="wid-m">
+    </section>
+    <section class="user-search">
+<!--      <p for="writerName" th:text="#{co_work.notification_list.writer_name}">작성자</p>-->
+      <input type="text" id="searchUserDisplayName" class="wid-m" name="searchUserDisplayName" th:placeholder="#{co_work.bulletin_list.select_writer_placeholder}" readonly>
+      <input type="hidden" id="searchUserId" name="searchUserId">
+      <a href="#none" id="btnSearchUser" class="pop-open-btn" data-modal="#modalSearchSingleUser"></a>
+    </section>
+    <section>
+      <p th:text="#{contents.gisung_payment_list.select_write_date}">작성일자</p>
+      <div class="input-date-wrap">
+        <div class="input-date">
+          <input type="date" id="startDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+        <small class="bar">-</small>
+        <div class="input-date">
+          <input type="date" id="endDate" placeholder="" class="">
+          <i class="ico"></i>
+        </div>
+      </div>
+    </section>
+    <section>
+      <a href="#none" id="btnSearchGisungPayment" class="btn btn-color2"><span th:text="#{contents.gisung_payment_list.btn_search_gisung_payment}">검색</span></a>
+<!--      <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.gisung_payment_list.btn_reset_search_condition}">초기화</span></a>-->
+    </section>
+  </div>
+</form>

@@ -1,0 +1,94 @@
+// BIM gantt-chart-area
+
+.viewer-area,
+.gantt-chart-area {
+    transition: max-height .3s ease-in-out, min-height .3s ease-in-out, height .3s ease-in-out;
+}
+
+.gantt-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .3rem 1rem .3rem 2rem;
+    width: 100%;
+    height: 65px;
+    border-top: 10px solid #e4e5e9;
+    background-color: #fff;
+
+    > div {
+        display: flex;
+        align-items: center;
+    }
+
+    .runtime-area {
+        margin-right: 1rem;
+
+        p {
+            margin-right: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    }
+
+    .slidebar-area {
+        flex: 0 1 80%;
+
+        > button {
+            margin-right: 3rem;
+            width: 80px;
+        }
+
+        .slidebar {
+            width: 100%;
+        }
+    }
+
+    .gantt-toggle-area {
+        margin-left: 1rem;
+
+        .btn-gantt-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            width: 40px;
+            height: 40px;
+            color: #1d1d1f;
+            font-size: 1rem;
+            border-radius: 50px;
+            transform: rotate(90deg);
+
+            &:hover {
+                background-color: #e2e2e2;
+            }
+        }
+    }
+}
+
+.hide-gantt-chart {
+    .viewer-area {
+        min-height: calc(100% - 65px)!important;
+        max-height: calc(100% - 65px)!important;
+        transition: max-height .3s ease-in-out, min-height .3s ease-in-out, height .3s ease-in-out;
+    }
+
+    .gantt-chart-area {
+        min-height: 65px!important;
+        max-height: 65px!important;
+        transition: max-height .3s ease-in-out, min-height .3s ease-in-out, height .3s ease-in-out;
+
+        > div:not(.gantt-chart-header) {
+            display: none!important;
+        }
+    }
+
+    .btn-gantt-chart {
+        transform: rotate(-90deg)!important;
+    }
+}
+
+.main-content {
+    .gantt-toggle-area {
+        margin-left: auto!important;
+    }
+}

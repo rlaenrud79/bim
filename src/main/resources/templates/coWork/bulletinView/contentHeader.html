@@ -1,0 +1,13 @@
+<div id="divContentHeader" class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2><span th:text="#{co_work.bulletin_view.title_bulletin_view}"> 게시판 조회</span></h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+
+    </div>
+    <a href="#none" id="btnGotoList" class="btn"><span th:text="#{co_work.notification_add.btn_goto_list}">목록으로</span></a>
+    <a href="#none" th:if="${isWriter or isRoleAdminProject}" id="btnDelete" class="btn btn-color2"><span th:text="#{co_work.bulletin_view.header_btn_delete}">삭제</span></a>
+    <a href="#none" th:if="${isWriter or isRoleAdminProject}" id="btnMoveEditPage" class="btn btn-color1"><span th:text="#{co_work.bulletin_view.header_btn_move_edit_page}">수정</span></a>
+  </div>
+</div>

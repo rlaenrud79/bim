@@ -1,0 +1,226 @@
+<div class="board-search">
+    <div class="search-box">
+        <input type="text" placeholder="공정명을 입력하세요.">
+        <a href="#" class="btn btn-color1">검색</a>
+        <a href="#none" class="btn btn-color1 btn-process-add">공정추가</a>
+    </div>
+</div><!--//board-search-->
+<div class="tree-nav">
+    <th:block th:with="depth1='', depth2='', depth3='', depth4='', depth5='', depth6='', depth7=''"></th:block>
+    <th:block th:each="item, index : ${processCategoryList}">
+        <th:block th:with="depth1=${item.cate1}"></th:block>
+        <th:block th:with="depth2=${item.cate2}"></th:block>
+        <th:block th:with="depth3=${item.cate3}"></th:block>
+        <th:block th:with="depth4=${item.cate4}"></th:block>
+        <th:block th:with="depth5=${item.cate5}"></th:block>
+        <th:block th:with="depth6=${item.cate6}"></th:block>
+        <th:block th:with="depth7=${item.cate7}"></th:block>
+        <div th:text="${depth1}"></div>-----
+        <th:block th:if="${item.cate2 == '000'}"> <!-- 1depth -->
+            <th:block th:if="${depth2 != '' && depth2 != '000'}"> <!-- 1depth -->
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li>
+            </th:block>
+            <th:block th:unless="${depth2 != '' && depth2 != '000'}">
+                <section class="depth0">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate" th:text="${depth2}">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <input type="checkbox" th:id="itemCheck+${index.index}">
+                        <label th:for="itemCheck+${index.index}"></label>
+                    </div>
+                </div>
+
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' && item.cate3 == '000'}"> <!-- 2depth -->
+            <th:block th:if="${depth3 != '000'}"> <!-- 2depth -->
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li>
+                <!-- cate2가 '000'인 경우에 실행될 코드 -->
+            </th:block>
+            <th:block th:if="${depth2 == '' or depth2 == '000'}">
+                <section class="depth1">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <input type="checkbox" th:id="itemCheck+${index.index}">
+                        <label th:for="itemCheck+${index.index}"></label>
+                    </div>
+                </div>
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' and item.cate3 != '000' and item.cate4 == '000'}"> <!-- 3depth -->
+            <th:block th:if="${depth4 != '000'}"> <!-- 3depth -->
+                </li></ul></section>
+                </li></ul></section>
+                </li></ul></section>
+                </li>
+                <!-- cate2가 '000'인 경우에 실행될 코드 -->
+            </th:block>
+            <th:block th:if="${depth3 == '' or depth3 == '000'}">
+                <section class="depth2">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <input type="checkbox" th:id="itemCheck+${index.index}">
+                        <label th:for="itemCheck+${index.index}"></label>
+                    </div>
+                </div>
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' and item.cate3 != '000' and item.cate4 != '000' and item.cate5 == '000'}"> <!-- 4depth -->
+            <th:block th:if="${depth5 != '000'}"> <!-- 4depth -->
+                </li></ul></section>
+                </li></ul></section>
+                </li>
+                <!-- cate2가 '000'인 경우에 실행될 코드 -->
+            </th:block>
+            <th:block th:if="${depth4 == '' or depth4 == '000'}">
+                <section class="depth3">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <th:block th:if="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:classappend="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}" name="item_no[]" th:data-no="${item.processItemId}" th:value="${item.processItemId}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                        <th:block th:unless="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:data-name="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                    </div>
+                </div>
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' and item.cate3 != '000' and item.cate4 != '000' and item.cate5 != '000' and item.cate6 == '00000'}"> <!-- 5depth -->
+            <th:block th:if="${depth6 != '00000'}"> <!-- 5depth -->
+                </li></ul></section>
+                </li>
+            </th:block>
+            <th:block th:if="${depth5 == '' or depth5 == '000'}">
+                <section class="depth4">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <th:block th:if="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:classappend="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}" name="item_no[]" th:data-no="${item.processItemId}" th:value="${item.processItemId}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                        <th:block th:unless="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:data-name="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                    </div>
+                </div>
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' and item.cate3 != '000' and item.cate4 != '000' and item.cate5 != '000' and item.cate6 != '00000' and item.cate7 == '00000'}"> <!-- 6depth -->
+            <th:block th:if="${depth7 != '00000'}"> <!-- 6depth -->
+                </li></ul></section>
+                </li>
+            </th:block>
+            <th:block th:if="${depth6 == '' or depth6 == '00000'}">
+                <section class="depth5">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <th:block th:if="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:classappend="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}" name="item_no[]" th:data-no="${item.processItemId}" th:value="${item.processItemId}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                        <th:block th:unless="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:data-name="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                    </div>
+                </div>
+        </th:block>
+        <th:block th:if="${item.cate2 != '000' and item.cate3 != '000' and item.cate4 != '000' and item.cate5 != '000' and item.cate6 != '00000' and item.cate7 != '00000'}"> <!-- 7depth -->
+            <th:block th:if="${depth7 == '' or depth7 == '00000'}"> <!-- 7depth -->
+                <section class="depth6">
+                    <ul>
+            </th:block>
+            <li>
+                <div class="menu-top">
+                    <button class="menu-btn"></button>
+                    <div class="menu-tit">
+                        <span>[[${item.taskName}]]</span>
+                        <span class="code">([[${item.phasingCode}]])</span>
+                        <span class="rate">30%</span>
+                    </div>
+                    <div class="check-set">
+                        <th:block th:if="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:classappend="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}" name="item_no[]" th:data-no="${item.processItemId}" th:value="${item.processItemId}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                        <th:block th:unless="${item.ganttTaskType == 'TASK'}">
+                            <input type="checkbox" th:id="itemCheck+${index.index}" class="itemCheck" th:data-name="${item.cate1+item.cate2+item.cate3+item.cate4+item.cate5}">
+                            <label th:for="itemCheck+${index.index}"></label>
+                        </th:block>
+                    </div>
+                </div>
+        </th:block>
+        <!-- depth1 값을 업데이트 -->
+
+    </th:block>
+    </li></ul></section>
+    </li></ul></section>
+    </li></ul></section>
+    </li></ul></section>
+    </li></ul></section>
+    </li>
+    </ul>
+    </section>
+</div>
+<button type="button" class="close close-btn">팝업닫기</button>

@@ -1,0 +1,80 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table class="table data-table">
+        <thead>
+        <tr>
+          <th class="text-center">No</th>
+          <th class="text-center">
+            <span th:text="#{co_work.co_work_list.list.co_work_title}">협업 제목</span>
+            <span>(<i data-sort="titleASC" class="fas fa-arrow-up sort"></i><i data-sort="titleDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center">
+            <span th:text="#{co_work.co_work_list.list.writer}">생성자</span>
+            <span>(<i data-sort="writerNameASC" class="fas fa-arrow-up sort"></i><i data-sort="writerNameDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center" th:text="#{co_work.co_work_list.list.joiner}">참여 대상자</th>
+          <th class="text-center" th:text="#{co_work.co_work_list.list.bim_model}">관련 BIM 모델</th>
+          <th class="text-center" th:text="#{co_work.co_work_list.list.issue}">관련 이슈</th>
+          <th class="text-center" th:text="#{co_work.co_work_list.list.co_work_status}">협업 상태</th>
+          <th class="text-center" >
+            <span th:text="#{co_work.co_work_list.list.write_date}">생성 일시</span>
+            <span>(<i data-sort="writeDateASC" class="fas fa-arrow-up sort"></i><i data-sort="writeDateDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, index : ${list}"
+            th:classappend="${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject && item.isHaveRequestOrGoingIssue}
+                              ? 'bg-info' : (${item.isWriter(#session.getAttribute('scopedTarget.userInfo')?.id) && item.isHaveRequestOrGoingIssue}
+                              ? 'bg-success' : (${item.isIncludedUser(#session.getAttribute('scopedTarget.userInfo')?.id) && item.isHaveRequestOrGoingIssue}
+                              ? 'bg-danger'))">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td>
+            <div class="table-text-cont">
+              <a th:id="coWork_+${item.id}" href="#" th:data-id="${item.id}">
+                <span class="text-over-dot" th:text="${item.subject}">휴무일 공지(2021.05.05)</span>
+              </a>
+            </div>
+          </td>
+          <td class="text-center">
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td class="text-center">
+            <a th:id="aCoWorkJoinerCnt_+${item.id}" href="#"
+               th:data-id="${item.id}"
+               th:text="${item.coWorkJoinerCount}">3</a>
+          </td>
+          <td class="text-center">
+            <a th:id="aCoWorkModelingCnt_+${item.id}" href="#"
+               th:data-id="${item.id}"
+               th:text="${item.coWorkModelingCount}">2</a>
+          </td>
+          <td class="text-center">
+            <a th:id="aCoWorkIssueCnt_+${item.id}" href="#"
+               th:data-id="${item.id}"
+               th:text="${item.coWorkIssueCount}">1</a>
+          </td>
+          <td class="text-center" th:text="#{${item.status.getMessageProperty()}}">잰행중</td>
+          <td class="text-center" th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021-04-06 14:00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- paging -->
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+
+  <script>
+    var currentSort = '[[${searchCoWorkVO.sortProp}]]';
+
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

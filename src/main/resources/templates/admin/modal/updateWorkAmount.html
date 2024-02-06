@@ -1,0 +1,124 @@
+<div class="form work-add">
+    <div class="grid">
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_amount.work}">공종</span></strong>
+            </div>
+            <div class="fm-txt">
+                <select id="workId" class="custom-select wid-s">
+                    <option value="0" th:text="#{contents.modal.add_document.select_work}">:: 공종을 선택하세요 ::</option>
+                    <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:selected="${item.id == workAmount.work.id}" th:text="${item.workNameLocale}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_amount.year}">년도</span></strong>
+            </div>
+            <div class="fm-txt">
+                <select id="year" class="custom-select wid-s">
+                    <option value="" th:text="#{admin.modal.add_work_amount.select_year}">:: 년도를 선택하세요 ::</option>
+                    <option th:each="year : ${years}"
+                            th:value="${year}" th:selected="${#strings.equals(year, workAmount.year)}"
+                            th:text="${year}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_amount.total_amount}">총계</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="number"
+                       id="totalAmount"
+                       name="totalAmount"
+                       th:value="${workAmount.totalAmount}"
+                       th:placeholder="#{admin.modal.add_work_amount.total_amount_placeholder}">
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_amount.prev_amount}">전년까지</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="number"
+                       id="prevAmount"
+                       name="prevAmount"
+                       th:value="${workAmount.prevAmount}"
+                       th:placeholder="#{admin.modal.add_work_amount.prev_amount_placeholder}">
+            </div>
+        </div>
+        <div class="fm-section col3">
+            <div class="fm-tit">
+                <strong><i class="ico-require"></i><span th:text="#{admin.modal.add_work_amount.amount}">당해년도</span></strong>
+            </div>
+            <div class="fm-txt">
+                <input type="number"
+                       id="amount"
+                       name="amount"
+                       th:value="${workAmount.amount}"
+                       th:placeholder="#{admin.modal.add_work_amount.amount_placeholder}">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="btn-box">
+    <a href="#none" id="mBtnAdd" class="btn btn-color1" th:text="#{admin.modal.update_work.btn_update}">등록</a>
+    <a href="#none" class="btn close" th:text="#{common.modal.btn_cancel}">취소</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        const workAmountId = [[${workAmount.Id}]]
+
+        $(this).on('click', '#mBtnAdd', function () {
+            if ($("#workId").val() == 0) {
+                alert("[[#{admin.modal.add_work_amount.error_no_work_id}]]");
+                return;
+            }
+            if ($("#year").val() === "") {
+                alert("[[#{admin.modal.add_work_amount.error_no_year}]]");
+                return;
+            }
+            if ($("#totalAmount").val() === "") {
+                alert("[[#{admin.modal.add_work_amount.error_no_total_amount}]]");
+                return;
+            }
+
+            if (confirm("[[#{admin.modal.add_work_amount.confirm_add_work}]]")) {
+                updateWorkAmount();
+            }
+        });
+
+        function updateWorkAmount() {
+            reqPostJSON('/adminApi/putWorkAmount'
+                , setSendData()
+                , function (data) {
+                    if (data.result) {
+                        $("#modalWorkAmountUpdate").modal("hide");
+                        reloadComponent("/admin/workAmountCardBody", "#divCardBody", "");
+                        //toastr.success(data.message);
+                    } else {
+                        alert(data.message);
+                    }
+                }
+                , function (xhr) {
+                    alert($.parseJSON(xhr.responseJSON).error);
+                }
+            );
+        }
+
+        function setSendData() {
+            return JSON.stringify({
+                "id": workAmountId,
+                "year": $("#year").val(),
+                "workId": parseInt($("#workId").val()),
+                "totalAmount": parseInt($("#totalAmount").val()),
+                "prevAmount": parseInt($("#prevAmount").val()),
+                "amount": parseInt($("#amount").val())
+            });
+        }
+
+    });
+</script>

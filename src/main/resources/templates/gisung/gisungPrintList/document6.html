@@ -1,0 +1,585 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="top-sticky">
+        <p class="tit">STEP 01. 기성부분집계표(연차)</p>
+    </div>
+    <div class="gisung-help-txt txt-cnt">* 정보수정 후 저장 버튼을 누르면 수정 전 원본 데이터를 다시 불러올 수 없습니다.<br>원본 데이터 수정을 원하시면 목록에서 삭제 후 다시 진행하세요.</div>
+
+    <div class="print-page print-write">
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2>
+                        <input id="gisungItemId" name="gisungItemId" type="hidden" th:value="${gisungItem.id}">
+                        <input id="documentNo" name="documentNo" type="hidden" th:value="6">
+                        <input type="text" name="title" id="title" th:value="${gisungItem.title}">
+                    </h2>
+                </div>
+                <!--
+                <table class="mb-20">
+                    <colgroup>
+                        <col style="width:50%">
+                        <col style="width:30%">
+                    </colgroup>
+                    <tr>
+                        <th class="txt-left"><input type="text" name="item01" id="item01" th:value="${gisungItem.item01}"></th>
+                        <td class="txt-left"><input type="text" name="item02" id="item02" th:value="${gisungItem.item02}"></td>
+                    </tr>
+                    <tr>
+                        <th class="txt-left"><input type="text" name="item03" id="item03" th:value="${gisungItem.item03}"></th>
+                        <td class="txt-left"><input type="text" name="item04" id="item04" th:value="${gisungItem.item04}"></td>
+                    </tr>
+                    <tr>
+                        <th class="txt-left"><input type="text" name="item05" id="item05" th:value="${gisungItem.item05}"></th>
+                        <td class="txt-left"><input type="text" name="item06" id="item06" th:value="${gisungItem.item06}"></td>
+                    </tr>
+                </table>
+                -->
+                <div class="tb-top">
+                    <h3>1.공정별 기성내역</h3>
+                    <span>&lt;단위 : 원&gt;</span>
+                </div>
+
+                <div class="tb-tab">
+                    <a href="#none" class="on btn-document-tab">순공사비 입력</a>
+                    <a href="#none" class="btn-document-tab">그외 입력</a>
+                </div>
+
+                <table id="tbTab1" name="tblGisung1" class="table mb-20 tb-tab-con on">
+                    <colgroup>
+                        <col style="width:3%">
+                        <col style="width:20%">
+                        <col style="width:15%" span="4">
+                        <col style="width:10%">
+                        <col style="width:5%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th rowspan="2" colspan="2">공종명</th>
+                        <th rowspan="2">도급액</th>
+                        <th colspan="3">준공부분액</th>
+                        <th rowspan="2">기성율<br>(%)</th>
+                        <th rowspan="2">비고</th>
+                    </tr>
+                    <tr>
+                        <th>전회까지</th>
+                        <th>금회</th>
+                        <th>누계</th>
+                    </tr>
+                    <th:block th:if="${gisungItem.id > 0}">
+                        <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails01}">
+                            <th:block th:if="${item.gtype == 'A' || item.gtype == 'B'}">
+                                <tr class="bg-grey">
+                            </th:block>
+                            <th:block th:unless="${item.gtype == 'A' || item.gtype == 'B'}">
+                                <tr>
+                            </th:block>
+                            <block th:if="${index.index == 0}">
+                                <td th:rowspan="${gisungItemDetails01.size()}" class="txt-cnt" style="vertical-align: middle !important;">순공사비</td>
+                            </block>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" th:value="${item.netCheck}">
+                                <input type="hidden" name="gtype" th:value="${item.gtype}">
+                                <input type="text" name="itemDetail01" th:value="${item.itemDetail01}">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.itemDetail02, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.itemDetail03, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.itemDetail04, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.itemDetail05, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.itemDetail06, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td></td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                    <th:block th:unless="${gisungItem.id > 0}">
+                        <!--<th:block th:utext="${html}"></th:block>-->
+
+                        <tr th:each="row, info : ${gisungWorkCosts}">
+                            <th:block th:if="${info.index == 0}">
+                            <td th:rowspan="${gisungWorkCosts.size()+list1.size()+list2.size()+2}" class="txt-cnt" style="vertical-align: middle !important;">순공사비</td>
+                            </th:block>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="Y">
+                                <input type="hidden" name="gtype" value="0">
+                                <input type="text" name="itemDetail01" th:value="| ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale}|">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(row.workAmount, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(row.prevPaidCost, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(row.paidCost, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(row.totalPaidCost, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(row.totalPaidRate, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                        <th:block th:if="${list1.size() > 0}">
+                            <tr th:each="item, index : ${list1}">
+                                <td class="txt-left">
+                                    <input type="hidden" name="netCheck" value="Y">
+                                    <input type="hidden" name="gtype" value="1">
+                                    <input type="text" name="itemDetail01" th:value="${item.title}">
+                                </td>
+                                <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.cost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.prevCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.todayCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.sumCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.sumRate, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                                <td></td>
+                            </tr>
+                        </th:block>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="Y">
+                                <input type="hidden" name="gtype" value="A">
+                                <input type="text" name="itemDetail01" value="   가. 직 접 공 사 비">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalCost1, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(totalPrevCost1, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(totalTodayCost1, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(totalSumCost1, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(totalSumPercent1, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                        <th:block th:if="${list2.size() > 0}">
+                            <tr th:each="item, index : ${list2}">
+                                <td class="txt-left">
+                                    <input type="hidden" name="netCheck" value="Y">
+                                    <input type="hidden" name="gtype" value="2">
+                                    <input type="text" name="itemDetail01" th:value="${item.title}">
+                                </td>
+                                <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.cost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.prevCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.todayCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.sumCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.sumRate, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                                <td></td>
+                            </tr>
+                        </th:block>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="Y">
+                                <input type="hidden" name="gtype" value="B">
+                                <input type="text" name="itemDetail01" value="   B. 순 공 사 원 가">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalCost2, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(totalPrevCost2, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(totalTodayCost2, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(totalSumCost2, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(totalSumPercent2, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+
+                <table id="tbTab2" name="tblGisung2" class="table mb-20 tb-tab-con">
+                    <colgroup>
+                        <col style="width:23%">
+                        <col style="width:15%" span="4">
+                        <col style="width:10%">
+                        <col style="width:5%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th rowspan="2">공종명</th>
+                        <th rowspan="2">도급액</th>
+                        <th colspan="3">준공부분액</th>
+                        <th rowspan="2">기성율<br>(%)</th>
+                        <th rowspan="2">비고</th>
+                    </tr>
+                    <tr>
+                        <th>전회까지</th>
+                        <th>금회</th>
+                        <th>누계</th>
+                    </tr>
+                    <th:block th:if="${gisungItem.id > 0}">
+                        <th:block th:id="|trIndex_${index.index}|" th:each="item, index : ${gisungItemDetails02}">
+                            <th:block th:if="${item.gtype == 'C' || item.gtype == 'D' || item.gtype == 'E' || item.gtype == 'F'}">
+                                <tr class="bg-grey">
+                            </th:block>
+                            <th:block th:unless="${item.gtype == 'C' || item.gtype == 'D' || item.gtype == 'E' || item.gtype == 'F'}">
+                                <tr>
+                            </th:block>
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" th:value="${item.netCheck}">
+                                <input type="hidden" name="gtype" th:value="${item.gtype}">
+                                <input type="text" name="itemDetail01" th:value="${item.itemDetail01}">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.itemDetail02, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.itemDetail03, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.itemDetail04, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.itemDetail05, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.itemDetail06, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td></td>
+                            </tr>
+                        </th:block>
+                    </th:block>
+                    <th:block th:unless="${gisungItem.id > 0}">
+                        <th:block th:if="${list3.size() > 0}">
+                            <tr th:each="item, index : ${list3}">
+                                <td class="txt-left">
+                                    <input type="hidden" name="netCheck" value="">
+                                    <input type="hidden" name="gtype" value="3">
+                                    <input type="text" name="itemDetail01" th:value="${item.title}">
+                                </td>
+                                <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.cost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.prevCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.todayCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.sumCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.sumRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                                <td></td>
+                            </tr>
+                        </th:block>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="">
+                                <input type="hidden" name="gtype" value="C">
+                                <input type="text" name="itemDetail01" value=" C. 공  사  비  계">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalCost3, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(totalPrevCost3, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(totalTodayCost3, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(totalSumCost3, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(totalSumPercent3, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="">
+                                <input type="hidden" name="gtype" value="D">
+                                <input type="text" name="itemDetail01" value=" D. 부 가 가 치 세">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalTax, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(totalPrevTax, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(totalTodayTax, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(totalSumTax, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(totalSumPercentTax, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="">
+                                <input type="hidden" name="gtype" value="E">
+                                <input type="text" name="itemDetail01" value=" 가. 도  급  액  계">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalCost3 + totalTax, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatDecimal((totalPrevCost3+totalPrevTax), 1, 0)}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatDecimal(totalTodayCost3 + totalTodayTax, 1, 0)}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatDecimal(totalSumCost3 + totalSumTax, 1, 0)}"></td>
+                            <th:block th:if="${(totalCost3 + totalTax) > 0}">
+                                <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(((totalSumCost3 + totalSumTax)/(totalCost3 + totalTax))*100, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            </th:block>
+                            <th:block th:unless="${(totalCost3 + totalTax) > 0}">
+                                <td><input type="text" name="itemDetail06" value="0"><em class="perc">%</em></td>
+                            </th:block>
+                            <td></td>
+                        </tr>
+                        <th:block th:if="${list4.size() > 0}">
+                            <tr th:each="item, index : ${list4}">
+                                <td class="txt-left">
+                                    <input type="hidden" name="netCheck" value="">
+                                    <input type="hidden" name="gtype" value="4">
+                                    <input type="text" name="itemDetail01" th:value="${item.title}">
+                                </td>
+                                <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(item.cost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(item.prevCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(item.todayCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(item.sumCost, 1, 'COMMA')}"></td>
+                                <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(item.sumRate, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                                <td></td>
+                            </tr>
+                        </th:block>
+                        <tr class="bg-grey">
+                            <td class="txt-left">
+                                <input type="hidden" name="netCheck" value="">
+                                <input type="hidden" name="gtype" value="F">
+                                <input type="text" name="itemDetail01" value="총  공  사  비">
+                            </td>
+                            <td><input type="text" name="itemDetail02" th:value="${#numbers.formatInteger(totalCost4, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail03" th:value="${#numbers.formatInteger(totalPrevCost4, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail04" th:value="${#numbers.formatInteger(totalTodayCost4, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail05" th:value="${#numbers.formatInteger(totalSumCost4, 1, 'COMMA')}"></td>
+                            <td><input type="text" name="itemDetail06" th:value="${#numbers.formatDecimal(totalSumPercent4, 1, 'COMMA', 2, 'POINT')}"><em class="perc">%</em></td>
+                            <td></td>
+                        </tr>
+                    </th:block>
+                    <!--
+                    <tr>
+                        <td class="txt-left" th:text="${item.itemDetail01}">(2) 일반관리비</td>
+                        <td><input type="text" name="itemDetail02" th:value="${item.itemDetail02}"></td>
+                        <td><input type="text" name="itemDetail03" th:value="${item.itemDetail03}"></td>
+                        <td><input type="text" name="itemDetail04" th:value="${item.itemDetail04}"></td>
+                        <td><input type="text" name="itemDetail05" th:value="${item.itemDetail05}"></td>
+                        <td><input type="text" name="itemDetail06" th:value="${item.itemDetail06}"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(3) 이 윤</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(4) 건설공사손해보험료</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(5) 간접피해보상비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(a) 정기안전점검비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(b) 기술사용료</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(c) 콘크리트생산시설전기인입비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(d) 터널전기인입시설비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(e) 추가 P.S 적용항목</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(f) Restrike 확인 및 분석</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(g) T.A.B 공사비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(h) 프로그램입력비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(i) 모바일전자상황판</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(j) 시공상세도작성비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(k)비탈면조정공사비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(l) 안전관리계획서 검토비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(m) 시험말뚝 시공 및 성능시험</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(n) 기타환경보전비</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(o) 설계도서인쇄,출력 및 준공도서</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(p) 물가변동(K1=3.74%)</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>0.00%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(6) 공사비 계</td>
+                        <td>9,832,527,304</td>
+                        <td>4,016,018,213</td>
+                        <td>1,818,181,818</td>
+                        <td>5,834,200,031</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(7) 부가가치세</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(8) 수탁공사비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">(9) 도급액</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td class="txt-left">지급자재비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    <tr class="bg-grey">
+                        <td class="txt-left">(9) 총공사비</td>
+                        <td>983,252,730</td>
+                        <td>401,601,821</td>
+                        <td>181,818,182</td>
+                        <td>583,420,003</td>
+                        <td>59.33%</td>
+                        <td></td>
+                    </tr>
+                    -->
+                    </tbody>
+                </table>
+
+                <!--
+                <div class="tb-top">
+                    <h3>2. 노선 및 예산과목 구분</h3>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <th rowspan="2" class="txt-cnt">노선</th>
+                            <th rowspan="2" class="txt-cnt">예산과목/구분</th>
+                            <th rowspan="2" class="txt-cnt">도급액</th>
+                            <th colspan="3" class="txt-cnt">기   성   부   분   액(원)</th>
+                            <th rowspan="2" class="txt-cnt">비고</th>
+                        </tr>
+                        <tr>
+                            <th class="txt-cnt">전회까지</th>
+                            <th class="txt-cnt">금     회</th>
+                            <th class="txt-cnt">누     계</th>
+                        </tr>
+                        <tr>
+                            <td class="text-left"><input type="text" name="item07" id="item07" th:value="${gisungItem.item07}"></td>
+                            <td class="text-left"><input type="text" name="item08" id="item08" th:value="${gisungItem.item08}"></td>
+                            <td><input type="text" name="item09" id="item09" th:value="${gisungItem.item09}"></td>
+                            <td><input type="text" name="item10" id="item10" th:value="${gisungItem.item10}"></td>
+                            <td><input type="text" name="item11" id="item11" th:value="${gisungItem.item11}"></td>
+                            <td><input type="text" name="item12" id="item12" th:value="${gisungItem.item12}"></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                -->
+            </section><!--//section-->
+
+            <div class="btn-box">
+                <th:block th:if="${isWriting}">
+                    <a href="#none" class="btn gisung-btn-disable" id="" th:data-gisung-id="${gisung.id}">저장</a>
+                </th:block>
+                <th:block th:unless="${isWriting}">
+                    <a href="#none" class="btn btn-color2" id="btnWriteGisungItem" th:data-gisung-id="${gisung.id}">저장</a>
+                </th:block>
+                <a href="#none" class="btn btn-color1 btn-download-print pop-open-btn" data-modal="#modalPrintGisungItem">인쇄하기</a>
+            </div>
+        </div>
+    </div>
+</div>

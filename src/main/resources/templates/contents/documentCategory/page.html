@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="contents/documentCategory/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <input type="hidden" id="tmpDocumentCategoryId" value="">
+        <input type="hidden" id="tmpTrIndex" value="">
+        <div id="divCardBody" class="card content-body-area" th:replace="contents/documentCategory/cardBody :: cardBody()"/>
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalDocumentCategoryAdd', #{contents.document_category.btn_add_document_category}, 'popup-md')"></th:block>
+<!-- modal end -->
+
+<script src="/dist/js/pages/documentCategory.js"></script>
+<script>
+  const confirmDeleteCompanyCategory = "[[#{contents.document_category_list.confirm_delete_document}]]";
+
+  $(document).ready(function () {
+
+    $(this).on('click', 'button[id^="btnForwardSortNo_"]', function (e) {
+      $("#tmpDocumentCategoryId").val($(this).attr("data-id"));
+      $("#tmpTrIndex").val($(this).attr("data-index"));
+      updateDocumentCategorySortNoASC();
+    });
+
+    $(this).on('click', 'button[id^="btnBackwardSortNo_"]', function (e) {
+      $("#tmpDocumentCategoryId").val($(this).attr("data-id"));
+      $("#tmpTrIndex").val($(this).attr("data-index"));
+      updateDocumentCategorySortNoDESC();
+    });
+
+  });
+
+  function updateDocumentCategorySortNoASC() {
+    reqPost('/contentsApi/putDocumentCategorySortNoASC'
+            , {"id": parseInt($("#tmpDocumentCategoryId").val()) }
+            , function (data) {
+              if (data.result) {
+                reloadComponent("/contents/documentCategoryCardBody", "#divCardBody", "");
+                alert(data.message);
+              }
+            }
+            , function (xhr) {
+              alert($.parseJSON(xhr.responseJSON).error);
+            });
+  }
+
+  function updateDocumentCategorySortNoDESC() {
+    reqPost('/contentsApi/putDocumentCategorySortNoDESC'
+            , { "id": parseInt($("#tmpDocumentCategoryId").val()) }
+            , function (data) {
+              if (data.result) {
+                reloadComponent("/contents/documentCategoryCardBody", "#divCardBody", "");
+                alert(data.message);
+              }
+            }
+            , function (xhr) {
+              alert($.parseJSON(xhr.responseJSON).error);
+            });
+  }
+</script>
+</body>
+</html>

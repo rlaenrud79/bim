@@ -1,0 +1,53 @@
+<article id="issueList" class="issue-area"  th:fragment="load()">
+  <header>
+    <h3>
+      <i class="fas fa-exclamation-circle"></i>
+      <span th:text="#{main.issue_area.title_issue}">이슈</span>
+    </h3>
+    <a id="moreViewIssueNormal" href="/coWork/issueList"><span th:text="#{main.issue_area.title_more}">더 보기</span> <i class="fas fa-angle-right"></i></a>
+  </header>
+
+  <div class="tab-content">
+    <div class="nav nav-tabs" role="tablist">
+      <a class="issue-tab active" data-target="#tabIssurelist" aria-controls="tabIssurelist" role="tab" data-toggle="tab">
+        <span th:text="#{main.issue_area.title_issue_normal}">일반</span>
+        <span class="badge badge-info" th:text="${mainIssuesCnt}">17</span>
+      </a>
+
+      <a class="issue-tab" data-target="#tabcoworkIssuelist" aria-controls="tabcoworkIssuelist" role="tab" data-toggle="tab">
+        <span th:text="#{main.co_work_issue_area.title_issue}">협업</span>
+        <span class="badge badge-info" th:text="${mainCoWorkIssuesCnt}">17</span>
+      </a>
+    </div>
+
+    <ul id="tabIssurelist" class="tab-pane active" role="tabpanel">
+      <li th:each="mainIssue, index : ${mainIssues}" th:if="${mainIssues.size > 0}">
+        <a th:id="aMainIssue_+${mainIssue.id}"
+          th:data-id="${mainIssue.id}"
+          href="#" class="text-over-dot">
+          <span class="badge bg-orange" th:if="${mainIssue.isNew}">NEW</span>
+          <span th:text="#{main.issue_area.list_issue}">[이슈]</span>
+          <span th:utext="${mainIssue.title}">A공구 설계 변경</span>
+        </a>
+      </li>
+      <li th:if="${mainIssues.size == 0}">
+        <span th:text="#{main.issue_area.no_issue_item}">이슈가 없습니다.</span>
+      </li>
+    </ul>
+
+    <ul id="tabcoworkIssuelist" class="tab-pane" role="tabpanel">
+      <li th:each="mainCoWorkIssue, index : ${mainCoWorkIssues}" th:if="${mainCoWorkIssues.size > 0}">
+        <a th:id="aMainCoWorkIssue_+${mainCoWorkIssue.id}"
+          th:data-id="${mainCoWorkIssue.id}"
+          href="#" class="text-over-dot">
+          <span class="badge bg-orange" th:if="${mainCoWorkIssue.isNew}">NEW</span>
+          <span th:text="#{main.co_work_issue_area.list_co_work_issue}">[협업이슈]</span>
+          <span th:utext="${mainCoWorkIssue.title}">A공구 설계 변경</span>
+        </a>
+      </li>
+      <li th:if="${mainCoWorkIssues.size == 0}">
+        <span th:text="#{main.co_work_issue_area.no_issue_item}">협업 이슈가 없습니다.</span>
+      </li>
+    </ul>
+  </div>
+</article>

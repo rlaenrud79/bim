@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+    <aside th:replace="layout/common :: aside('project','jobSheetCopy')"></aside>
+
+    <!-- contents area  -->
+    <main role="main" class="content-wrapper project-content board-add">
+        <!-- Content Header (Page header) -->
+        <div th:replace="project/jobSheetCopy/contentHeader :: contentHeader()"></div>
+
+        <!-- /.contents area -->
+        <section class="content">
+            <div class="container-fluid">
+                <div class="con-report-update">
+                    <div class="col-lg-12">
+                        <div class="card content-body-area">
+                            <div class="card-header">
+                                <div class="col-12">
+                                    <div class="bim-btn-group">
+                                        <button type="button" id="btnMoveListPage" class="btn bg-gradient-info">
+                                            <i class="fas fa-list"></i><span th:text="#{project.job_sheet_copy.btn_move_list_page}"> 목록으로</span>
+                                        </button>
+                                        <button type="button" id="btnWriteJobSheet" class="btn bg-gradient-warning" >
+                                            <i class="fas fa-plus"></i><span th:text="#{project.job_sheet_copy.btn_write_job_sheet}"> 임시저장</span>
+                                        </button>
+                                        <button type="button" id="btnGoingJobSheet" class="btn bg-gradient-warning" >
+                                            <i class="fas fa-plus"></i><span th:text="#{project.job_sheet_copy.btn_going_job_sheet}"> 공사일지 상신</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-12">
+                                    <h2 class="list-title"><i class="far fa-list-alt"></i><span th:text="#{project.job_sheet_copy.job_sheet_copy}"> 공사일지 복사</span></h2>
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <tbody>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_title}"> 제목</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                <td colspan="3">
+                                                    <div class="form-group w-50">
+                                                        <input type="text" id="title" name="title" class="form-control" th:value="${jobSheet.title}" th:placeholder="#{project.job_sheet_copy.input_title_placeholder}">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_reportDate}"> 보고일자</span></th>
+                                                <td colspan="3">
+                                                    <div class="form-group from-date w-50">
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="reportDate" readonly>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_grantor}"> 결재자</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                <td>
+                                                    <div class="d-flex flex-wrap align-items-center justify-content-between">
+                                                        <div id="divUserInfoAtField"
+                                                             class="user-panel d-none"
+                                                             data-toggle="tooltip"
+                                                             data-placement="bottom"
+                                                             data-html="true">
+                                                            <div class="image">
+                                                                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                            </div>
+                                                        </div>
+                                                        <div class="savedGrantor">
+                                                            <div th:replace="/common/userInfo :: userInfo(${jobSheet.jobSheetGrantor.accountDTO})"></div>
+                                                        </div>
+                                                        <p class="ml-1 mr-auto savedGrantor" th:text="|${jobSheet.jobSheetGrantor.grantor.userName} (${jobSheet.jobSheetGrantor.grantor.company.companyRole.companyRoleName} / ${jobSheet.jobSheetGrantor.grantor.company.name}) |">이결재 (발주사 / 한국 발주)</p>
+                                                        <input type="hidden" id="jobSheetGrantorId" name="jobSheetGrantorId" th:value="${jobSheet.jobSheetGrantor.grantor.id}">
+                                                        <button id="btnSearchGrantor" type="button" class="btn bg-gradient-primary my-2"><span th:text="#{project.job_sheet_copy.btn_grantor}"> 결재자 지정</span></button>
+                                                    </div>
+                                                </td>
+                                                <th><span th:text="#{project.job_sheet_copy.input_reference}"> 참조자</span></th>
+                                                <td>
+                                                    <div class="d-flex align-items-center justify-content-between">
+                                                        <div id="divUserInfoAtFields" class="d-none">
+                                                            <div class="user-panel"
+                                                                 data-toggle="tooltip"
+                                                                 data-placement="bottom"
+                                                                 data-html="true">
+                                                                <div class="image">
+                                                                    <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="d-flex flex-column">
+                                                            <div class="d-flex align-items-center mb-2 savedReferences" th:each="item, index : ${jobSheet.jobSheetReferences}">
+                                                                <div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div>
+                                                                <p class="ml-2 mr-auto" th:text="|${item.reference.userName} (${item.reference.company.companyRole.companyRoleName} / ${item.reference.company.name})|">김참조 (발주사 / 한국 발주)</p>
+                                                            </div>
+                                                        </div>
+                                                        <input type="hidden" id="jobSheetReferencesIds" name="jobSheetReferencesIds">
+                                                        <button id="btnSearchReference" type="button" class="btn bg-gradient-primary my-2"><span th:text="#{project.job_sheet_copy.btn_reference}"> 참조자 지정</span></button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_project_name}"> 공사명</span></th>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="text" th:value="${projectName}" id="projectName" name="projectName" class="form-control" readonly>
+                                                    </div>
+                                                </td>
+                                                <th><span th:text="#{project.job_sheet_copy.input_location}"> 위치</span></th>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <input type="text" id="location" name="location" th:value="${jobSheet.location}" class="form-control" maxlength="255" th:placeholder="#{project.job_sheet_copy.input_location_placeholder}">
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_temperature}"> 온도</span></th>
+                                                <td>
+                                                    <div class="d-flex flex-wrap w-100">
+                                                        <div class="form-group my-1 w-100">
+                                                            <label th:text="#{project.job_sheet_copy.input_temperature_max}">최고</label>
+                                                            <input type="text" id="temperatureMax" name="temperatureMax" th:value="${jobSheet.temperatureMax}" class="form-control" th:placeholder="#{project.job_sheet_copy.input_common_unit_placeholder}">
+                                                        </div>
+                                                        <div class="form-group my-1 w-100">
+                                                            <label th:text="#{project.job_sheet_copy.input_temperature_min}">최저</label>
+                                                            <input type="text" id="temperatureMin" name="temperatureMin" th:value="${jobSheet.temperatureMin}" class="form-control" th:placeholder="#{project.job_sheet_copy.input_common_unit_placeholder}">
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <th><span th:text="#{project.job_sheet_copy.input_weather}"> 기상</span></th>
+                                                <td>
+                                                    <div class="d-flex flex-wrap w-100">
+                                                        <div class="form-group my-1 w-100">
+                                                            <label th:text="#{project.job_sheet_copy.input_rainfall_amount}">강우량</label>
+                                                            <input type="text" id="rainfallAmount" name="rainfallAmount" th:value="${jobSheet.rainfallAmount}" class="form-control" th:placeholder="#{project.job_sheet_add.input_common_unit_placeholder}">
+                                                        </div>
+                                                        <div class="form-group my-1 w-100">
+                                                            <label th:text="#{project.job_sheet_copy.input_snowfall_amount}">강설량</label>
+                                                            <input type="text" id="snowfallAmount" name="snowfallAmount" th:value="${jobSheet.snowfallAmount}" class="form-control" th:placeholder="#{project.job_sheet_add.input_common_unit_placeholder}">
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.attach_file}"> 파일첨부</span></th>
+                                                <td colspan="3">
+                                                    <div class="d-flex align-items-center">
+                                                        <div th:replace="/common/fileUploader :: multiFileUploader('jobSheetAttachFile')"></div>
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="up-file-list" th:each="item, index : ${jobSheet.jobSheetFiles}">
+                                                            <div class="badge badge-pill">
+                                                                <a href="#" class="download-attach-file" th:data-file-id="${item.id}" th:data-file-ext="${item.originFileNameExt}" th:data-file-path="${item.filePath}" th:data-origin-file-name="${item.originFileName}"><span th:text="${item.originFileName}"></span></a>
+                                                                <button type="button" th:data-file-id="${item.id}" class="btn btnDeleteFile"><i class="fas fa-times"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.attach_snap_shot}">스냅샷 첨부</span></th>
+                                                <td colspan="3">
+                                                    <div class="d-flex flex-column align-items-start">
+                                                        <button type="button" class="btn bg-gradient-primary" data-toggle="modal" data-target="#mySnapShotShare">
+                                                            <span th:text="#{project.job_sheet_copy.btn_snap_shot}">스냅샷 선택</span>
+                                                        </button>
+                                                        <div class="up-file-list" th:replace="/project/jobSheetUpdate/snapShotList :: load()">
+                                                        </div>
+                                                        <div class="up-file-list savedSnapShot">
+                                                            <div th:each="item, index : ${jobSheet.jobSheetSnapShots}">
+                                                                <img th:src="${item.source}" style="width: 200px; height: 100px;">
+                                                                <div class="badge badge-pill">
+                                                                    <span th:text="${item.title}"></span>
+                                                                    <button type="button" name="savedSnapShotId" th:data-snap-shot-id="${item.id}" class="btn btnDeleteSavedSnapShot"><i class="fas fa-times-circle"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_add.input_progress}">공정별 진행률</span></th>
+                                                <td colspan="3">
+                                                    <div class="d-flex flex-column align-items-start w-100">
+                                                        <button id="btnSearchProcess" type="button" class="btn bg-gradient-primary">
+                                                            <span th:text="#{project.job_sheet_add.btn_add_progress}">공정 추가</span>
+                                                        </button>
+
+                                                        <div id="taskList" class="task-list">
+                                                            <div th:each="row, info : ${jobSheetProcessItems}">
+                                                                <div class="task-title">
+                                                                    [[${row.taskFullPath}]]
+                                                                    <i class="fas fa-times-circle ml-2" style="cursor: pointer;" onclick="removeSlider(this)"></i>
+                                                                </div>
+                                                                <div class="task-element">
+                                                                    <input type="number" min="0" max="100" step="0.01" class="js-range-slider" name="js-range-slider" th:value="${row.afterProgressRate}"/>
+                                                                    <div class="input-group">
+                                                                        <input id="processItemId" name="processItemId" type="hidden" th:value="${row.processItemId}">
+                                                                        <input id="phasingCode" name="phasingCode" type="hidden" th:value="${row.phasingCode}">
+                                                                        <input id="taskFullPath" name="taskFullPath" type="hidden" th:value="${row.taskFullPath}">
+                                                                        <input id="beforeProgressRate" name="beforeProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" style="width: 50px;" class="form-control" th:value="${row.beforeProgressRate}" readonly> %
+                                                                        <span class="mx-4">▶</span>
+                                                                        <input id="afterProgressRate" name="afterProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" style="width: 50px;" class="form-control" th:value="${row.afterProgressRate}" > %
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.get_job_sheet_template}"> 템플릿 가져오기</span></th>
+                                                <td colspan="3">
+                                                    <div class="form-group w-50">
+                                                        <select id="selectedTemplate" class="custom-select">
+                                                            <option value="0"><span th:text="#{project.job_sheet_copy.select_job_sheet_template}"> :: 공사 현황 템플릿을 선택하세요 ::</span></option>
+                                                            <option th:each="item : ${jobSheetTemplateList}" th:value="${item.getId()}" th:text="${item.getTitle()}"></option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th><span th:text="#{project.job_sheet_copy.input_job_sheet}"> 공사 현황</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                                                <td colspan="3">
+                                                    <div th:replace="common/editor/page :: load()"></div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </section>
+        <!-- /.content -->
+    </main>
+
+    <footer th:replace="layout/common :: footer()"></footer>
+
+    <script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/modal :: modal('modalSearchJobSheetGrantor', #{common.modal_title.search_job_sheet_grantor}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalSearchJobSheetReferences', #{common.modal_title.search_job_sheet_references}, 'modal-xl')"></th:block>
+<th:block th:replace="layout/modal :: modal('mySnapShotShare', #{common.modal_title.share_my_snap_shot}, 'modal-lg')"></th:block>
+<th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+<th:block th:replace="process/modal/searchProcess :: load()"></th:block>
+<!-- modal end -->
+
+<div th:include="layout/common :: script()"></div>
+<div th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></div>
+<div th:include="common/editor/page :: script()"></div>
+
+<link rel="stylesheet" href="/plugins/adminlte-slider/adminlte.slider.css" />
+<script src="/plugins/adminlte-slider/adminlte.slider.min.js"></script>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js"></script>
+<script type="text/javascript" src="/dist/js/common-grid.js"></script>
+
+<script th:inline="javascript">
+
+    const jobSheetTemplateList = /*[[${jobSheetTemplateList}]]*/ [];
+
+    $(document).ready(function () {
+        const jobSheetId = [[${jobSheet.id}]]
+
+        const $title = $("#title");
+        const $reportDate = $("#reportDate");
+        const $location = $("#location");
+        const $temperatureMax = $("#temperatureMax");
+        const $temperatureMin = $("#temperatureMin");
+        const $rainfallAmount = $("#rainfallAmount");
+        const $snowfallAmount = $("#snowfallAmount");
+        const $jobSheetGrantorId = $("#jobSheetGrantorId");
+        const $jobSheetReferencesIds = $("#jobSheetReferencesIds");
+        const $selectedTemplate = $("#selectedTemplate");
+
+        const jobSheetFileExtension = [[${jobSheetFileExtension}]];
+        const previewFileExtension = [[${previewFileExtension}]];
+
+        const allowFileExtList = jobSheetFileExtension.split("||");
+        const previewFileExtList = previewFileExtension.split("||");
+        let prevTemplateId = 0;
+        let newJobSheetId = 0;
+
+        $reportDate.datepicker(datepickerFormat);
+
+        // move page
+        $(this).on('click', '#btnMoveListPage', function () {
+            moveListPage();
+        });
+
+        function moveListPage() {
+            window.location.href = '/project/jobSheetList?keepCondition=false';
+        }
+
+        // template
+        $(this).on("focus", "#selectedTemplate", function () {
+            prevTemplateId = parseInt($(this).val());
+        }).on("change", "#selectedTemplate", function () {
+            if (prevTemplateId === 0 && CommonEditor.isEmpty()) {
+                changeJobSheetTemplate();
+            } else {
+                showConfirm([[#{system.common.confirm.title}]], [[#{project.job_sheet_copy.confirm_change_job_sheet_template}]], changeJobSheetTemplate, cancelChangeJobSheetTemplate.bind(this, prevTemplateId))
+            }
+        });
+
+        function changeJobSheetTemplate() {
+            const selectedTemplateId = parseInt($selectedTemplate.val());
+            if (selectedTemplateId !== 0) {
+                const selectedContents = jobSheetTemplateList.filter(x => x.id === selectedTemplateId)[0].contents;
+                CommonEditor.setInputData(selectedContents);
+            } else {
+                CommonEditor.deleteInputData();
+            }
+        }
+
+        function cancelChangeJobSheetTemplate(prevTemplateId) {
+            $selectedTemplate.val(prevTemplateId);
+        }
+
+        // grantor
+        function setJobSheetGrantorSendData() {
+            return `&userId=${$jobSheetGrantorId.val()}`;
+        }
+
+        $(this).on('click', '#btnSearchGrantor', function (e) {
+            modalShowAndDraggable('#modalSearchJobSheetGrantor');
+        });
+
+        $(this).on('show.bs.modal', '#modalSearchJobSheetGrantor', function () {
+            let params = "formElementIdForUserId=jobSheetGrantorId";
+            params += "&formElementIdForModal=modalSearchJobSheetGrantor";
+            params += "&searchUserFilter=Y";
+
+            reqGet(`/commonModal/searchSingleUser?${params}`, function (data) {
+                $('#modalSearchJobSheetGrantor').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalSearchJobSheetGrantor', function () {
+            if ($jobSheetGrantorId.val() === "") return false;
+            $("#mIsSearchRoleAdminProject").off("click");
+            $("#mIsSearchRoleAdminWork").off("click");
+            $("#mSearchText").off("keyup");
+            $("button[id^='mBtnSelect_']").off("click");
+            $("#modalSearchJobSheetGrantor").find('.modal-body').html('');
+
+            reloadComponent("/common/userInfoAtField", "#divUserInfoAtField", setJobSheetGrantorSendData());
+            $('.savedGrantor').addClass('d-none');
+            $('#divUserInfoAtField').removeClass('d-none');
+        });
+
+        // references
+        function setJobSheetReferencesSendData() {
+            return `&userIds=${$jobSheetReferencesIds.val()}`;
+        }
+
+        $(this).on('click', '#btnSearchReference', function (e) {
+            modalShowAndDraggable('#modalSearchJobSheetReferences');
+        });
+
+        $(this).on('show.bs.modal', '#modalSearchJobSheetReferences', function () {
+            let params = "formElementIdForUserIds=jobSheetReferencesIds";
+            params += "&formElementIdForModal=modalSearchJobSheetReferences";
+            params += "&searchUserFilter=Y";
+            params += "&referenceSelected=Y";
+            params == "&jobSheetId=" + jobSheetId;
+
+            reqGet(`/commonModal/searchMultiUser?${params}`, function (data) {
+                $('#modalSearchJobSheetReferences').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#modalSearchJobSheetReferences', function () {
+            if ($jobSheetReferencesIds.val() === "") return false;
+            $("#isSearchRoleAdminProject").off("click");
+            $("#isSearchRoleAdminWork").off("click");
+            $("#searchText").off("keyup");
+            $("button[id^='mBtnSelectUser']").off("click");
+            $("button[id^='mBtnRemoveSelectUser']").off("click");
+            reloadComponent("/common/userInfoAtFields", "#divUserInfoAtFields", setJobSheetReferencesSendData());
+            $("#modalSearchJobSheetReferences").find('.modal-body').html('');
+
+            $('.savedReferences').each(function (idx, elem) {
+                $(elem).removeClass('d-flex').addClass('d-none');
+            });
+
+            $('#divUserInfoAtFields').removeClass('d-none');
+        });
+
+        // attach file
+        function startFileUpload() {
+            $("#jobSheetAttachFile").dmUploader("start");
+        }
+
+        function completeUploadFile(obj) {
+            if ($(obj)[0].id === "jobSheetAttachFile") {
+                moveListPage();
+            }
+        }
+
+        function jobSheetFileUploaderExtraData() {
+            return {
+                "id": newJobSheetId,
+                "fileUploadUIType": "JOB_SHEET_FILE",
+                "makeVersion": false,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeMultiUploaderScript("#jobSheetAttachFile"
+            , jobSheetFileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+        );
+
+        $(this).on('click', '.download-attach-file', function (e) {
+            e.preventDefault();
+
+            const fileExt = $(this).data('file-ext');
+            const filePath = $(this).data('file-path');
+
+            if (previewFileExtList.includes(fileExt.toLowerCase())) {
+                window.open(filePath);
+            } else {
+                executeFileDownloadModal($(this).data("file-id"), "JOB_SHEET_FILE");
+            }
+        });
+
+        // delete file
+        $(this).on('click', '.btnDeleteFile', function () {
+            $(this).parent().parent().remove();
+        });
+
+        // snap shot
+        $('#mySnapShotShare').on('show.bs.modal', function () {
+            const $sortedSelector = $("#jobSheetSnapShotList").find("button.btn");
+            let existSnapShotIds = "";
+
+            $sortedSelector.each(function (index, item) {
+                if (existSnapShotIds === "") existSnapShotIds = $(item).data('snap-shot-id');
+                else existSnapShotIds += "," + $(item).data('snap-shot-id');
+            });
+
+            reqGet(`/commonModal/mySnapShotShare?type=jobSheetUpdate&id=${jobSheetId}&existSnapShotIds=${existSnapShotIds}`, function (data) {
+                $('#mySnapShotShare').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#mySnapShotShare', function () {
+            $(".shareMySnapShot").off("click");
+            $('#mySnapShotShare').find('.modal-body').html('');
+        });
+
+        // delete snap shot
+        $(this).on('click', '.btnDeleteSavedSnapShot', function () {
+            $(this).parent().parent().remove();
+        });
+
+        $('button[name="btnSnapShotId"]').on('click', function (e) {
+            $(this).parent().remove();
+        });
+
+        // view point
+        $('#myViewPointShare').on('show.bs.modal', function () {
+            reqGet("/commonModal/myViewPointShare?type=jobSheetUpdate&modelIds=all&id=0", function (data) {
+                $('#myViewPointShare').find('.modal-body').html(data);
+            });
+        });
+
+        $(this).on('hidden.bs.modal', '#myViewPointShare', function () {
+            $("#allCheck").off("change");
+            $("#shareMyViewPoint").off("click");
+            $('#myViewPointShare').find('.modal-body').html('');
+        });
+
+        // delete view point
+        $(this).on('click', '.btnDeleteSavedViewPoint', function () {
+            $(this).parent().parent().remove();
+        });
+
+        // copy jobsheet
+        $(this).on('click', '#btnWriteJobSheet', function () {
+            if ($title.val() === "") {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_title}]]);
+                return false;
+            }
+
+            if ($jobSheetGrantorId.val() === "" || $jobSheetGrantorId.val() === "0") {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_grantor}]]);
+                return false;
+            }
+
+            if (CommonEditor.isEmpty()) {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_job_sheet}]]);
+                return false;
+            }
+
+            copyJobSheet("WRITING");
+        });
+
+        // going jobsheet
+        $(this).on('click', '#btnGoingJobSheet', function () {
+            if ($title.val() === "") {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_title}]]);
+                return false;
+            }
+
+            if ($jobSheetGrantorId.val() === "" || $jobSheetGrantorId.val() === "0") {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_grantor}]]);
+                return false;
+            }
+
+            if (CommonEditor.isEmpty()) {
+                showErrorAlert("ALERT", [[#{project.job_sheet_copy.alert_job_sheet}]]);
+                return false;
+            }
+
+            copyJobSheet("GOING");
+        });
+
+        function setSendData(status) {
+            return JSON.stringify({
+                "id": jobSheetId,
+                "title": $title.val(),
+                "contents": CommonEditor.getInputData(),
+                "reportDate": $reportDate.val(),
+                "location": $location.val(),
+                "temperatureMax": $temperatureMax.val(),
+                "temperatureMin": $temperatureMin.val(),
+                "rainfallAmount": $rainfallAmount.val(),
+                "snowfallAmount": $snowfallAmount.val(),
+                "grantorId": $jobSheetGrantorId.val(),
+                "referencesIds": getJobSheetReferencesIds(),
+                "mySnapShotIds": getSnapShotIds(),
+                "fileIds": getFileIds(),
+                "processItemIds": getInputVlues("processItemId"),
+                "phasingCodes": getInputVlues("phasingCode"),
+                "taskFullPaths": getInputVlues("taskFullPath"),
+                "beforeProgressRates": getInputVlues("beforeProgressRate"),
+                "afterProgressRates": getInputVlues("afterProgressRate"),
+                "status": status,
+            });
+        }
+
+        function getInputVlues(nm) {
+            let vals = [];
+            $("input[name="+nm+"]").map(function(i,el){
+                vals.push(el.value+"");
+            });
+            return vals;
+        }
+
+        function getFileIds() {
+            if ($('.download-attach-file').length === 0) {
+                return [];
+            }
+            let fileIds = [];
+            const $fileIds = $('.download-attach-file');
+            $fileIds.each(function (idx, item) {
+                fileIds.push($(item).data('file-id'));
+            });
+            return fileIds;
+        }
+
+        function getViewPointIds() {
+            if ($('.savedViewPoint').length > 0) {
+                return [];
+            }
+
+            const $viewPointIds = $('button[name="btnViewPointId"]');
+            if ($viewPointIds.length === 0) return [];
+
+            let viewPointIds = [];
+            $viewPointIds.each(function (idx, item) {
+                viewPointIds.push($(item).data('view-point-id'));
+            });
+            return viewPointIds;
+        }
+
+        function getSnapShotIds() {
+            if ($('.savedSnapShot').length > 0) {
+                return [];
+            }
+
+            const $snapShotIds = $('button[name="btnSnapShotId"]');
+            if ($snapShotIds.length === 0) return [];
+
+            let snapShotIds = [];
+            $snapShotIds.each(function (idx, item) {
+                snapShotIds.push($(item).data('snap-shot-id'));
+            });
+            return snapShotIds;
+        }
+
+        function getJobSheetReferencesIds() {
+            if ($jobSheetReferencesIds.val().length === 0) return [];
+            return $jobSheetReferencesIds.val().split(',').map(Number);
+        }
+
+        function copyJobSheet(status) {
+            reqPostJSON('/projectApi/copyJobSheet', setSendData(status),
+                function (data) {
+                    if (!data.result) {
+                        showErrorAlert("ALERT", data.message);
+                    } else {
+                        toastr.success(data.message);
+                        newJobSheetId = data.returnId;
+                        startFileUpload();
+                    }
+                },
+                function (xhr) {
+                    showErrorAlert("ALERT", xhr.responseJSON.message);
+                }
+            );
+        }
+
+        function initValue() {
+            $reportDate.val(moment([[${jobSheet.reportDate}]]).format("YYYY-MM-DD"));
+            CommonEditor.setInputData([[${jobSheet.contents}]]);
+
+            const $savedReferences = $('.savedReferences');
+            if ($savedReferences.length > 0) {
+                const savedReferenceIds = $.map($savedReferences, function (elem) {
+                    return $(elem).find('#divUserInfo').data('user-id');
+                });
+                $('#jobSheetReferencesIds').val(savedReferenceIds);
+            }
+        }
+
+        initValue();
+
+        // process
+        $(this).on('click', '#btnSearchProcess', function (e) {
+            modalShowAndDraggable('#modalSearchProcess');
+        });
+
+        const gridProcess = new dhx.Grid("gridProcess", {
+            columns: [
+                      {
+                        id        : "processItemId"
+                        , hidden  : true
+                        , header  : [{text: "ID", rowspan: 2}]
+                        , editable: false
+                      },
+                      {
+                        id        : "selected"
+                        , editable: true
+                        , header  :[{text: [[#{project.modal.add_process.select}]], rowspan: 2 , align: "center"}]
+                        , type: "boolean"
+                      },
+                      {
+                        id      : "workName"
+                        , editable: false
+                        , header: [{text: [[#{project.modal.add_process.cost.work_name}]], align: "center"}, {content: "comboFilter", filterConfig: {multiselection: true}}]
+                        , mark  : function (cell, data) {
+                          return "process-col-disabled";
+                        }
+                      },
+                      {
+                        id  : "taskFullPath"
+                        , editable: false
+                        , header: [{text: [[#{project.modal.add_process.cost.task_full_path}]], align: "center"}, {content: "inputFilter"}]
+                        , mark: function (cell, data) {
+                          return "process-col-disabled";
+                        }
+                      },
+                      {
+                        id      : "phasingCode"
+                        , editable: false
+                        , header  : [{text: [[#{project.modal.add_process.cost.phasing_code}]], align: "center"}, {content: "inputFilter"}]
+                        , mark  : function (cell, data) {
+                          return "process-col-disabled";
+                        }
+                      },
+                      {
+                        id      : "taskName"
+                        , editable: false
+                        , header  : [{text: [[#{project.modal.add_process.cost.task_name}]], align: "center"}, {content: "inputFilter"}]
+                        , mark  : function (cell, data) {
+                          return "process-col-disabled";
+                        }
+                      },
+                      {
+                        id  : "progressRate"
+                        , editable: false
+                        , header: [{text: [[#{project.modal.add_process.cost.progress_rate}]], align: "center"}, {content: "inputFilter"}], type: "percent", format: "#.00"
+                        , mark: function (cell, data) {
+                          return "process-col-disabled";
+                        }
+                      },
+            ],
+            adjust      : true,
+            autoEmptyRow: false,
+            resizable   : true,
+            selection   : true,
+            selection: "row",
+            editable: true
+        });
+
+        const getProcessItemCost = function() {
+            reqPostJSON("/costApi/getProcessItemCostForPass", getSearchCondition(), function(data) {
+                if (data.result) {
+                    const model = JSON.parse(data.model);
+                    gridProcess.data.parse(model);
+                }
+            }, function(xhr) {
+                showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+            });
+        }
+
+        const getSearchCondition = function() {
+            return JSON.stringify({
+            });
+        }
+
+        getProcessItemCost();
+
+        $(this).on('click', '#btnPrcessAdd', function() {
+            setTimeout(function(){
+                let selectedData = gridProcess.data.getInitialData().filter(o => o.selected);
+                if (selectedData.length > 0) {
+                    setSlider(selectedData);
+                } else {
+                    showErrorAlert("ALERT", "선택된 공정이 없습니다");
+                }
+            },100);
+        });
+
+        function setSlider(taskList){
+            const $taskList = $("#taskList");
+
+            let textHtml = '';
+            for (let i = 0; i < taskList.length; i++) {
+                let existProcessItem = false;
+                for (let ii = 0; ii < $("input[name=processItemId]").length; ii++) {
+                    if($("input[name=processItemId]").eq(ii).val() === (taskList[i].processItemId+"")){
+                        existProcessItem = true;
+                        break;
+                    }
+                }
+                if(existProcessItem){
+                    continue;
+                }
+                textHtml += '<div>';
+                textHtml += '<div class="task-title">';
+                textHtml += taskList[i].taskFullPath;
+                textHtml += '<i class="fas fa-times-circle ml-2" style="cursor: pointer;" onclick="removeSlider(this)"></i>';
+                textHtml += '</div>';
+                textHtml += '<div class="task-element">';
+                textHtml += '    <input type="number" min="0" max="100" step="0.01" class="js-range-slider" name="js-range-slider" value="'+taskList[i].progressRate+'" />';
+                textHtml += '        <div class="input-group">';
+                textHtml += '            <input id="processItemId" name="processItemId" type="hidden" value="'+taskList[i].processItemId+'">';
+                textHtml += '            <input id="phasingCode" name="phasingCode" type="hidden" value="'+taskList[i].phasingCode+'">';
+                textHtml += '            <input id="taskFullPath" name="taskFullPath" type="hidden" value="'+taskList[i].taskFullPath+'">';
+                textHtml += '            <input id="beforeProgressRate" name="beforeProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" style="width: 50px;" class="form-control" value="'+taskList[i].progressRate+'" readonly> %';
+                textHtml += '            <span class="mx-4">▶</span>';
+                textHtml += '            <input id="afterProgressRate" name="afterProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" style="width: 50px;" class="form-control" value="'+taskList[i].progressRate+'"> %';
+                textHtml += '        </div>';
+                textHtml += '</div>';
+                textHtml += '</div>';
+            }
+            $taskList.append(textHtml);
+
+            setTimeout(drawSlider,100);
+            $("#modalSearchProcess").modal("hide");
+        }
+
+        function drawSlider(){
+            for (let i = 0; i < $("input[name=js-range-slider]").length; i++) {
+                $("input[name=js-range-slider]").eq(i).ionRangeSlider({
+                    type: 'single',
+                    min: 0.00,
+                    max: 100.00,
+                    step: 0.01,
+                    postfix: " %",
+                    onChange: function(data) {
+                        $('input[name=afterProgressRate]').eq(i).val(data.from);
+                    },
+                });
+
+                $('input[name=afterProgressRate]').eq(i).on("change", function() {
+                    const v = parseInt(this.value);
+                    if (v < 0) {
+                        this.value = 0;
+                    } else if (v > 100) {
+                        this.value = 100;
+                    }
+                    $('input[name=js-range-slider]').eq(i).data("ionRangeSlider").update({
+                        from: $('input[name=afterProgressRate]').eq(i).val(),
+                    });
+                });
+            }
+
+        }
+        drawSlider();
+    });
+
+    function removeSlider(obj) {
+        obj.parentElement.parentElement.remove();
+    }
+</script>
+</body>
+
+</html>

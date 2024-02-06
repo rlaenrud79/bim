@@ -1,0 +1,23 @@
+<!-- 모달 - 알림 -->
+<!-- modal-dialog modal-sm -->
+<div class="content modal-notice">
+    <p th:utext="#{process.modal.start_validate.proc_message}">
+        공정 코드 검증 작업을 시작하였습니다.<br>
+        공정 코드 검증 작업은 시간이 소요되는 작업입니다.<br>
+        작업 완료 후 “검증 결과“ 확인을 통해서 결과를 확인하시기 바랍니다.
+    </p>
+</div>
+<div class="btn-footer">
+    <button id="mBtnProcConfirm" type="button" class="btn bg-gradient-success" th:text="#{process.modal.start_validate.btn_proc_confirm}">확인</button>
+</div>
+
+<script>
+
+  $(document).ready(function () {
+    let _this = $("#modalStartValidate");
+
+    _this.on("click", "#mBtnProcConfirm", function(){
+      _this.modal("hide");
+    });
+  });
+</script>

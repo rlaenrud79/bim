@@ -1,0 +1,47 @@
+<form id="frmSearchForm" th:fragment="frmSearchForm()">
+    <div class="search-box" th:object="${searchModelingVO}">
+<!--        <section>-->
+<!--            <input type="checkbox" id="searchLatest" th:checked="*{searchLatest}">-->
+<!--            <label for="searchLatest" th:text="#{contents.modeling_list.is_search_latest}">최신버전</label>-->
+<!--        </section>-->
+        <section>
+            <select id="workId" class="custom-select" th:field="*{workId}">
+                <option value="0" th:text="#{contents.document_list.select_work_type}">:: 공종 ::</option>
+                <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:text="${item.workNameLocale}"></option>
+            </select>
+        </section>
+        <section>
+<!--            <p th:text="#{contents.modeling_list.search_bim_model_name}">BIM 모델명</p>-->
+            <input type="text"
+                   id="fileName"
+                   th:field="*{fileName}"
+                   class="wid-m"
+                   th:placeholder="#{contents.modeling_list.file_name_placeholder}">
+        </section>
+        <section class="user-search">
+<!--            <p th:text="#{contents.modeling_list.writer_name}">등록자</p>-->
+            <input type="text" id="writerName" name="writerName" class="wid-m" th:placeholder="#{contents.modeling_list.search_writer_name}" readonly>
+            <input type="hidden" id="writerId" name="writerId" th:field="*{writerId}">
+            <input type="hidden" id="tmpModelingId" value="">
+            <a href="#none" id="btnSearchUser" class="pop-open-btn" data-modal="#modalSearchSingleUser"></a>
+        </section>
+        <section>
+            <p th:text="#{contents.modeling_list.write_date}">업로드일자</p>
+            <div class="input-date-wrap">
+                <div class="input-date">
+                    <input type="date" id="writeDateFrom" th:field="*{writeDateFrom}" placeholder="" class="">
+                    <i class="ico"></i>
+                </div>
+                <small class="bar">-</small>
+                <div class="input-date">
+                    <input type="date" id="writeDateEnd" th:field="*{writeDateEnd}" placeholder="" class="">
+                    <i class="ico"></i>
+                </div>
+            </div>
+        </section>
+        <section>
+            <a href="#none" id="btnSearch" class="btn btn-color2"><span th:text="#{contents.gisung_list.btn_search_document}">검색</span></a>
+<!--            <a href="#none" id="btnInit" class="btn"><span th:text="#{contents.gisung_list.btn_reset_search_condition}">초기화</span></a>-->
+        </section>
+    </div>
+</form>

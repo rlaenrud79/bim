@@ -1,0 +1,23 @@
+<article id="issueList" class="issue-area"  th:fragment="load()">
+  <header>
+    <h3>
+      <i class="fas fa-exclamation-circle"></i>
+      <span th:text="#{main.co_work_issue_area.title_issue}">협업 이슈</span>
+      <span class="badge badge-info" th:text="${mainCoWorkIssuesCnt}">17</span>
+    </h3>
+  </header>
+  <ul>
+    <li th:each="mainCoWorkIssue, index : ${mainCoWorkIssues}" th:if="${mainCoWorkIssues.size > 0}">
+      <a th:id="aMainCoWorkIssue_+${mainCoWorkIssue.id}"
+         th:data-id="${mainCoWorkIssue.id}"
+         href="#" class="text-over-dot">
+        <span class="badge bg-orange" th:if="${mainCoWorkIssue.isNew}">NEW</span>
+        <span th:text="#{main.co_work_issue_area.list_co_work_issue}">[협업이슈]</span>
+        <span th:utext="${mainCoWorkIssue.title}">A공구 설계 변경</span>
+      </a>
+    </li>
+    <li th:if="${mainCoWorkIssues.size == 0}">
+      <span th:text="#{main.co_work_issue_area.no_issue_item}">협업 이슈가 없습니다.</span>
+    </li>
+  </ul>
+</article>

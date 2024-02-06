@@ -1,0 +1,406 @@
+<div class="cost-dual">
+  <section class="left-box">
+    <div class="board-top">
+      <select id="bookmarks">
+        <option th:value="${0}" th:text="#{cost.modal.cost_detail.bookmark_cost_detail_selection}">:: 북마크 비용 상세 선택 ::</option>
+        <option th:each="item, index : ${bookmarkList}" th:value="${item.processItemId}" th:text="${item.taskName}"></option>
+      </select>
+    </div>
+    <div id="processItemBookmarkCostDetail"></div>
+  </section>
+  <div class="dual-arr">
+    <button type="button" id="addCostDetail" class="btn-b"><span th:text="#{cost.modal.cost_detail.add_bookmark_cost_detail}">추가</span> <img src="/dist/img/common/ico-next.png" alt=""></button>
+  </div>
+  <section class="right-box">
+    <table class="table table-blue" id="tbCostDetail">
+      <tbody>
+      <tr class="sticky-th">
+        <th rowspan="2">
+          <div class="check-set">
+            <input type="checkbox" id="costDetailItemCheck">
+            <label for="costDetailItemCheck"></label>
+          </div>
+        </th>
+        <th rowspan="2">No</th>
+        <th colspan="2">상세공종</th>
+        <th colspan="4">수량</th>
+        <th rowspan="2">공사비</th>
+      </tr>
+      <tr class="sticky-th-two">
+        <th>코드</th>
+        <th>규격</th>
+        <th>대표</th>
+        <th>ⓐ값</th>
+        <th>단위</th>
+        <th>ⓑ단가</th>
+      </tr>
+      <tr class="sticky-th-three tb-style-total">
+        <th></th>
+        <th></th>
+        <th>총계</th>
+        <th id="totalCount">12</th>
+        <th colspan="4" id="complexUnitPrice">3,479,058 = 3,479,058 / 1</th>
+        <th id="totalCost">3,479,058</th>
+      </tr>
+      <tr th:id="tr_+${info.index}" th:each="row, info : ${costDetailList}"><!--  class="tb-style-add" -->
+        <td>
+          <div class="check-set">
+            <input type="checkbox" th:id="|itemCostDetailCheck${info.index}|" name="item_cost_detail_no" class="cost-detail-list-item-checkbox" th:data-no="${row.id}" th:value="${row.id}">
+            <label th:for="|itemCostDetailCheck${info.index}|"></label>
+          </div>
+        </td>
+        <td th:text="${(info.index+1)}">1</td>
+        <td>
+          <input type="hidden" id="rowState" name="rowState" class="form-control" placeholder="" value="R">
+          <input type="hidden" id="id" name="id" class="form-control" placeholder="" th:value="${row.id}">
+          <input type="text" id="code" name="code" class="form-control input-box-xs" placeholder="" th:value="${row.code}">
+        </td>
+        <td>
+          <input type="text" id="name" name="name" class="form-control input-box-s" placeholder="" th:value="${row.name}">
+        </td>
+        <td>
+          <div class="check-set">
+            <input type="checkbox" id="isFirst" th:checked="${row.isFirst == true}">
+            <label for="isFirst"></label>
+          </div>
+        </td>
+        <td>
+          <input type="text" id="count" name="count" class="form-control input-box-s" placeholder="" th:value="${row.count}">
+        </td>
+        <td>
+          <input type="text" id="unit" name="unit" class="form-control input-box-s" placeholder="" th:value="${row.unit}">
+        </td>
+        <td class="txt-right">
+          <input type="text" id="unitPrice" name="unitPrice" class="form-control input-box-s" placeholder="" th:value="${#numbers.formatInteger(row.unitPrice, 1, 'COMMA')}">
+        </td>
+        <td class="txt-right">
+          <input type="text" id="cost" name="cost" class="form-control input-box-s" placeholder="" th:value="${#numbers.formatInteger(row.cost, 1, 'COMMA')}">
+        </td>
+      </tr>
+      </tbody>
+    </table>
+    <div class="btn-box">
+      <a href="#none" class="btn" id="removeRowCostDetail" th:if="${#strings.isEmpty(jobSheetProcessItemCount) or jobSheetProcessItemCount == 0}" th:text="#{cost.modal.cost_detail.delete_bookmark_cost_detail}">삭제</a>
+      <a href="#none" class="btn btn-color2" id="addCostDetailTr" th:if="${#strings.isEmpty(jobSheetProcessItemCount) or jobSheetProcessItemCount == 0}" th:text="#{cost.modal.cost_detail.add_bookmark_cost_detail}">추가</a>
+      <a href="#none" class="btn btn-color1" id="saveCostDetail" th:if="${#strings.isEmpty(jobSheetProcessItemCount) or jobSheetProcessItemCount == 0}" th:text="#{cost.modal.cost_detail.save_bookmark_cost_detail}">저장</a>
+      <th:block th:if="${isBookmark}">
+        <a href="#none" class="btn setBookmark" th:classappend="${isBookmark}? 'on':''" data-is-bookmark=false>북마크</a>
+      </th:block>
+      <th:block th:unless="${isBookmark}">
+        <a href="#none" class="btn setBookmark" data-is-bookmark=true>북마크</a>
+      </th:block>
+    </div>
+  </section>
+</div>
+<script th:inline="javascript">
+  $(document).ready(function() {
+    calculateCostDetailComplexUnitPrice();
+
+    const $this = $("#modalCostDetailPopup");
+    let saveData = [];
+    const isPaidCost = [[${isPaidCost}]];
+    const savedComplexUnitPrice = [[${savedComplexUnitPrice}]];
+
+    $('#costDetailItemCheck').click(function() {
+      $(".cost-detail-list-item-checkbox").prop("checked",($(this).prop("checked")));
+    });
+
+    $this.find("#addCostDetail").on("click", function () {
+      let processItemCostCnt = $("tr[id^='tr_']").length;
+      $("#tbProcessItemCostDetail input[name='item_process_detail_no']:checked").each(function () {
+        // Get the closest parent row
+        let originalRow = $(this).closest("tr");
+        console.log($("tr[id^='tr_']").length);
+
+        // Clone the row
+        let newRow = originalRow.clone();
+
+        // Change the ID, name, and class of the checkbox in the cloned row
+        let isFirstCheckbox = newRow.find("input[id='isFirst']");
+        //if (!isFirstCheckbox.prop('checked')) {
+          let checkbox = newRow.find("input[name='item_process_detail_no']");
+          let label = newRow.find("label[for^='itemProcessDetailCheck']");
+          let newId = "itemCostDetailCheck" + processItemCostCnt;
+          let tdNo = newRow.find("td").eq(1);
+          let tdCode = newRow.find("td").eq(2);
+          let tdName = newRow.find("td").eq(3);
+          let tdCount = newRow.find("td").eq(5);
+          let tdUnit = newRow.find("td").eq(6);
+          let tdUnitPrice = newRow.find("td").eq(7);
+          let tdCost = newRow.find("td").eq(8);
+          console.log("newId : " + newId);
+          checkbox.attr("id", newId);
+          checkbox.attr("name", "item_cost_detail_no");
+          checkbox.removeClass("process-detail-list-item-checkbox").addClass("cost-detail-list-item-checkbox");
+          label.attr("for", newId);
+          newRow.attr("id", "tr_" + processItemCostCnt);
+          newRow.addClass("tb-style-add");
+          tdNo.text(processItemCostCnt + 1);
+          tdCode.html('<input type="hidden" id="rowState" name="rowState" class="form-control" placeholder="" value="C">' +
+                  '<input type="hidden" id="id" name="id" class="form-control" placeholder="" value="'+checkbox.val()+'">' +
+                  '<input type="text" id="code" name="code" class="form-control input-box-s" placeholder="" value="'+tdCode.text()+'">');
+          tdName.html('<input type="text" id="name" name="name" class="form-control input-box-s" placeholder="" value="'+tdName.text()+'">');
+          tdCount.html('<input type="text" id="count" name="count" class="form-control input-box-s" placeholder="" value="'+tdCount.text()+'">');
+          tdUnit.html('<input type="text" id="unit" name="unit" class="form-control input-box-s" placeholder="" value="'+tdUnit.text()+'">');
+          tdUnitPrice.html('<input type="text" id="unitPrice" name="unitPrice" class="form-control input-box-s" placeholder="" value="'+tdUnitPrice.text()+'">');
+          tdCost.html('<input type="text" id="cost" name="cost" class="form-control input-box-s" placeholder="" value="'+tdCost.text()+'">');
+          processItemCostCnt += 1;
+
+          // Append the cloned row to tbCostDetail
+          $("#tbCostDetail tbody").append(newRow);
+        //}
+      });
+      calculateCostDetailComplexUnitPrice();
+    });
+
+    $this.find("#addCostDetailTr").on("click", function() {
+      let processItemCostCnt = $("tr[id^='tr_']").length;
+      let newId = "itemCostDetailCheck" + processItemCostCnt;
+      let newRow = "";
+      newRow = '<tr id="tr_'+processItemCostCnt+'">' +
+          '<td>' +
+              '<div class="check-set">' +
+              '<input type="checkbox" id="'+newId+'" name="item_cost_detail_no" class="cost-detail-list-item-checkbox" data-no="" value="">' +
+              '<label for="'+newId+'"></label>' +
+              '</div>' +
+              '</td>' +
+              '<td>'+(processItemCostCnt+1)+'</td>' +
+              '<td>' +
+              '<input type="hidden" id="rowState" name="rowState" class="form-control" placeholder="" value="C">' +
+              '<input type="hidden" id="id" name="id" class="form-control" placeholder="" value="0">' +
+              '<input type="text" id="code" name="code" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '<td>' +
+              '<input type="text" id="name" name="name" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '<td>' +
+              '<div class="check-set">' +
+              '<input type="checkbox" id="isFirst">' +
+              '<label for="isFirst"></label>' +
+              '</div>' +
+              '</td>' +
+              '<td>' +
+              '<input type="text" id="count" name="count" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '<td>' +
+              '<input type="text" id="unit" name="unit" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '<td class="txt-right">' +
+              '<input type="text" id="unitPrice" name="unitPrice" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '<td class="txt-right">' +
+              '<input type="text" id="cost" name="cost" class="form-control input-box-s" placeholder="" value="">' +
+              '</td>' +
+              '</tr>';
+      $("#tbCostDetail tbody").append(newRow);
+    });
+
+    $this.find("#saveCostDetail").on("click", function () {
+      let processItemCostCnt = $("tr[id^='tr_']").length;
+      if (processItemCostCnt == 0) {
+        alert([[#{cost.modal.cost_detail.message.cost_detail_is_not_saving_data}]]);
+        return;
+      }
+
+      if (isPaidCost) {
+        let complexUnitPrice = calculateCostDetailComplexUnitPrice();
+        if (complexUnitPrice != savedComplexUnitPrice) {
+          alert([[#{cost.modal.cost_detail.message.saved_paid_cost_same_can_save}]]+`(${savedComplexUnitPrice})`);
+          return;
+        }
+      }
+
+      if (confirm([[#{cost.modal.cost_detail.message.save}]])) {
+        $(".cost-detail-list-item-checkbox").prop("checked",true);
+        reqPostJSON("/costApi/saveProcessItemCostDetail/[[${processItemId}]]", JSON.stringify(getProcessItemCostDetailValues()), function (data) {
+          if (data.result) {
+            //$("#btnSearch").trigger("click");
+            alert(data.message);
+            //let model = JSON.parse(data.model);
+            //gridCostDetail.data.parse(model);
+            //aggregateSaveRow();
+            $(".close").click();
+            reloadCostDetail();
+          } else {
+            alert(data.message);
+          }
+        });
+      }
+    });
+
+    $this.find("#removeRowCostDetail").on("click", function () {
+      let message = [[#{cost.modal.cost_detail.message.delete}]];
+      let deleteDataCnt = $(".cost-detail-list-item-checkbox:checkbox:checked").length;
+      let saveDataCnt = $("tr[class^='tb-style-add']").length;
+      if (isPaidCost) {
+        alert([[#{cost.modal.cost_detail.message.existing_cost_detail_can_not_delete}]]);
+        return;
+      }
+
+      if (deleteDataCnt == 0) {
+        alert([[#{cost.modal.cost_detail.message.cost_detail_is_not}]]);
+        return;
+      }
+
+      if (saveDataCnt > 0) message = [[#{cost.modal.cost_detail.message.save_before_cost_detail_is}]] + message;
+
+      if (confirm(message)) {
+        reqPostJSON("/costApi/deleteProcessItemCostDetail/[[${processItemId}]]", JSON.stringify(getProcessItemCostDetailValues()), function (data) {
+          if (data.result) {
+            alert(data.message);
+            $(".close").click();
+            reloadCostDetail();
+          } else {
+            alert(data.message);
+          }
+        });
+      }
+    });
+
+    $this.find(".setBookmark").on("click", function () {
+      let isBookmark = $(this).data("is-bookmark");
+
+      reqPost("/costApi/setProcessItemBookmark/[[${processItemId}]]/" + isBookmark, {}, function (data) {
+        if (data.result) {
+          alert(data.message);
+          if (isBookmark) {
+            $this.find(".setBookmark").data("is-bookmark", false);
+            $this.find(".setBookmark").addClass("on");
+          } else {
+            $this.find(".setBookmark").data("is-bookmark", true);
+            $this.find(".setBookmark").removeClass("on");
+          }
+          //$this.find(".setBookmark[data-is-bookmark=" + !isBookmark + "]").addClass("on");
+          //$this.find(".setBookmark[data-is-bookmark=" + isBookmark + "]").removeClass("on");
+        }
+      });
+    });
+  });
+
+  function reloadCostDetail() {
+    const params = {};
+    const callback = function (data) {
+      $('#modalCostDetailPopup').find('.popup-con').html(data);
+    };
+
+    $.nfx.ajaxGet(params, 'html', callback, '/costModal/costDetail/[[${processItemId}]]');
+  }
+
+  function setSendData() {
+    return JSON.stringify({
+      "processItemCostDetailIds": getInputValues("item_cost_detail_no"),
+    });
+  }
+
+  function getInputValues(nm) {
+    let vals = [];
+    $("input[name=" + nm + "]").map(function (i, el) {
+      if ($(el).is(":checked")) {
+        vals.push(el.value + "");
+      }
+    });
+    return vals;
+  }
+
+  function getProcessItemCostDetailValues() {
+    let vals = [];
+    $("#tbCostDetail tr[id^='tr_']").map(function (i, el) {
+      if ($(el).find('input[name=item_cost_detail_no]').is(":checked")) {
+        //const row = $(el).find("tr[id^='tr_']");
+        //console.log(row);
+        let processItemCodeDetailId = 0;
+        let processItemId = 0;
+        if ($(el).find('input[name=rowState]').val() == "R") {
+          processItemCodeDetailId = $(el).find('input[name=id]').val();
+          processItemId = [[${processItemId}]];
+        }
+        vals.push({
+          rowState: $(el).find('input[name=rowState]').val() + "",
+          processItemCodeDetailId: processItemCodeDetailId + "",
+          processItemId: processItemId + "",
+          id: $(el).find('input[name=id]').val() + "",
+          code: $(el).find('input[name=code]').val() + "",
+          name: $(el).find('input[name=name]').val() + "",
+          isFirst: $(el).find('input[id=isFirst]').prop('checked') + "",
+          count: $(el).find('input[name=count]').val().replaceAll(",", "") + "",
+          unit: $(el).find('input[name=unit]').val() + "",
+          unitPrice: $(el).find('input[name=unitPrice]').val().replaceAll(",", "") + "",
+          cost: $(el).find('input[name=cost]').val().replaceAll(",", "") + "",
+        });
+      }
+      /**
+       let originalRow = $(this).closest("tr");
+       let newRow = originalRow.clone();
+       vals.push({
+        rowState: "C",
+        processItemCodeDetailId: 0,
+        processItemId: 0,
+        code: ids.eq(i).val() + "",
+        value: values.eq(i).val() + "",
+      })
+       let names = [];
+       let ids = [];
+       let values = [];
+       if (name == "tblProcessWorker") {
+        names = table.find('input[name=progressWorkerName]');
+        ids = table.find('input[name=progressWorkerId]');
+        values = table.find('input[name=progressWorkerValue]');
+      } else if (name == "tblProcessDevice") {
+        names = table.find('input[name=progressDeviceName]');
+        ids = table.find('input[name=progressDeviceId]');
+        values = table.find('input[name=progressDeviceValue]');
+      }
+       const val = []
+       for (let i=0; i<names.length; i++) {
+        val.push({
+          name: names.eq(i).val() + "",
+          id: ids.eq(i).val() + "",
+          value: values.eq(i).val() + "",
+        })
+      }
+       vals.push(val);
+       **/
+    });
+    console.log(vals);
+    return vals;
+  }
+
+  function calculateCostDetailComplexUnitPrice() {
+    let totalCost = 0;
+    let firstRow = {count: 0};
+    let firstRowCount = 0;
+    let result = '';
+    let complexUnitPrice = 0;
+    let totalCount = 0;
+
+    console.log("firstRowCount : " + firstRowCount);
+    //$("#tbCostDetail input[name='item_cost_detail_no']").each(function (i) {
+    $("#tbCostDetail tr[id^='tr_']").each(function (i) {
+      console.log("i : " + i);
+      let td = $(this).children();
+
+      if (td.eq(4).find('#isFirst').prop('checked')) firstRowCount = parseInt(td.find('input[name=count]').val());
+      if (isNumeric(td.find('input[name=cost]').val().replaceAll(",", ""))) totalCost += parseInt(td.find('input[name=cost]').val().replaceAll(",", ""));
+      else result += td.find('input[name=code]').val() + ' ';
+      totalCount += 1;
+      console.log("totalCount : " + totalCount);
+      console.log("totalCost : " + totalCost);
+    });
+
+    console.log("firstRowCount : " + firstRowCount);
+    if (result != '') result += [[#{cost.modal.cost_detail.message.result.can_not_calculate_without_cost}]];
+    if (firstRowCount == 0 || firstRowCount == '') result += [[#{cost.modal.cost_detail.message.result.first_count_is_zero_or_not}]];
+    if (result == '') {
+      complexUnitPrice = parseInt(totalCost / firstRowCount);
+      result += numberWithCommas(complexUnitPrice) + ' = ' + numberWithCommas(parseInt(totalCost)) + ' / ' + firstRowCount;
+    }
+    console.log("firstRowCount : " + firstRowCount + ", totalCost : " + totalCost + ", complexUnitPrice : " + complexUnitPrice  + ", result : " + result);
+
+    $("#complexUnitPrice").html(result);
+    $("#totalCount").html(totalCount);
+    $("#totalCost").html(numberWithCommas(parseInt(totalCost)));
+
+    return complexUnitPrice;
+  }
+
+</script>

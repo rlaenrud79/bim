@@ -1,0 +1,186 @@
+<div id="divSaveVersionArea" class="result-Code-validate board-list">
+
+  <div class="top-search p-0 mb-20">
+    <div class="search-box">
+      <section>
+        <p><span th:text="#{process.modal.save_version_list.search_save_date}">저장 일자</span></p>
+        <div class="input-date-wrap">
+          <div class="input-date">
+            <input type="date" id="mSearchDateFrom" placeholder="">
+            <i class="ico"></i>
+          </div>
+          <small class="bar">-</small>
+          <div class="input-date">
+            <input type="date" id="mSearchDateEnd" placeholder="">
+            <i class="ico"></i>
+          </div>
+        </div>
+      </section>
+      <section>
+        <select class="custom-select" id="mSearchType">
+          <option value="USER_NAME" th:utext="#{process.modal.save_version_list.search_user_name}">::저장 유저명::</option>
+          <option value="SAVE_VERSION" th:utext="#{process.modal.save_version_list.search_version}">::저장 버전 제목::</option>
+        </select>
+      </section>
+      <section>
+        <input type="text" id="mSearchText" name="mSearchText" class="form-control"/>
+      </section>
+      <section>
+        <button id="mBtnExecuteVersionSearch"
+                type="button"
+                class="btn btn-color2">
+          <span>검색</span>
+        </button>
+        <button id="mBtnInitVersionSearch"
+                type="button"
+                class="btn">
+          <span>초기화</span>
+        </button>
+      </section>
+    </div>
+  </div>
+
+
+
+  <div class="search-users">
+    <div class="search-user-list">
+      <div class="scroll-area-v">
+        <table class="table">
+          <thead>
+          <tr>
+            <th class="text-center" th:text="#{process.modal.save_version_list.list_title_no}">No</th>
+            <th class="text-center" th:text="#{process.modal.save_version_list.list_title_version}">저장 버전 제목</th>
+            <th class="text-center" th:text="#{process.modal.save_version_list.list_title_description}">비고</th>
+            <th class="text-center" th:text="#{process.modal.save_version_list.list_title_user}">저장 유저</th>
+            <th class="text-center" th:text="#{process.modal.save_version_list.list_title_select}">선택</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:id="tr_+${index.index}" th:each="item, index : ${processInfoDTOs}" th:classappend="${item.isCurrentVersion} ? 'bg-danger'">
+            <td class="text-center" th:text="${index.index + 1}">6</td>
+            <td th:id="td_+${index.index}" class="text-left" th:text="${item.title}">버전 제목</td>
+            <td th:id="td_+${index.index}" class="text-left" th:text="${item.description}">설명</td>
+            <td class="text-center">
+              <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+            </td>
+            <td class="text-center">
+              <button th:id="btnSelect_+${index.index}"
+                      th:data-id="${item.processInfoId}"
+                      type="button"
+                      class="btn-xs"
+                      th:if="${item.isCurrentVersion == false}"
+                      th:text="#{process.modal.save_version_list.btn_select}">선택
+              </button>
+            </td>
+            <td style="display: none;" th:text="${item.writerDTO.userName}">김기사</td>
+            <td style="display: none;" th:text="${item.writeDate}">2021-11-01</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+
+    const $this = $("#modalSaveVersionList");
+
+    $("#mSearchDateFrom, #mSearchDateEnd").datepicker(datepickerFormat);
+
+    let getSearchCondition = function () {
+      let searchDateFrom = $("#mSearchDateFrom").val();
+      let searchDateEnd = $("#mSearchDateEnd").val();
+      let searchType = $("#mSearchType").val();
+      let searchText = $("#mSearchText").val();
+      return {searchDateFrom, searchDateEnd, searchType, searchText};
+    }
+
+    let hideSearchList = function () {
+      $("tr[id^='tr_']").hide();
+    }
+
+    let executeSearch = function(searchDateFrom, searchDateEnd, searchType, searchText) {
+      $("tr[id^='tr_']").each(function (i) {
+
+        let td = $(this).children();
+
+        if(searchDateFrom === "" && searchDateEnd === "") {
+          if(searchType.toUpperCase() === "USER_NAME" && searchText !== "" ){
+            if(td.eq(5).text().includes(searchText)) $(this).show();
+          }
+          if(searchType.toUpperCase() === "SAVE_VERSION" && searchText !== ""){
+            if(td.eq(1).text().includes(searchText)) $(this).show();
+          }
+          if(searchText === "") {
+            $(this).show();
+          }
+        }
+        if(searchDateFrom !== "" && searchDateEnd !== "") {
+          if(searchText !== "" && searchType.toUpperCase() === "USER_NAME" ) {
+            if(td.eq(5).text().includes(searchText) && td.eq(6).text() >= searchDateFrom && td.eq(6).text() <= searchDateEnd) $(this).show();
+          }
+          if (searchText !== "" && searchType.toUpperCase() === "SAVE_VERSION" ) {
+            if(td.eq(1).text().includes(searchText) && td.eq(6).text() >= searchDateFrom && td.eq(6).text() <= searchDateEnd) $(this).show();
+          }
+
+          if(searchText === "") {
+            if(td.eq(6).text() >= searchDateFrom && td.eq(6).text() <= searchDateEnd) $(this).show();
+          }
+        }
+      });
+    }
+
+    $this.find("#mBtnExecuteVersionSearch").on("click", function(e){
+      let {searchDateFrom, searchDateEnd, searchType, searchText} = getSearchCondition();
+
+      if((searchDateFrom === "" && searchDateEnd !== "") ||  (searchDateFrom !== "" && searchDateEnd === "")){
+        showErrorAlert("ALERT", "[[#{process.modal.save_version_list.error_no_search_date}]]");
+        return false;
+      }
+
+      if((searchDateFrom === "" && searchDateEnd === "") && searchText === ""){
+        showErrorAlert("ALERT", "[[#{process.modal.save_version_list.error_no_search_condition}]]");
+        return false;
+      }
+
+      hideSearchList();
+      executeSearch(searchDateFrom, searchDateEnd, searchType, searchText);
+    });
+
+    $this.find("#mBtnInitVersionSearch").on("click", function(e){
+      $("#mSearchDateFrom").val("");
+      $("#mSearchDateEnd").val("");
+      $("#mSearchType").val("USER_NAME");
+      $("#mSearchText").val("");
+
+      executeSearch("", "", "USER_NAME", "");
+    });
+
+    $this.find("button[id^='btnSelect_']").on("click", function(e){
+
+      let processInfoId = $(this).data("id");
+
+      reqPut('/processApi/putIsCurrentVersion'
+        , {
+          newProcessInfoId: processInfoId,
+          isAddNewFile : false
+        }
+        , function (data) {
+          if(!data.result)  {
+            $this.hide();
+            showErrorAlert("ALERT", data.message);
+          }
+        }
+        , function (xhr) {
+          $this.hide();
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }
+        , function () {
+          $this.hide();
+          PageFunction.reloadPage();
+        });
+    })
+  });
+</script>

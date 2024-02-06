@@ -1,0 +1,64 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table class="table data-table">
+        <thead>
+        <tr>
+          <th class="text-center" width="100"><span th:text="#{admin.job_sheet_template.job_sheet_template_list.list_title_no}"> No</span></th>
+          <th class="text-center" width="500">
+            <span th:text="#{admin.job_sheet_template.job_sheet_template_list.list_title_template_title}"> 템플릿 제목</span>
+            <span>
+                (
+                  <i data-sort="titleASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="titleDESC" class="fas fa-arrow-down sort"></i>
+                )
+            </span>
+          </th>
+          <th class="text-center" width="200"><span th:text="#{admin.job_sheet_template.job_sheet_template_list.list_title_writer}"> 등록자</span></th>
+          <th class="text-center" width="250">
+            <span th:text="#{admin.job_sheet_template.job_sheet_template_list.list_title_enabled}"> 사용여부</span>
+            <span>
+                (
+                  <i data-sort="enabledASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="enabledDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+          </th>
+          <th class="text-center" width="300">
+            <span th:text="#{admin.job_sheet_template.job_sheet_template_list.list_title_write_date}"> 등록일시</span>
+            <span>
+                (
+                  <i data-sort="writeDateASC" class="fas fa-arrow-up sort"></i>
+                  <i data-sort="writeDateDESC" class="fas fa-arrow-down sort"></i>
+                )
+              </span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:id="trIndex_+${index.index}" th:each="item, index : ${jobSheetTemplateDTOs}">
+          <td class="text-center" th:text="${index.index + 1}">1</td>
+          <td class="text-center">
+            <a th:href="@{/admin/jobSheetTempUpdate(id=${item.id})}" class="text-center" th:text="${item.title}">템플릿 1</a>
+          </td>
+          <td class="text-center">
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td class="text-center" th:text="${item.getStatusString()}">Y</td>
+          <td class="text-center" th:text="${#temporals.format(item.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021-04-06 11:10</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    var currentSort = '[[${sortProp}]]';
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

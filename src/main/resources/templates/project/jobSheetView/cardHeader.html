@@ -1,0 +1,32 @@
+<div id="divCardHeader" class="card-header" th:fragment="cardHeader()">
+  <div class="col-12">
+    <div class="bim-btn-group">
+      <button type="button" id="btnDownloadPRINT" class="btn bg-gradient-info">
+        <i class="fas fa-print"></i><span th:text="#{project.job_sheet_view.header_btn_print}"> PRINT</span>
+      </button>
+      <!--<button type="button" id="btnDownloadPDF" class="btn bg-gradient-info">
+        <i class="far fa-file-pdf"></i><span th:text="#{project.job_sheet_view.header_btn_pdf}"> PDF</span>
+      </button>-->
+      <button type="button" id="btnMoveListPage" class="btn bg-gradient-info">
+        <i class="fas fa-list"></i><span th:text="#{project.job_sheet_view.header_btn_move_list_page}"> 목록으로</span>
+      </button>
+      <button th:if="${isWriter and isWriting}" id="btnDelete" th:data-job-sheet-id="*{id}" type="button" class="btn bg-gradient-danger">
+        <i class="fas fa-trash"></i><span th:text="#{project.job_sheet_view.header_btn_delete}"> 삭제</span>
+      </button>
+      <button th:if="${isWriter and isWriting}" id="btnMoveEditPage" type="button" class="btn bg-gradient-warning">
+        <i class="fas fa-edit"></i><span th:text="#{project.job_sheet_view.header_btn_move_edit_page}"> 수정</span>
+      </button>
+      <!--
+      <button th:if="${isWriter and isGoing}" id="btnWritingJobSheet" type="button" class="btn bg-gradient-warning">
+        <i class="fas fa-edit"></i><span th:text="#{project.job_sheet_view.header_btn_move_writing_page}"> 임시저장 변경</span>
+      </button>
+      -->
+      <button th:if="${isGrantor and isGoing}" id="openDenyJobSheetModal" type="button" class="btn bg-gradient-danger" data-toggle="modal" data-target="modalDenyJobSheet">
+        <i class="fas fa-hand-paper"></i><span th:text="#{project.job_sheet_view.header_btn_deny}"> 반려</span>
+      </button>
+      <button th:if="${isGrantor and isGoing}" id="openApproveJobSheetModal" type="button" class="btn bg-gradient-success" data-toggle="modal" data-target="modalApproveJobSheet">
+        <i class="fas fa-thumbs-up"></i><span th:text="#{project.job_sheet_view.header_btn_approve}"> 승인</span>
+      </button>
+    </div>
+  </div>
+</div>

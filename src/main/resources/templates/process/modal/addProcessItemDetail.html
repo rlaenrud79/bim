@@ -1,0 +1,344 @@
+<div className="grid form">
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i><span th:text="#{admin.modal.add_work.work}">공종</span></strong>
+        </div>
+        <div className="fm-txt">
+            <input type="hidden" name="taskDepth" id="taskDepth" th:value="${searchProcessCategory.cateNo}">
+            <input type="hidden" name="taskType" id="taskType" th:value="${searchProcessCategory.taskType}">
+            <input type="hidden" name="processItemCate1" id="processItemCate1"
+                   th:value="${searchProcessCategory.cate1}">
+            <input type="hidden" name="processItemCate2" id="processItemCate2"
+                   th:value="${searchProcessCategory.cate2}">
+            <input type="hidden" name="processItemCate3" id="processItemCate3"
+                   th:value="${searchProcessCategory.cate3}">
+            <input type="hidden" name="processItemCate4" id="processItemCate4"
+                   th:value="${searchProcessCategory.cate4}">
+            <input type="hidden" name="processItemCate5" id="processItemCate5"
+                   th:value="${searchProcessCategory.cate5}">
+            <input type="hidden" name="processItemCate6" id="processItemCate6"
+                   th:value="${searchProcessCategory.cate6}">
+            <input type="hidden" name="processItemCode" id="processItemCode" th:value="${searchProcessCategory.code}">
+            <input type="hidden" name="processItemId" id="processItemId" th:value="${processItem.id}">
+            <select id="workId" className="custom-select wid-lg">
+                <option value="0" th:text="#{contents.modal.add_document.select_work}">:: 공종을 선택하세요 ::</option>
+                <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:if="${ptype=='write'}"
+                        th:text="${item.workNameLocale}"></option>
+                <option th:each="item, index : ${workDTOs}" th:value="${item.id}" th:if="${ptype=='edit'}"
+                        th:selected="${item.id == processItem.work.id}" th:text="${item.workNameLocale}"></option>
+            </select>
+            <input type="hidden" id="selWorkId" name="selWorkId" th:if="${ptype=='edit'}"
+                   th:value="${processItem.work.id}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>공정명</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="taskName"
+                   name="taskName"
+                   th:value="${processItem.taskName}">
+        </div>
+    </div>
+    <div th:if="${searchProcessCategory.taskType == 'TASK'}" className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>Phasing code</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="phasingCode"
+                   name="phasingCode"
+                   th:value="${processItem.phasingCode}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>시작일</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="startDate"
+                   name="startDate"
+                   th:value="${processItem.startDate}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>종료일</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="endDate"
+                   name="endDate"
+                   th:value="${processItem.endDate}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>계획 시작일</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="plannedStartDate"
+                   name="plannedStartDate"
+                   th:value="${processItem.plannedStartDate}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>계획 종료일</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="plannedEndDate"
+                   name="plannedEndDate"
+                   th:value="${processItem.plannedEndDate}">
+        </div>
+    </div>
+    <div className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>기간</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="duration"
+                   name="duration"
+                   th:value="${processItem.duration}">
+        </div>
+    </div>
+    <!--
+    <div class="fm-section col3">
+        <div class="fm-tit">
+            <strong><i class="ico-require"></i>설명</strong>
+        </div>
+        <div class="fm-txt">
+            <input type="text"
+                   id="description"
+                   name="description"
+                   th:value="${processItem.description}">
+        </div>
+    </div>
+    -->
+    <div th:if="${searchProcessCategory.taskType == 'TASK'}" className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>계산식</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="firstCountFormula"
+                   name="firstCountFormula"
+                   th:value="${processItem.firstCountFormula}">
+        </div>
+    </div>
+    <div th:if="${searchProcessCategory.taskType == 'TASK'}" className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>대표수량</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="number"
+                   id="firstCount"
+                   name="firstCount"
+                   th:value="${processItem.firstCount}">
+        </div>
+    </div>
+    <div th:if="${searchProcessCategory.taskType == 'TASK'}" className="fm-section col3">
+        <div className="fm-tit">
+            <strong><i className="ico-require"></i>단위</strong>
+        </div>
+        <div className="fm-txt">
+            <input type="text"
+                   id="firstCountUnit"
+                   name="firstCountUnit"
+                   th:value="${processItem.firstCountUnit}">
+        </div>
+    </div>
+</div>
+<div className="btn-box">
+    <th:block th:if="${ptype == 'write'}">
+        <a href="#none" className="btn btn-color1 btn-save" th:text="#{admin.modal.add_work_amount.btn_add}">등록</a>
+    </th:block>
+    <th:block th:if="${ptype == 'edit'}">
+        <a href="#none" className="btn btn-color1 btn-save" th:text="#{admin.modal.update_work.btn_update}">수정</a>
+    </th:block>
+</div>
+
+<!--<div th:if="${searchProcessCategory.cateNo > 1}" th:include="common/workSelectOption :: script('workId')"></div>-->
+<script type="text/javascript">
+    (function ($) {
+        var o = {
+
+            init: function () {
+                $.nfx.click(".btn-save", function () {
+                    let taskDepth = $("#taskDepth").val();
+                    let taskType = $("#taskType").val();
+                    let cate1 = $("#processItemCate1").val();
+                    let cate2 = $("#processItemCate2").val();
+                    let cate3 = $("#processItemCate3").val();
+                    let cate4 = $("#processItemCate4").val();
+                    let cate5 = $("#processItemCate5").val();
+                    let upCode = "";
+
+                    if ($("#workId").val() === "" || $("#workId").val() === "0") {
+                        alert("[[#{ process.modal.alert_work_id }]]");
+                        return false;
+                    }
+
+                    if ($("#taskType").val() == "TASK") {
+                        if ($("#phasingCode").val() === "") {
+                            alert("[[#{ process.modal.alert_phasing_code }]]");
+                            return false;
+                        }
+                    }
+                    /**
+                     if ($("#plannedStartDate").val() === "") {
+                        alert("[[#{ process.modal.alert_start_date }]]");
+                        return;
+                    }
+                     if ($("#plannedEndDate").val() === "") {
+                        alert("[[#{ process.modal.alert_end_date }]]");
+                        return;
+                    }
+                     **/
+                    if ($("#processItemId").val() > 0) {
+                        reqPutJSON('/processApi/putProcessItem', o.setSendData(),
+                            function (data) {
+                                if (!data.result) {
+                                    alert(data.message);
+                                } else {
+                                    //alert(data.message);
+                                    $("#modalProcessItemAdd .close").click();
+                                    if (taskDepth == 1) {
+                                        getReload();
+                                    } else if (taskDepth == 2) {
+                                        upCode = cate1;
+                                    } else if (taskDepth == 3) {
+                                        upCode = cate2;
+                                    } else if (taskDepth == 4) {
+                                        upCode = cate3;
+                                    } else if (taskDepth == 5) {
+                                        upCode = cate4;
+                                    } else if (taskDepth == 6) {
+                                        upCode = cate5;
+                                    }
+                                    getProgressData(taskDepth, upCode);
+                                }
+                            },
+                            function (xhr) {
+                                alert(xhr.responseJSON.message);
+
+                            }
+                        );
+                    } else {
+                        reqPostJSON('/processApi/postProcessItem', o.setSendData(),
+                            function (data) {
+                                if (!data.result) {
+                                    alert(data.message);
+                                } else {
+                                    //alert(data.message);
+                                    $("#modalProcessItemAdd .close").click();
+                                    if (taskDepth == 1) {
+                                        getReload();
+                                    } else if (taskDepth == 2) {
+                                        upCode = cate1;
+                                    } else if (taskDepth == 3) {
+                                        upCode = cate2;
+                                    } else if (taskDepth == 4) {
+                                        upCode = cate3;
+                                    } else if (taskDepth == 5) {
+                                        upCode = cate4;
+                                    } else if (taskDepth == 6) {
+                                        upCode = cate5;
+                                    }
+                                    getProgressData(taskDepth, upCode);
+                                }
+                            },
+                            function (xhr) {
+                                alert(xhr.responseJSON.message);
+
+                            }
+                        );
+                    }
+                });
+            },
+
+            getDuration: function (date1, date2) {
+                var diff = Math.abs(date1.getTime() - date2.getTime());
+                return diff / (1000 * 60 * 60 * 24);
+            },
+
+            setSendData: function () {
+                let phasingCode = "";
+                let duration = 0;
+                let startDate = "";
+                let endDate = "";
+                let plannedStartDate = "";
+                let plannedEndDate = "";
+                let firstCountFormula = "";
+                let firstCount = 0;
+                let firstCountUnit = "";
+                if (isObject($("#phasingCode").val())) {
+                    phasingCode = $("#phasingCode").val();
+                }
+                if (isObject($("#duration").val())) {
+                    duration = $("#duration").val() === "" ? 0 : $("#duration").val();
+                }
+                if (isObject($("#startDate").val())) {
+                    startDate = $("#startDate").val();
+                }
+                if (isObject($("#endDate").val())) {
+                    endDate = $("#endDate").val();
+                }
+                if (isObject($("#plannedStartDate").val())) {
+                    plannedStartDate = $("#plannedStartDate").val();
+                }
+                if (isObject($("#plannedEndDate").val())) {
+                    plannedEndDate = $("#plannedEndDate").val();
+                }
+                if (isObject($("#firstCountFormula").val())) {
+                    firstCountFormula = $("#firstCountFormula").val();
+                }
+                if (isObject($("#firstCount").val())) {
+                    firstCount = $("#firstCount").val();
+                }
+                if (isObject($("#firstCountUnit").val())) {
+                    firstCountUnit = $("#firstCountUnit").val();
+                }
+                return JSON.stringify(
+                    {
+                        "taskName": $("#taskName").val(),
+                        "phasingCode": phasingCode,
+                        "duration": duration + "",
+                        "startDate": startDate,
+                        "endDate": endDate,
+                        "plannedStartDate": plannedStartDate,
+                        "plannedEndDate": plannedEndDate,
+                        "taskDepth": $("#taskDepth").val(),
+                        "workId": $("#workId").val(),
+                        "firstCountFormula": firstCountFormula,
+                        "firstCount": firstCount + "",
+                        "firstCountUnit": firstCountUnit,
+                        "cate1": $("#processItemCate1").val(),
+                        "cate2": $("#processItemCate2").val(),
+                        "cate3": $("#processItemCate3").val(),
+                        "cate4": $("#processItemCate4").val(),
+                        "cate5": $("#processItemCate5").val(),
+                        "cate6": $("#processItemCate6").val(),
+                        "code": $("#processItemCode").val(),
+                        "id": $("#processItemId").val(),
+                    }
+                );
+            }
+        };
+
+        $(document).ready(function () {
+            $.extend($.nfx, {
+                form: document.FRM
+            });
+
+            o.init();
+        });
+
+    })(jQuery);
+</script>

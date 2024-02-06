@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="admin/companyRoleList/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <input type="hidden" id="tmpCompanyRoleId" value="">
+                <input type="hidden" id="tmpTrIndex" value="">
+
+                <div id="divCardBody" th:replace="admin/companyRoleList/cardBody :: cardBody()"/>
+
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalCompanyRoleAdd', #{admin.company_role_list.modal_title.add_company_role}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalCompanyRoleUpdate', #{admin.company_role_list.modal_title.update_company_role}, 'popup-md')"></th:block>
+<!-- modal end -->
+
+<script src="/dist/js/pages/companyRoleList.js"></script>
+</body>
+</html>

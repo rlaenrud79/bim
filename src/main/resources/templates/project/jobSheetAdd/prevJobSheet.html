@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="header" th:replace="project/jobSheetAdd/contentHeader :: contentHeader()"></div>
+
+            <div class="content">
+                <form name="FRM" method="post" action="" enctype="multipart/form-data">
+                    <input type="hidden" name="jobSheetId" id="jobSheetId" th:value="0">
+                    <div class="form-wrap">
+                        <div class="section form-toggle on">
+                            <div class="title">
+                                <h3>공사일지 정보</h3>
+                                <button type="button" class="form-toggle-btn"></button>
+                            </div>
+                            <div class="form form-toggle-box">
+                                <div class="form form-toggle-box">
+                                    <div class="grid">
+                                        <div class="fm-section col1">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_add.input_reportDate}">보고일자</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <div class="input-date-wrap">
+                                                    <div class="input-date">
+                                                        <input type="date" name="reportDate" id="reportDate" placeholder="" class="" th:value="${#temporals.format(jobSheet.reportDate, #messages.msg('system.locale.dateformat.year_month_day'))}">
+                                                        <i class="ico"></i>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col5">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require on"></i><span th:text="#{project.job_sheet_add.input_title}">제목</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <input type="text" id="title" name="title" th:placeholder="#{project.job_sheet_add.input_title_placeholder}" th:value="${jobSheet.title}">
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require on"></i><span th:text="#{project.job_sheet_add.input_grantor}">결재자</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <div class="col-group">
+                                                    <div class="col">
+
+                                                        <div id="divUserInfoAtField" class="user-panel d-none" data-toggle="tooltip"
+                                                             data-placement="bottom" data-html="true" style="display:none!important">
+                                                            <div class="image user-img">
+                                                                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                            </div>
+                                                        </div>
+                                                        <div class="savedGrantor">
+                                                            <div
+                                                                    th:replace="/common/userInfo :: userInfo(${jobSheet.jobSheetGrantor.accountDTO})">
+                                                            </div>
+                                                        </div>
+                                                        <p class="ml-1 mr-auto savedGrantor"
+                                                           th:text="|${jobSheet.jobSheetGrantor.grantor.userName} (${jobSheet.jobSheetGrantor.grantor.company.companyRole.companyRoleName} / ${jobSheet.jobSheetGrantor.grantor.company.name}) |">
+                                                            이결재 (발주사 / 한국 발주)</p>
+                                                        <div class="col">
+                                                            <input type="hidden" id="jobSheetGrantorId" name="jobSheetGrantorId" th:value="${jobSheet.jobSheetGrantor.grantor.id}">
+                                                            <a href="#none" id="btnSearchGrantor" class="btn-b pop-open-btn" data-modal="#modalSearchSingleUser"><span th:text="#{project.job_sheet_update.btn_grantor}">결재자 지정</span></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col4">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_update.input_reference}"> 참조자</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <div class="col-group">
+                                                    <div id="divUserInfoAtFields" class="d-none" style="display:none">
+                                                        <div class="user-panel" data-toggle="tooltip" data-placement="bottom"
+                                                             data-html="true">
+                                                            <div class="image user-img">
+                                                                <img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex gap-10 al-center">
+                                                        <div class="flex gap-10 al-center savedReferences"
+                                                             th:each="item, index : ${jobSheet.jobSheetReferences}">
+                                                            <div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div>
+                                                            <p class="ml-2 mr-auto"
+                                                               th:text="|${item.reference.userName} (${item.reference.company.companyRole.companyRoleName} / ${item.reference.company.name})|">
+                                                                김참조 (발주사 / 한국 발주)</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col">
+                                                        <input type="hidden" id="jobSheetReferencesIds" name="jobSheetReferencesIds">
+                                                        <a href="#none" id="btnSearchReference" class="btn-b pop-open-btn" data-modal="#taskRefereePopup"><span
+                                                                th:text="#{project.job_sheet_update.btn_reference}"> 참조자 지정</span></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_update.input_project_name}">공사명</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <input type="text" id="projectName" name="projectName" th:value="${projectName}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_update.input_location}">위치</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <input type="text" id="location" name="location" maxlength="255"
+                                                       th:placeholder="#{project.job_sheet_update.input_location_placeholder}"
+                                                       th:value="${jobSheet.location}">
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_update.input_temperature}">온도</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <div class="col-group">
+                                                    <div class="col3 flex">
+                                                        <p class="sub-tit" th:text="#{project.job_sheet_update.input_temperature_max}">최고</p>
+                                                        <input type="text" id="temperatureMax" name="temperatureMax"
+                                                               th:placeholder="#{project.job_sheet_update.input_common_unit_placeholder}"
+                                                               th:value="${jobSheet.temperatureMax}">
+                                                    </div>
+                                                    <div class="col3 flex">
+                                                        <p class="sub-tit" th:text="#{project.job_sheet_update.input_temperature_min}">최저</p>
+                                                        <input type="text" id="temperatureMin" name="temperatureMin"
+                                                               th:placeholder="#{project.job_sheet_update.input_common_unit_placeholder}"
+                                                               th:value="${jobSheet.temperatureMin}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="fm-section col2">
+                                            <div class="fm-tit">
+                                                <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_update.input_weather}">기상</span></strong>
+                                            </div>
+                                            <div class="fm-txt">
+                                                <div class="col-group">
+                                                    <div class="col3 flex">
+                                                        <p class="sub-tit" th:text="#{project.job_sheet_update.input_rainfall_amount}">강우량</p>
+                                                        <input type="text" id="rainfallAmount" name="rainfallAmount"
+                                                               th:placeholder="#{project.job_sheet_add.input_common_unit_placeholder}"
+                                                               th:value="${jobSheet.rainfallAmount}">
+                                                    </div>
+                                                    <div class="col3 flex">
+                                                        <p class="sub-tit" th:text="#{project.job_sheet_update.input_snowfall_amount}">강설량</p>
+                                                        <input type="text" id="snowfallAmount" name="snowfallAmount"
+                                                               th:placeholder="#{project.job_sheet_add.input_common_unit_placeholder}"
+                                                               th:value="${jobSheet.snowfallAmount}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div><!--//form-->
+                        </div><!--//section-->
+
+                        <div class="section form-toggle on">
+                            <div class="title">
+                                <h3><span th:text="#{project.job_sheet_add.input_progress}">공정별 진행률</span></h3>
+                                <button type="button" class="form-toggle-btn"></button>
+                            </div>
+                            <div class="form form-toggle-box">
+                                <div class="flex al-center mb-10">
+                                    <a href="#none" id="btnSearchProcess" class="btn btn-color2 pop-open-btn" data-modal="#taskAddPopup"><span th:text="#{project.job_sheet_add.btn_add_progress}">공정 추가</span></a>
+
+                                    <div class="add-task-control">
+                                        <button type="button" class="all-open btn-s btn-open-all">전체열기</button>
+                                        <button type="button" class="all-close btn-s btn-close-all">전체닫기</button>
+                                    </div>
+                                </div>
+
+                                <div id="taskList" class="add-task-list">
+                                    <div th:id="${'jobSheetProcessItemList' + info.index}" th:each="row, info : ${jobSheetProcessItems}">
+                                        <section class="add-task">
+                                            <div class="flex">
+                                                <div class="tit-box flex">
+                                                    <div th:id="'jobSheetSnapShotList'+${info.index}" class="img">
+                                                        <img th:if="${row.mySnapShotSource != null and row.mySnapShotSource != ''}" th:src="${row.mySnapShotSource}" th:id="${'jobSheetSnapShotImg'+info.index}">
+                                                        <img th:unless="${row.mySnapShotSource != null and row.mySnapShotSource != ''}" src="/dist/img/no_img.jpg" th:id="${'jobSheetSnapShotImg'+info.index}">
+                                                        <th:block th:if="${row.mySnapShotSource != null and row.mySnapShotSource != ''}">
+                                                            <button type="button" name="btnSnapShotId" th:data-snap-shot-img="${'jobSheetSnapShotImg'+info.index}" th:data-snap-shot-id="${row.mySnapShotId} ? ${row.mySnapShotId} : 0" class="btn"><i
+                                                                    class="fas fa-times-circle"></i></button>
+                                                        </th:block>
+                                                    </div>
+                                                    <div class="tb-cate">
+                                                        <span>[[${row.cate3Name}]]</span>
+                                                        <span>[[${row.cate4Name}]]</span>
+                                                        <span>[[${row.taskName}]]</span>
+                                                    </div>
+                                                </div>
+                                                <div class="task-rate flex">
+                                                    <p>진행률 :
+                                                        <strong th:if="${row.processItem.getDuration()} != 0">[[${row.afterProgressRate / row.processItem.getDuration()}]]%</strong>
+                                                        <strong th:unless="${row.processItem.getDuration()} != 0">[[${row.afterProgressRate}]]%</strong>
+                                                        (일 평균)</p>
+                                                    <div class="btn-box">
+                                                        <input id="processItemId" name="processItemId" type="hidden" th:value="${row.processItem.id}">
+                                                        <input id="processItemCost" name="processItemCost" type="hidden" th:value="${row.processItem.cost}">
+                                                        <input id="phasingCode" name="phasingCode" type="hidden" th:value="${row.phasingCode}">
+                                                        <input id="taskFullPath" name="taskFullPath" type="hidden" th:value="${row.taskFullPath}">
+                                                        <input id="exchangeId" name="exchangeId" type="hidden" th:value="${row.exchangeIds}">
+                                                        <a href="#none" class="btn-xs btnAddPrevJobSheetItem" th:data-process-item-id="${row.processItem.id}" th:data-item-bun="${info.index}">이전내역 불러오기</a>
+                                                        <input type="hidden" name="mySnapShotId" th:value="${row.mySnapShotId} ? ${row.mySnapShotId} : 0">
+                                                        <a href="#none" class="btn-xs pop-open-btn btnSelectSnapShot" data-modal="#mySnapShotShare">스냅샷설정</a>
+                                                        <a href="#none" class="btn-xs btnRemoveSlider">삭제</a>
+                                                    </div>
+
+                                                    <button type="button" class="toggle-btn"></button>
+                                                </div>
+                                            </div>
+
+                                            <div class="task-con">
+                                                <div class="grid">
+                                                    <div class="col4">
+                                                        <div class="table-wrap">
+                                                            <table class="table">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <th colspan="3">실시량(원)</th>
+                                                                    <th colspan="3">진도(%)</th>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>전일누계</td>
+                                                                    <td>금일누계</td>
+                                                                    <td>누계</td>
+                                                                    <td>전일진도</td>
+                                                                    <td>금일진도</td>
+                                                                    <td>누계</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td id="beforeProgressAmount">[[${row.processItem.getProgressAmount()}]]</td>
+                                                                    <td id="todayProgressAmount">0</td>
+                                                                    <td id="afterProgressAmount">[[${row.processItem.getProgressAmount()}]]</td>
+                                                                    <td id="beforeProgressRate">[[${row.processItem.getProgressRate()}]]</td>
+                                                                    <td><input type="number" class="input-box-xs" id="todayProgressRate" name="todayProgressRate" min="0" max="100" step="0.01" value="0.00"></td>
+                                                                    <td id="afterProgressRate">[[${row.processItem.getProgressRate()}]]</td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table><!--// table-->
+                                                        </div><!--//table-wrap-->
+                                                    </div>
+                                                    <div class="col2">
+                                                        <div class="add-job grid task-option-add">
+                                                            <div class="fm-section col2">
+                                                                <div class="fm-tit">
+                                                                    <strong><i class="ico-require"></i>인원관리</strong>
+                                                                </div>
+                                                                <div class="fm-txt">
+                                                                    <a href="#none" class="btn btn-color4 pop-open-btn btnSelectWorker" data-modal="#selectWorkList">추가</a>
+                                                                    <p class="col6 fm-msg tblProcessWorker">
+                                                                        <th:block th:if="${row.worker.size() > 0}">
+                                                                            [[${row.worker[0].name}]] [[${row.worker[0].value}]]명 외 <strong class="txt-color1">[[${row.worker.size()-1}]]</strong>건
+                                                                            <th:block  th:each="item, info : ${row.worker}">
+                                                                                <input name="progressWorkerId" type="hidden" th:value="${item.id}">
+                                                                                <input name="progressWorkerName" type="hidden" th:value="${item.name}">
+                                                                                <input name="progressWorkerValue" type="hidden" th:value="${item.value}">
+                                                                            </th:block>
+                                                                        </th:block>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                            <div class="fm-section col2">
+                                                                <div class="fm-tit">
+                                                                    <strong><i class="ico-require"></i>장비관리</strong>
+                                                                </div>
+                                                                <div class="fm-txt">
+                                                                    <a href="#none" class="btn btn-color3 pop-open-btn btnSelectDevice" data-modal="#selectDeviceList">추가</a>
+                                                                    <p class="col6 fm-msg tblProcessDevice">
+                                                                        <th:block th:if="${row.device.size() > 0}">
+                                                                            [[${row.device[0].name}]] [[${row.device[0].value}]]개 외 <strong class="txt-color1">[[${row.device.size()-1}]]</strong>건
+                                                                            <th:block  th:each="item, info : ${row.device}">
+                                                                                <input name="progressDeviceId" type="hidden" th:value="${item.id}">
+                                                                                <input name="progressDeviceName" type="hidden" th:value="${item.name}">
+                                                                                <input name="progressDeviceValue" type="hidden" th:value="${item.value}">
+                                                                            </th:block>
+                                                                        </th:block>
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </section>
+                                    </div>
+                                </div><!--//add-task-list-->
+                            </div><!--//form-->
+                        </div><!--//section-->
+
+                        <div class="section form-toggle on">
+                            <div class="title">
+                                <h3><span th:text="#{project.job_sheet_add.input_job_sheet}">주요 작업내용</span> </h3>
+                                <button type="button" class="form-toggle-btn"></button>
+                            </div>
+                            <div class="form form-toggle-box">
+                                <div class="grid">
+                                    <div class="fm-section col6">
+                                        <div class="fm-tit">
+                                            <strong><i class="ico-require on"></i><span th:text="#{project.job_sheet_add.input_now_job_sheet}">전일작업</span></strong>
+                                        </div>
+                                        <div class="input-icon">
+                                            <div class="icon-title">아이콘삽입</div>
+                                            <div class="icon-list">
+                                                <p>작업지휘자/신호수</p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade1-s.png"><img src="/dist/img/ico-grade1-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade1-a.png"><img src="/dist/img/ico-grade1-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade1-b.png"><img src="/dist/img/ico-grade1-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade1-c.png"><img src="/dist/img/ico-grade1-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>작업지휘자 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade2-s.png"><img src="/dist/img/ico-grade2-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade2-a.png"><img src="/dist/img/ico-grade2-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade2-b.png"><img src="/dist/img/ico-grade2-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade2-c.png"><img src="/dist/img/ico-grade2-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>신호수 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade3-s.png"><img src="/dist/img/ico-grade3-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade3-a.png"><img src="/dist/img/ico-grade3-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade3-b.png"><img src="/dist/img/ico-grade3-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade3-c.png"><img src="/dist/img/ico-grade3-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>미해당 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade4-s.png"><img src="/dist/img/ico-grade4-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade4-a.png"><img src="/dist/img/ico-grade4-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade4-b.png"><img src="/dist/img/ico-grade4-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="contents" data-image="/dist/img/ico-grade4-c.png"><img src="/dist/img/ico-grade4-c.png" alt=""></button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fm-txt">
+                                            <div id="contents" class="jobsheet-input txt-bg edit-txt" contenteditable="true" th:utext="${jobSheet.getContents()}"></div>
+                                        </div>
+                                    </div>
+                                    <div class="fm-section col6">
+                                        <div class="fm-tit">
+                                            <strong><i class="ico-require on"></i><span th:text="#{project.job_sheet_add.input_next_job_sheet}">명일작업</span></strong>
+                                        </div>
+                                        <div class="input-icon">
+                                            <div class="icon-title">아이콘삽입</div>
+                                            <div class="icon-list">
+                                                <p>작업지휘자/신호수</p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade1-s.png"><img src="/dist/img/ico-grade1-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade1-a.png"><img src="/dist/img/ico-grade1-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade1-b.png"><img src="/dist/img/ico-grade1-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade1-c.png"><img src="/dist/img/ico-grade1-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>작업지휘자 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade2-s.png"><img src="/dist/img/ico-grade2-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade2-a.png"><img src="/dist/img/ico-grade2-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade2-b.png"><img src="/dist/img/ico-grade2-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade2-c.png"><img src="/dist/img/ico-grade2-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>신호수 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade3-s.png"><img src="/dist/img/ico-grade3-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade3-a.png"><img src="/dist/img/ico-grade3-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade3-b.png"><img src="/dist/img/ico-grade3-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade3-c.png"><img src="/dist/img/ico-grade3-c.png" alt=""></button></li>
+                                                </ul>
+                                                <p>미해당 </p>
+                                                <ul>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade4-s.png"><img src="/dist/img/ico-grade4-s.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade4-a.png"><img src="/dist/img/ico-grade4-a.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade4-b.png"><img src="/dist/img/ico-grade4-b.png" alt=""></button></li>
+                                                    <li><button type="button" class="addImageIcon" data-id="today_contents" data-image="/dist/img/ico-grade4-c.png"><img src="/dist/img/ico-grade4-c.png" alt=""></button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fm-txt">
+                                            <div id="today_contents" class="jobsheet-input txt-bg edit-txt" contenteditable="true" th:utext="${jobSheet.getTodayContents()}"></div>
+                                        </div>
+                                    </div>
+                                    <div class="fm-section col6">
+                                        <div class="fm-tit">
+                                            <strong><i class="ico-require"></i><span th:text="#{project.job_sheet_add.attach_file}">파일첨부</span></strong>
+                                        </div>
+                                        <div class="fm-txt">
+                                            <div th:replace="/common/fileUploader :: multiFileUploader('jobSheetAttachFile')"></div>
+                                        </div>
+                                    </div>
+                                </div><!--//grid-->
+                            </div><!--//form-->
+                        </div><!--//section-->
+
+                        <div class="btn-box right-sticky">
+                            <th:block th:if="${ptype == 'write'}">
+                                <section>
+                                    <a href="#none" id="btnPrevJopSheet" class="btn btn-color-orange">이전내역 불러오기</a>
+                                    <a href="#none" id="btnPreview" class="btn btn-color2" data-modal="#modalPrintJobSheetDetail">미리보기</a>
+                                </section>
+                            </th:block>
+                            <section>
+                                <button type="button" class="btn-gotop" title="상단으로 이동"></button>
+                            </section>
+                        </div><!--//btn-box-->
+
+                    </div><!--// form-wrap -->
+                </form>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalSearchSingleUser', #{common.modal_title.search_job_sheet_grantor}, '')"></th:block> <!-- 결재자 지정 -->
+<th:block th:replace="layout/popup :: modal('taskRefereePopup', #{common.modal_title.search_job_sheet_references}, '')"></th:block> <!-- 참조자 지정 -->
+<th:block th:replace="layout/snapshot_popup :: modal('mySnapShotShare', #{common.modal_title.share_my_snap_shot}, 'popup-right')"></th:block> <!-- 스냅샷 공유 -->
+<th:block th:replace="layout/jobsheet_task_add_popup :: modal('taskAddPopup', #{project.job_sheet_add.btn_add_progress}, 'popup-lg')"></th:block> <!-- 공정 추가 -->
+<th:block th:replace="layout/popup :: modal('selectWorkList', #{common.modal_title.job_sheet_personal_management}, '')"></th:block> <!-- 인원관리 -->
+<th:block th:replace="layout/popup :: modal('selectDeviceList', #{common.modal_title.job_sheet_equipment_management}, '')"></th:block> <!-- 장비관리 -->
+<th:block th:replace="process/modal/selectProcessItem:: load()"></th:block>
+<th:block th:replace="layout/popup :: modal('modalAddPrevJobSheetItem', #{common.modal_title.print}, '')"></th:block> <!-- 공정 이전내역 불러오기 -->
+<th:block th:replace="layout/popup :: modal('modalPrintJobSheetDetail', #{common.modal_title.print}, '')"></th:block>
+<!-- modal end -->
+
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script th:inline="javascript">
+    const jobSheetAddAlertReportDate = [[#{ project.job_sheet_add.alert_report_date }]];
+    const jobSheetAddAlertTitle = [[#{ project.job_sheet_add.alert_title }]];
+    const jobSheetAddAlertGrantor = [[#{ project.job_sheet_add.alert_grantor }]];
+    const jobSheetAddAlertJobSheet = [[#{ project.job_sheet_add.alert_job_sheet }]];
+    const jobSheetAddAlertMaxReportDate = [[#{ project.job_sheet_add.alert_max_report_date }]];
+    const maxReportDate = [[${ maxReportDate }]];
+    let jobSheetId = $("#jobSheetId").val();
+    const jobSheetFileExtension = [[${ jobSheetFileExtension }]];
+    const allowFileExtList = jobSheetFileExtension.split("||");
+    const alertMsg = [[${alertmsg}]];
+
+    $(document).ready(function() {
+
+        if (alertMsg != null && alertMsg != "") {
+            alert([[#{system.job_sheet_service.ok_prev_job_sheet}]]);
+        }
+
+        const $savedReferences = $('.savedReferences');
+        if ($savedReferences.length > 0) {
+            const savedReferenceIds = $.map($savedReferences, function (elem) {
+                return $(elem).find('#divUserInfo').data('user-id');
+            });
+            $('#jobSheetReferencesIds').val(savedReferenceIds);
+        }
+    });
+
+    function startFileUpload() {
+        $("#jobSheetAttachFile").dmUploader("start");
+    }
+
+    function moveListPageFile(condition) {
+        window.location.href = `/project/jobSheetList?keepCondition=${condition}`;
+    }
+
+    function completeUploadFile(obj) {
+        if ($(obj)[0].id === "jobSheetAttachFile") {
+            moveListPageFile(false);
+        }
+    }
+
+    function jobSheetFileUploaderExtraData() {
+        return {
+            "id": jobSheetId,
+            "fileUploadUIType": "JOB_SHEET_FILE",
+            "makeVersion": false,
+            "executeHoopsConverter": false
+        }
+    }
+
+    makeSingleUploaderScript("#jobSheetAttachFile"
+        , jobSheetFileUploaderExtraData
+        , 5000000000
+        , allowFileExtList
+        , '[[#{common.file_upload.error_single_uploader}]]'
+        , '[[#{common.file_upload.error_file_size}]]'
+        , '[[#{common.file_upload.error_ext}]]'
+        , completeUploadFile
+    );
+
+    function setJobSheetReferencesSendData() {
+        return `&userIds=${$("#jobSheetGrantorId").val()}`;
+    }
+
+    function getUserInfoAtField(userIds) {
+        $("#pSelectJobSheetReferences").hide();
+        reloadComponent("/common/userInfoAtFields", "#divUserInfoAtFields", `&userIds=${userIds}`);
+    }
+</script>
+<script src="/dist/js/pages/jobSheet.js"></script>
+
+</body>
+</html>

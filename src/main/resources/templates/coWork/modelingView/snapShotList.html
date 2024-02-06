@@ -1,0 +1,26 @@
+<article th:fragment="snapShotList()">
+  <header>
+    <span th:text="#{co_work.modeling_view.page.snap_shot_list}">스냅샷 리스트</span>
+    <button th:if="${isGoing}" type="button" class="btn bg-gradient-success btn-xs" data-toggle="modal" data-target="#mySnapShotShare" th:text="#{co_work.modeling_view.page.snap_shot_share}">
+      내 스냅샷 공유
+    </button>
+  </header>
+  <div class="scroll-area-v" id="snapShotImgList">
+    <ul>
+      <li th:each="snapShot : ${snapShots}" th:data-id="${snapShot.id}">
+        <img class="zoom-in-image" th:src="${snapShot.source}" th:data-snap-shot="${snapShot.viewPointJson}"  th:data-id="${snapShot.id}" >
+        <div>
+          <p>
+            <span th:text="${snapShot.title}">정면에서 100배 비율로 축소한 샷</span>
+          </p>
+          <p>
+            <span th:text="${#temporals.format(snapShot.writeEmbedded.writeDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.07.08 01</span>
+          </p>
+          <button th:if="${isGoing && snapShot.isOwner(#session.getAttribute('scopedTarget.userInfo')?.id)}" type="button" class="btn bg-gradient-danger btn-xs deleteSnapShot"  th:text="#{co_work.modeling_view.page.snap_shot_btn_delete}">
+            제외
+          </button>
+        </div>
+      </li>
+    </ul>
+  </div>
+</article>

@@ -1,0 +1,82 @@
+///// BIM FONTS
+
+$font-color: #212529;
+
+// Google Font: Noto Sans
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@100;300;400;500;700;900&family=Noto+Sans+JP:wght@100;300;400;500;700;900&family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Noto+Sans+SC:wght@100;300;400;500;700;900&family=Noto+Sans+TC:wght@100;300;400;500;700;900&display=swap');
+
+html {
+    font-size: 13px;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+
+    @media screen and (max-width: 768px) {
+        font-size: 13px;
+    }
+
+    @media screen and (min-width: 768px) {
+        -webkit-text-size-adjust: none;
+        -moz-text-size-adjust: none;
+        -ms-text-size-adjust: none;
+    }
+}
+
+body {
+    font-family: 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans HK', 'Noto Sans SC', 'Noto Sans TC', sans-serif!important;
+    font-size: 1rem;
+}
+
+body, input, textarea, select, button {
+    font-synthesis: none;
+    -moz-font-feature-settings: 'kern';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6,
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+    line-height: inherit;
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.2rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+h5 { font-size: 1rem; }
+h6 { font-size: 1rem; }
+
+a, .link {
+    color: #06c;
+    letter-spacing: inherit;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+
+    &:focus {
+        outline: 0 solid rgba(0,125,250,0.6);
+        outline-offset: 1px;
+    }
+}
+
+.text-over-dot {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.keysmall {
+    display: inline-flex;
+    line-height: 1;
+
+    span {
+        margin: 0 .2rem;
+        font-size: 1.35rem;
+        font-weight: 500;
+        line-height: 1;
+        color: #dc3545;
+    }
+}

@@ -1,0 +1,113 @@
+<div class="form" th:fragment="cardBody()">
+  <div class="grid">
+    <div class="fm-section col6">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_title}">제목</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt" colspan="3" th:text="${noticeItem.title}">휴무일 공지 (2021.05.05)</div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_writer}">작성자</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt"><span th:replace="/common/userInfoAtField :: userInfoAtField(${noticeItem.writerDTO})"></span></div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_write_date}">작성일시</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt" th:text="${#temporals.format(noticeItem.writeEmbedded.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_target_work}">대상</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt">
+          <span th:text="${noticeItem.worksNames}">교량공 / 배수공</span>
+        </div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_last_modify_date}">최종 수정일시</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt">
+          <span th:text="${#temporals.format(noticeItem.lastModifyEmbedded.lastModifyDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021.04.17 11:00</span>
+        </div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:text="#{co_work.notification_view.card_body_view_confirm_user}">확인자</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="txt">
+          <span th:replace="/common/userInfoPhotoAtFields :: divUserInfoPhotoAtFields(${alertConfirmUserDTOs})"></span>
+        </div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><th th:text="#{co_work.notification_view.card_body_view_attach_file}">첨부파일</th></strong>
+      </div>
+      <div class="fm-txt">
+        <div class="d-flex align-items-center">
+          <div class="up-file-list">
+            <div class="badge badge-pill" th:each="attachFile, index : ${noticeFileNotImg}">
+              <a th:id="btnNoImage_ + ${attachFile.id}"
+                 href="#"
+                 th:data-id="${attachFile.id}"
+                 th:data-ext="${attachFile.originFileNameExt}"
+                 th:data-file-path="${attachFile.filePath}"
+                 th:classappend="${attachFile.isImage} ? 'zoom-in-image'"
+                 th:data-is-image="${attachFile.isImage}"
+                 th:text="${attachFile.originFileName}">xxxxxxxxxxxxxxxxxxxxxxx.ppt</a>
+              <a href="#" th:id="btnNoImageDownLoad_+${attachFile.id}"
+                 th:data-id="${attachFile.id}"
+                 th:data-ext="${attachFile.originFileNameExt}"
+                 th:data-file-path="${attachFile.filePath}"
+                 th:classappend="${attachFile.isImage} ? 'zoom-in-image'"
+                 th:data-is-image="${attachFile.isImage}" class="btn btn-color1">
+                <span th:text="#{common.modal.file_download.btn_download}">다운로드</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fm-section col2">
+      <div class="fm-tit">
+        <strong><i class="ico-require"></i><span th:utext="${noticeItem.contents.replaceAll('\n', '<br/>')}">내용</span></strong>
+      </div>
+      <div class="fm-txt">
+        <div th:if="${noticeFileImg.size > 0}">
+          <div class="conimg-area">
+            <div class="scroll-area-w">
+              <ul>
+                <li th:each="imgFile, index : ${noticeFileImg}" >
+                  <img th:src="${#strings.isEmpty(imgFile.filePath) ? '/dist/img/no_image.png' : imgFile.filePath}">
+                  <button type="button" class="btn btn-default"
+                          th:id="btnImageDelete_ + ${imgFile.id}"
+                          th:data-id="${imgFile.id}"
+                          th:classappend="${imgFile.isImage} ? 'zoom-in-image'"
+                          th:src="${#strings.isEmpty(imgFile.filePath) ? '/dist/img/no_image.png' : imgFile.filePath}">
+                    <i class="fas fa-search-plus"></i>
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

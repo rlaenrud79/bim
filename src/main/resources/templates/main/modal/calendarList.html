@@ -1,0 +1,8 @@
+<div class="calendar-popup">
+    <div class="tit">총 <span th:text="${processItemList.size()}">00</span>개의 공정계획이 있습니다.</div>
+    <div class="txt">
+        <th:block th:each="item, index : ${processItemList}">
+            <span th:utext="${item.taskName}"></span>
+        </th:block>
+    </div>
+</div>

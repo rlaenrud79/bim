@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+
+    <div class="container">
+        <nav th:replace="layout/common :: navigation('project')"></nav>
+
+        <div class="right-area">
+            <div id="divContentHeader" class="content-header" th:replace="gisung/cost/contentHeader :: contentHeader()"/>
+
+            <div class="content">
+                <section class="gisung-cost-content">
+
+                    <div class="card-header">
+                        <input type="hidden" name="workId" id="workId" value="0"/>
+                        <input type="hidden" name="subWorkId" id="subWorkId" value="0"/>
+                        <!--추가-->
+                        <div class="tab-nav-round">
+                            <ul>
+                                <li class="on"><button type="button" class="btnWork" data-work-id="0" th:text="#{admin.modal.add_schedule.work_all}">전체</button></li>
+                                <th:block th:each="item, index : ${workList}">
+                                    <li><button type="button" class="btnWork" th:text="${item.workNameLocale}" th:data-work-id="${item.id}">전체</button></li>
+                                </th:block>
+                            </ul>
+                            <!--
+                            <button class="btn bg-gradient-info" data-toggle="" data-target="">
+                              <span>공정추가</span>
+                            </button>
+                            -->
+                            <!--                <div class="check-set ml-30">-->
+                            <!--                  <input type="checkbox" class="form-check" id="editMode">-->
+                            <!--                  <label for="editMode" th:text="#{cost.index.page.edit_mode}">수정 모드</label>-->
+                            <!--                </div>-->
+                        </div><!--//sub-tab-->
+
+                        <div class="bim-btn-group no-wrap">
+                            <!--
+                            <button class="btn-xs" data-toggle="modal" data-target='#paidCostAll'>
+                              <span th:text="#{cost.index.page.paid_cost_all}">일괄 기성</span>
+                            </button>
+                            -->
+                            <button class="btn-xs" id="exportXlsx">
+                                <span th:text="#{cost.index.page.print_xlsx}">xlsx 출력</span>
+                            </button>
+                            <!--
+                            <button class="btn-xs" id="exportCsv">
+                              <span th:text="#{cost.index.page.print_csv}">csv 출력</span>
+                            </button>
+                            -->
+                        </div>
+                    </div>
+
+                    <!--          <div class="card-body">-->
+                    <!--            <div class="connectedSortable dhx_sample-container mt-0">-->
+                    <!--              <div class="dhx_sample-container__widget" id="gridCost"></div>-->
+                    <!--            </div>-->
+                    <!--          </div>-->
+
+
+<!--                    <div class="cost-total-box">-->
+<!--                        <strong>기성금 총계</strong>-->
+<!--                        <span id="totalPaidCost" th:text="|${#numbers.formatInteger(paidCostSum, 1, 'COMMA')}원|">108,672,938,196원</span>-->
+<!--                    </div>-->
+
+<!--                    <div class="tree-body">-->
+<!--                        <div class="tree-nav tree-open">-->
+<!--                        </div>&lt;!&ndash;//tree-nav&ndash;&gt;-->
+<!--                    </div>-->
+
+
+                    <!--신규-->
+                    <table class="tree-table">
+                        <thead>
+                        <tr>
+                            <th rowspan="2" class="txt-left">
+                                <div class="tree-table-control">
+                                    <button id="expand-all" type="button"></button>
+                                    <button id="collapse-all" type="button"></button>
+                                </div>
+                                공정명
+                            </th>
+                            <th rowspan="2">표시</th>
+                            <th rowspan="2">공종</th>
+                            <th rowspan="2">공정코드</th>
+                            <th rowspan="2">진행률</th>
+                            <th rowspan="2">작업일수</th>
+                            <th rowspan="2">시작일</th>
+                            <th rowspan="2">종료일</th>
+                            <th colspan="3">대표수량</th>
+                            <th rowspan="2">ⓑ복합단가</th>
+                            <th colspan="2">기성금(원)</th>
+                            <th rowspan="2">공사비 계산 결과</th>
+                            <th rowspan="2">모델</th>
+                        </tr>
+                        <tr>
+                            <th>계산식</th>
+                            <th>ⓐ값</th>
+                            <th>단위</th>
+                            <th>계획</th>
+                            <th>기성금</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr data-id="1" data-level="1">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>공정명</div></td>
+                            <td>
+								<span class="check-set">
+									<input type="checkbox" id="itemCheck">
+									<label for="itemCheck"></label>
+								</span>
+                            </td>
+                            <td>토공</td>
+                            <td></td>
+                            <td>0.00%</td>
+                            <td>31,525</td>
+                            <td>2021-01-02</td>
+                            <td>2025-12-25</td>
+                            <td>EA100000#Count</td>
+                            <td>1</td>
+                            <td>식</td>
+                            <td><button type="button" class="btn-xs btn-bo3 pop-open-btn" data-modal="#costDetail">1,874,846</button></td>
+                            <td>12,110,256,469</td>
+                            <td>0</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-1" data-parent="1" data-level="2">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>공정명</div></td>
+                            <td>
+								<span class="check-set">
+									<input type="checkbox" id="itemCheck">
+									<label for="itemCheck"></label>
+								</span>
+                            </td>
+                            <td>토공</td>
+                            <td></td>
+                            <td>0.00%</td>
+                            <td>31,525</td>
+                            <td>2021-01-02</td>
+                            <td>2025-12-25</td>
+                            <td>EA100000#Count</td>
+                            <td>1</td>
+                            <td>식</td>
+                            <td><button type="button" class="btn-xs btn-bo3 pop-open-btn" data-modal="#costDetail">1,874,846</button></td>
+                            <td>12,110,256,469</td>
+                            <td>0</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-1-1" data-parent="1-1" data-level="3">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 1-1-1</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-1-1-1" data-parent="1-1-1" data-level="4">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 1-1-1-1 토공_1구간_기존철거_철근깨기</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-1-1-1-1" data-parent="1-1-1-1" data-level="5">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 1-1-1-1-1 토공_1구간_기존철거_철근깨기</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-2" data-parent="1" data-level="2">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 1-2</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="1-2-1" data-parent="1-2" data-level="3">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 1-2-1</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr data-id="2" data-level="1">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>공정명</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="2-1" data-parent="2" data-level="2">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 2-1</div></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="depth-hidden" data-id="2-1-1" data-parent="2-1" data-level="3">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>레벨 2-1-1</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="3" data-level="1">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>공정명</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr data-id="4" data-level="1">
+                            <td><div class="depth-tit"><button class="toggle-btn"></button>공정명</div></td>
+                            <td>-</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+
+                        <tfoot>
+                        <tr class="tb-style-total">
+                            <th>총계</th>
+                            <th></th>
+                            <th></th>
+                            <th>16,281</th>
+                            <th>0.00%</th>
+                            <th>229,215</th>
+                            <th>2021-09-01</th>
+                            <th>2026-11-29</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>108,672,938,196</th>
+                            <th>0</th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
+
+                </section>
+            </div><!--// content-->
+        </div>
+    </div>
+</div>
+
+<div id="costDetail" class="popup-wrap">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <span class="popup-tit">복합단가 상세</span>
+            <button type="button" class="close close-btn">팝업닫기</button>
+        </div>
+        <div class="popup-con">
+            <div class="scroll-wrap sc-table-f">
+                <table class="table">
+                    <tbody>
+                    <tr class="sticky-th">
+                        <th>공종코드</th>
+                        <th>규격</th>
+                        <th>대표</th>
+                        <th>값</th>
+                        <th>단위</th>
+                        <th>단가</th>
+                        <th>공사비</th>
+                    </tr>
+                    <tr>
+                        <td>G000000019</td>
+                        <td>건설폐기물파쇄(100M/M)/적재및운반</td>
+                        <td>
+								<span class="check-set">
+									<input type="checkbox" id="itemCheck">
+									<label for="itemCheck"></label>
+								</span>
+                        </td>
+                        <td>1.0000</td>
+                        <td>M3</td>
+                        <td>7,892</td>
+                        <td>12,201,032</td>
+                    </tr>
+                    <tr>
+                        <td>G000000019</td>
+                        <td>건설폐기물파쇄(100M/M)/적재및운반</td>
+                        <td>
+								<span class="check-set">
+									<input type="checkbox" id="itemCheck">
+									<label for="itemCheck"></label>
+								</span>
+                        </td>
+                        <td>1.0000</td>
+                        <td>M3</td>
+                        <td>7,892</td>
+                        <td>12,201,032</td>
+                    </tr>
+                    <tr class="tb-style-total">
+                        <th>총계</th>
+                        <th>3</th>
+                        <th colspan="4">12,201,033 = 12,201,033 / 1</th>
+                        <th>12,201,033</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+
+        //트리테이블
+        $('.tree-table .toggle-btn').click(function(e) {
+            e.stopPropagation(); // 상위 요소로의 이벤트 전파 중지
+            var $currentTr = $(this).closest('tr');
+            var currentId = $currentTr.data('id');
+            var isActive = $(this).hasClass('active');
+
+            if (!isActive) {
+                // 확장 로직
+                $(this).addClass('active');
+                $('[data-parent="' + currentId + '"]').removeClass('depth-hidden').each(function() {
+                    if (!$(this).find('.toggle-btn').length) {
+                        $(this).find('.toggle-btn').remove();
+                    }
+                });
+            } else {
+                // 축소 로직
+                $(this).removeClass('active');
+                closeAllSubLevels(currentId);
+            }
+        });
+
+        function closeAllSubLevels(parentId) {
+            $('[data-parent="' + parentId + '"]').each(function() {
+                $(this).addClass('depth-hidden');
+                var id = $(this).data('id');
+                closeAllSubLevels(id);
+                $(this).find('.toggle-btn').removeClass('active');
+            });
+        }
+
+        // 모든 레벨 열기
+        $('#expand-all').click(function() {
+            $('.tree-table .toggle-btn').each(function() {
+                $(this).addClass('active');
+                var $currentTr = $(this).closest('tr');
+                var currentId = $currentTr.data('id');
+                $('[data-parent="' + currentId + '"]').removeClass('depth-hidden');
+            });
+        });
+        // 모든 레벨 닫기, 1레벨은 제외
+        $('#collapse-all').click(function() {
+            $('.tree-table .toggle-btn').removeClass('active');
+            $('.tree-table tbody tr').not('[data-level="1"]').addClass('depth-hidden');
+        });
+        // 1레벨 항상 열려있게 유지
+        $('.tree-table tr[data-level="1"]').each(function() {
+            $(this).removeClass('depth-hidden'); // 1레벨 항목 항상 표시
+        });
+
+    });
+</script>
+
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalCostPopup',#{contents.gisung_item_list.modal_title_add}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalCostDetailPopup',#{contents.gisung_item_list.modal_title_cost_detail}, 'popup-ml')"></th:block>
+<th:block th:replace="layout/popup :: modal('costDetail', #{cost.index.page.object_price_detail}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('paidCost', #{cost.index.page.cost_detail_add_update}, 'popup-ml')"></th:block>
+<th:block th:replace="layout/popup :: modal('paidCostAll', #{cost.index.page.paid_cost_all}, 'popup-sm')"></th:block>
+<!-- modal end -->
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+</script>
+<script src="/dist/js/pages/cost.js"></script>
+
+</body>
+</html>
+
+
+<!--<div class="bg-loading">-->
+<!--    <img src="/dist/img/loading.gif" alt="">-->
+<!--</div>-->

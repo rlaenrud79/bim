@@ -1,0 +1,50 @@
+<div id="divCardBody" class="card-body pdf_page" th:fragment="cardBody()">
+  <div class="col-12">
+    <h2 class="list-title">
+      <i class="far fa-arrow-alt-circle-right"></i><span th:text="#{project.job_sheet_view.job_sheet}"> 공사일지</span>
+    </h2>
+    <div class="table-responsive">
+      <table class="table">
+        <tbody>
+        <tr>
+          <th><span th:text="#{project.job_sheet_view.report_date}"> 보고일자</span></th>
+          <td th:text="${#temporals.format(jobSheet.reportDate, #messages.msg('system.locale.dateformat.year_month_day'))}">2021.06.24</td>
+
+          <th><span th:text="#{project.job_sheet_view.write_date}"> 작성일시</span></th>
+          <td th:text="${#temporals.format(jobSheet.writeEmbedded.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min_sec'))}">2021.06.25 12:00:05</td>
+        </tr>
+        <tr>
+          <th><span th:text="#{project.job_sheet_view.writer}"> 보고자</span></th>
+          <td>
+            <div class="d-flex align-items-center">
+              <div th:replace="/common/userInfo :: userInfo(${jobSheet.writeEmbedded.accountDTO})"></div>
+              <p class="ml-4 mr-auto" th:text="|${jobSheet.writeEmbedded.writer.userName} (${jobSheet.writeEmbedded.writer.company.companyRole.companyRoleName} : ${jobSheet.writeEmbedded.writer.company.name})|">김감독 (발주사 : 한국 발주)</p>
+            </div>
+          </td>
+
+          <th><span th:text="#{project.job_sheet_view.grantor_with_state}"> 결재자 / 상태</span></th>
+          <td>
+            <div class="d-flex align-items-center justify-content-between">
+              <div th:replace="/common/userInfo :: userInfo(${jobSheet.jobSheetGrantor.accountDTO})"></div>
+              <p class="ml-4 mr-auto" th:text="|${jobSheet.jobSheetGrantor.grantor.userName} (${jobSheet.jobSheetGrantor.grantor.company.companyRole.companyRoleName} / ${jobSheet.jobSheetGrantor.grantor.company.name}) - #{${jobSheet.jobSheetGrantor.status.getMessageProperty()}}|">이결재 (발주사 / 한국 발주) - 결제중/승인/반려</p>
+              <button type="button" id="btnReAdd" th:if="${isWriter and #strings.toString(jobSheet.status) == 'REJECT'}" class="btn bg-gradient-primary"><span th:text="#{project.job_sheet_view.btn_move_re_write}"> 재보고</span></button>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <th><span th:text="#{project.job_sheet_view.title}"> 제목</span></th>
+          <td th:text="${jobSheet.title}">토목1 콘크리트 공정 6/24 업무보고</td>
+
+          <th><span th:text="#{project.job_sheet_view.reference}"> 참조자</span></th>
+          <td>
+            <div class="d-flex align-items-center mb-2" th:each="item, index : ${jobSheet.jobSheetReferences}">
+              <div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div>
+              <p class="ml-4 mr-auto" th:text="|${item.reference.userName} (${item.reference.company.companyRole.companyRoleName} / ${item.reference.company.name})|">김참조 (발주사 / 한국 발주)</p>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

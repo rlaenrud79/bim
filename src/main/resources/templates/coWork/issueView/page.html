@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('coWork')"></nav>
+    <aside th:replace="layout/common :: aside('coWork','issueView')"></aside>
+
+    <!-- contents area  -->
+    <main role="main" class="content-wrapper coWork-content board-view">
+      <!-- Content Header (Page header) -->
+      <div id="divContentHeader" class="content-header" th:replace="coWork/issueView/contentHeader :: contentHeader()"/>
+
+      <!-- /.contents area -->
+      <section class="content">
+        <div class="container-fluid">
+          <div class="con-issue-view">
+            <div class="col-lg-12">
+              <div class="card content-body-area">
+                <div id="divCardHeader" class="card-header" th:replace="coWork/issueView/cardHeader :: cardHeader()"/>
+                <div id="divCardIssueBody" class="card-body" th:replace="coWork/issueView/cardIssueBody :: cardIssueBody()"/>
+              </div>
+
+              <div class="card content-body-area">
+                <div id="divCardReportBody" class="card-body" th:replace="coWork/issueView/cardReportBody :: cardReportBody()"/>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /.container-fluid -->
+      </section>
+      <!-- /.content -->
+    </main>
+
+    <footer th:replace="layout/common :: footer()"></footer>
+  </div>
+
+  <!-- modal -->
+  <div th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></div>
+  <th:block th:replace="layout/modal :: modal('modalDownloadFile', #{common.modal_title.download_file}, 'modal-lg')"></th:block>
+  <th:block th:replace="layout/modal :: modal('modalAddIssueReport', #{co_work.modal_title.add_issue_report}, 'modal-xl')"></th:block>
+  <!-- modal end -->
+
+  <div th:include="layout/common :: script()"></div>
+
+  <script>
+
+    let PageFunction = {};
+
+    $(document).ready(function () {
+
+      let _this = $(this);
+
+      let _page = '[[${pageable.pageNumber}]]';
+      let _size = '[[${pageable.pageSize}]]';
+      let _issueId = 0;
+
+      let setParam = function(page, size) {
+
+        let param = "";
+
+        param += "page=" + page;
+        param += "&size=" + size;
+        param += "&searchType=[[${searchIssueVO.searchType}]]";
+        param += "&searchText=[[${searchIssueVO.searchText}]]";
+        param += "&writerName=[[${searchIssueVO.writerName}]]";
+        param += "&writerId=[[${searchIssueVO.writerId}]]";
+        param += "&searchDateType=[[${searchIssueVO.searchDateType}]]";
+        param += "&searchDateFrom=[[${searchIssueVO.searchDateFrom}]]";
+        param += "&searchDateEnd=[[${searchIssueVO.searchDateEnd}]]";
+        param += "&sortProp=[[${searchIssueVO.sortProp}]]";
+
+        return param;
+      }
+
+      let deleteIssueItem = function() {
+        reqDelete('/coWorkApi/deleteIssue/' + _issueId
+          , function (data) {
+            if (data.result) {
+              location.href = "/coWork/issueList?" + setParam(0, _size);
+              toastr.success(data.message);
+            } else {
+              toastr.error(data.message);
+            }
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+          }, "json");
+      }
+
+      _this.on("click", "a[id^='btnIssueReportFile_']", function () {
+        if($(this).data("ext").toUpperCase() === "PDF") window.open("[[${saveBasePath}]]" + $(this).data("file-path"));
+        if($(this).data("is-image")) return;
+        else executeFileDownloadModal($(this).data("id"), "ISSUE_REPORT_FILE");
+      });
+
+      _this.on("click", "#btnGoToList", function(){
+        location.href = "/coWork/issueList?" + setParam(_page, _size);
+      });
+
+      _this.on("click", "#btnDelete", function (){
+        _issueId = $(this).data("id");
+        showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.issue_view.confirm_delete_issue}]]", deleteIssueItem);
+      });
+
+      _this.on("click", "#btnUpdateIssue", function(){
+        location.href="/coWork/issueUpdate?issueId=" + $(this).data("id") + "&" + setParam(_page, _size);
+      });
+
+      _this.on('click', '#btnAddIssueReport', function (e) {
+        _issueId = $(this).data("id");
+        modalShowAndDraggable('#modalAddIssueReport');
+      });
+
+      _this.on('show.bs.modal', '#modalAddIssueReport', function () {
+        reqGet("/coWorkModal/addIssueReport/" +  _issueId
+          , function (data) {
+            $('#modalAddIssueReport').find('.modal-body').html(data);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+
+      $("#modalAddIssueReport").on('hidden.bs.modal', function () {
+        $("#mBtnAddIssueReport").off("click");
+        $("#modalAddIssueReport").find('.modal-body').html('');
+      });
+
+      _this.on("click", "a[id^='btnIssueReportFile_']", function () {
+        executeFileDownloadModal($(this).data("id"), "ISSUE_REPORT_FILE");
+      });
+
+      PageFunction.setParam = setParam;
+    });
+  </script>
+</body>
+
+</html>

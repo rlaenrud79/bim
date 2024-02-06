@@ -1,0 +1,91 @@
+<div class="content add-coworkissue-report">
+    <table class="table">
+        <caption th:text="#{co_work.modal.add_issue_report.report_contents}">작업내용</caption>
+        <tbody>
+            <tr>
+                <th><span th:text="#{co_work.modal.add_issue_report.contents}">내용</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                <td>
+                    <div th:replace="common/editor/page :: load()"></div>
+                </td>
+            </tr>
+            <tr>
+                <th th:text="#{co_work.modal.add_issue_report.attach_file}">파일 첨부</th>
+                <td>
+                  <div th:replace="/common/fileUploader :: multiFileUploader('coWorkIssueReportFileUpload')"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="btn-footer">
+    <button id="postCoWorkIssueReport" type="button" class="btn bg-gradient-success" th:text="#{co_work.modal.add_issue_report.btn_add}">등록</button>
+</div>
+<div th:include="common/editor/page :: script()"></div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<script>
+  $(document).ready(function () {
+
+    let $this = $("#coWorkIssueReport");
+    let _coWorkIssueId = [[${coWorkIssueId}]];
+    let _coWorkIssueReportId = 0;
+    let _coWorkIssueFileExtension = '[[${coWorkIssueFileExtension}]]';
+
+    $this.on("click", "#postCoWorkIssueReport", function (){
+      if(CommonEditor.getInputData() == "<p><br></p>"  || CommonEditor.isEmpty()){
+        showErrorAlert("ALERT", "[[#{co_work.modal.add_issue_report.error_no_contents}]]");
+        return;
+      }
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.modal.add_issue_report.confirm_add_issue_report}]]", executeAddCoWorkIssueReport);
+    });
+
+    function getSendData() {
+      return JSON.stringify({
+        "coWorkIssueId": _coWorkIssueId,
+        "contents": CommonEditor.getInputData()
+      });
+    }
+
+    let executeAddCoWorkIssueReport = function () {
+      reqPostJSON('/coWorkApi/postCoWorkIssueReport'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            if ($("#coWorkIssueReportFileUpload"+"s").find(".devo_file_list").length > 0) {
+              _coWorkIssueReportId = data.returnId;
+              $("#coWorkIssueReportFileUpload").dmUploader("start");
+            }
+            else completeUploadFile();
+          }
+          else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    let completeUploadFile = function () {
+      reloadComponent("/coWork/coWorkIssueResult/"+_coWorkIssueId, "#issueResult", "");
+      toastr.success('[[#{co_work.modal.add_issue_report.message_success}]]');
+      $this.modal("hide");
+    }
+
+    let setFileExtraData = function () {
+      return {
+        "id": _coWorkIssueReportId,
+        "fileUploadUIType": "CO_WORK_ISSUE_REPORT",
+        "makeVersion": false,
+        "executeHoopsConverter" : false
+      }
+    }
+
+    makeMultiUploaderScript("#coWorkIssueReportFileUpload"
+      , setFileExtraData
+      , 5000000000
+      , _coWorkIssueFileExtension.split("||")
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+
+  });
+</script>

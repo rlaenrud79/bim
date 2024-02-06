@@ -1,0 +1,127 @@
+<div className="card-body" id="divCardBody" th:fragment="contentForm()">
+    <div class="print-page print-write">
+        <div class="card-body">
+            <section class="page pg-ty1">
+                <div class="title">
+                    <h2>기성검사조서</h2>
+                </div>
+                <table>
+                    <colgroup>
+                        <col style="width:20%">
+                        <col style="width:80%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th>1. 공사명 :</th>
+                        <td><input type="text" th:value="${project.name}"></td>
+                    </tr>
+                    <tr>
+                        <th>2. 기성금액 :</th>
+                        <td>￦ <input type="text" class="wid-s" value="11,736,113,000"> (금회 : ￦ <input type="text" class="wid-s" value="5,753,451,000">)</td>
+                    </tr>
+                    <tr>
+                        <th>3. 계약년월일 :</th>
+                        <td><input type="text" class="wid-xs" th:value="${#strings.substring(project.startDesignDate, 0, 4)}"> 년 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDesignDate, 5, 7)}"> 월 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDesignDate, 8, 10)}"> 일</td>
+                    </tr>
+                    <tr>
+                        <th>4. 착공년원일 :</th>
+                        <td><input type="text" class="wid-xs" th:value="${#strings.substring(project.startDate, 0, 4)}"> 년 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDate, 5, 7)}"> 월 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDate, 8, 10)}"> 일</td>
+                    </tr>
+                    <tr>
+                        <th>5. 준공예정일 :</th>
+                        <td><input type="text" class="wid-xs" th:value="${#strings.substring(project.endDate, 0, 4)}"> 년 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDate, 5, 7)}"> 월 <input type="text" class="wid-xs" th:value="${#strings.substring(project.startDate, 8, 10)}"> 일</td>
+                    </tr>
+                    <tr>
+                        <th>6. 계약자 :</th>
+                        <td>
+                            <table>
+                                <tr>
+                                    <td><input type="text" value="(주)태영건설"></td>
+                                    <td><input type="text" value="대표이사"></td>
+                                    <td><input type="text" value="이재규"></td>
+                                    <td>
+                                        <div class="btn-control">
+                                            <a href="#" class="btn-add" title="추가"></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                    <td><input type="text"></td>
+                                    <td>
+                                        <div class="btn-control">
+                                            <a href="#" class="btn-add" title="추가"></a>
+                                            <a href="#" class="btn-remove" title="삭제"></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="ph-20">
+                            <p>상기 공사 기성부분 검사의 명을 받아 <input type="text" class="wid-xs" value="2022">년 <input type="text" class="wid-xs" value="02">월 <input type="text" class="wid-xs" value="11">일 검사한 결과 별지 명세서와 같이 전 공사에 대하여 <input type="text" class="wid-xs" value="40">% 기성이 상위없음을 증명함</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="txt-right">
+                            <input type="text" class="wid-xs" value="2022"> 년 <input type="text" class="wid-xs" value="02"> 월 <input type="text" class="wid-xs" value="22"> 일
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="txt-right">
+                            <table>
+                                <colgroup>
+                                    <col style="width:70%">
+                                    <col style="width:15%">
+                                    <col style="width:5%">
+                                </colgroup>
+                                <tr>
+                                    <th class="txt-right">검사원 :</th>
+                                    <td class="txt-right"><input type="text" value="최윤형"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                                <tr>
+                                    <th class="txt-right">검사원 :</th>
+                                    <td class="txt-right"><input type="text" value="최윤형"></td>
+                                    <td class="txt-right">(인)</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="file-btm">
+                    <dl>
+                        <dt>첨부 :</dt>
+                        <dd>1.
+                            <input type="text" value="기성부분 집계표">
+                            <div class="btn-control">
+                                <a href="#" class="btn-add" title="추가"></a>
+                            </div>
+                        </dd>
+                        <dd>2.
+                            <input type="text" value="기성부분 내역서">
+                            <div class="btn-control">
+                                <a href="#" class="btn-add" title="추가"></a>
+                                <a href="#" class="btn-remove" title="삭제"></a>
+                            </div>
+                        </dd>
+                        <dd>3.
+                            <input type="text" value="그 밖의 참고자료">
+                            <div class="btn-control">
+                                <a href="#" class="btn-add" title="추가"></a>
+                                <a href="#" class="btn-remove" title="삭제"></a>
+                            </div>
+                        </dd>
+                    </dl>
+                </div>
+            </section><!--//section-->
+
+            <div class="btn-box">
+                <a href="#" class="btn bg-gradient-primary">확인</a>
+            </div>
+        </div>
+    </div>
+</div>

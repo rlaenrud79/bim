@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/workAmountList/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <input type="hidden" id="tmpWorkAmountId" value="">
+        <input type="hidden" id="tmpTrIndex" value="">
+        <input type="hidden" id="pageNo" value="">
+
+        <div id="divCardBody" th:replace="admin/workAmountList/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalWorkAmountAdd', #{admin.work_amount.modal_title.add_work} , 'popup-md')">공종 등록</th:block>
+<th:block th:replace="layout/popup :: modal('modalWorkAmountUpdate', #{admin.work_amount.modal_title.update_work}, 'popup-md')">공종 수정</th:block>
+<!-- modal end -->
+
+<div th:include="common/workSearchSelectOption :: script('searchWorkId')"></div>
+<script>
+  let confirmDeleteWorkAmount = "[[#{contents.work_amount_list.confirm_delete_work_amount}]]"
+</script>
+<script src="/dist/js/pages/workAmount.js"></script>
+</body>
+</html>

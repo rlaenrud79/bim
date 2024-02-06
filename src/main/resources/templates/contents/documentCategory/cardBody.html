@@ -1,0 +1,60 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+    <div class="table-wrap">
+      <table class="table">
+        <colgroup>
+          <col style="width:5%">
+          <col>
+          <col style="width:10%" span="6">
+        </colgroup>
+        <tbody>
+        <tr>
+          <th th:text="#{contents.document_category.list_title_no}">No</th>
+          <th th:text="#{contents.document_category.list_title_name}">구분명</th>
+          <th th:text="#{contents.document_category.list_title_writer}">등록자</th>
+          <th th:text="#{contents.document_category.list_title_sort_no}">순서</th>
+          <th th:text="#{contents.document_category.list_title_enabled}">사용여부</th>
+          <th th:text="#{contents.document_category.list_title_write_date}">등록일시</th>
+          <th th:text="#{contents.document_category.list_title_last_modify_date}">최종 수정 일시</th>
+          <th th:text="#{contents.document_list.list_title_delete}">삭제</th>
+        </tr>
+        <th:block th:if="${list == null or list.size() == 0}">
+          <tr>
+            <td colspan="8" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+          </tr>
+        </th:block>
+        <tr th:id="trIndex_+${index.index}" th:each="item, index : ${list}">
+          <td th:text="${index.index + 1}">1</td>
+          <td>
+            <a th:id="btnUpdate_+${index.index}"
+                 href="#"
+                 th:data-id="${item.id}" class="tb-tit pop-open-btn" data-modal="#modalDocumentCategoryAdd">
+            <span class="text-over-dot" th:text="${item.name}">배관공종</span>
+            </a>
+          </td>
+          <td>
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td>
+            <div class="">
+              <button th:id="btnForwardSortNo_+${index.index}"
+                      th:data-id="${item.id}" th:data-index="${index.index}"
+                      th:if="${minSortNo lt item.sortNo}" type="button"
+                      class="btnForwardSortNo"></button>
+<!--              <span th:text="${item.sortNo}">1</span>-->
+              <button th:id="btnBackwardSortNo_+${index.index}"
+                      th:data-id="${item.id}" th:data-index="${index.index}"
+                      th:if="${maxSortNo gt item.sortNo}" type="button"
+                      class="btnBackwardSortNo"></button>
+            </div>
+          </td>
+          <td th:text="${item.documentCategoryStatusString}">Y</td>
+          <td th:text="${#temporals.format(item.writeDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021-04-06 11:10</td>
+          <td th:text="${#temporals.format(item.lastModifyDate, #messages.msg('system.locale.dateformat.year_month_day_hour_min'))}"> 2021-04-06 11:10</td>
+          <td>
+            <a href="#" id="btnDelete" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-document-category-id="${item.id}" class="btn-xs"><span th:text="#{contents.document_list.btn_delete_document}">삭제</span></a>
+          </td>
+        </tr>
+        </tbody>
+      </table><!--// table-->
+    </div><!--//table-wrap-->
+</div>

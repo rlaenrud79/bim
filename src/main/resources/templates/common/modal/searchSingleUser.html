@@ -1,0 +1,187 @@
+
+<!--<div class="txt-box">-->
+<!--    <p>결재자 지정은 1명만 가능합니다.</p>-->
+<!--</div>-->
+
+<div class="search-box mb-40">
+    <input type="text" id="mSearchText" value="" name="mSearchText" class="wid-m" placeholder="이름 또는 소속을 입력하세요." onkeydown="handleKeyPress(event, '#btnSearchUser')">
+    <a href="#none" id="btnSearchUser" class="btn btn-color2"><span>검색</span></a>
+</div>
+
+
+<div class="board-top">
+    <div class="total-num"><span th:utext="#{common.total_list_count(${searchUserDTOs.size()})}">총 <strong>100</strong>건</span></div>
+</div><!--//board-top-->
+
+<div class="table-wrap">
+    <table class="table">
+        <tbody>
+        <tr>
+            <th th:text="#{common.modal.search_single_user.list_title_photo}">사진</th>
+            <th th:text="#{common.modal.search_single_user.list_title_name}">이름</th>
+            <th th:text="#{common.modal.search_single_user.list_title_company}">소속</th>
+            <th th:text="#{common.modal.search_single_user.list_title_rank}">직급</th>
+            <th th:text="#{common.modal.search_single_user.list_title_select}">선택</th>
+        </tr>
+        <th:block th:if="${searchUserDTOs == null or searchUserDTOs.size() == 0}">
+            <tr>
+                <td colspan="5" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+            </tr>
+        </th:block>
+        <tr th:id="tr_+${item.accountDTO.userId}" th:each="item, index : ${searchUserDTOs}">
+            <td><div th:replace="/common/userInfo :: userInfo(${item.accountDTO})"></div></td>
+            <td th:if="${!item.accountDTO.isRoleAdminProcess}" th:id="td_+${index.index}" class="text-center" th:text="${item.accountDTO.userName}">abc(공정 관리자)</td>
+            <td th:if="${item.accountDTO.isRoleAdminProcess}" th:id="td_+${index.index}" class="text-center" th:text="${item.accountDTO.userName} + '(' + #{common.modal.search_single_user.role_admin_process} + ')'">김기사</td>
+            <td class="text-center"><small><span th:text="${item.accountDTO.companyRoleName}">발주사</span> / <span th:text="${item.accountDTO.companyName}">한국 발주</span></small></td>
+            <td th:if="${item.accountDTO.rank == null}">-</td>
+            <td th:if="${item.accountDTO.rank != null}" th:text="${item.accountDTO.rank}">-</td>
+            <td><a href="#" th:id="mBtnSelect_+${index.index}"
+                   th:data-id="${item.accountDTO.userId}"
+                   th:data-name="${item.accountDTO.userName}" th:text="#{common.modal.search_single_user.list_title_select}" class="btn-xs">선택</a></td>
+            <td style="display: none;" th:text="${item.accountDTO.companyName}"></td>
+            <td style="display: none;" th:text="${item.accountDTO.accountRoles}"></td>
+            <td style="display: none;" th:text="${item.isSearchResult}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!--
+<div class="btn-box">
+    <a href="#none" class="btn btn-color1">저장</a>
+    <a href="#none" class="btn close-btn">취소</a>
+</div>
+-->
+
+
+<script>
+    $(document).ready(function () {
+
+        const $this = $("#[[${formElementIdForModal}]]");
+        const _checkedSearchCondition = "[[${checkedSearchCondition}]]";
+
+
+        let getSearchCondition = function () {
+            let isSearchRoleAdminProject = $("input:checkbox[id='mIsSearchRoleAdminProject']").is(":checked");
+            let isSearchRoleAdminWork = $("input:checkbox[id='mIsSearchRoleAdminWork']").is(":checked");
+            let searchUserType = $("#mSearchUserType").val();
+            let searchText = $("#mSearchText").val();
+            return {isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText};
+        }
+
+        let hideSearchList = function () {
+            $("tr[id^='tr_']").hide();
+        }
+
+        let executeSearch = function (isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText) {
+
+            $("tr[id^='tr_']").each(function (i) {
+
+                let td = $(this).children();
+
+                if (isSearchRoleAdminProject === true && isSearchRoleAdminWork === true && searchUserType === "USER_NAME") {
+                    if (td.eq(1).text().includes(searchText)
+                        && (td.eq(6).text().includes("ROLE_ADMIN_PROJECT") || td.eq(6).text().includes("ROLE_ADMIN_WORK"))
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === true && isSearchRoleAdminWork === false && searchUserType === "USER_NAME") {
+                    if (td.eq(1).text().includes(searchText)
+                        && td.eq(6).text().includes("ROLE_ADMIN_PROJECT")
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === false && isSearchRoleAdminWork === true && searchUserType === "USER_NAME") {
+                    if (td.eq(1).text().includes(searchText)
+                        && td.eq(6).text().includes("ROLE_ADMIN_WORK")
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === false && isSearchRoleAdminWork === false && searchUserType === "USER_NAME") {
+                    if (td.eq(1).text().includes(searchText)
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === true && isSearchRoleAdminWork === true && searchUserType === "COMPANY_NAME") {
+                    if (td.eq(5).text().includes(searchText)
+                        && (td.eq(6).text().includes("ROLE_ADMIN_PROJECT") || td.eq(6).text().includes("ROLE_ADMIN_WORK"))
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === true && isSearchRoleAdminWork === false && searchUserType === "COMPANY_NAME") {
+                    if (td.eq(5).text().includes(searchText)
+                        && td.eq(6).text().includes("ROLE_ADMIN_PROJECT")
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === false && isSearchRoleAdminWork === true && searchUserType === "COMPANY_NAME") {
+                    if (td.eq(5).text().includes(searchText)
+                        && td.eq(6).text().includes("ROLE_ADMIN_WORK")
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+                if (isSearchRoleAdminProject === false && isSearchRoleAdminWork === false && searchUserType === "COMPANY_NAME") {
+                    if (td.eq(5).text().includes(searchText)
+                        && td.eq(7).text().includes("TRUE"))
+                        $(this).show();
+                }
+            });
+        }
+
+        let init = function(){
+            if(_checkedSearchCondition === "true") {
+                hideSearchList();
+                executeSearch(true, true, "USER_NAME", "");
+            }
+        }
+
+        $this.find("#mIsSearchRoleAdminProject, #mIsSearchRoleAdminWork").on("click", function () {
+            let {isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText} = getSearchCondition();
+            hideSearchList();
+            executeSearch(isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText);
+        });
+        /**
+        $this.find('#mSearchText').on('keyup', function () {
+            let {isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText} = getSearchCondition();
+
+            if (searchText.length < 2) {
+                $("tr[id^='tr_']").show();
+                return;
+            }
+
+            hideSearchList();
+            executeSearch(isSearchRoleAdminProject, isSearchRoleAdminWork, searchUserType, searchText);
+        });
+        **/
+        $this.find('a[id^=\'mBtnSelect_\']').on('click', function (e) {
+            if ('' != '[[${formElementIdForUserId}]]') $("#[[${formElementIdForUserId}]]").val($(this).attr("data-id"));
+            if ('' != '[[${formElementIdForUserName}]]') $("#[[${formElementIdForUserName}]]").val($(this).attr("data-name"));
+            if ('' != '[[${formElementIdForModal}]]') $this.find('.close-btn').click();
+        });
+
+        $this.find('.close-btn').on('click', function () {
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+            //$this.focus();
+        });
+
+        $this.find('#btnSearchUser').on('click', function () {
+            let param = `formElementIdForUserId=[[${formElementIdForUserId}]]`;
+            param += `&formElementIdForModal=[[${formElementIdForModal}]]`;
+            param += `&formElementIdForUserName=[[${formElementIdForUserName}]]`;
+            param += `&searchUserFilter=N`;
+            param += `&searchText=${$("#mSearchText").val()}`;
+            const params = {};
+
+            const callback = function (data) {
+                $('#modalSearchSingleUser').find('.popup-con').html(data);
+                $('#modalSearchSingleUser').show();
+            };
+
+            $.nfx.ajaxGet(params, 'html', callback, `/commonModal/searchSingleUserText?${param}`);
+        });
+
+        //init();
+
+
+    });
+</script>

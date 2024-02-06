@@ -1,0 +1,166 @@
+<div class="content my-view-point">
+    <div class="hoops-ui-window-body">
+      <img id="my-snapshot-dialog-image-copy" class="snapshot-dialog-image"/>
+      <!--div class="snapshot-text">Right Click to Save image</div-->
+    </div>
+    <div class="hoops-ui-window-footer">      
+      <div class="form-group">
+      <label form="modelName"><span th:text="#{account.modal.my_snap_shot.snap_shot_name}">스냅샷 명</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </label>
+      <input type="text" id="mySnapShotTitle" name="mySnapShotTitle" class="form-control"
+             th:placeholder="#{account.modal.my_snap_shot.input_snap_shot_name_to_save}" maxlength="255">
+    </div>
+      <button type="button" id="saveMySnapShot" class="btn bg-gradient-primary ml-2"><i class="fas fa-save"></i>저장</button>
+    </div>
+  <div class="myviewpoint-list">
+    <div class="scroll-area-v">
+      <table id="mySnapShotTable" class="table">
+        <caption th:text="#{account.modal.my_snap_shot.my_snap_shot_list}">저장 스냅샷 리스트</caption>
+        <thead>
+        <tr>
+          <th class="text-center w-50" th:text="#{account.modal.my_snap_shot.snap_shot_name}">스냅샷 명</th>
+          <th class="text-center w-50" th:text="#{account.modal.my_snap_shot.working}">작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="mySnapShot, index : ${mySnapShots}" th:data-id="${mySnapShot.id}">
+          <td class="text-center">
+            <div class="form-group">
+              <p class="text-left" th:id="${'readModelName_'+mySnapShot.id}" th:text="${mySnapShot.title}" style="display: block">상부 거더 1좌측 뷰상부 거더 1좌측 뷰</p>
+              <input type="text" th:id="${'writeModelName_'+mySnapShot.id}" th:value="${mySnapShot.title}" class="form-control w-100" placeholder="수정할 View point 명." style="display: none"/>
+            </div>
+          </td>
+          <td class="text-center" th:data-id="${mySnapShot.id}">
+            <button type="button" class="btn btn-app goSnopShot"><i class="fas fa-share-square"></i></button>
+            <button type="button" class="btn btn-app doCoWorkNew" th:data-model-ids="${mySnapShot.viewModelId}"><i class="fas fa-users"></i></button>
+            <button type="button" class="btn btn-app editMySnapShotTitle">
+              <i class="fas fa-edit"></i>
+              <i class="fas fa-save" style="display: none"></i>
+            </button>
+            <button type="button" class="btn btn-app deleteMySnapShot" th:data-file-count="${mySnapShot.mySnapShotFiles.size()}"><i class="fas fa-trash-alt"></i></button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () { 
+	  
+    $("#saveMySnapShot").on("click", function () {
+      if (hwv == null || hwv == undefined) return false;
+      let camera = hwv.view.getCamera();
+      let jsonViewPoint = camera.forJson();
+	
+      let title = $("#mySnapShotTitle").val();
+      let source = $("#my-snapshot-dialog-image-copy").attr("src");
+      if ($.trim(title) == "") {
+        showErrorAlert("my snap shot", "enter title of snapshot.");
+        $("#mySnapShotTitle").focus;
+        return;
+      }
+
+      let param = {
+        title          : title
+        , source       : source
+        , viewPointJson: JSON.stringify(jsonViewPoint)
+        , viewModelJson: JSON.stringify(models)
+        , viewModelId  : modelIds
+      }
+
+      reqPost("/account/mySnapShot"
+        , param
+        , (result) => {
+          $('#dialogMySnapShot').html(result);
+
+          let id = $("#dialogMySnapShot #mySnapShotTable tr:last").data("id");
+          let rowCount = $("#mySnapShotArea tbody tr").length;
+          reloadComponentTabActive('/contents/mySnapShotArea/' + id, "#mySnapShotArea", "modelIds="+modelIds);
+          $("#mySnapShotAreaCount").html(++rowCount);
+          $("#my-snapshot-dialog-image-copy").attr("src", source);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }
+      )
+    });
+    
+    $(".goSnopShot").on("click", function () {
+      let mySnopShotId = getData(this,"tr","id"); 
+      window.open("/contents/modelingViewBy/" + mySnopShotId, "my_view_point - " + new Date());
+    });
+
+    $(".doCoWorkNew").on("click", function () {
+      let modelIds = $(this).data("model-ids");
+      let mySnapShotId = getData(this,"tr","id");
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{co_work.co_work_list.confirm_add_co_work}]]", () => {
+        window.open("/coWork/modelingView?modelIds=" + modelIds +"&mySnapShotId="+mySnapShotId, "my_view_point - " + new Date());
+      });
+    });
+
+    $(".editMySnapShotTitle").on("click", function () {
+      let _editMySnapShotTitle = $(this);
+      let id = getData(this,"tr","id");
+
+      if (_editMySnapShotTitle.find(".fa-edit").is(":visible")) {
+    	_editMySnapShotTitle.find(".fa-edit").hide();
+    	_editMySnapShotTitle.find(".fa-save").show();
+        $("#writeModelName_" + id).show();
+        $("#readModelName_" + id).hide();
+      } else {
+        let title = $("#writeModelName_" + id).val();
+        if (title.trim() === "") {
+          alert("[[#{account.modal.my_snap_shot.input_my_snap_shot}]]")
+          $("#writeModelName_" + id).focus();
+          return false;
+        }
+
+        let param = {id: id, title: title};
+        let currentImg = $("#my-snapshot-dialog-image-copy").attr('src');
+
+        reqPut("/account/mySnapShotTitle"
+          , param
+          , (result) => {
+            $('#dialogMySnapShot').html(result);
+            reloadComponentTabActive('/contents/mySnapShotArea/' + id, "#mySnapShotArea", "modelIds="+modelIds);
+            $("#my-snapshot-dialog-image-copy").attr('src', currentImg);
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+          });
+      }
+    });
+
+    $(".deleteMySnapShot").on("click", function () {
+      let fileCount = $(this).data("file-count");
+      let message = "[[#{account.modal.my_snap_shot.delete_my_snap_shot}]]";
+
+      if(fileCount > 0) {
+        message = "[[#{account.modal.my_snap_shot.delete_with_file}]]" + "<br/>" + message;
+      }
+
+      showConfirm("[[#{account.modal.my_snap_shot.my_snap_shot_delete}]]",message,() =>{
+
+        reqDelete("/account/mySnapShot/"+getData(this,"tr","id")
+          , (result) => {
+            $('#dialogMySnapShot').html(result);
+            let rowCount = $("#dialogMySnapShot #mySnapShotTable tr").length;
+
+            if(rowCount > 0) {
+              let id = $("#dialogMyViewPoint #mySnapShotTable tr:last").data("id");
+              let currentViewPointCount = $("#mySnapShotCount").html();
+              reloadComponentTabActive('/contents/mySnapShotArea/' + id, "#mySnapShotArea", "modelIds="+modelIds);
+              $("#mySnapShotCount").html(--currentViewPointCount);
+            }
+          }
+          , function (xhr) {
+            showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+          }, "html");
+      });
+    });
+    $("#my-snapshot-dialog-image-copy").parent().height(300); // shrink blank area from snapshot area
+    $("#mySnapShotTitle").width(180); // show all placeholder for korean
+  });
+</script>

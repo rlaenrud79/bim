@@ -1,0 +1,11 @@
+<div id="divContentHeader" class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{admin.work_amount.title_work_amount_list}">공종 총계 관리</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <form id="frmSearchForm" th:replace="admin/workAmountList/frmSearchForm :: frmSearchForm()"/>
+    </div>
+    <a href="#none" id="btnAdd" class="btn btn-color1 pop-open-btn" data-modal="#modalWorkAmountAdd"><span th:text="#{admin.work_amount.btn_add}">등록</span></a>
+  </div>
+</div>

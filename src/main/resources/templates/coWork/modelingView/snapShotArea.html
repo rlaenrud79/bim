@@ -1,0 +1,4 @@
+<div id="snapShotArea" class="" role="tabpanel" th:fragment="load()" th:classappend="${modelings!=null and modelings.size() > 0} ? 'tab-pane bim-snapshot-area' : 'bim-snapshot-area non-model'">
+	<article id="snapShotList" th:replace="/coWork/modelingView/snapShotList :: snapShotList()"></article>
+	<article id="snapShotFileList" th:replace="/coWork/modelingView/snapShotFileList :: snapShotFileList()"></article>
+</div>

@@ -1,0 +1,161 @@
+<p class="txt1" th:text="#{contents.gisung_list.gisung_excel_upload_message}">엑셀파일을 업로드하세요.</p>
+<p class="fm-msg" th:text="#{contents.gisung_list.gisung_excel_upload_max_size}">최대 업로드 가능 용량 10MB</p>
+<div class="popup-add-file">
+    <div th:replace="/common/fileUploader :: singleFileUploaderNew('processItemExcelFile')"></div>
+</div><!--//popup-add-file-->
+
+<div class="btn-box">
+    <a href="#none" id="btnAddProcessItemExcel" class="btn btn-color1"><span th:text="#{common.modal.btn_set_save}">적용</span></a>
+    <a href="#none" class="btn close"><span th:text="#{common.modal.btn_cancel}">취소</span></a>
+</div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+
+<script>
+    $(document).ready(function () {
+        let processItemExcelFileId = "";
+        let excelExport = false;
+
+        const processFileExtension = '[[${processFileExtension}]]';
+        const allowFileExtList = processFileExtension.split("||");
+
+        $('#btnAddProcessItemExcel').on('click', function () {
+            if ($('li.devo_file_list').length === 0) {
+                alert("[[#{process.modal.process_file_upload.error_no_upload_file}]]");
+                return false;
+            }
+
+            if (confirm("[[#{process.modal.process_file_upload.confirm_upload_file}]]")) {
+                addProcessItemExcel();
+            }
+        });
+
+        let getOnlyFileName = function (filePath) {
+            let fileValue = filePath.split("\\");
+            return fileValue[fileValue.length - 1];
+        }
+
+        function addProcessItemExcel() {
+            reqPostJSON('/processApi/postProcessItemExcelFileExcel', "",
+                function (data) {
+                    if (!data.result) {
+                        alert(data.message);
+                    } else {
+                        //toastr.success(data.message);
+                        processItemExcelFileId = data.returnId;
+                        startFileUpload();
+                        $(".load-info").show();
+                    }
+                },
+                function (xhr) {
+                    alert(xhr.responseJSON.message);
+                }
+            );
+            /**
+            reqPostJSON('/processApi/postProcessFileProcessInfo'
+                , {uploadFileName: getOnlyFileName($(".input_file").val())}
+                , function (data) {
+                    if (data.result) {
+                        processItemExcelFileId = data.returnId;
+                        startFileUpload();
+                        $(".load-info").show();
+                    } else showErrorAlert("ALERT", data.message);
+                }
+                , function (xhr) {
+                    showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+             **/
+        }
+
+        function startFileUpload() {
+            $("#processItemExcelFile").dmUploader("start");
+        }
+
+        function completeUploadFile(obj) {
+            if ($(obj)[0].id === "processItemExcelFile") {
+                sendSocket();
+                $('.close-btn').click();
+                //PageFunction.resetAndSearch();
+            }
+        }
+
+        function fileUploaderExtraData() {
+            return {
+                "id": processItemExcelFileId,
+                "fileUploadUIType": "PROCESS_ITEM_EXCEL_FILE",
+                "makeVersion": false,
+                "executeHoopsConverter": false
+            }
+        }
+
+        makeSingleUploaderScript("#processItemExcelFile"
+            , fileUploaderExtraData
+            , 5000000000
+            , allowFileExtList
+            , '[[#{common.file_upload.error_single_uploader}]]'
+            , '[[#{common.file_upload.error_file_size}]]'
+            , '[[#{common.file_upload.error_ext}]]'
+            , completeUploadFile
+        );
+
+        function sendSocket() {
+            if (!excelExport) {
+                // WebSocket 연결을 열기
+                const socket = new WebSocket('ws://localhost:28000');
+
+                // 연결이 열린 경우 실행되는 이벤트 핸들러
+                socket.addEventListener('open', (event) => {
+                    //$("#btnCompareGisung").html("검증/비교 중");
+                    console.log('WebSocket 연결이 열렸습니다.', event);
+
+                    // 서버에 메시지 전송
+                    socket.send('make_process_item_cost_detail');
+                    excelExport = true;
+                });
+
+                // 메시지를 받은 경우 실행되는 이벤트 핸들러
+                socket.addEventListener('message', (event) => {
+                    console.log('서버로부터 메시지를 수신했습니다:', event.data);
+                    //if (event.data === "result_make_gisung_compare") {
+                    //$("#btnCompareGisung").html("검증/비교");
+                    $("#btnUploadCostDetailFile").addClass("pop-open-btn");
+                    $("#btnUploadCostDetailFile").html('복합단가 업로드');
+                    $(".load-info").hide();
+                    // }
+                    excelExport = false;
+                    socket.close();
+                    // 받은 메시지를 처리하는 코드를 추가하세요.
+                });
+
+                // 에러가 발생한 경우 실행되는 이벤트 핸들러
+                socket.addEventListener('error', (event) => {
+                    console.error('WebSocket 오류:', event);
+                    excelExport = false;
+
+                    reqGet("/processApi/exportProcessItemPython",
+                        function (data) {
+                            if (!data.result) {
+                                alert(data.message);
+                            } else {
+                                alert(data.message);
+                                //toastr.success(data.message);
+                                //location.reload();
+                            }
+                            //$("#btnUploadCostDetailFile").addClass("pop-open-btn");
+                            //$("#btnUploadCostDetailFile").html('복합단가 업로드');
+                            //$(".load-info").hide();
+                        },
+                        function (xhr) {
+                            alert(xhr.responseJSON.message);
+                        }
+                    )
+                });
+
+                // 연결이 닫힌 경우 실행되는 이벤트 핸들러
+                socket.addEventListener('close', (event) => {
+                    console.log('WebSocket 연결이 닫혔습니다.', event);
+                    excelExport = false;
+                });
+            }
+        }
+    });
+</script>

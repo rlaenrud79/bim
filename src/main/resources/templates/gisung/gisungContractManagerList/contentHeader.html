@@ -1,0 +1,11 @@
+<div class="header" th:fragment="contentHeader()">
+    <div class="header-left">
+        <h2>계약대상자등록</h2>
+    </div>
+    <div class="header-right">
+        <div class="top-search">
+            <form id="frmSearchForm" th:replace="gisung/gisungContractManagerList/frmSearchForm :: frmSearchForm()"/>
+        </div>
+        <a href="#none" id="btnAdd" class="btn btn-color1 pop-open-btn" data-gisung-year="" data-modal="#modalAddGisungContractManager"><span th:text="#{contents.gisung_list.btn_open_add_modal}">신규등록</span></a>
+    </div>
+</div>

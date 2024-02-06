@@ -1,0 +1,2194 @@
+
+<!-- css for hoops is defined in templates/layout/common.html -->
+
+<div id="modelingCanvas" th:fragment="loadCanvas()">
+  <input type="hidden" id="userId" th:value="${#session.getAttribute('scopedTarget.userInfo')?.id}" />
+  <div id="content">
+    <div id="viewerContainer"></div>
+
+    <div id="dialogCreateJob" th:title="#{common.modal.add_job_from_snapshot.title}"></div>
+    <div id="dialogMySnapShot" title="My Shap Shot" th:data-view-point="${selectedMySnapShot}"></div>
+    <div id="dialogMultiSelect" title="내역 목록">
+      <table id="tbMultiSelect" border="1">
+        <thead>
+        <tr>
+          <td class='text-center'>공정명</td>
+          <td class='text-center' rowspan="2">공종</td>
+          <td class='text-center' rowspan="2">진행률</td>
+          <td class='text-center' rowspan="2">시작일</td>
+          <td class='text-center' rowspan="2">종료일</td>
+          <td class='text-center' colspan="2">복합단가</td>
+          <td class='text-center'>기성금</td>
+        </tr>
+        <tr>
+          <td class='text-right' id="selectCount">개수 : </td>
+          <td class='text-right' id="costSum" colspan="2">합계 : </td>
+          <td class='text-right' id="taskCostSum">합계 : </td>
+        </tr>
+        </thead>
+        <tbody id="tbMultiSelectBody">
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MONAD: Show Search Name Dialog -->
+    <div id="dialog_search_by_name" title="이름 검색">
+      <div class="d-flex align-items-center">
+        <label for="txtSearchName" class="mb-0 mr-2">이름  </label>
+        <input id="txtSearchName" type="text" class="d-inline-block form-control w-75"></input>
+        <button id="btnSearchName" class="btn bg-gradient-primary ml-2">검색</button>
+      </div>
+      <div class="mt-3 mb-2">객체 수 (<span id="cntSearchName"></span>)</div>
+      <hr/>
+      <table id="tblSearchName" style="width:100%">
+        <thead>
+        <tr>
+          <th style="width:96%">이름</th>
+        </tr>
+        </thead>
+        <tbody id="tblSearchNameBody" style="overflow-y: scroll"></tbody>
+      </table>
+    </div>
+    <!-- MONAD: Show Search Property Dialog -->
+    <div id="dialogSearchByProperty" title="속성 검색">
+      <div>
+        <label for="txtSearchProperty">속성 </label>
+        <input id="txtSearchProperty" type="text" value="Materials and Finishes/Structural Material" style="width:400px"></input>
+        <button id="btnSearchProperty">검색 </button>
+      </div>
+      <div>수량 <span id="cntSearchProperty"></span></div>
+      <hr/>
+      <table id="tblSearchProperty" style="width:100%">
+        <thead>
+        <tr>
+          <th style="width:10%">NodeId</th>
+          <th style="width:65%"> Node Name</th>
+          <th style="width:25%">Property Value</th>
+        </tr>
+        </thead>
+        <tbody id="tblSearchPropertyBody" style="overflow-y: scroll"></tbody>
+      </table>
+    </div>
+    <!-- 모델 선택 다이얼로그 -->
+    <div id="dialogSelectModels" title="모델 선택" style="overflow-y: auto"></div>
+
+    <!-- dk.lee: 민원버튼 클릭 시 다이얼로그 -->
+    <div id="dialog_minwon" title="민원정보"  style="overflow-y: auto">
+      <div class="d-flex align-items-center">
+        <img src="/dist/img/minwon-img.png" width="750"/>
+      </div>
+      <div class="d-flex bim-btn-group contract-buttons" style="padding-top: 10px; justify-content: center;">
+        <button type="button" class="input-group-text" style="background-color: #4472C4;" onclick="popupContractResult('보상완료');">보상완료</button>
+        <button type="button" class="input-group-text" style="background-color: #ED7D31;" onclick="popupContractResult('미보상');">미보상</button>
+        <button type="button" class="input-group-text" style="background-color: #FFC000;" onclick="popupContractResult('수용재결');">수용재결</button>
+        <button type="button" class="input-group-text" style="background-color: #70AD47;" onclick="popupContractResult('국·공유지');">국·공유지</button>
+      </div>
+    </div>
+    <div id="dialog_contract" title="보상현황" style="overflow-y: auto">
+      <div id="contract_content"></div>
+    </div>
+
+    <!-- Toolbar HTML-->
+    <div id="toolBar">
+      <div class="toolbar-tools">
+        <div class="toolbar-group" style="display:none;">
+          <div>
+            <div id="home-button" title="홈 뷰" data-operatorclass="toolbar-home" class="hoops-tool">
+              <div class="tool-icon"></div>
+            </div>
+          </div>
+
+          <div>
+            <div id="view-button" title="뷰 선택" data-operatorclass="toolbar-camera" data-submenu="view-submenu" class="hoops-tool toolbar-menu">
+              <div class="tool-icon"></div>
+            </div>
+            <div id="submenus">
+              <div id="view-submenu" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="view-face" title="Orient Camera To Selected Face" data-operatorclass="toolbar-face" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="view-iso" title="Iso 뷰" data-operatorclass="toolbar-iso" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-ortho" title="직교투영" data-operatorclass="toolbar-ortho" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-persp" title="원근투영" data-operatorclass="toolbar-persp" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="view-left" title="좌측면도" data-operatorclass="toolbar-left" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-right" title="우측면도" data-operatorclass="toolbar-right" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-bottom" title="밑면도" data-operatorclass="toolbar-bottom" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="view-front" title="정면도" data-operatorclass="toolbar-front" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-back" title="배면도" data-operatorclass="toolbar-back" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="view-top" title="평면도" data-operatorclass="toolbar-top" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="toolbar-group">
+          <div style="display:none;">
+            <div id="edgeface-button" title="형상 선택" data-operatorclass="toolbar-wireframeshaded" data-submenu="edgeface-submenu" class="hoops-tool toolbar-menu">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>형상 선택</span></div>
+            <div id="submenus">
+              <div id="edgeface-submenu" data-button="edgeface-button" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="viewport-wireframe-on-shaded" title="음영처리" data-operatorclass="toolbar-wireframeshaded" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>음영처리</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="viewport-shaded" title="우선숨김" data-operatorclass="toolbar-shaded" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>우선숨김</span></div>
+                    </td>
+                  </tr>
+                  <!--
+                  <tr>
+                    <td>
+                      <div id="viewport-empty" title="투시" data-operatorclass="toolbar-hidden-line" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="viewport-wireframe" title="와이어프레임" data-operatorclass="toolbar-wireframe" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  -->
+                  <tr>
+                    <td>
+                      <div id="viewport-xray" title="X-Ray" data-operatorclass="toolbar-xray" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>X-Ray</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div id="click-button" title="객체 선택" data-operatorclass="toolbar-select" data-submenu="click-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>객체 선택</span></div>
+            <div id="submenus">
+              <div id="click-submenu" data-button="click-button" class="toolbar-submenu submenus">
+                <table>
+                  <!-- MONAD
+                  <tr>
+                    <td>
+                      <div id="note-button" title="핀 노트" data-operatorclass="toolbar-note" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="coordinate-button" title="지정점 좌표" data-operatorclass="toolbar-coordinate" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="measure-angle-between-faces" title="면기반 각도 측정" data-operatorclass="toolbar-measure-angle" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="measure-distance-between-faces" title="면기반 거리 측정" data-operatorclass="toolbar-measure-distance" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="measure-edges" title="선기반 각도 측정" data-operatorclass="toolbar-measure-edge" class="submenu-icon"></div>
+                    </td>
+                    <td>
+                      <div id="measure-point-to-point" title="점기반 거리 측정" data-operatorclass="toolbar-measure-point" class="submenu-icon"></div>
+                    </td>
+                  </tr>
+                  -->
+                  <tr>
+                    <td>
+                      <div id="select-parts" title="객체 선택" data-operatorclass="toolbar-select" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>객체 선택</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="area-select" title="객체 묶기" data-operatorclass="toolbar-area-select" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>객체 묶기</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="redline-button" title="도형 표시" data-operatorclass="toolbar-redline-note" data-submenu="redline-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>도형 표시</span></div>
+            <div id="submenus">
+              <div id="redline-submenu" data-button="redline-button" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="redline-circle-button" title="원형 표시" data-operatorclass="toolbar-redline-circle" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>원형 표시</span></div>
+                    </td>
+                    <td>
+                      <div id="redline-rectangle-button" title="사각 표시" data-operatorclass="toolbar-redline-rectangle" class="submenu-icon">
+                        <div class="tool-icon-text"><span>사각 표시</span></div>
+                      </div>
+
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="redline-note" title="문자 표시" data-operatorclass="toolbar-redline-note" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>문자 표시</span></div>
+                    </td>
+                    <td>
+                      <div id="redline-freehand" title="자유 표시" data-operatorclass="toolbar-redline-freehand" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>자유 표시</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="measure-button" title="검측 기능" data-operatorclass="toolbar-measure" data-submenu="measure-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon"></div>
+              <!--
+              <div class="tool-icon toolbar-measure" style="background-image: url(/dist/css/bim-style/hoops/images/3D_32.png);width:32px;height:32px">
+                <img src="/dist/img/svg/info.svg" style="width:32px;height:32px;">
+              </div>
+              -->
+            </div>
+            <div class="tool-icon-text"><span>검측 기능</span></div>
+            <div id="submenus">
+              <div id="measure-submenu" data-button="measure-button" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="coordinate-button" title="좌표 측정" data-operatorclass="toolbar-coordinate" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>좌표 측정</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="measure-point-to-point" title="점간 거리" data-operatorclass="toolbar-measure-point" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>점간 거리</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="explode-button" title="객체 전개" data-operatorclass="toolbar-explode" data-submenu="explode-slider" class="hoops-tool toolbar-menu toolbar-menu-toggle toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>객체 전개</span></div>
+            <div id="submenus">
+              <div id="explode-slider" class="toolbar-submenu slider-menu submenus">
+                <div id="explosion-slider" style="height:90px;" class="toolbar-slider"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="cuttingplane-button" title="단면 보기" data-operatorclass="toolbar-cuttingplane" data-submenu="cuttingplane-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>단면 보기</span></div>
+            <div id="submenus">
+              <div id="cuttingplane-submenu" class="toolbar-submenu cutting-plane submenus no-modal">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="cuttingplane-x" title="X축 단면" data-plane="x" data-operatorclass="toolbar-cuttingplane-x" class="toolbar-cp-plane submenu-icon"></div>
+                      <div class="tool-icon-text"><span>X축 단면</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="cuttingplane-y" title="Y축 단면" data-plane="y" data-operatorclass="toolbar-cuttingplane-y" class="toolbar-cp-plane submenu-icon"></div>
+                      <div class="tool-icon-text"><span>Y축 단면</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="cuttingplane-z" title="Z축 단면" data-plane="z" data-operatorclass="toolbar-cuttingplane-z" class="toolbar-cp-plane submenu-icon"></div>
+                      <div class="tool-icon-text"><span>Z축 단면</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-group" style="display:none;">
+          <div title="개별 선택" class="hoops_tool">
+            <button id="btnSelectAdd" class="toolbar_button">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M200 344V280H136C122.7 280 112 269.3 112 256C112 242.7 122.7 232 136 232H200V168C200 154.7 210.7 144 224 144C237.3 144 248 154.7 248 168V232H312C325.3 232 336 242.7 336 256C336 269.3 325.3 280 312 280H248V344C248 357.3 237.3 368 224 368C210.7 368 200 357.3 200 344zM0 96C0 60.65 28.65 32 64 32H384C419.3 32 448 60.65 448 96V416C448 451.3 419.3 480 384 480H64C28.65 480 0 451.3 0 416V96zM48 96V416C48 424.8 55.16 432 64 432H384C392.8 432 400 424.8 400 416V96C400 87.16 392.8 80 384 80H64C55.16 80 48 87.16 48 96z"/></svg>
+            </button>
+            <div class="tool-icon-text"><span>개별 선택</span></div>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <div>
+            <div id="camera-button" title="시선 선택" data-operatorclass="toolbar-orbit" data-submenu="camera-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>시선 선택</span></div>
+            <div id="submenus">
+              <div id="camera-submenu" data-button="camera-button" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="operator-camera-walk" title="보행 시선" data-operatorclass="toolbar-walk" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>보행 시선</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="operator-camera-turntable" title="뷰 회전" data-operatorclass="toolbar-turntable" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>뷰 회전</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div id="operator-camera-orbit" title="카메라 컨트롤" data-operatorclass="toolbar-orbit" class="submenu-icon"></div>
+                      <div class="tool-icon-text"><span>카메라 컨트롤</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <div>
+            <div id="btnDispSearchDialog" title="이름 검색" class="hoops_tool">
+              <button class="toolbar_button toolbar-ico">
+                <div class="tool-icon toolbar-search"></div>
+              </button>
+            </div>
+            <div class="tool-icon-text"><span>이름 검색</span></div>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <div>
+            <div id="btnSelectModels" title="모델 선택" class="hoops_tool">
+              <button class="toolbar_button toolbar-ico">
+                <div class="tool-icon" style="background-image: url(/dist/css/bim-style/hoops/images/3D_32.png);width:32px;height:32px"></div>
+              </button>
+            </div>
+            <div class="tool-icon-text"><span>모델 선택</span></div>
+          </div>
+          <div>
+            <div title="Sync Model" class="hoops_tool" style="display:none;">
+              <button id="btnSyncModel" class="toolbar_button" data-on="false">
+                <div class="tool-icon toolbar-sync"></div>
+              </button>
+            </div>
+          </div>
+        </div>
+        <!--
+
+                <div class="toolbar-group">
+                  <div>
+                    <div title="뷰 저장" class="hoops_tool">
+                      <button id="btnSaveView" class="toolbar_button">
+                        <div class="tool-icon toolbar-snapshot"></div>
+                      </button>
+                    </div>
+                    <div class="tool-icon-text"><span>뷰 저장</span></div>
+                  </div>
+                </div>
+        -->
+
+        <div class="toolbar-group">
+          <div>
+            <div id="process-button" title="공정 메뉴" data-operatorclass="toolbar-construction" data-submenu="construction-submenu" class="hoops-tool toolbar-menu toolbar-ico">
+              <div class="tool-icon toolbar-construction">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 27.52 29.86"><defs><style>.d{fill:#444}</style></defs><g id="b"><g id="c"><path style="fill:#5bb8df" d="m8.19 17.88-2.81 1.84.5 8.81 15.05.15.34-9.3-2.64-.97-.76 6.84-8.69.35-.99-7.72z"></path><path class="d" d="M26.6 21.9c-.23-1.76-1.77-2.39-2.51-2.69l-1.64-.67s-.09-.02-.13-.04c-.07-.06-.13-.13-.22-.18l-2.73-1.43a.993.993 0 0 0-.96.02c-.3.17-.49.47-.5.81l-.35 6.29H9.97l-.35-6.29a.992.992 0 0 0-.5-.81 1.02 1.02 0 0 0-.96-.02l-2.73 1.43c-.07.04-.13.1-.19.15-.09.01-.18.03-.27.07l-1.55.67c-.12.06-.25.09-.37.12-.36.1-.85.25-1.24.67-.47.49-.78 1.17-.88 1.89L0 28.73c-.04.29.05.57.24.79.19.22.46.34.75.34H5.7l.14-.03c.05 0 .09.03.14.03h15.58s.06-.02.09-.02.06.02.09.02h4.79a1.001 1.001 0 0 0 .99-1.13l-.91-6.83ZM8.02 25.07c.03.53.47.94 1 .94h9.48c.53 0 .97-.41 1-.94l.32-5.68 1.23.64-.28 7.84H6.66l-.28-7.79 1.32-.69.32 5.68Zm-5.88 2.8.76-5.7c.04-.31.17-.6.34-.78.04-.03.23-.09.35-.12.2-.06.41-.12.61-.21l.2-.09.25 6.91H2.14Zm20.63 0 .25-6.94.31.13c1.02.42 1.24.71 1.29 1.11l.76 5.7h-2.61ZM13.3 5.83l-.67-3.7c.55-.18 1.71-.18 2.26 0l-.67 3.7 1.97.36.8-4.39-.03-.18C16.78.61 15.58 0 13.77 0s-3.01.61-3.19 1.62l-.03.18.8 4.39 1.97-.36Z"></path><path class="d" d="m6.12 11.02.3.45h.75c.12 1.13.35 2.56.8 3.47.78 1.56 2.57 2.91 4.53 3.39.41.06.73.1 1.05.1.34 0 .69-.04 1.17-.11 1.89-.46 3.73-1.8 4.57-3.34.5-.91.8-2.36.98-3.5h.83l.3-.45c.13-.2.21-.43.24-.76.02-.48 0-.96-.05-1.46-.07-.68-.29-1.05-.54-1.31-.24-2.1-1.37-4.03-3.13-5.33l-1.18 1.61c1.33.98 2.21 2.5 2.34 4.04.03.57.33.88.51 1.04 0 .03.02.08.02.15.02.16.03.31.04.46H7.89c0-.15.02-.3.04-.46 0-.07.01-.12.02-.15.16-.13.48-.44.5-1 .13-1.58 1.01-3.1 2.34-4.08L9.61 2.17c-1.75 1.29-2.88 3.2-3.13 5.32-.25.25-.47.62-.54 1.31-.05.5-.07.98-.05 1.53.03.26.11.49.24.69Zm8.21 5.33c-.65.1-.89.1-1.45.02-1.32-.32-2.61-1.28-3.13-2.32-.24-.47-.44-1.42-.58-2.57h9.06c-.19 1.14-.44 2.07-.7 2.54-.58 1.06-1.93 2.03-3.21 2.34Z"></path></g></g></svg>
+              </div>
+            </div>
+            <div class="tool-icon-text"><span>공정 메뉴</span></div>
+
+            <div id="submenus">
+              <div id="construction-submenu" class="toolbar-submenu submenus">
+                <table>
+                  <tr>
+                    <td>
+                      <div id="show-all" title="전체 공정" class="hoops_tool">
+                        <button class="toolbar_button">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 29"><defs><style>.d{fill:#444}</style></defs><g id="b"><g id="c"><path style="fill:#5bb8df" d="m6.94 18.85-2.39 1.56.43 7.46 12.74.13.3-7.88-2.24-.82-.65 5.79-7.36.3-.83-6.54z"/><path class="d" d="M22.53 22.25c-.2-1.49-1.5-2.02-2.13-2.28l-1.39-.57-.11-.03c-.06-.05-.11-.11-.19-.15l-2.31-1.21a.86.86 0 0 0-.81.01c-.25.14-.41.4-.43.69l-.3 5.33H8.43l-.3-5.33a.854.854 0 0 0-.43-.69.834.834 0 0 0-.81-.01l-2.31 1.21c-.06.03-.11.08-.16.13-.08 0-.16.03-.23.06l-1.31.57c-.11.05-.21.08-.32.11-.3.09-.72.21-1.05.56-.4.42-.66.99-.74 1.6L0 28.04c-.03.24.04.49.2.67.16.18.39.29.64.29h3.98s.08-.02.12-.02c.04 0 .08.02.12.02h13.19s.05-.01.08-.02c.03 0 .05.02.08.02h4.05c.24 0 .48-.11.64-.29.16-.18.23-.43.2-.67l-.77-5.79ZM6.79 24.93c.02.45.4.8.85.8h8.03c.45 0 .82-.35.85-.8l.27-4.81 1.04.55-.24 6.64H5.64l-.24-6.6 1.12-.58.27 4.81ZM1.81 27.3l.64-4.83c.03-.26.14-.5.29-.66.04-.03.19-.08.3-.11.17-.05.34-.1.52-.18l.17-.07.21 5.85H1.81Zm17.47 0 .21-5.88.26.11c.86.35 1.05.6 1.09.94l.64 4.83h-2.21ZM11.27 8.65l-.57-3.13c.47-.15 1.45-.15 1.92 0l-.57 3.13 1.67.3.68-3.72-.03-.15c-.16-.86-1.17-1.37-2.7-1.37s-2.55.51-2.7 1.37l-.03.15.68 3.72 1.67-.3Z"/><path class="d" d="m5.19 13.03.25.38h.63c.1.96.3 2.17.68 2.94.66 1.32 2.17 2.47 3.84 2.87.35.05.62.08.89.08.29 0 .59-.03.99-.1 1.6-.39 3.16-1.52 3.87-2.83.42-.77.68-2 .83-2.97h.7l.25-.38c.11-.17.18-.36.21-.64.01-.41 0-.81-.04-1.24-.06-.58-.25-.89-.46-1.11-.2-1.78-1.16-3.41-2.65-4.51l-1 1.37c1.13.83 1.87 2.12 1.98 3.42.02.49.28.75.43.88 0 .03.01.07.02.12l.03.39H6.68c0-.13.02-.26.03-.39 0-.06.01-.1.02-.12.13-.11.41-.37.43-.84.11-1.33.86-2.63 1.99-3.46l-1-1.37C6.67 6.61 5.71 8.23 5.5 10.03c-.21.21-.4.52-.46 1.11-.04.42-.06.83-.04 1.3.02.22.09.42.2.58Zm6.95 4.51c-.55.09-.75.09-1.22.01-1.12-.27-2.21-1.08-2.65-1.97-.2-.4-.38-1.2-.49-2.18h7.68c-.16.96-.38 1.75-.6 2.15-.49.9-1.64 1.72-2.72 1.98Z"/><path class="d" d="M30 17.85H18v-1.02h10.98v-.78l-2.43-2.15V1.02H6.74v2.21H5.72V0h21.85v13.44L30 15.59v2.25Zm-2.56-1.6h-1.41v-1.02h1.41v1.02Zm-2.23 0H23.8v-1.02h1.41v1.02Zm-2.23 0h-1.41v-1.02h1.41v1.02Zm-2.23 0h-1.41v-1.02h1.41v1.02Zm-2.27 0h-1.41v-1.02h1.41v1.02Zm7.38-1.29h-1.41v-1.02h1.41v1.02Zm-2.23 0h-1.41v-1.02h1.41v1.02Zm-2.23 0h-1.41v-1.02h1.41v1.02Zm-2.23 0h-1.41v-1.02h1.41v1.02ZM26 12.53h-8.63v-1.02h7.62V2.67H7.82V1.65h18.16v10.87Z"/><path class="d" d="m23.52 7.86.63-.05-.02-1.52-.63-.04c-.04-.13-.1-.26-.16-.38l.41-.48-1.09-1.06-.47.42c-.12-.06-.25-.11-.38-.15l-.05-.63-1.52.02-.04.63c-.13.04-.25.1-.38.16l-.48-.41-1.06 1.09.42.47c-.06.12-.11.25-.15.38l-.63.05.02 1.52.63.04c.04.13.1.26.16.38l-.41.48 1.09 1.06.47-.42c.12.06.25.11.38.15l.05.63 1.52-.02.04-.63c.13-.04.26-.1.38-.16l.48.41 1.06-1.09-.42-.47c.06-.12.11-.25.15-.38Zm-2.47.63c-.12 0-.25-.01-.36-.04a1.46 1.46 0 0 1-.63-.35c-.27-.26-.42-.61-.42-.98s.14-.72.4-.99.61-.42.98-.42c.77 0 1.4.61 1.42 1.38 0 .77-.61 1.4-1.38 1.42Z"/></g></g></svg>
+                        </button>
+                      </div>
+                      <div class="tool-icon-text"><span>전체 공정</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div title="완료 공정" class="hoops_tool">
+                        <button id="show-untilToday" class="toolbar_button flex-de">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.29 30.03"><defs><style>.d{fill:#444}.e{fill:#5bb8df}</style></defs><g id="b"><g id="c"><path class="d" d="m2.17 17.43 4.26.68L6.39 17l1.12-.58.09 1.66 1.7.09-.18-3.15a.854.854 0 0 0-.43-.69.834.834 0 0 0-.81-.01l-2.31 1.21c-.06.03-.11.08-.16.13-.08 0-.16.03-.23.06l-1.31.57c-.11.05-.21.08-.32.11-.3.09-.72.21-1.05.56-.13.14-.24.31-.34.48M23.28 17.78c-.45-.91-1.38-1.31-1.89-1.51L20 15.7l-.11-.03c-.06-.05-.11-.11-.19-.15l-2.31-1.21a.86.86 0 0 0-.81.01c-.25.14-.41.4-.43.69l-.17 2.97 1.69-.16.1-1.41 1.04.55-.03.77 4.49.05M12.26 4.94l-.57-3.13c.47-.15 1.45-.15 1.92 0l-.57 3.13 1.67.3.68-3.72-.03-.15C15.2.51 14.19 0 12.66 0s-2.55.51-2.7 1.37l-.03.15.68 3.72 1.67-.3Z"/><path class="d" d="m6.18 9.33.25.38h.63c.1.96.3 2.17.68 2.94.66 1.32 2.17 2.47 3.84 2.87.35.05.62.08.89.08.29 0 .59-.03.99-.1 1.6-.39 3.16-1.52 3.87-2.83.42-.77.68-2 .83-2.97h.7l.25-.38c.11-.17.18-.36.21-.64.01-.41 0-.81-.04-1.24-.06-.58-.25-.89-.46-1.11-.2-1.78-1.16-3.41-2.65-4.51l-1 1.37c1.13.83 1.87 2.12 1.98 3.42.02.49.28.75.43.88 0 .03.01.07.02.12l.03.39H7.67c0-.13.02-.26.03-.39 0-.06.01-.1.02-.12.13-.11.41-.37.43-.84.11-1.33.86-2.63 1.99-3.46l-1-1.37C7.66 2.91 6.7 4.53 6.49 6.33c-.21.21-.4.52-.46 1.11-.04.42-.06.83-.04 1.3.02.22.09.42.2.58Zm6.95 4.51c-.55.09-.75.09-1.22.01-1.12-.27-2.21-1.08-2.65-1.97-.2-.4-.38-1.2-.49-2.18h7.68c-.16.96-.38 1.75-.6 2.15-.49.9-1.64 1.72-2.72 1.98Z"/><path class="e" d="m.99 16.97.44 3.69.91.4 1.68.18.63 2.76-1.44.95h-.94l.53 2.48.52 1.23 1.08.81h15.2l1.5-.18 1.38-1.33.62-2.98-2.59-.94.87-2.94 2.47-.04.62-4.27-1.21.94L4.04 18 .99 16.97z"/><path class="e" d="M5.16 17.99C.81 17.75.47 15.6.47 15.6l1.27-1.39 3.42 1.17v2.61M20.15 17.99c4.34-.24 4.69-2.39 4.69-2.39l-1.27-1.39-3.42 1.17v2.61"/><path class="d" d="m24.89 20.24-.41-.18.65-3.7c.15-.48.11-.97-.11-1.4-.27-.51-.77-.88-1.45-1.04-.91-.23-2.02-.05-2.71.43-.49.34-.76.8-.76 1.29 0 .85 1.01 1.23 1.74 1.23.64 0 1.14-.23 1.37-.62.19-.33.12-.6.06-.73-.17-.38-.58-.5-.88-.57l-.18.87c-.08.03-.2.05-.37.05-.32 0-.69-.15-.74-.23 0-.15.12-.33.33-.47.45-.31 1.26-.43 1.9-.28.27.07.63.21.8.53.06.11.08.24.08.38l-.06.32c-.02.07-.05.13-.09.2-.35.62-1.18.99-2.23.99H3.45c-1.05 0-1.88-.37-2.23-1-.04-.07-.06-.13-.09-.2l-.06-.31c0-.13.02-.26.08-.38.17-.32.52-.47.8-.53.63-.16 1.45-.04 1.89.28.21.15.33.32.34.46-.05.09-.42.25-.74.25-.17 0-.29-.02-.37-.05l-.18-.87c-.3.06-.71.19-.88.57-.06.13-.13.4.06.73.23.39.73.62 1.37.62.72 0 1.74-.38 1.74-1.23 0-.49-.27-.95-.76-1.29-.68-.48-1.79-.65-2.71-.43-.68.17-1.18.53-1.45 1.04-.16.31-.21.66-.18 1.01.01.14.03.27.07.39l.65 3.71-.42.18-.4 1.19.63 3.31 1.09.5.33 1.88c.26 1.45 1.29 2.92 3.04 2.92h15.1c1.75 0 2.79-1.46 3.04-2.92l.33-1.91 1.08-.47.49-2.37.15-.94-.4-1.19ZM1.13 22.21l-.11-.7.03-.09.03.18h2.58l.14.1.39 2.15-1.35.56-.55-.02-.77-.35-.38-1.83Zm21.12 4.73c-.17.96-.81 2.09-2.06 2.09H5.09c-1.25 0-1.89-1.12-2.06-2.09l-.27-1.53.23.02 1.96-.75.27-.74-.51-2.83-.74-.5H1.93l-.07-.38-.42-2.4c.56.3 1.25.47 2.01.47h18.39c.77 0 1.46-.17 2.01-.47l-.32 1.81-.17.96h-2.04l-.74.5-.51 2.83.27.74 1.96.75h.23l-.27 1.52Zm1.52-2.9-.77.35-.55.02-1.33-.51-.02-.06.39-2.15.14-.09h2.57l.03-.19.03.09-.49 2.53Z"/></g></g></svg>
+                        </button>
+                      </div>
+                      <div class="tool-icon-text"><span>완료 공정</span></div>
+                    </td>
+                  </tr>
+
+                  <!--<tr>
+                    <td>
+                      <div title="금일 공정" class="hoops_tool">
+                        <button id="show-allToday" class="toolbar_button">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23.31 30"><defs><style>.d{fill:#444}</style></defs><g id="b"><g id="c"><path style="fill:#5bb8df" d="M6.94 15.14 4.55 16.7l.43 7.46 12.74.13.3-7.87-2.24-.82-.65 5.79-7.36.29-.83-6.54z"/><path class="d" d="M22.53 18.55c-.2-1.49-1.5-2.02-2.13-2.28l-1.39-.57-.11-.03c-.06-.05-.11-.11-.19-.15l-2.31-1.21a.86.86 0 0 0-.81.01c-.25.14-.41.4-.43.69l-.3 5.33H8.43l-.3-5.33a.854.854 0 0 0-.43-.69.834.834 0 0 0-.81-.01l-2.31 1.21c-.06.03-.11.08-.16.13-.08 0-.16.03-.23.06l-1.31.57c-.11.05-.21.08-.32.11-.3.09-.72.21-1.05.56-.4.42-.66.99-.74 1.6L0 24.34c-.03.24.04.49.2.67.16.18.39.29.64.29h3.98s.08-.02.12-.02c.04 0 .08.02.12.02h13.19s.05-.01.08-.02c.03 0 .05.02.08.02h4.05c.24 0 .48-.11.64-.29.16-.18.23-.43.2-.67l-.77-5.79ZM6.79 21.23c.02.45.4.8.85.8h8.03c.45 0 .82-.35.85-.8l.27-4.81 1.04.55-.24 6.64H5.64l-.24-6.6 1.12-.58.27 4.81ZM1.81 23.6l.64-4.83c.03-.26.14-.5.29-.66.04-.03.19-.08.3-.11.17-.05.34-.1.52-.18l.17-.07.21 5.85H1.81Zm17.47 0 .21-5.88.26.11c.86.35 1.05.6 1.09.94l.64 4.83h-2.21ZM11.27 4.94l-.57-3.13c.47-.15 1.45-.15 1.92 0l-.57 3.13 1.67.3.68-3.72-.03-.15C14.21.51 13.2 0 11.67 0s-2.55.51-2.7 1.37l-.03.15.68 3.72 1.67-.3Z"/><path class="d" d="m5.19 9.33.25.38h.63c.1.96.3 2.17.68 2.94.66 1.32 2.17 2.47 3.84 2.87.35.05.62.08.89.08.29 0 .59-.03.99-.1 1.6-.39 3.16-1.52 3.87-2.83.42-.77.68-2 .83-2.97h.7l.25-.38c.11-.17.18-.36.21-.64.01-.41 0-.81-.04-1.24-.06-.58-.25-.89-.46-1.11-.2-1.78-1.16-3.41-2.65-4.51l-1 1.37c1.13.83 1.87 2.12 1.98 3.42.02.49.28.75.43.88 0 .03.01.07.02.12l.03.39H6.68c0-.13.02-.26.03-.39 0-.06.01-.1.02-.12.13-.11.41-.37.43-.84.11-1.33.86-2.63 1.99-3.46l-1-1.37C6.67 2.91 5.71 4.53 5.5 6.33c-.21.21-.4.52-.46 1.11-.04.42-.06.83-.04 1.3.02.22.09.42.2.58Zm6.95 4.51c-.55.09-.75.09-1.22.01-1.12-.27-2.21-1.08-2.65-1.97-.2-.4-.38-1.2-.49-2.18h7.68c-.16.96-.38 1.75-.6 2.15-.49.9-1.64 1.72-2.72 1.98Z"/><g><path style="fill-rule:evenodd;fill:#5bb8df" d="m4.4 29.5-.68-9.59h15.87l-.68 9.59H4.4z"/><path class="d" d="M19.05 20.41 18.44 29H4.86l-.61-8.59h14.8m1.07-1H3.18L3.93 30h15.44l.75-10.59Z"/></g></g></g></svg>
+                        </button>
+                      </div>
+                      <div class="tool-icon-text"><span>금일 공정</span></div>
+                    </td>
+                  </tr>-->
+
+                  <tr>
+                    <td>
+                      <div title="계획 공정" class="hoops_tool">
+                        <button id="show-period" class="toolbar_button">
+                          <img src="/dist/img/svg/period.svg" style="width:32px;height:32px;">
+                        </button>
+                      </div>
+                      <div class="tool-icon-text"><span>계획 공정</span></div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div title="실시 공정" class="hoops_tool">
+                        <button id="show-jobsheet" class="toolbar_button">
+                          <img src="/dist/img/svg/period.svg" style="width:32px;height:32px;">
+                        </button>
+                      </div>
+                      <div class="tool-icon-text"><span>실시 공정</span></div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="snapshot-button" title="화면 저장" class="hoops_tool">
+              <button class="toolbar_button toolbar-ico">
+                <div class="tool-icon toolbar-snapshot"></div>
+              </button>
+            </div>
+            <div class="tool-icon-text"><span>화면 저장</span></div>
+          </div>
+          <div style="display: none;">
+            <div id="snapshot-exe" data-operatorclass="toolbar-snapshot" class="hoops-tool">
+              <div class="tool-icon"></div>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead)}" class="toolbar-group">
+          <div>
+            <div id="loadCreateJob" title="공사 일지" class="hoops_tool">
+                <button class="toolbar_button toolbar-ico">
+                  <div class="tool-icon toolbar-job-list">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29.9 30"><defs><style>.d{fill:#444}</style></defs><g id="b"><g id="c"><path class="d" d="M8.92 5.31h13v2h-13z"/><path d="M20.43 15.92v-1.58l-1.59-.15c-.08-.29-.19-.56-.34-.82l1.02-1.23-1.12-1.12-1.23 1.02c-.25-.14-.53-.26-.82-.34l-.14-1.59h-1.58l-.15 1.59c-.29.08-.56.19-.81.34l-1.23-1.02-1.12 1.12 1.02 1.23c-.14.25-.26.53-.34.81l-1.59.14v1.58l1.59.15c.08.29.19.56.34.81l-1.02 1.23 1.12 1.12 1.23-1.02c.25.14.53.26.82.34l.14 1.59h1.58l.15-1.59c.29-.08.56-.19.82-.34l1.23 1.02 1.12-1.12-1.02-1.23c.15-.25.26-.53.34-.82l1.59-.14Zm-5.01.43a1.23 1.23 0 1 1 0-2.46 1.23 1.23 0 1 1 0 2.46Z" style="fill:#5bb8df"/><path class="d" d="M5.31 25.19h4.84a.499.499 0 0 0 .35-.85L5.66 19.5a.514.514 0 0 0-.54-.11c-.19.08-.31.26-.31.46v4.84c0 .28.22.5.5.5Zm.5-4.13 3.13 3.13H5.81v-3.13Z"/><path class="d" d="M29.85 10.02a.681.681 0 0 0-.39-.39l-2.52-1.06a.719.719 0 0 0-.52-.01V0h-22v11.97L1.7 9.25c-.29-.29-.72-.37-1.09-.22-.37.15-.62.52-.62.92V29c0 .55.45 1 1 1h25.43V18.69l3.42-8.12a.7.7 0 0 0 0-.55ZM15.26 28v-1.12c0-.28-.22-.5-.5-.5s-.5.22-.5.5V28H9.74v-1.12c0-.28-.22-.5-.5-.5s-.5.22-.5.5V28H4.23v-1.12c0-.28-.22-.5-.5-.5s-.5.22-.5.5V28H2V12.37L17.63 28h-2.36Zm4.69-.5L6.92 14.47V2.5h17v11.38l-3.44 8.15c-.04.11-.06.22-.05.34l.23 2.96a.726.726 0 0 0 .72.67c.17 0 .33-.06.46-.17l2.08-1.73v3.41h-3.97Zm3.12-4.57-1.08.9-.11-1.4 4.3-10.19 1.19.5-4.3 10.19Zm4.86-11.52-1.19-.5.31-.73 1.19.5-.31.73Z"/></g></g></svg>
+                  </div>
+                </button>
+            </div>
+            <div class="tool-icon-text"><span>공사 일지</span></div>
+          </div>
+        </div>
+
+        <div class="toolbar-group">
+          <div>
+            <div id="multiselect-button" title="객체 정보" class="hoops_tool">
+              <button class="toolbar_button toolbar-ico">
+                <!--<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M320 96H192L144.6 24.9C137.5 14.2 145.1 0 157.9 0H354.1c12.8 0 20.4 14.2 13.3 24.9L320 96zM192 128H320c3.8 2.5 8.1 5.3 13 8.4C389.7 172.7 512 250.9 512 416c0 53-43 96-96 96H96c-53 0-96-43-96-96C0 250.9 122.3 172.7 179 136.4l0 0 0 0c4.8-3.1 9.2-5.9 13-8.4zm84.1 96c0-11.1-9-20.1-20.1-20.1s-20.1 9-20.1 20.1v6c-5.6 1.2-10.9 2.9-15.9 5.1c-15 6.8-27.9 19.4-31.1 37.7c-1.8 10.2-.8 20 3.4 29c4.2 8.8 10.7 15 17.3 19.5c11.6 7.9 26.9 12.5 38.6 16l2.2 .7c13.9 4.2 23.4 7.4 29.3 11.7c2.5 1.8 3.4 3.2 3.8 4.1c.3 .8 .9 2.6 .2 6.7c-.6 3.5-2.5 6.4-8 8.8c-6.1 2.6-16 3.9-28.8 1.9c-6-1-16.7-4.6-26.2-7.9l0 0 0 0 0 0 0 0c-2.2-.8-4.3-1.5-6.3-2.1c-10.5-3.5-21.8 2.2-25.3 12.7s2.2 21.8 12.7 25.3c1.2 .4 2.7 .9 4.4 1.5c7.9 2.7 20.3 6.9 29.8 9.1V416c0 11.1 9 20.1 20.1 20.1s20.1-9 20.1-20.1v-5.5c5.4-1 10.5-2.5 15.4-4.6c15.7-6.7 28.4-19.7 31.6-38.7c1.8-10.4 1-20.3-3-29.4c-3.9-9-10.2-15.6-16.9-20.5c-12.2-8.8-28.3-13.7-40.4-17.4l-.8-.2c-14.2-4.3-23.8-7.3-29.9-11.4c-2.6-1.8-3.4-3-3.6-3.5c-.2-.3-.7-1.6-.1-5c.3-1.9 1.9-5.2 8.2-8.1c6.4-2.9 16.4-4.5 28.6-2.6c4.3 .7 17.9 3.3 21.7 4.3c10.7 2.8 21.6-3.5 24.5-14.2s-3.5-21.6-14.2-24.5c-4.4-1.2-14.4-3.2-21-4.4V224z"/></svg>-->
+                <div class="tool-icon toolbar-note"></div>
+              </button>
+            </div>
+            <div class="tool-icon-text"><span>객체 정보</span></div>
+          </div>
+        </div>
+
+        <div class="toolbar-group" id="tg_setting">
+          <div id="settings-button" class="" >
+            <div title="설정" data-operatorclass="toolbar-settings" class="hoops-tool toolbar-ico">
+              <div class="tool-icon"></div>
+            </div>
+            <div class="tool-icon-text"><span>설정</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- viewer 상단 이미지 버튼(공정,기성) 추가 -->
+    <div class="viewTopBtn" >
+      <div align="left" vertical-align="middle" class="toolbar-tools-top" style="opacity: 0.6;">
+        <div>
+          <div class="hoops_tool">
+            <button id="modelMainPageView" class="on" onclick="onCostLayout('model');window.setTimeout( function(){ hwv.resizeCanvas();}, 2000);">
+              모델
+            </button>
+          </div>
+        </div>
+        <th:block sec:authorize="hasAnyRole('ROLE_ADMIN_PROCESS')">
+          <div>
+            <div class="hoops_tool">
+              <button id="processMainPageView" onclick="onCostLayout('process');window.setTimeout( function(){ hwv.resizeCanvas();}, 2000);">
+                공정
+              </button>
+            </div>
+          </div>
+        </th:block>
+        <div th:if="!${(#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypePartner)}" >
+          <div class="hoops_tool">
+            <button id="costMainPageView" onclick="onCostLayout('cost');window.setTimeout( function(){ hwv.resizeCanvas();}, 2000);">
+              기성
+            </button>
+          </div>
+        </div>
+        <div>
+          <div class="hoops_tool">
+            <button id="minwonMainPageView" onclick="onCostLayout('minwon');window.setTimeout( function(){ hwv.resizeCanvas();}, 2000);">
+              민원
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="snapshots"></div>
+    <div id="viewer-settings-dialog-container">
+      <!-- Viewer Settings Window -->
+      <div id="viewer-settings-dialog" class="hoops-ui-window" style="font-family:Noto Sans KR;width:600px;top:200px;">
+
+        <!-- Header -->
+        <div class="hoops-ui-window-header">
+          <span class="tab selected btn btn-default mr-2" id="settings-tab-label-general">일반</span>
+          <span class="tab btn btn-default mr-2" id="settings-tab-label-walk">걷기</span>
+          <span class="tab btn btn-default mr-2" id="settings-tab-label-drawing">그리기</span>
+        </div>
+
+        <!-- Drawing tab -->
+        <div class="hoops-ui-window-body" id="settings-tab-drawing">
+          <div class="settings-group-header">Drawing</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <div class="w-100">Drawing Colors:</div>
+              <div class="w-100">
+                <input type="text" id="settings-drawing-background" class="form-control color-picker" data-position="bottom left"/>
+                <label>Background</label>
+              </div>
+              <div class="w-100">
+                <input type="text" id="settings-drawing-sheet" class="form-control color-picker" data-position="bottom left"/>
+                <label>Sheet</label>
+              </div>
+              <div class="w-100">
+                <input type="text" id="settings-drawing-sheet-shadow" class="form-control color-picker" data-position="bottom left"/>
+                <label>Sheet Shadow</label>
+              </div>
+              <div class="w-100">
+                <input type="checkbox" id="settings-drawing-background-enabled"/>
+                <label>Show Sheet Background</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Walk tab -->
+        <div class="hoops-ui-window-body" id="settings-tab-walk">
+          <div class="settings-group-header">보행시선</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <label>보행시선</label>
+              <select id="settings-walk-mode" class="right-align custom-select w-25">
+                <option value="0">마우스</option>
+                <option value="1">키보드</option>
+              </select>
+            </div>
+
+            <div class="settings-block" id="walk-navigation-keys">
+              <div id="walk-navigation-text" class="center-align bold w-100">조작 키</div>
+              <div class="d-flex align-items-center w-100">
+                <div>
+                  <span id="walk-key-forward">W</span> /
+                  <span id="walk-key-left">A</span> /
+                  <span id="walk-key-backward">S</span> /
+                  <span id="walk-key-right">D</span>
+                </div>
+                <span class="right-align">이동</span>
+              </div>
+              <div class="d-flex align-items-center w-100">
+                <div>
+                  <span id="walk-key-rotate-left">Q</span> /
+                  <span id="walk-key-rotate-right">E</span>
+                </div>
+                <span class="right-align">회전</span>
+              </div>
+              <div class="d-flex align-items-center w-100">
+                <div>
+                  <span id="walk-key-up">X</span> /
+                  <span id="walk-key-down">C</span>
+                </div>
+                <span class="right-align">상 / 하</span>
+              </div>
+              <div class="d-flex align-items-center w-100">
+                <div>
+                  <span id="walk-key-tilt-up">R</span> /
+                  <span id="walk-key-tilt-down">F</span>
+                </div>
+                <span id="move-keys" class="right-align">기울기</span>
+              </div>
+              <div class="d-flex align-items-center w-100">
+                <div>
+                  <span id="walk-key-toggle-collision">V</span>
+                </div>
+                <span class="right-align">충돌 감지 전환 </span>
+              </div>
+
+            </div>
+
+            <div class="settings-block">
+              <span id="walk-rotation-text">회전속도 (Deg/s) </span>
+              <input type="number" min="0" id="settings-walk-rotation" class="form-control right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span id="walk-speed-text">이동속도 (<span id="walk-speed-units">m</span>/s) </span>
+              <input type="number" min="0" id="settings-walk-speed" step=".1" class="form-control right-align"/>
+            </div>
+            <div class="settings-block">
+              <span id="walk-elevation-text">상/하 이동속도 (<span id="elevation-speed-units">m</span>/s) </span>
+              <input type="number" min="0" id="settings-walk-elevation" step=".1" class="form-control right-align"/>
+            </div>
+            <div class="settings-block">
+              <span id="walk-view-angle-text">시야각 (Deg) </span>
+              <input type="number" min="30" max="150" id="settings-walk-view-angle" class="form-control right-align"/>
+            </div>
+            <div class="settings-block">
+              <span id="walk-mouse-look-text">마우스로 시야 회전 </span>
+              <input type="checkbox" id="settings-mouse-look-enabled"/>
+
+              <span id="settings-mouse-look-style" class="grayed-out right-align">
+                <label>속도 </label>
+                <input id="settings-mouse-look-speed" type="number" class="form-control d-inline-flex"/>
+              </span>
+            </div>
+            <div class="settings-block">
+              <span id="walk-bim-mode-text">충돌 감지 허용 </span>
+              <input type="checkbox" id="settings-bim-mode-enabled"/>
+            </div>
+          </div>
+        </div>
+
+        <!--General tab-->
+        <div class="hoops-ui-window-body selected" id="settings-tab-general">
+          <!-- general -->
+          <div class="settings-group-header">일반</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <label>투영모드 </label>
+              <select id="settings-projection-mode" class="custom-select w-25 right-align">
+                <option value="0">직교</option>
+                <option value="1">원근</option>
+              </select>
+            </div>
+
+            <div class="settings-block">
+              <span class="framerate-text">프레임율(fps) </span>
+              <input type="number" min="0" id="settings-framerate" class="form-control right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span>투시 불투명도 설정 (0-1) </span>
+              <input id="settings-hidden-line-opacity" class="form-control right-align" type="number" min="0" max="1" step=".1"/>
+            </div>
+
+            <div class="settings-block">
+              <label for="settings-show-backfaces">배면 보이기 </label>
+              <input type="checkbox" id="settings-show-backfaces" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <label for="settings-show-capping-geometry">Show Capping Geometry:</label>
+              <input type="checkbox" id="settings-show-capping-geometry" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span>면/선 선택 가능 </span>
+              <input type="checkbox" id="settings-enable-face-line-selection" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span>Selection Honors Scene Visibility:</span>
+              <input type="checkbox" id="settings-select-scene-invisible" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span>화면 중심으로 카메라 회전 </span>
+              <input type="checkbox" id="settings-orbit-mode" class="right-align"/>
+            </div>
+          </div>
+
+          <!-- effects -->
+          <div class="settings-group-header">효과</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <span>엠비언트 오클루전 / 셰이딩 켜기 </span>
+              <input type="checkbox" id="settings-ambient-occlusion"/>
+
+              <div class="right-align mr-2">각도 </div>
+              <input id="settings-ambient-occlusion-radius" type="number" min="0" max="10" step=".01" class="form-control"/>
+            </div>
+
+            <div class="settings-block">
+              <span>앨리어싱 제거 / 모서리 부드럽게</span>
+              <input type="checkbox" id="settings-anti-aliasing" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <div class="d-flex align-items-center w-100">
+                <span>블룸 / 광학효과 </span>
+                <input type="checkbox" id="settings-bloom-enabled" class="right-align"/>
+              </div>
+
+              <div id="settings-bloom-style" class="grayed-out d-flex flex-wrap w-100">
+                <div class="d-flex align-items-center w-100">
+                  <label>광원 조도 </label>
+                  <input id="settings-bloom-intensity" type="number" min="0" step=".1" class="form-control right-align" disabled/>
+                </div>
+                <div class="d-flex align-items-center w-100">
+                  <label>광원 임계값 </label>
+                  <input type="range" id="settings-bloom-threshold" min="0" max="1" step="0.1" class="form-control w-50 right-align" disabled/>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <span>실루엣 엣지 / 윤곽선 강조</span>
+              <input type="checkbox" id="settings-silhouette-enabled" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <span>Reflection Planes:</span>
+              <input type="checkbox" id="settings-reflection-enabled" class="right-align"/>
+            </div>
+
+            <div class="settings-block">
+              <div class="d-flex align-items-center w-100">
+                <span>Enable Shadows:</span>
+                <input type="checkbox" id="settings-shadow-enabled" class="right-align"/>
+              </div>
+              <div id="settings-shadow-style" class="grayed-out d-flex flex-wrap w-100">
+                <div class="d-flex align-items-center w-100">
+                  <span>Interactive:</span>
+                  <input type="checkbox" id="settings-shadow-interactive" class="right-align" disabled/>
+                </div>
+                <div class="d-flex align-items-center w-100">
+                  <label>Blur Samples:</label>
+                  <input type="range" id="settings-shadow-blur-samples" min="0" max="20" step="1" class="form-control w-50 right-align" disabled/>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- axis -->
+          <div class="settings-group-header">축선</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <span>축삼각주 보이기 </span>
+              <input type="checkbox" id="settings-axis-triad" class="right-align"/>
+            </div>
+            <div class="settings-block">
+              <span>뷰 큐브 보이기 </span>
+              <input type="checkbox" id="settings-nav-cube" class="right-align" checked/>
+            </div>
+          </div>
+
+          <!-- point cloud -->
+          <div class="settings-group-header">포인트 클라우드</div>
+          <div class="settings-group settings-group-general">
+            <div class="settings-block">
+              <span>스플랫 처리 </span>
+              <input type="checkbox" id="settings-splat-rendering-enabled"/>
+
+              <span id="settings-splat-enabled-style" class="grayed-out right-align w-75">
+                <label>크기 </label>
+                <input id="settings-splat-rendering-size" class="form-control d-inline-flex" step=".01" type="number"/>
+
+                <label class="d-inline-flex">모드 </label>
+                <select id="settings-splat-rendering-point-size-unit" class="d-inline-flex custom-select w-50">
+                    <option value="0">스크린픽셀</option>
+                    <option value="1">CSS픽셀</option>
+                    <option value="2">월드</option>
+                    <option value="3">스크린 폭</option>
+                    <option value="4">스크린 높이</option>
+                    <option value="5">경계 대각선</option>
+                </select>
+            </span>
+            </div>
+            <div class="settings-block">
+              <span>아이돔 라이팅 / 외곽선 강조</span>
+              <input type="checkbox" id="settings-eye-dome-lighting-enabled" class="right-align"/>
+            </div>
+          </div>
+
+          <!--color-->
+          <div class="settings-group-header">색상</div>
+          <div class="settings-group settings-group-colors">
+            <div class="settings-block">
+              <div>배경 색상 </div>
+              <div class="w-100">
+                <input type="text" id="settings-background-top" class="form-control color-picker" data-position="top left"/>
+                <label> 위</label>
+              </div>
+              <div class="w-100">
+                <input type="text" id="settings-background-bottom" class="form-control color-picker" data-position="top left"/>
+                <label> 아래</label>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div>Capping Geometry:</div>
+              <div class="w-100">
+                <input type="text" id="settings-capping-face-color" class="form-control color-picker" data-position="top left"/>
+                <label>Face</label>
+              </div>
+              <div class="2-100">
+                <input type="text" id="settings-capping-line-color" class="form-control color-picker" data-position="top left"/>
+                <label>Line</label>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <div>선택 색상 </div>
+              <div class="d-flex align-items-center w-100">
+                <input type="text" id="settings-selection-color-body" class="color-picker form-control" data-position="top left"/>
+                <label> 객체</label>
+              </div>
+
+              <div id="settings-selection-color-face-line-style d-flex align-items-center w-100">
+                <input type="text" id="settings-selection-color-face-line" class="form-control color-picker" data-position="top left"/>
+                <label> 면 / 선</label>
+              </div>
+            </div>
+
+            <div class="settings-block">
+              <input type="text" id="settings-measurement-color" class="form-control color-picker" data-position="top left"/>
+              <label> 치수선</label>
+            </div>
+
+            <div class="settings-block">
+              <span id="settings-pmi-color-style" class="grayed-out">
+                  <input type="text" id="settings-pmi-color" class="form-control color-picker" data-position="top left" disabled/>
+                  <label>PMI Override Color</label>
+              </span>
+
+              <div class="d-flex align-items-center ml-auto">
+                <input type="checkbox" id="settings-pmi-enabled"/>
+                <label> 켜기</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div>
+          <div class="hoops-ui-window-footer">
+            <div class="version">
+              <!--              Viewer Version:
+                            <span id="settings-viewer-version"></span>, Format Version:
+                            <span id="settings-format-version"></span>-->
+            </div>
+            <div class="hoops-ui-footer-buttons">
+              <button id="viewer-settings-ok-button" class="btn btn-primary">확인</button>
+              <button id="viewer-settings-cancel-button" class="btn btn-primary">취소</button>
+              <button id="viewer-settings-apply-button" class="btn btn-primary">적용</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modelingJavaScript" th:fragment="loadScript()">
+  <script src="/plugins/hoops/js/jquery.ui.touch-punch.min.js"></script>
+  <script src="/plugins/hoops/js/keymaster.min.js"></script>
+  <script src="/plugins/hoops/js/iscroll.min.js"></script>
+  <script src="/plugins/hoops/js/mobile-detect.min.js"></script>
+  <script src="/plugins/hoops/js/hoops_web_viewer.js?v=ab8e5f4" id="hwvScript"></script>
+  <script src="/plugins/hoops/js/jquery.minicolors.min.js"></script>
+  <script src="/plugins/hoops/js/web_viewer_ui.js?v=ab8e5f4" id="hwvUI"></script>
+  <script src="/plugins/hoops/js/communicator_server_integration.js?v=ab8e5f4"></script>
+  <script src="/plugins/hoops/js/jquery-ui.monad.min.js"></script><!-- MONAD -->
+  <script src="/plugins/hoops/js/hoops_web_viewer_user.js?v=ab8e5f4"></script><!-- MONAD from sample.js -->
+  <script src="/plugins/hoops/js/hwv_utility.js"></script> <!-- MONAD -->
+  <script src="/plugins/hoops/js/common_utility.js"></script> <!-- MONAD -->
+  <script src="/plugins/socket.io/socket.io.min.js"></script> <!-- MONAD -->
+  <script src="/plugins/hoops/js/viewpoint_sync.js"></script> <!-- MONAD -->
+  <script src="/plugins/hoops/js/custom/viewer_setting.js"></script> <!-- MONAD -->
+
+  <script src="/plugins/hoops/js/annotation/CustomOperatorsExample.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/annotation/AnnotationMarkup.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/annotation/AnnotationOperatorBase.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/annotation/AnnotationOperator.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/annotation/AnnotationRegistry.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/annotation/PointCursor.js"></script> <!-- MONAD for coordinate -->
+  <script src="/plugins/hoops/js/custom/userProperty.js"></script> <!-- MONAD for user property of model -->
+  <script src="/plugins/hoops/js/custom/nodePropertyPopup.js"></script> <!-- MONAD for node property information -->
+  <script src="/plugins/hoops/js/custom/showHideModels.js"></script> <!-- MONAD for node property information -->
+
+  <script type="text/javascript" id="viewerStartup">
+    var hwv = null;
+    var ui = null;
+    var md = new MobileDetect(window.navigator.userAgent);
+    var models = "";
+    var modelIds = "[[${modelIds}]]";
+    let loadedModels = []; //로딩된 모델의 nodeId와 모델명을 보유
+    let yongJiModels = []; //용지도 모델의 이름을 배열로 보유
+    let yongJiModels_nodeIds = [];
+    var myWorkIds = [];
+
+    let allIds = [];
+
+    let allTaskExchangeIds = [];
+    let completeIds = [];    // 금일기준 완료공정의 exchangeId를 배열로 저장
+    let incompleteIds = [];  // 금일기준 미완료공정의 exchangeId를 배열로 저장
+    var goViewPoint = function (viewPoint) {
+      let camera = new Communicator.Camera.fromJson(viewPoint);
+      hwv.view.setCamera(camera);
+    }
+    var g_offset = null;
+
+    let selectAdd = false;
+
+    let costDetail = {};
+    let selectedNodeId = [];
+    const currentDay = moment().format("YYYY-MM-DD");
+    var exchangeIds  = "[[${ExchangeIds}]]";
+
+    // 로그인 계정의 회사 유형(발주사:HEAD, 원도급사:LEAD, 협력업체:PARTNER)
+    let companyRoleType = "[[${#session.getAttribute('scopedTarget.userInfo')?.companyRoleType}]]";
+    let isCompanyRoleTypeHead = [[${#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeHead}]];
+    let isCompanyRoleTypeLead = [[${#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypeLead}]];
+    let isCompanyRoleTypePartner = [[${#session.getAttribute('scopedTarget.userInfo')?.isCompanyRoleTypePartner}]];
+
+    window.onload = function () {
+      UserViewer.opt = {model: "", viewer: "[[${viewerType}]]"};
+
+      if (modelIds.trim() != "") {
+        reqGet("/modelingViewerApi/models/" + modelIds
+                , function (data) {
+                  models = JSON.parse(data.models);
+                  modelIds = data.modelIds;
+                  if(data.myWorkIds){
+                    myWorkIds = JSON.parse(data.myWorkIds);
+                  }
+                  workName = JSON.parse(data.workName);
+                  distinctWorkName = JSON.parse(data.distinctWorkName);
+                  //UserViewer.opt.model = data.model;// default is none-model
+                  createModelingViewer();
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "json");
+        reqGet("/modelingViewerApi/processItems"
+                , function (data) {
+                  allTaskExchangeIds = data;
+
+                  // 공정기간 상태에 따른 exchange_id를 완료/미완료로 구분하여 저장
+                  for(let i=0 ; i < allTaskExchangeIds.length ; i++) {
+                    let jsonData = allTaskExchangeIds[i];
+
+                    allIds = allIds.concat(jsonData.exchangeIds);
+
+                    // 공정 시작일이 2024-01-01 이전 공정만
+                    if(moment(jsonData.startDate).isBefore("2024-01-01"))
+                    {
+                      // TODO 조건에 맞는 공정 필터
+                      if (moment(jsonData.endDate).isBefore(currentDay)) {
+                        completeIds = completeIds.concat(jsonData.exchangeIds);
+                      } else if (moment(jsonData.endDate).isSameOrAfter(currentDay)) {
+                        incompleteIds = incompleteIds.concat(jsonData.exchangeIds);
+                      }
+                    }
+                  }
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }, "json");
+        // yongJiModels
+        reqGet("/modelingViewerApi/modelNames/YongJi",
+                function(data){
+                  yongJiModels = data;
+                },
+                function(xhr){showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);},
+                "");
+      }else{
+        $("#toolBar").hide();
+      }
+
+      $("#dialogMySnapShot").dialog({
+        autoOpen: false,
+        position: {my: "center", at: "center", of: window},
+        show    : {effect: "blind", duration: 500},
+        hide    : {effect: "blind", duration: 500},
+        width   : 1200
+      });
+
+      $("#snapshot-button").on("click", () => {
+        $("#dialogMySnapShot").dialog("open");
+        reqGet("/account/mySnapShot"
+                , function (data) {
+                  $('#dialogMySnapShot').html(data);
+                  $("#snapshot-exe").click();
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                }
+                , "html");
+      });
+
+      $("#mySnapShotTitle").on("keypress", function(e) {
+        if(e.keyCode === 13) {
+          $("#saveMySnapShot").trigger("click");
+        }
+      });
+
+      $("#saveMySnapShot").on("click", () => {
+        let title = $("#mySnapShotTitle").val();
+        if ($.trim(title) == "") {
+          showErrorAlert("my snap shot", "enter title of snapshot.");
+          $("#mySnapShotTitle").focus;
+          return;
+        }
+        let camera = hwv.view.getCamera();
+        let jsonViewPoint = camera.forJson();
+
+        let param = {
+          source: $("#snapshot-dialog-image").attr("src"),
+          title : title,
+          viewPointJson: JSON.stringify(jsonViewPoint),
+          viewModelJson: JSON.stringify(models),
+          viewModelId  : modelIds
+        };
+
+        reqPost("/accountApi/mySnapShot"
+                , param
+                , (data) => {
+                  if (data.result) {
+                    toastr.success(data.message);
+                    if ($("#mySnapShotArea").length) {
+                      let rowCount = $("#mySnapShotArea li").length;
+                      reloadComponentTabActive('/contents/mySnapShotArea', "#mySnapShotArea", "");
+                      $("#mySnapShotCount").html(rowCount + 1);
+                    }
+
+                    $("#mySnapShotTitle").val("");
+                    $("#snapshot-dialog-cancel-button").trigger("click");
+                  } else {
+                    toastr.error(data.message);
+                  }
+                }
+                , function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                });
+      });
+
+      // MONAD: Search Name 다이얼로그 표시 -------------------------------------------------------------
+      function showSearchResultTable(nodeIds) {
+        HwvUtility.cwv = hwv;
+        let tbl = "";
+        for (let i = 0; i < nodeIds.length; i++) {
+          let nodeName = HwvUtility.getNodeNameFromId(nodeIds[i]);
+          tbl += "<tr><td style='cursor:pointer' class='resultNodeName' data-node_id='" + nodeIds[i] + "'>" + nodeName + "</td></tr>";
+        }
+        $("#cntSearchName").text(nodeIds.length);
+        $("#tblSearchNameBody").empty();
+        $("#tblSearchNameBody").append(tbl);
+
+
+      }
+
+      $("#dialog_search_by_name").dialog({
+        autoOpen: false,
+        //title: "View Point",
+        position : {my: "center", at: "center", of: window},
+        show     : {effect: "blind", duration: 500},
+        hide     : {effect: "explode", duration: 500},
+        width    : 500,
+        maxHeight: 500
+      });
+      $("#btnDispSearchDialog").on("click", function () {
+        // "이름 검색" 버튼으로 Dialog 팝업 On/Off
+        if($("#dialog_search_by_name").dialog("isOpen")){
+          $("#dialog_search_by_name").dialog("close");
+        }else{
+          $("#dialog_search_by_name").dialog("open");
+        }
+
+      });
+      let imageId = 0;
+      const cameraBuff = []
+      $("#btnSaveView").on("click", function () {
+        // 뷰 저장
+        hwv.takeSnapshot({ width: 160, height: 120, layers:Communicator.SnapshotLayer.All }).then(function (image) {
+          cameraBuff.push(hwv.view.getCamera());
+          image.id = imageId++;
+          const divRoot = document.getElementById("snapshots");
+          const div = document.createElement('div');
+          div.id = 'snapshot_' + image.id;
+          divRoot.appendChild(div);
+          div.appendChild(image);
+          image.addEventListener('click', (event) => {
+            hwv.view.setCamera(cameraBuff[image.id], 300);
+          });
+          const span = document.createElement('span');
+          span.innerHTML = 'X';
+          div.appendChild(span);
+          span.addEventListener('click', () => {
+            cameraBuff[image.id] = null;
+            divRoot.removeChild(div);
+          });
+        });
+      });
+      function searchByName(){
+        HwvUtility.cwv = hwv;
+        let searchName = $("#txtSearchName").val().trim();
+        if (searchName.trim() === "") {
+          alert("Please insert node name.")
+          $("#txtSearchName").focus();
+          return false;
+        } else {
+          let nodeIds = HwvUtility.getNodeIdsFromName(searchName);
+          showSearchResultTable(nodeIds);
+        }
+      }
+
+      $("#btnSearchName").click(function () {
+        searchByName();
+      });
+      // 검색에서 엔터 키가 눌려 졌을 때
+      $("#txtSearchName").on("keyup", function(key){
+        if(key.keyCode == 13){
+          searchByName();
+        }
+      });
+
+      async function findChildrenPhasingCodesRecursive(nodeId){
+        let nodeIdChildrens = hwv.model.getNodeChildren(nodeId);
+
+        let childrenPhasingCodes = [];
+        let childrenPhasingCodeSet = new Set();
+
+        for(let i in nodeIdChildrens){
+          let checkHavePhasingCode = await HwvUtility.getPhasingCodesByNodeId(nodeIdChildrens[i]);
+          if(checkHavePhasingCode === undefined){
+            childrenPhasingCodes = childrenPhasingCodes.concat( await findChildrenPhasingCodesRecursive(nodeIdChildrens[i]) )
+          }
+          else{
+            childrenPhasingCodes = childrenPhasingCodes.concat( nodeIdChildrens[i] );
+          }
+        }
+        childrenPhasingCodes.map(item => childrenPhasingCodeSet.add(item));
+        let resultPhasingCodes = [...childrenPhasingCodeSet];
+
+        return resultPhasingCodes;
+      }
+
+      $("#tblSearchNameBody").on('click', '.resultNodeName', async function () {
+        let nodeId = $(this).data("node_id");
+        let zoom = $("body").find(".ui-contextmenu").find("#zoom");
+
+        hwv.selectPart(-1); // 기존 선택된 항목들 제거
+        let selectionType = "";
+
+        let checkHavePhasingCode = await HwvUtility.getPhasingCodesByNodeId(nodeId);
+
+        if (checkHavePhasingCode === undefined){ // PhasingCode가 없는 경우
+          let resultPhasingCodes = await findChildrenPhasingCodesRecursive(nodeId);
+          if(resultPhasingCodes.length != 0){
+            //hwv.view.centerCameraOnNode(nodeId, 1000).then(() => {}); // 카메라 시점만 이동
+            hwv.selectPart(nodeId);
+            $(zoom).trigger("click"); // 카메라 시점 이동 및 줌
+          }
+          for (let i in resultPhasingCodes){
+            HwvUtility.cwv.getSelectionManager().selectNode(resultPhasingCodes[i], Communicator.SelectionMode.Add);
+          }
+        }
+        else{
+          selectionType = hwv.selectPart(nodeId);
+          if (selectionType) {
+            //hwv.view.centerCameraOnNode(nodeId, 1000).then(() => {});
+            $(zoom).trigger("click");
+            hwv.selectPart(nodeId);
+          }
+        }
+
+      });
+      // ----------------------------------------------------------------------------------
+
+      // MONAD: Search Property 다이얼로그 표시 -------------------------------------------------------------
+      $("#btnDispPropertySearchDialog").on("click", function () {
+        $("#dialogSearchByProperty").dialog("open");
+      });
+      $("#btnSearchProperty").click(async function () {
+        HwvUtility.cwv = hwv;
+        let searchProperty = $("#txtSearchProperty").val().trim();
+        $("#tblSearchPropertyBody").empty();
+        $("#dialogSearchByProperty").parent("div").children(".ui-dialog-titlebar").children(".ui-dialog-title").text("Search Property");
+
+        if (searchProperty === "") {
+          alert("Please insert property name.")
+          $("#txtSearchProperty").focus();
+          return false;
+        } else {
+          //let start = Date.now(); console.log(start);
+          let nodeIdsFromProperty = await HwvUtility.getNodeIdsFromProperty(searchProperty);
+          //let end = Date.now(); console.log(end);
+          let elapsed = ComUtility.getDiffSeconds(start, end);
+          let txtTitle = "Search Property: " + searchProperty + ", Elapsed " + elapsed;
+          $("#dialogSearchByProperty").parent("div").children(".ui-dialog-titlebar").children(".ui-dialog-title").text(txtTitle);
+          $("#cntSearchProperty").text("0");
+          if (nodeIdsFromProperty && nodeIdsFromProperty.length > 0) {
+            showSearchPropertyResultTable(nodeIdsFromProperty);
+          }
+        }
+      });
+
+      $("#dialogSearchByProperty").dialog({
+        autoOpen : false,
+        position : {my: "center", at: "center", of: window},
+        show     : {effect: "blind", duration: 500},
+        width    : 600,
+        maxHeight: 500
+      });
+
+      function showSearchPropertyResultTable(objNodes) {
+        let tbl = "";
+        for (let i = 0; i < objNodes.length; i++) {
+          let nodeId = objNodes[i]["nodeId"];
+          let nodeName = hwv.model.getNodeName(objNodes[i]["nodeId"]);
+          let propVal = objNodes[i]["value"];
+          tbl += "<tr><td>" + nodeId + "</td><td data-node_id='" + nodeId + "' class='propNodeName' style='cursor:pointer'>" + nodeName + "</td><td>" + propVal + "</td></tr>";
+        }
+        $("#cntSearchProperty").text(objNodes.length);
+        $("#tblSearchPropertyBody").empty();
+        $("#tblSearchPropertyBody").append(tbl);
+      }
+
+      $("#tblSearchPropertyBody").on('click', '.propNodeName', function () {
+        let nodeId = $(this).data("node_id");
+        let selectionType = hwv.selectPart(nodeId);
+        if (selectionType) {
+          hwv.view.centerCameraOnNode(nodeId, 1000).then(() => {
+          });
+        }
+      });
+
+      $("#dialogCreateJob").dialog({
+        autoOpen: false,
+        position: {my: "center bottom", at: "center bottom", of: ".main-footer"},
+        show    : {effect: "blind", duration: 500},
+        hide    : {effect: "blind", duration: 500},
+        width   : 800,
+        height  : 500
+      });
+      $("#loadCreateJob").on("click", async () => {
+        const selectedTaskPhasingCodes = await HwvUtility.getSelectedPhasingCodes();
+        setCookie('JobPhasingCodes', JSON.stringify(selectedTaskPhasingCodes), null, '/');
+        //window.open("/project/jobSheetAdd");
+        reqGet(
+                "/project/selectJobSheetList?phasingCodes=" + selectedTaskPhasingCodes.join(","),
+                function (data) {
+                  if (data === null || data === undefined || data === "") {
+                    window.open("/project/jobSheetAdd");
+                  } else {
+                    $("#dialogCreateJob").dialog("open");
+                    $('#dialogCreateJob').html(data);
+                    $("#snapshot-exe").click();
+                  }
+                },
+                function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+                },
+                "html"
+        );
+      });
+
+      // set project coordinate
+      reqGet(
+              "/modelingViewerApi/baseCoordinate"
+              , function(res){
+                if( res) {
+                  g_offset = res;
+                  //console.log(g_offset.x, g_offset.y, g_offset.z);
+                }
+              }
+              , function(xhr) { showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);}
+              , "json"
+      );
+      // show coordinate
+      $("#coordinate-button").on("click", function(){
+        annotationExample = new UserViewer.AnnotationExample();
+        annotationExample.start(hwv);
+      });
+
+      $("#show-all").on("click", function() {
+        HwvUtility.showRootNodeId();
+        chgColorProcessStatus(allTaskExchangeIds, "2023-01-01");
+      });
+
+      function untilToday(){
+
+      };
+      $("#show-untilToday").on("click", function() {
+        HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+        let showExchangeIds = [];
+        for (let i = 0; i < allTaskExchangeIds.length; i++) {
+          let t = allTaskExchangeIds[i];
+          if (moment(t.endDate).isSameOrAfter(currentDay)) {
+            break;
+          }
+          if (moment(t.endDate).isBefore(currentDay)) {
+            showExchangeIds = showExchangeIds.concat(t.exchangeIds);
+          }
+        }
+        if (showExchangeIds.length > 0) {
+          HwvUtility.getNodeIdsFromExchangeIds(showExchangeIds);
+          HwvUtility.showSelectedNodeIds();
+        }
+
+        chgColorProcessStatus(allTaskExchangeIds, currentDay);
+      });
+
+      function showUntilTodayNodesIds(showExchangeIds){
+        return new Promise(function(resolve, reject){
+          if (showExchangeIds.length > 0) {
+            HwvUtility.getNodeIdsFromExchangeIds(showExchangeIds);
+            HwvUtility.showSelectedNodeIds();
+          }
+          resolve(true);
+        });
+      };
+      $("#show-allToday").on("click", function() { //20221130 신윤철 : untilToday + Today를 진행 한 후, allToday에 대해서는 Select하도록 수정
+        HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+        let processItemId = 0;
+        let showExchangeIds = [];
+        let todayExchangeIds = [];
+        for (let i = 0; i < allTaskExchangeIds.length; i++) {
+          let t = allTaskExchangeIds[i];
+
+          /*
+          if (moment(t.endDate).isBefore(currentDay)) {
+            showExchangeIds = showExchangeIds.concat(t.exchangeIds);
+          }*/
+
+          if (moment(t.startDate).isSameOrBefore(currentDay) && moment(t.endDate).isSameOrAfter(currentDay)) {
+            if(processItemId === 0){
+              processItemId = t.processItemId;
+            }
+
+            //  showExchangeIds = showExchangeIds.concat(t.exchangeIds);
+            todayExchangeIds = todayExchangeIds.concat(t.exchangeIds);
+          }
+        }
+        /*
+        showUntilTodayNodesIds(showExchangeIds)
+                .then(function (resolve){
+                  if (todayExchangeIds.length >0){
+                    HwvUtility.getNodeIdsFromExchangeIds(todayExchangeIds);
+                    for(let i = 0 ; i < todayExchangeIds.length ; i++){
+                      HwvUtility.cwv.getSelectionManager().selectNode(HwvUtility.nodeIdsFromExchangeIds[i], Communicator.SelectionMode.Add);
+                    }
+                  }
+                });*/
+        if (todayExchangeIds.length >0){
+          HwvUtility.getNodeIdsFromExchangeIds(todayExchangeIds);
+          for(let i = 0 ; i < todayExchangeIds.length ; i++){
+            // HwvUtility.cwv.getSelectionManager().selectNode(HwvUtility.nodeIdsFromExchangeIds[i], Communicator.SelectionMode.Add);
+            HwvUtility.showSelectedNodeIds();
+          }
+        }
+
+        if(processItemId){
+          selectAndFocusTask(processItemId);
+          processItemId = 0;
+        }
+        chgColorProcessStatus(allTaskExchangeIds, currentDay);
+
+      });
+
+      $("#show-period").on("click", function(){
+        HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+        let showExchangeIds = [];
+
+        let startDate = "";
+        let endDate = "";
+
+        if(window.localStorage.getItem("viewPage") === "processMainPageView"){
+          startDate = moment($("#startCalender").val()).format('YYYY-MM-DD');
+          endDate = moment($("#endCalender").val()).format('YYYY-MM-DD');
+        }
+        else if(window.localStorage.getItem("viewPage") === "costMainPageView"){
+          startDate = moment($("#gridStartDate").val()).format('YYYY-MM-DD');
+          endDate = moment($("#gridEndDate").val()).format('YYYY-MM-DD');
+        }
+        const filterData = allTaskExchangeIds.filter((model) => {
+          return (startDate ? moment(model.startDate).isSameOrAfter(startDate) : true) &&
+                  (endDate ? moment(model.endDate).isSameOrBefore(endDate) : true);
+        })
+        filterData.forEach(model => showExchangeIds = showExchangeIds.concat(model.exchangeIds));
+        if (showExchangeIds.length > 0) {
+          HwvUtility.getNodeIdsFromExchangeIds(showExchangeIds);
+          HwvUtility.showSelectedNodeIds();
+        }
+        chgColorProcessStatus(allTaskExchangeIds, currentDay);
+      });
+
+      $("#show-show-untilToday").on("click", function() {
+        HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+        let processItemId = 0;
+        let showExchangeIds = [];
+        for (let i = 0; i < allTaskExchangeIds.length; i++) {
+          let t = allTaskExchangeIds[i];
+          if (moment(t.startDate).isSameOrBefore(currentDay) && moment(t.endDate).isSameOrAfter(currentDay)) {
+            if (myWorkIds.includes(t.workId + "")) {
+              if(processItemId === 0){
+                processItemId = t.processItemId;
+              }
+              showExchangeIds = showExchangeIds.concat(t.exchangeIds);
+            }
+          }
+        }
+        if (showExchangeIds.length > 0) {
+          HwvUtility.getNodeIdsFromExchangeIds(showExchangeIds);
+          HwvUtility.showSelectedNodeIds();
+        }
+        if(processItemId){
+          selectAndFocusTask(processItemId);
+          processItemId = 0;
+        }
+
+        chgColorProcessStatus(allTaskExchangeIds, currentDay);
+
+      });
+      // 공사일지 기반 모델 exchangeIds 가져오기(2023.06.09 이동근)
+      $("#show-jobsheet").on("click", function () {
+        let param = "";
+        if(window.localStorage.getItem("viewPage") === "processMainPageView"){
+          param = "startDate=" + moment($("#startCalender").val()).format('YYYY-MM-DD');
+          param += "&endDate=" + moment($("#endCalender").val()).format('YYYY-MM-DD');
+        }
+        else if(window.localStorage.getItem("viewPage") === "costMainPageView"){
+          param = "startDate=" + moment($("#gridStartDate").val()).format('YYYY-MM-DD');
+          param += "&endDate=" + moment($("#gridEndDate").val()).format('YYYY-MM-DD');
+
+        }
+        HwvUtility.setOpacitySelectedNodeIds([hwv.model.getAbsoluteRootNode()], 0.1);
+        let jsExchangeIds = [];
+
+        reqGet(`/modelingViewerApi/getJobSheetModelExchangeIds?${param}`,
+                function (data) {
+                  for (let i = 0; i < data.length; i++) {
+                    let t = data[i];
+
+                    if (t.exchangeId !== "") {
+                      if(t.exchangeId.includes("|,|")){
+                        let arrExchangeId = t.exchangeId.split("|,|");
+                        arrExchangeId.forEach((exchangeId) => {
+                          jsExchangeIds.push(exchangeId);
+                        })
+                      }else{
+                        jsExchangeIds.push(t.exchangeId);
+                      }
+                    }
+                    jsExchangeIds = jsExchangeIds.concat(t.exchangeId);
+                  }
+
+                  if (jsExchangeIds.length > 0) {
+                    HwvUtility.getNodeIdsFromExchangeIds(jsExchangeIds);
+                    HwvUtility.showSelectedNodeIds();
+                  }
+
+                  chgColorProcessStatus(jsExchangeIds, currentDay);
+                },
+                function (xhr) {
+                  showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+                });
+      });
+
+
+
+      // 표시할 모델을 선택할 다이얼로그 표시
+      $("#btnSelectModels").on("click", function () {
+        // "모델 표시" 버튼으로 Dialog 팝업 On/Off
+        if($("#dialogSelectModels").dialog("isOpen")){
+          $("#dialogSelectModels").dialog("close");
+        }else{
+          $("#dialogSelectModels").dialog("open");
+        }
+      });
+
+      // 하단 버튼 margin > auto 처리
+      // 버튼 아이콘, 버튼 텍스트 가운데 정렬
+      $(".submenu-icon").css("margin","auto");
+      $(".toolbar_button").css("margin","auto");
+      $(".tool-icon-text").css("text-align","center");
+
+      // 발주사 계정은 toolBar width=1100, 그 외의 계정은 width=560
+      if(isCompanyRoleTypeHead)       $("#toolBar").css("width","560");
+      else                            $("#toolBar").css("width","1100");
+
+      // 화면 초기화(모델 뷰 > 전체화면 , 하단영역(공정/기성) 제거)
+      onCostLayout('model');
+      sleep(2000);
+
+      let init_position = `[[${initPosition}]]`;
+
+      window.setTimeout( function(){
+        if(hwv.view !== null) {
+          if (init_position === "") {
+            hwv.view.setViewOrientation(0).then(function () {
+              sleep(2000);
+              hwv.view.setDrawMode(1);
+            });
+          } else {
+            let initViewData = JSON.parse(init_position.replaceAll('&quot;', '"'));
+
+            hwv.view.setDrawMode(1).then(function(){sleep(2000);goViewPoint(initViewData);});
+          }
+        }
+      }, 5000);
+
+
+      // 처음 시작화면 설정 > 스냅샷 데이터 이용
+/*
+      window.setTimeout( function(){
+        if(hwv.view !== null) {
+          let initViewData = {
+            "position":{
+              "x":1841843.7291683592,
+              "y":967656.9230348456,
+              "z":3515605.823171171
+            },
+            "target":{
+              "x":1740453.6435222465,
+              "y":1076861.1641346104,
+              "z":102597.70200593723
+            },
+            "up":{
+              "x":-0.6797535808966453,
+              "y":0.7321423483886592,
+              "z":0.04361938736533655
+            },
+            "width":3416259.5596375866,
+            "height":3416259.5596375866,
+            "projection":0,
+            "nearLimit":0.01,
+            "className":"Communicator.Camera"
+          }
+
+          // goViewPoint(initViewData).then(function(){sleep(2000);hwv.view.setDrawMode(1);});
+          hwv.view.setDrawMode(1).then(function(){sleep(2000);goViewPoint(initViewData);});
+
+        }
+      }, 5000);
+*/
+
+      function selectAndFocusTask(processItemId){
+        if(typeof gantt !== "undefined" && gantt != null){
+          const x = gantt.getScrollState();
+          const taskHeight = gantt.getTaskHeight();
+          gantt.eachTask(function (task) {
+            if(task.id === processItemId){
+              gantt.selectTask(task.id);
+              gantt.scrollTo(x,task.ganttSortNo*taskHeight);
+              return false;
+            }
+          });
+        }
+      }
+
+      function closeCostDetailPopover(){
+        $(".popover").popover('dispose');
+        if(Object.keys(costDetail).length === 0){
+          return ;
+        }
+        for(let i=0; i<Object.keys(costDetail).length ; i++){
+          $("#btnCostPopover-"+Object.keys(costDetail)[i]).popover("dispose");
+        }
+      }
+
+      $("#dialogMultiSelect").dialog({
+        autoOpen : false,
+        position : {my: "center", at: "center", of: window},
+        show     : {effect: "blind", duration: 500},
+        hide     : {effect: "blind", duration: 500},
+        width    : 700,
+        close    : function(){
+          closeCostDetailPopover();
+        },
+      });
+
+      function insertTableBody(data, i){
+        $("#tbMultiSelectBody").append("<tr>"+
+                "  <td>"+data.taskName+"</td>"+
+                "  <td class='text-center'>"+data.workName+"</td>"+
+                "  <td class='text-right'>"+data.progressRate+"%</td>"+
+                "  <td class='text-center'>"+data.startDate+"</td>"+
+                "  <td class='text-center'>"+data.endDate+"</td>"+
+                "  <td class='text-right'>"+data.complexUnitPrice.toLocaleString('ko-KR')+"</td>"+
+                "  <td class='text-center'><button id='btnCostPopover-"+data.processItemId+"' class='btn btn-primary costPopover' data-toggle='popover' data-processitemid="+data.processItemId+">+</button></td>"+
+                "  <td class='text-right'>"+data.taskCost.toLocaleString('ko-KR')+"</td>"+
+                "</tr>");
+
+        $("#btnCostPopover-"+data.processItemId).popover({
+          placement : "right",
+          html      : true,
+          title     : "복합단가 상세",
+          container : "body",
+          content   : function(){
+            let dom = document.createElement("div");
+            dom.innerHTML = NodePropertyPopup._getCostDetail(costDetail[data.processItemId], data.processItemId);
+            return dom;
+          },
+        });
+      };
+
+      function getCostDetail(processItemId){
+        return new Promise(function(resolve, reject){
+          reqGet("/costApi/getProcessItemCostDetail/"+processItemId+"/R", function (data) {
+            if (data.result) {
+              costDetail[processItemId] = JSON.parse(data.model);
+              resolve(true);
+            }
+          });
+        });
+      };
+
+      // 객체정보 버튼 클릭
+      $("#multiselect-button").on("click", async() => {
+        if(hwv.selectionManager.getResults().length < 1 ){
+          return;
+        }
+        let nodeId = hwv.selectionManager.getResults()[0]._nodeId;
+        nodeId = hwv.model.getNodeParent(nodeId);
+        console.log('nodeId', nodeId)
+        closeCostDetailPopover();
+        let phasingCodes = await HwvUtility.getSelectedPhasingCodes();
+        costDetail = {};
+        let phasingCodesSet = new Set();
+        phasingCodes.map(item => phasingCodesSet.add(item));
+        let phasingCodesArray = [...phasingCodesSet]
+
+        if(phasingCodesArray.length === 0 ){
+          return;
+        }
+        else if(phasingCodesArray.length === 1){ // 기존의 객체 정보 창 출력
+          NodePropertyPopup._getHwvProperty(hwv.selectionManager.getResults()[0]._nodeId).then(()=>{
+
+            if(String(phasingCodesArray[0]).trim().length > 0  && phasingCodesArray[0] !== undefined) { // 2022.10.04 phasingCodes 유무 체크
+              if(phasingCodesArray[0].toUpperCase().startsWith("YJ_") ){ // 용지 정보
+                hwv.model.getNodeProperties(nodeId).then((properties)=>{
+                  let tbl = NodePropertyPopup._landInformation(properties);
+                  $("#dlgObjectProperty").parent().find("span").html("용지 정보");
+                  $("#dlgObjectProperty").html(tbl);
+                  $("#dlgObjectProperty").dialog("open");
+                });
+              } else {
+                let tbl = NodePropertyPopup._objInformation(companyRoleType);
+                $("#dlgObjectProperty").parent().find("span").html("객체 정보");
+                $("#dlgObjectProperty").html(tbl);
+                NodePropertyPopup._getCostProperties(phasingCodesArray[0])
+                        .then(function (resolve) {
+                          NodePropertyPopup._findCostDetail();
+                          NodePropertyPopup._findWorkerDeviceDetail();
+                          NodePropertyPopup._popoverInit();
+                        });
+              }
+            }
+          });
+        }
+        else if(phasingCodesArray.length >= 2){
+          $("#selectCount").text("개수 : ");
+          $("#costSum").text("합계 : ");
+          $("#taskCostSum").text("합계 : ");
+
+          $("#dialogMultiSelect").dialog("open");
+          $("#tbMultiSelectBody").empty();
+          reqPostJSON('/costApi/getProcessItemsCost'
+                  , JSON.stringify({"phasingCodes": phasingCodesArray})
+                  , function(data){
+                    let sumComplexUnitPrice = 0;
+                    let sumTaskCost = 0;
+                    for(let i=0 ; i < data.length ; i++){
+                      let jsonData = JSON.parse(data[i].model);
+                      getCostDetail(jsonData[0].processItemId)
+                              .then(function (resolve){
+                                insertTableBody(jsonData[0], i);
+                              });
+                      sumComplexUnitPrice += jsonData[0].complexUnitPrice;
+                      sumTaskCost += jsonData[0].taskCost;
+
+                    }
+                    $("#selectCount").text("개수 : " + data.length.toLocaleString('ko-KR'));
+                    $("#costSum").text("합계 : " + sumComplexUnitPrice.toLocaleString('ko-KR'));
+                    $("#taskCostSum").text("합계 : " + sumTaskCost.toLocaleString('ko-KR'));
+                  }
+          );
+        }
+      });
+
+      $("#btnSelectAdd").on("click", function(){
+        if(selectAdd){
+          document.getElementById("btnSelectAdd").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M200 344V280H136C122.7 280 112 269.3 112 256C112 242.7 122.7 232 136 232H200V168C200 154.7 210.7 144 224 144C237.3 144 248 154.7 248 168V232H312C325.3 232 336 242.7 336 256C336 269.3 325.3 280 312 280H248V344C248 357.3 237.3 368 224 368C210.7 368 200 357.3 200 344zM0 96C0 60.65 28.65 32 64 32H384C419.3 32 448 60.65 448 96V416C448 451.3 419.3 480 384 480H64C28.65 480 0 451.3 0 416V96zM48 96V416C48 424.8 55.16 432 64 432H384C392.8 432 400 424.8 400 416V96C400 87.16 392.8 80 384 80H64C55.16 80 48 87.16 48 96z"/></svg>';
+          selectAdd = false;
+          selectedNodeId = [];
+
+        }
+        else{
+          document.getElementById("btnSelectAdd").innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM200 344V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H248v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>';
+          selectAdd = true;
+
+        }
+      });
+
+      $("#tbMultiSelect").on("click", ".costPopover", function(){
+        $(".popover-body").css({"max-height":"700px", "overflow-y":"auto"});
+        NodePropertyPopup._clickExportXlsx();
+        NodePropertyPopup._clickExportWorkerDeviceXlsx();
+      });
+    }; // end of window.onload
+    let createModelingViewer = function () {
+      UserViewer.createViewer().then(function (viewer) {
+                hwv = viewer;
+                HwvUtility.cwv = hwv;
+                window.onresize = function (event) {
+                  // jQuery resizable triggers onresize, check that the call is not coming from a DOM element object
+                  if (typeof event.target.getAttribute !== "function") {
+                    hwv.resizeCanvas();
+                  }
+                };
+
+                let screenConfiguration = (md.mobile() !== null) ? Communicator.ScreenConfiguration.Mobile : UserViewer.screenConfiguration;
+                let uiConfig = {
+                  containerId        : "content",
+                  screenConfiguration: screenConfiguration,
+                }
+
+                ui = new Communicator.Ui.Desktop.DesktopUi(hwv, uiConfig);
+                hwv.start();
+
+                setOrbitRotate();
+                setMouseWheelAdjustCameraTarget();
+                setSingleEntityToggleModeEnabled();
+
+                hwv.setCallbacks({
+                  sceneReady         : function () {
+                    let root = hwv.model.getAbsoluteRootNode();
+                    loadedModels = [];
+                    for (let i = 0, p = Promise.resolve(); i < Object.keys(models).length; i++) {
+                      p = p.then(() => hwv.model.loadSubtreeFromModel(root, models[i]).then(function(response){
+                        loadedModels.push({"nodeId":response[0], "modelName":models[i]});
+                        if (yongJiModels.includes(models[i])) {
+                          hwv.model.setNodesVisibility([response[0]], false);
+                          yongJiModels_nodeIds = yongJiModels_nodeIds.concat(response[0]);
+                        }
+                      }));
+                    }
+
+                    let v = new syncViewer();
+                    if (isCoWorkPage()) {
+                      v.start();
+                    }
+                    viewerBgColor(); // user defined viewer background color
+
+                    // HOOPS 조작 변경적용(2023.1.26)
+                    // 1. 밑면 투명 적용(setBackfacesVisible)
+                    // 2. left클릭 > cameraTarget 회전, 휠버튼 클릭 > OrbitTarget 회전
+                    // 3. 모델 1개 선택 시 모델 중심 회전
+                    // 4. 모델 2개 이상 선택시 모들 모델의 x,y,z값을 계산하여 중심점 기준으로 회전
+
+                    // HOOPS 조작 변경 적용보류 (2023.1.27)
+                    // 기 적용 코드 주석 처리 > 추후 검토 후 수정 적용
+
+                    // 지형도 선표시 미적용
+                    // hwv.view.setLineVisibility(false);
+
+                    // 2023.1.26
+
+                    const canvas = hwv.getViewElement();
+                    canvas.addEventListener("mousedown", () => {
+                      viewer.focusInput(true);
+
+                      // 밑면 투명 적용(setBackfacesVisible)
+                      // s.j.h : 현재 교각 같은 모델에서 일부 메쉬의 방향이 잘 못 되어 있어 3D의 품질이 저하되는 현상이 있어 일단 주석처리합니다.
+                      // viewer.view.setBackfacesVisible(false);
+
+                      var orbitOperator = viewer.operatorManager.getOperator(Communicator.OperatorId.Orbit);
+                      var selectionManager = viewer.selectionManager;
+                      var selectionItems = selectionManager.getResults();
+
+                      // 모델이 선택되면 OrbitTarget 모드 > x,y,z좌표 계산하여 중점 기준 회전
+                      if(selectionItems.length > 0) {
+                        var center = {x:0, y:0, z:0};
+                        for (var i = 0; i < selectionItems.length; i++) {
+                          var selectionItem = selectionItems[i];
+                          if (selectionItem !== null) {
+                            var position = selectionItem.getPosition();
+                            center.x += position.x;
+                            center.y += position.y;
+                            center.z += position.z;
+                          }
+                        }
+                        center.x /= selectionItems.length;
+                        center.y /= selectionItems.length;
+                        center.z /= selectionItems.length;
+                        orbitOperator.setOrbitTarget(new Communicator.Point3(center.x, center.y, center.z));
+                        orbitOperator.setOrbitFallbackMode(Communicator.OrbitFallbackMode.OrbitTarget);
+                      } else {
+                        // 선택 모델이 없으면 CameraTarget 모드
+                        orbitOperator.setOrbitFallbackMode(Communicator.OrbitFallbackMode.CameraTarget);
+                      }
+                    })
+
+                  },
+                  modelStructureReady: function () {
+                    /* let viewPoint = $("#dialogMyViewPoint").data("view-point");
+                    if (viewPoint) goViewPoint(viewPoint); */
+                    let viewPoint = $("#dialogMySnapShot").data("view-point");
+                    if (viewPoint) goViewPoint(viewPoint);
+
+                    sleepPromise(5000).then(()=>{
+                      viewerSettingInit();
+                    });
+
+                    UserProperty.init();
+                    NodePropertyPopup.init();
+                    ShowHideModels.init();
+                  },
+                  subtreeLoaded: function(){
+                    // chgColorProcessStatus();
+                  },
+                  partsVisibilityShown: function () {
+                    if(exchangeIds != null && exchangeIds.trim() != ""){
+                      HwvUtility.getNodeIdsFromExchangeIds(exchangeIds);
+                      let nodeId = HwvUtility.nodeIdsFromExchangeIds;
+                      hwv.view.fitNodes(nodeId);
+                    }
+                  },
+
+                  selectionArray: async function(selectionEvents) {
+                    UserProperty.enableAddProperty(selectionEvents);
+                    HwvUtility.getSelectedNodePhasingCodes(selectionEvents).then((v) => {
+                      if(v){
+                        const phasingCode = $.trim(v);
+                        if(HwvUtility.isGanttClicked){
+                          return false;
+                        }
+                        if(typeof gantt !== "undefined" && gantt != null){
+                          const x = gantt.getScrollState();
+                          const taskHeight = gantt.getTaskHeight();
+                          gantt.eachTask(function (task) {
+                            if(task.phasingCode === phasingCode){
+                              gantt.selectTask(task.id);
+                              gantt.scrollTo(x,task.ganttSortNo*taskHeight);
+                              return false;
+                            }
+                          });
+                        }
+                      }
+                    });
+                    if( keyEventWhich === Communicator.KeyCode.Shift ){
+                      NodePropertyPopup.showNodePropertyPopup(selectionEvents,companyRoleType);
+                      keyEventWhich = null;
+                    }
+
+                    // s.j.h : 투명한 객체에 대한 선택 제거
+                    var arrTrans = [];
+                    for (const selectionEvent of selectionEvents) {
+                      const model = hwv.model;
+                      var selection = selectionEvent.getSelection();
+                      let trans = model.getNodesHaveTransparency([selection.getNodeId()]);
+                      await trans.then((value) => {
+                        if(value[0]) {
+                          const selectionIds = selectionEvents.map(sEvent => sEvent.getSelection().getNodeId());
+                          const foundIndex = selectionIds.indexOf(selection.getNodeId());
+                          //hwv.selectionManager.remove(selectionEvents[foundIndex].getSelection());
+                          //console.log("remove : ",selection.getNodeId(), hwv.selectionManager);
+                          trans.object = selectionEvents[foundIndex].getSelection();
+                        }
+                      });
+
+                      if(trans.object != null)
+                        arrTrans.push(trans.object);
+                    }
+
+                    for (const obj of arrTrans)
+                    {
+                      hwv.selectionManager.remove(obj);
+                    }
+
+                    if(arrTrans.length > 0)
+                    {
+                      hwv.redraw();
+                    }
+
+                    // s.j.h : 코드 점검 필요
+                    if (selectAdd === true){
+                      for (const selectionEvent of selectionEvents){
+                        const selection = selectionEvent.getSelection();
+                        console.log(selection.getNodeId());
+                        selectedNodeId.push(selection.getNodeId());
+
+                        for (const nodeId of selectedNodeId){
+                          HwvUtility.cwv.getSelectionManager().selectNode(nodeId, Communicator.SelectionMode.Add);
+                        }
+                      }
+                    }
+                  },
+                  contextMenuReset: async function () {
+                    await hwv.model.reset();
+                    showHideYongJiModel(false);
+                    ShowHideModels._showHideByCheckbox();
+                  }
+                });
+              },
+              function (errorReason) {
+                let errorDialog = new Communicator.Ui.UiDialog("content");
+                errorDialog.setTitle("Viewer Error");
+                errorDialog.setText(errorReason);
+                errorDialog.show();
+              });
+    }
+    // 화면에서 keydown 이벤트 취득 -> Shift + 모델 클릭 -> 팝업 표출
+    let keyEventWhich = null;
+    function keyDownEvent(event){
+      keyEventWhich = event.which;
+      //console.log(`keyEventWhich:${keyEventWhich}`);
+    }
+    document.getElementsByTagName("body")[0].addEventListener("keydown", keyDownEvent, false);
+
+  </script>
+
+  <script>
+    function onCostLayout(type){
+      if(type === "cost"){
+        $('main').removeClass('hide-reset');
+        $('main').addClass('hide-gantt-chart');
+        $('main').removeClass('hide-gantt-chart2');
+        $('main').removeClass('hide-cost-area');
+        HwvUtility.showRootNodeId();
+      }else if(type === "process"){
+        $('main').removeClass('hide-reset');
+        $('main').removeClass('hide-gantt-chart');
+        $('main').removeClass('hide-gantt-chart2');
+        $('main').addClass('hide-cost-area');
+        HwvUtility.showRootNodeId();
+      }else if(type === "model"){
+        $('main').addClass('hide-reset');
+        $('main').addClass('hide-gantt-chart');
+        $('main').removeClass('hide-gantt-chart2');
+        $('main').addClass('hide-cost-area');
+      }else if(type === "minwon"){
+        $('main').addClass('hide-reset');
+        $('main').addClass('hide-gantt-chart');
+        $('main').removeClass('hide-gantt-chart2');
+        $('main').addClass('hide-cost-area');
+        HwvUtility.showRootNodeId();
+      }else{
+        $('main').addClass('hide-reset');
+        $('main').addClass('hide-gantt-chart');
+        $('main').removeClass('hide-gantt-chart2');
+        $('main').addClass('hide-cost-area');
+      }
+    }
+    // 기성 또는 공정 버튼이 클릭되었을 때
+    $("#modelMainPageView, #modelMainPageView, #costMainPageView, #processMainPageView").on("click", function(){
+      if($("#dialog_minwon").dialog("isOpen")){
+        $("#dialog_minwon").dialog("close");
+      }
+
+      if( hwv.model.getNodeVisibility(hwv.model.getAbsoluteRootNode()) === false ) {
+        hwv.model.setNodesVisibility([hwv.model.getAbsoluteRootNode()], true);
+      }
+      showHideYongJiModel(false);
+    });
+
+    $("#dialog_minwon").dialog({
+      autoOpen: false,
+      position: {my: "right bottom", at: "right bottom", of: ".main-footer"},
+      show    : {effect: "blind", duration: 500},
+      hide    : {effect: "blind", duration: 500},
+      width   : 780,
+      height  : 475
+    });
+
+    $("#dialog_contract").dialog({
+      autoOpen: false,
+      position: {my: "right bottom", at: "right bottom", of: ".main-footer"},
+      show    : {effect: "blind", duration: 500},
+      hide    : {effect: "blind", duration: 500},
+      width   : 600,
+      height  : 300
+    });
+
+    // 민원 버튼이 클릭되었을 때
+    $("#minwonMainPageView").on("click", function(){
+      $("#dialog_minwon").dialog("open");
+
+      if( yongJiModels.length > 0) {
+        hwv.model.setNodesVisibility([hwv.model.getAbsoluteRootNode()], false);
+        showHideYongJiModel(true);
+        // 모델선택 팝업 체크박스 처리
+        $("#dialogSelectModels").find("#workName").val("4").prop("selected", true);
+        $("#dialogSelectModels").find("#workName").trigger("change");
+        $(".modelShowHide").prop("checked",false);
+        ShowHideModels._showWorks();
+      }
+    });
+
+    function showHideYongJiModel(blShowYongJi){
+      for (let i = 0; i < yongJiModels_nodeIds.length; i++) {
+        hwv.model.setNodesVisibility([yongJiModels_nodeIds[i]], blShowYongJi);
+      }
+    }
+    let contractHtml = ''
+    async function popupContractResult(contract) {
+      let properties = []
+      for (let i = 0; i < loadedModels.length; i++) {
+        if (yongJiModels.includes(loadedModels[i].modelName)) {
+          properties = properties.concat(await getContractNodeProperties(loadedModels[i].nodeId, contract))
+        }
+      }
+      let total = 0;
+      for (property of properties) {
+        let money = Number(property['Data/감정평가금액']);
+        if (isNaN(money)) { money = 0; }
+        total += money;
+      }
+      // 국.공유지는 특수문자 문제로 공유지로 검색했기 때문에 실제 값을 가져온다.
+      contract = properties[0]['Data/계약완료'];
+      let html2 = "<div style='display: flex; justify-content: space-between; width: 100%;'><div>"
+      html2 += "<table border='1'><tr>";
+      html2 += "<td>" + contract + "</td><td style='text-align: right;'>" + total.toLocaleString() + "</td>";
+      html2 += "</tr></table>";
+      html2 += "</div><div align='right'><button class='input-group-text' onclick='downloadContractExcel()'>다운로드</button></div></div>";
+      html2 += "<br>";
+      let html ="<table width='100%' border='1'><tr><td>필지번호</td><td>소유주</td><td>면적(m2)</td><td>감정평가금액</td><td>계약현황</td></tr>";
+      for (property of properties) {
+        let money = Number(property['Data/감정평가금액']);
+        html += "<tr>";
+        html += "<td>" + property['Data/필지번호'] + "</td>";
+        html += "<td>" + cstr(property['Data/소유주']) + "</td>";
+        html += "<td style='text-align: right;'>" + cstr(property['Data/면적']) + "</td>";
+        html += "<td style='text-align: right;'>" + cint(money) + "</td>";
+        html += "<td>" + property['Data/계약완료'] + "</td>";
+        html += "</tr>";
+      }
+      html += "</table>";
+      contractHtml = html;
+      document.getElementById("contract_content").innerHTML = html2 + html;
+      $("#dialog_contract").dialog("open");
+    }
+    function cstr(value) {
+      if (value === undefined) {
+        return ''
+      }
+      return value;
+    }
+    function cint(value) {
+      if (isNaN(value)) {
+        return ''
+      }
+      return value.toLocaleString();
+    }
+    function downloadContractExcel () {
+      var data_type = 'data:application/vnd.ms-excel;charset=utf-8';
+      var table_html = encodeURIComponent(contractHtml);
+
+      var a = document.createElement('a');
+      a.href = data_type + ',%EF%BB%BF' + table_html;
+      a.download = '보상현황.xls';
+      a.click();
+    }
+    async function getContractNodeProperties (nodeId, contract) {
+      const children = hwv.model.getNodeChildren(nodeId);
+      let properties = []
+      for (const id of children) {
+        let property = await HwvUtility.getPropertyByNodeId(id);
+        if (property['Data/계약완료'] !== undefined) {
+          if (property['Data/계약완료'].includes(contract)) {
+            properties.push(property);
+          }
+        } else {
+          properties = properties.concat(await getContractNodeProperties(id, contract));
+        }
+      }
+      return properties;
+    }
+
+    /*메뉴클릭효과*/
+    $('.viewTopBtn button').on('click',function (){
+      $('.viewTopBtn button').removeClass('on');
+      $(this).addClass('on');
+    });
+  </script>
+
+  <style>
+    .ui-dialog.ui-widget {max-width: none; max-height: 1000px;}
+    #dialogMultiSelect{max-height: 800px !important;}
+    .popover{z-index: 6000 !important; max-width: 1000px !important;}
+    .tablePopover{width: 580px !important;}
+    .toolbar-tools-top{
+      display: block;
+      opacity: 1!important;
+    }
+    .contract-buttons button { margin-right: 10px; color: white; }
+  </style>
+</div>

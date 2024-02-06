@@ -1,0 +1,330 @@
+<link rel="stylesheet" href="/plugins/adminlte-slider/adminlte.slider.css" />
+<script src="/plugins/adminlte-slider/adminlte.slider.min.js"></script>
+<div class="content add-job-snapshot">
+	<div class="card-body">
+		<div class="add-job-snapshot-snapshot">
+			<img id="snapshot-image-jobSheet" class="snapshot-dialog-image" />
+		</div>
+
+		<div class="col-12">
+			<div class="table-responsive">
+				<table class="table" style="table-layout: fixed;">
+					<tbody>
+						<tr>
+							<td>
+								<span th:text="#{common.modal.add_job_from_snapshot.input_title}" class="font-weight-bold">제목</span> <small class="keysmall">&#40;<span class="font-weight-bold">&#42;</span>&#41;</small>
+								<div class="mt-2 w-100">
+									<input type="text" id="jobSheetTitle" name="jobSheetTitle" class="form-control" th:placeholder="#{common.modal.add_job_from_snapshot.input_title_placeholder}">
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<span th:text="#{common.modal.add_job_from_snapshot.input_reportDate}" class="font-weight-bold">보고일자</span>
+								<div class="form-group from-date w-100 my-0 mx-0 mt-2">
+									<div class="input-group my-0 mx-0">
+										<input type="text" class="form-control" id="reportDate" readonly>
+									</div>
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<div class="d-flex align-items-start w-100 row">
+									<div class="col-sm-6">
+										<span th:text="#{common.modal.add_job_from_snapshot.input_grantor}" class="font-weight-bold">결재자</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+										<div class="d-flex align-items-center mt-2">
+											<div id="divUserInfoAtField" class="user-panel mr-4" data-toggle="tooltip" data-placement="bottom" data-html="true">
+												<div class="image">
+													<img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+												</div>
+											</div>
+											<span th:if="${accountGrantor.id > 0}">
+												[[${accountGrantor.userName}]]
+												<span th:if="${accountGrantor.accountDTO.isRoleAdminProcess}" th:text="'(' + #{common.modal.search_multi_user.role_admin_process} + ')'"></span>
+											</span>
+											<span th:unless="${accountGrantor.id > 0}">
+												<p id="pSelectJobSheetGrantor" class="mr-auto"><span th:text="#{common.modal.add_job_from_snapshot.select_grantor}"> 결재자가 없습니다.</span></p>
+											</span>
+											<input type="hidden" id="grantorId" name="grantorId" th:value="${accountGrantor.id}">
+										</div>
+									</div>
+
+									<div class="col-sm-6">
+										<span th:text="#{common.modal.add_job_from_snapshot.input_reference}" class="font-weight-bold"> 참조자</span>
+										<div class="d-flex align-items-center mt-2">
+											<div id="divUserInfoAtField" class="user-panel mr-4" data-toggle="tooltip" data-placement="bottom" data-html="true">
+												<div class="image">
+													<img src="/dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+												</div>
+											</div>
+											<span th:if="${accountReferences.size == 0}">
+												<p id="pSelectJobSheetGrantor" class="mr-auto"><span th:text="#{common.modal.add_job_from_snapshot.select_reference}"> 참조자가 없습니다.</span></p>
+											</span>
+											<div th:each="row, i : ${accountReferences}">
+												<span th:if="${i.Index > 0}">, </span>
+												[[${row.userName}]]
+												<span th:if="${row.accountDTO.isRoleAdminProcess}" th:text="'(' + #{common.modal.search_multi_user.role_admin_process} + ')'"></span>
+												<input type="hidden" id="referencesId" name="referencesId" th:value="${row.id}">
+											</div>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<span th:text="#{common.modal.add_job_from_snapshot.input_progress}" class="font-weight-bold">공정별 진행률</span>
+
+								<div class="d-flex flex-column align-items-start w-100 mt-2">
+									<div class="task-list">
+										<div th:each="row, info : ${taskList}" style="width: 100%; max-width: 100%;">
+											<div class="task-title" style="width: 100%; max-width: 100%;">
+												[[${row.taskFullPath}]] <i class="fas fa-times-circle ml-2" style="cursor: pointer;" onclick="removeSlider(this)"></i>
+											</div>
+
+											<div class="task-element">
+												<input type="number" min="0" max="100" step="0.01" class="js-range-slider" name="js-range-slider" th:value="${row.progressRate}" />
+												<div class="input-group">
+													<input id="processItemId" name="processItemId" type="hidden" th:value="${row.processItemId}">
+													<input id="phasingCode" name="phasingCode" type="hidden" th:value="${row.phasingCode}">
+													<input id="taskFullPath" name="taskFullPath" type="hidden" th:value="${row.taskFullPath}">
+													<input id="beforeProgressRate" name="beforeProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" class="form-control" th:value="${row.progressRate}" style="width: 40px;" readonly> % ▶
+													<input id="afterProgressRate" name="afterProgressRate" type="number" min="0" max="100" step="0.01" maxlength="6" class="form-control" th:value="${row.progressRate}" style="width: 40px;"> %
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<span th:text="#{common.modal.add_job_from_snapshot.get_job_sheet_template}" class="font-weight-bold">템플릿 가져오기</span>
+
+								<div class="form-group my-0 mx-0 mt-2">
+									<select id="selectedTemplate" class="custom-select">
+										<option value="0"><span th:text="#{common.modal.add_job_from_snapshot.select_job_sheet_template}"> :: 공사 현황 템플릿을 선택하세요 ::</span></option>
+										<option th:each="item : ${jobSheetTemplateList}" th:value="${item.getId()}" th:text="${item.getTitle()}"></option>
+									</select>
+								</div>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<span th:text="#{common.modal.add_job_from_snapshot.input_job_sheet}" class="font-weight-bold">공사 현황</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+
+								<div th:replace="common/editor/page :: load()" class="mt-2"></div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<div class="col-12">
+			<div class="bim-btn-group" style="text-align: right;">
+				<button type="button" class="btn bg-gradient-info" id="btnJobSheetWrite">
+					<span th:text="#{common.modal.add_job_from_snapshot.btn_write}">임시저장</span>
+				</button>
+				<button type="button" class="btn bg-gradient-info" id="btnJobSheetGoing">
+					<span th:text="#{common.modal.add_job_from_snapshot.btn_going}">공사일지 상신</span>
+				</button>
+				<button type="button" class="btn bg-gradient-info" id="btnJobSheetClose">
+					<span th:text="#{common.modal.add_job_from_snapshot.btn_close}">닫기</span>
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div th:include="common/editor/page :: script()"></div>
+<script th:inline="javascript">
+$(document).ready(function() {
+	const jobSheetTemplateList = [[${jobSheetTemplateList}]];
+
+	let prevTemplateId = 0;
+	let mySnapshotIds = [];
+
+	$("#reportDate").datepicker(datepickerFormat);
+
+	$(this).on("focus", "#selectedTemplate", function() {
+		prevTemplateId = parseInt($(this).val());
+	}).on("change", "#selectedTemplate", function() {
+		if (prevTemplateId === 0 && CommonEditor.isEmpty()) {
+			changeJobSheetTemplate();
+		} else {
+			showConfirm([[#{system.common.confirm.title}]], [[#{common.modal.add_job_from_snapshot.confirm_change_job_sheet_template}]], changeJobSheetTemplate, cancelChangeJobSheetTemplate.bind(this, prevTemplateId))
+		}
+	});
+
+	function changeJobSheetTemplate() {
+		const selectedTemplateId = parseInt($("#selectedTemplate").val());
+		if (selectedTemplateId !== 0) {
+			const selectedContents = jobSheetTemplateList.filter(x => x.id === selectedTemplateId)[0].contents;
+			CommonEditor.setInputData(selectedContents);
+		} else {
+			CommonEditor.deleteInputData();
+		}
+	}
+
+	function cancelChangeJobSheetTemplate(prevTemplateId) {
+		$("#selectedTemplate").val(prevTemplateId);
+	}
+
+	function setSendData(status) {
+		return JSON.stringify({
+			"title": $("#jobSheetTitle").val(),
+			"contents": CommonEditor.getInputData(),
+			"reportDate": $("#reportDate").val(),
+			"grantorId": $("#grantorId").val(),
+			"referencesIds": getInputVlues("referencesId"),
+			"mySnapShotIds": mySnapshotIds,
+			"processItemIds": getInputVlues("processItemId"),
+			"phasingCodes": getInputVlues("phasingCode"),
+			"taskFullPaths": getInputVlues("taskFullPath"),
+			"beforeProgressRates": getInputVlues("beforeProgressRate"),
+			"afterProgressRates": getInputVlues("afterProgressRate"),
+			"status": status,
+		});
+	}
+
+	function setDefaultValue() {
+        setTimeout(function(){
+            const accountJobSheetTemplateId = [[${user.jobSheetTemplateId}]];
+            if(accountJobSheetTemplateId > 0){
+                $("#selectedTemplate").val(accountJobSheetTemplateId);
+                CommonEditor.setInputData(jobSheetTemplateList.filter(x => x.id === accountJobSheetTemplateId)[0].contents);
+            }
+        },1000);
+		$("#jobSheetTitle").val("");
+		$("#reportDate").val(moment().format("YYYY-MM-DD"));
+	}
+
+	function getInputVlues(nm) {
+		let vals = [];
+		$("input[name="+nm+"]").map(function(i,el){
+			vals.push(el.value+"");
+		});
+		return vals;
+	}
+
+	function addJobSheet(status) {
+		saveMySnapShot(status);
+	}
+
+	function saveMySnapShot(status) {
+		mySnapshotIds = [];
+		if (hwv == null || hwv == undefined) return false;
+		let camera = hwv.view.getCamera();
+		let jsonViewPoint = camera.forJson();
+
+		const phasingCodes = [[${phasingCodes}]];
+		let mySnapshottitle = $("#jobSheetTitle").val()+((phasingCodes.length > 0)?"["+phasingCodes.replace(/ /g, '')+"]":"");
+		let source = $("#snapshot-image-jobSheet").attr("src");
+		let param = {
+			title: mySnapshottitle,
+			source: source,
+			viewPointJson: JSON.stringify(jsonViewPoint),
+			viewModelJson: JSON.stringify(models),
+			viewModelId: modelIds
+		}
+		reqPost("/account/saveMySnapShot/beforeJobSheet", param, (data) => {
+			if(data.result){
+				const model = JSON.parse(data.model);
+				mySnapshotIds.push(model.id);
+				saveJobSheet(status);
+			}
+		}, function(xhr) {
+			showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+		});
+	}
+
+	function saveJobSheet(status) {
+		const params = setSendData(status);
+		reqPostJSON('/projectApi/postJobSheet', params,
+	   		function(data) {
+		   		if (!data.result) {
+		   			showErrorAlert("ALERT", data.message);
+		   		} else {
+	   				toastr.success(data.message);
+		   			top.location.href = "/project/jobSheetView?id="+data.returnId;
+	   			}
+	   		},
+	   		function(xhr) {
+	   			showErrorAlert("ALERT", xhr.responseJSON.message);
+	   		}
+	   	);
+	}
+
+	setDefaultValue();
+
+	/*[# th:each="row, info : ${taskList}"]*/
+	$("input[name=js-range-slider]").eq(/*[[${info.index}]]*/).ionRangeSlider({
+		type: 'single',
+		min: 0.00,
+		max: 100.00,
+		step: 0.01,
+		postfix: " %",
+		onChange: function(data) {
+			$('input[name=afterProgressRate]').eq(/*[[${info.index}]]*/).val(data.from);
+		},
+	});
+
+	$('input[name=afterProgressRate]').eq(/*[[${info.index}]]*/).on("change", function() {
+		const v = parseInt(this.value);
+		if (v < 0) {
+			this.value = 0;
+		} else if (v > 100) {
+			this.value = 100;
+		}
+		$('input[name=js-range-slider]').eq(/*[[${info.index}]]*/).data("ionRangeSlider").update({
+			from: $('input[name=afterProgressRate]').eq(/*[[${info.index}]]*/).val(),
+		});
+	});
+	/*[/]*/
+
+	$(this).on('click', '#btnJobSheetWrite', function(e) {
+		if ($("#jobSheetTitle").val() === "") {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_title}]]);
+			return false;
+		}
+		if ($("#grantorId").val() === "") {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_grantor}]]);
+			return false;
+		}
+		if (CommonEditor.isEmpty()) {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_job_sheet}]]);
+			return false;
+		}
+		addJobSheet("WRITING");
+	});
+	$(this).on('click', '#btnJobSheetGoing', function(e) {
+		if ($("#jobSheetTitle").val() === "") {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_title}]]);
+			return false;
+		}
+		if ($("#grantorId").val() === "") {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_grantor}]]);
+			return false;
+		}
+		if (CommonEditor.isEmpty()) {
+			showErrorAlert("ALERT", [[#{common.modal.add_job_from_snapshot.alert_job_sheet}]]);
+			return false;
+		}
+		addJobSheet("GOING");
+	});
+	$(this).on('click', '#btnJobSheetClose', function(e) {
+		$(".ui-dialog-titlebar-close").click();
+	});
+
+});
+function removeSlider(obj) {
+    obj.parentElement.parentElement.remove();
+}
+</script>

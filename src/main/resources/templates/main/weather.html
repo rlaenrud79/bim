@@ -1,0 +1,213 @@
+<th:block th:fragment="weather()">
+  <article class="weather-area">
+    <header>
+      <h3><i class="fas fa-cloud-sun"></i> 날씨</h3>
+    </header>
+    <div class="weather-info" role="tabpanel">
+      <div class="weather-day-tab nav nav-tabs" role="tablist">
+        <button type="button" class="active" data-target="#weatherToday" aria-controls="weatherToday" role="tab" data-toggle="tab">오늘<small class="date" th:text="${#temporals.format(dateTime, 'MM.dd')}">07.07</small></button>
+        <button type="button" data-target="#weatherTomorrow" aria-controls="weatherTomorrow" role="tab" data-toggle="tab">내일<small class="date" th:text="${#temporals.format(dateTime.plusDays(1), 'MM.dd')}">07.08</small></button>
+        <button type="button" data-target="#weatherAfterTomorrow" aria-controls="weatherAfterTomorrow" role="tab" data-toggle="tab">모레<small class="date" th:text="${#temporals.format(dateTime.plusDays(2), 'MM.dd')}">07.09</small></button>
+        <button type="button" data-target="#weatherWeekly" aria-controls="weatherWeekly" role="tab" data-toggle="tab">주간<small class="date" th:text="|${#temporals.format(dateTime.plusDays(1), 'MM.dd')} ~ ${#temporals.format(dateTime.plusDays(7), 'MM.dd')}|">07.01 ~ 07.14</small></button>
+      </div>
+      <div class="tab-content">
+        <th:block th:if="${nowForecastDTO eq null}">
+          <div id="weatherToday" class="tab-pane weather-today active" role="tabpanel">
+            <div class="weather-state">
+              <div class="weather-view">
+                <p>현재 날씨 정보를 가져오지 못했습니다.</p>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:unless="${nowForecastDTO eq null}" th:object="${nowForecastDTO}">
+          <div class="weather-datetime-local">
+            <p th:unless="${#strings.isEmpty(projectAddress)}" th:text="${#strings.substring(projectAddress, 0, T(Math).min(12, #strings.length(projectAddress)))}">경기도 여주시</p>
+            <p th:text="*{getBaseTime()}">2021.07.07 &#40월&#41 13&#58;00</p>
+          </div>
+
+          <div id="weatherToday" class="tab-pane weather-today active" role="tabpanel">
+            <div class="weather-state">
+              <div class="weather-view">
+                <i th:class="*{getSkyStatus('icon')}"></i>
+                <p class="temp">[[*{t1h}]] <span class="txt-unit">°c</span></p>
+                <p class="temp-text" th:text="*{getSkyStatus('text')}"> 맑음</p>
+              </div>
+              <div class="temp-state">
+                <dl>
+                  <dt>습도</dt>
+                  <dd th:text="|*{reh}%|">00%</dd>
+                  <dt th:text="|*{getWindVector()}풍|">북동풍</dt>
+                  <dd th:text="|*{wsd}m/s|">1.8m/s</dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:if="${shortDaysForecastDTO.get('day1') eq null}">
+          <div id="weatherTomorrow" class="tab-pane weather-tomorrow" role="tabpanel">
+            <div class="weather-state">
+              <div style="max-width: 100% !important;">
+                <div class="weather-view">
+                  <p>내일 날씨 정보를 가져오지 못했습니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:unless="${shortDaysForecastDTO.get('day1') eq null}" th:object="${shortDaysForecastDTO.get('day1')}">
+          <div id="weatherTomorrow" class="tab-pane weather-tomorrow" role="tabpanel">
+            <div class="weather-state">
+              <div>
+                <p class="weather-ampm">오전</p>
+                <div class="weather-view">
+                  <i th:class="*{getSkyStatus('AM', 'icon')}"></i>
+                  <p class="temp">[[*{getTemperature(AMtmn)}]] <span class="txt-unit">°c</span></p>
+                  <p class="temp-text" th:text="*{getSkyStatus('AM', 'text')}">맑음</p>
+                </div>
+              </div>
+              <div>
+                <p class="weather-ampm">오후</p>
+                <div class="weather-view">
+                  <i th:class="*{getSkyStatus('PM', 'icon')}"></i>
+                  <p class="temp">[[*{getTemperature(PMtmx)}]] <span class="txt-unit">°c</span></p>
+                  <p class="temp-text" th:text="*{getSkyStatus('PM', 'text')}">맑음</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:if="${shortDaysForecastDTO.get('day2') eq null}">
+          <div id="weatherAfterTomorrow" th:object="${shortDaysForecastDTO.get('day2')}" class="tab-pane weather-tomorrow" role="tabpanel">
+            <div class="weather-state">
+              <div style="max-width: 100% !important;">
+                <div class="weather-view">
+                  <p>모레 날씨 정보를 가져오지 못했습니다.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <th:block th:unless="${shortDaysForecastDTO.get('day2') eq null}" th:object="${shortDaysForecastDTO.get('day2')}">
+          <div id="weatherAfterTomorrow" class="tab-pane weather-tomorrow" role="tabpanel">
+            <div class="weather-state">
+              <div>
+                <p class="weather-ampm">오전</p>
+                <div class="weather-view">
+                  <i th:class="*{getSkyStatus('AM', 'icon')}"></i>
+                  <p class="temp">[[*{getTemperature(AMtmn)}]] <span class="txt-unit">°c</span></p>
+                  <p class="temp-text" th:text="*{getSkyStatus('AM', 'text')}">맑음</p>
+                </div>
+              </div>
+              <div>
+                <p class="weather-ampm">오후</p>
+                <div class="weather-view">
+                  <i th:class="*{getSkyStatus('PM', 'icon')}"></i>
+                  <p class="temp">[[*{getTemperature(PMtmx)}]] <span class="txt-unit">°c</span></p>
+                  <p class="temp-text" th:text="*{getSkyStatus('PM', 'text')}">맑음</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </th:block>
+        <div id="weatherWeekly" class="tab-pane weather-weekly" role="tabpanel">
+          <div class="scroll-area-w">
+            <ul class="weather-weekly-list">
+              <th:block th:unless="${shortDaysForecastDTO.get('day1') eq null}" th:object="${shortDaysForecastDTO.get('day1')}">
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(fcstDate)}]]<span>[[*{getSimpleDate(fcstDate)}]]</span></p>
+                  <i th:class="*{getSkyStatus('PM', 'icon')}"></i>
+                  <p class="temp">
+                    <span>[[*{getTemperature(AMtmn)}]]°</span>
+                    <span>[[*{getTemperature(PMtmx)}]]°</span>
+                  </p>
+                </li>
+              </th:block>
+              <th:block th:unless="${shortDaysForecastDTO.get('day2') eq null}" th:object="${shortDaysForecastDTO.get('day2')}">
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(fcstDate)}]]<span>[[*{getSimpleDate(fcstDate)}]]</span></p>
+                  <i th:class="*{getSkyStatus('PM', 'icon')}"></i>
+                  <p class="temp">
+                    <span>[[*{getTemperature(AMtmn)}]]°</span>
+                    <span>[[*{getTemperature(PMtmx)}]]°</span>
+                  </p>
+                </li>
+              </th:block>
+              <th:block th:if="${longForecastDTO eq null}">
+                <li>
+                  <div style="padding-top: 2rem; padding-bottom: 2rem;">
+                    <p>주간 날씨 정보를 가져오지 못했습니다. </p>
+                  </div>
+                </li>
+              </th:block>
+              <th:block th:unless="${longForecastDTO eq null}" th:object="${longForecastDTO}">
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(day3)}]]<span>[[*{getSimpleDate(day3)}]]</span></p>
+                  <i th:class="*{getSkyStatus(wf3Pm)}"></i>
+                  <p class="temp">
+                    <span>[[*{taMin3}]]°</span>
+                    <span>[[*{taMax3}]]°</span>
+                  </p>
+                </li>
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(day4)}]]<span>[[*{getSimpleDate(day4)}]]</span></p>
+                  <i th:class="*{getSkyStatus(wf4Pm)}"></i>
+                  <p class="temp">
+                    <span>[[*{taMin4}]]°</span>
+                    <span>[[*{taMax4}]]°</span>
+                  </p>
+                </li>
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(day5)}]]<span>[[*{getSimpleDate(day5)}]]</span></p>
+                  <i th:class="*{getSkyStatus(wf5Pm)}"></i>
+                  <p class="temp">
+                    <span>[[*{taMin5}]]°</span>
+                    <span>[[*{taMax5}]]°</span>
+                  </p>
+                </li>
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(day6)}]]<span>[[*{getSimpleDate(day6)}]]</span></p>
+                  <i th:class="*{getSkyStatus(wf6Pm)}"></i>
+                  <p class="temp">
+                    <span>[[*{taMin6}]]°</span>
+                    <span>[[*{taMax6}]]°</span>
+                  </p>
+                </li>
+                <li>
+                  <p class="weekly-day">[[*{getDayOfWeek(day7)}]]<span>[[*{getSimpleDate(day7)}]]</span></p>
+                  <i th:class="*{getSkyStatus(wf7Pm)}"></i>
+                  <p class="temp">
+                    <span>[[*{taMin7}]]°</span>
+                    <span>[[*{taMax7}]]°</span>
+                  </p>
+                </li>
+              </th:block>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="weather-time-state">
+      <p>시간대별 날씨</p>
+      <div class="scroll-area-w">
+        <th:block th:if="${shortPeriodForecastDTOs eq null}">
+          <ul>
+            <li>
+              <p>시간대별 날씨 정보를 가져오지 못했습니다.</p>
+            </li>
+          </ul>
+        </th:block>
+        <th:block th:unless="${shortPeriodForecastDTOs eq null}">
+          <ul>
+            <li th:each="item, index: ${shortPeriodForecastDTOs}">
+              <p class="time">[[${item.getTimeString()}]]시</p>
+              <i th:class="${item.getSkyStatus()}"></i>
+              <small>[[${item.tmp}]]°c</small>
+            </li>
+          </ul>
+        </th:block>
+      </div>
+    </div>
+  </article>
+</th:block>

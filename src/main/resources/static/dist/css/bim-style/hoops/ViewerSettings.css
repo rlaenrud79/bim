@@ -1,0 +1,202 @@
+/* 
+    Parent container positioned relative fixes a bug with jQuery draggable
+    https://stackoverflow.com/questions/3523747/webkit-and-jquery-draggable-jumping/20147335#20147335
+*/
+#viewer-settings-dialog-container {
+  position: relative;
+}
+
+#viewer-settings-dialog {
+  display: none;
+  z-index: 7;
+  background: white;
+  border: 1px solid #c5c5c5;
+  position: absolute;
+  top: 0;
+  left: 50%!important;
+  transform: translateX(-50%)!important;
+  font-size: 13px;
+  min-width: 500px;
+}
+
+#viewer-settings-dialog .hoops-ui-window-body {
+  height: 335px;
+  overflow-y: scroll;
+  padding-right: 10px;
+  display: none;
+}
+
+#viewer-settings-dialog .hoops-ui-window-body.selected {
+  display: block;
+}
+
+#viewer-settings-dialog .tab {}
+
+#viewer-settings-dialog .tab.selected {
+  background-color: rgba(255, 255, 255, 0.8);
+  font-weight: 900;
+}
+
+.settings-group {
+  border: 1px solid #dee2e6;
+  margin-bottom: 10px;
+}
+
+.settings-group > div:nth-child(even) {
+  background-color: #dee2e6;
+}
+
+.settings-group label {
+  display: inline-block;
+  margin-bottom: 0;
+}
+
+.settings-group-header {
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
+}
+
+.settings-group-general .right-align {
+  margin-left: auto;
+}
+
+.settings-group-general select {
+  padding-left: 0.5rem;
+}
+
+.settings-group-general .bold {
+  font-weight: bold;
+}
+
+.settings-group-general .center-align {
+  text-align: center;
+}
+
+.settings-group-general .clear-both {
+  clear: both;
+  display: block;
+  padding: 0px;
+}
+
+.settings-group.settings-group-colors {
+  padding-bottom: 8px;
+}
+
+#settings-tab-walk .settings-block {
+  padding: 13px 5px;
+}
+
+.settings-block {
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.settings-block * {
+  padding: 2px 0px;
+}
+
+.settings-block > * {
+  vertical-align: middle;
+  vertical-align: -webkit-baseline-middle;
+}
+
+.settings-block > div {
+  margin-top: 3px;
+  margin-bottom: 3px;
+}
+
+.settings-block input[type="number"] {
+  width: 65px;
+  text-align: center;
+}
+
+.grayed-out {
+  opacity: 0.5;
+}
+
+#viewer-settings-ok-button,
+#viewer-settings-cancel-button {
+  font-size: 13px;
+}
+
+.hoops-ui-window {
+  z-index: 5;
+  position: absolute;
+  background: rgba(100, 100, 100, 0.8);
+  overflow: hidden;
+  border-style: solid;
+  background: rgba(0, 0, 0, 0);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+.hoops-ui-window-header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0.77rem;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 0;
+  background-color: #6f42c1;
+}
+
+.hoops-ui-window-body {
+  padding-top: 5px;
+  font-family: Verdana;
+  border-bottom: 1px solid #dee2e6;
+  background-color: white;
+  padding: 7px 11px 5px 11px;
+  overflow: hidden;
+}
+
+.hoops-ui-window-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px;
+  background-color: white;
+}
+
+.hoops-ui-window-footer .hoops-ui-footer-buttons {
+  position: relative;
+}
+
+/* minicolor styling */
+
+.minicolors-swatch {
+  width: 20px !important;
+  height: 20px;
+  top: 6px;
+}
+
+.minicolors-theme-default .minicolors-swatch {
+  top: 8px !important;
+}
+
+.minicolors-theme-default .minicolors-input {
+  width: 170px !important;
+  height: calc(2.25rem + 2px)!important;
+  padding-left: 30px !important;
+}
+
+.minicolors-grid .minicolors-picker,
+.minicolors-grid .minicolors-picker > div {
+  padding: 0;
+}
+
+.version {
+  font-size: 11px;
+  margin-right: auto;
+}

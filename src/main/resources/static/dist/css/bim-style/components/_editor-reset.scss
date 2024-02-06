@@ -1,0 +1,46 @@
+// BIM note-editor
+
+.note-editor {
+    margin: 0!important;
+    border: none!important;
+
+    .note-toolbar {
+        display: flex;
+        align-items: center;
+        padding: .5rem!important;
+    }
+
+    .note-btn-group {
+        margin: 0 .5rem 0 0!important;
+
+        .note-btn-group { margin: 0!important; }
+
+        button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            i { margin: 0; }
+        }
+
+        .note-color .dropdown-toggle {
+            padding-left: 0!important;
+        }
+
+        .dropdown-toggle::after {
+            margin-left: .6em;
+            border-top: 5px solid !important;
+            border-right: 3px solid transparent !important;
+            border-left: 3px solid transparent !important;
+        }
+    }
+
+    + div {
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        button { margin-left: .3rem; width: 80px; }
+    }
+}

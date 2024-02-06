@@ -1,0 +1,34 @@
+<!-- 모달 - 관련 BIM 모델 -->
+<div class="content cowork-modelinglist">
+  <div class="scroll-area-v">
+    <table class="table">
+      <caption th:text="#{co_work.modal.co_work_modeling_list.title}">참여 대상자</caption>
+      <thead>
+      <tr>
+        <th class="text-center" th:text="#{co_work.modal.co_work_modeling_list.list_title_no}">No</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_modeling_list.list_title_model_name}">BIM 모델명</th>
+        <th class="text-center" th:text="#{co_work.modal.co_work_modeling_list.list_title_work_name}">공종</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="item, index : ${coWorkModelings}">
+        <td class="text-center" th:text="${index.index + 1}">6</td>
+        <td>
+          <div class="table-text-cont">
+            <span data-toggle="tooltip"
+                  data-placement="bottom"
+                  data-html="true"
+                  th:title="${item.modeling.description}"><i class="fas fa-question-circle"></i></span>
+            <a th:id="btnDownloadModelFile_+${index.index}"
+               href="#"
+               th:data-id="${item.modeling.id}">
+              <span class="text-over-dot" th:text="${item.modeling.fileName}">tunnel-S01.rvt</span>
+            </a>
+          </div>
+        </td>
+        <td class="text-center" th:text="${ item.modeling.work.getLocaleName()}">터널-구간1</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,109 @@
+    <div class="flex">
+        <div class="tit-box flex">
+            <div th:id="'jobSheetSnapShotList'+${itemBun}" class="img">
+                <img th:if="${jobSheetProcessItem.mySnapShotSource != null and jobSheetProcessItem.mySnapShotSource != ''}" th:src="${jobSheetProcessItem.mySnapShotSource}" th:id="'jobSheetSnapShotImg'+${itemBun}">
+                <img th:unless="${jobSheetProcessItem.mySnapShotSource != null and jobSheetProcessItem.mySnapShotSource != ''}" src="/dist/img/no_img.jpg" th:id="'jobSheetSnapShotImg'+${itemBun}">
+                <th:block th:if="${jobSheetProcessItem.mySnapShotSource != null and jobSheetProcessItem.mySnapShotSource != ''}">
+                    <button type="button" name="btnSnapShotId" th:data-snap-shot-img="${itemBun}" th:data-snap-shot-id="${jobSheetProcessItem.mySnapShotId} ? ${jobSheetProcessItem.mySnapShotId} : 0" class="btn"><i
+                            class="fas fa-times-circle"></i></button>
+                </th:block>
+            </div>
+            <div class="tb-cate">
+                <span>[[${jobSheetProcessItem.cate3Name}]]</span>
+                <span>[[${jobSheetProcessItem.cate4Name}]]</span>
+                <span>[[${jobSheetProcessItem.taskName}]]</span>
+            </div>
+        </div>
+        <div class="task-rate flex">
+            <p>진행률 :
+                <strong th:if="${jobSheetProcessItem.processItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate / jobSheetProcessItem.processItem.getDuration()}]]%</strong>
+                <strong th:unless="${jobSheetProcessItem.processItem.getDuration()} != 0">[[${jobSheetProcessItem.afterProgressRate}]]%</strong>
+                (일 평균)</p>
+            <div class="btn-box">
+                <input id="processItemId" name="processItemId" type="hidden" th:value="${jobSheetProcessItem.processItem.id}">
+                <input id="processItemCost" name="processItemCost" type="hidden" th:value="${jobSheetProcessItem.processItem.cost}">
+                <input id="phasingCode" name="phasingCode" type="hidden" th:value="${jobSheetProcessItem.phasingCode}">
+                <input id="taskFullPath" name="taskFullPath" type="hidden" th:value="${jobSheetProcessItem.taskFullPath}">
+                <input id="exchangeId" name="exchangeId" type="hidden" th:value="${jobSheetProcessItem.exchangeIds}">
+                <a href="#none" class="btn-xs btnAddPrevJobSheetItem" th:data-process-item-id="${jobSheetProcessItem.processItem.id}" th:data-item-bun="${itemBun}">이전내역 불러오기</a>
+                <input type="hidden" name="mySnapShotId" th:value="${jobSheetProcessItem.mySnapShotId} ? ${jobSheetProcessItem.mySnapShotId} : 0">
+                <a href="#none" class="btn-xs btnSelectSnapShot pop-open-btn" data-target="#mySnapShotShare"><span th:text="#{project.job_sheet_add.btn_snap_shot}">스냅샷설정</span></a>
+                <a href="#none" class="btn-xs btnRemoveSlider">삭제</a>
+            </div>
+
+            <button type="button" class="toggle-btn"></button>
+        </div>
+    </div>
+
+    <div class="task-con">
+        <div class="grid">
+            <div class="col4">
+                <div class="table-wrap">
+                    <table class="table">
+                        <tbody>
+                        <tr>
+                            <th colspan="3">실시량(원)</th>
+                            <th colspan="3">진도(%)</th>
+                        </tr>
+                        <tr>
+                            <td>전일누계</td>
+                            <td>금일누계</td>
+                            <td>누계</td>
+                            <td>전일진도</td>
+                            <td>금일진도</td>
+                            <td>누계</td>
+                        </tr>
+                        <tr>
+                            <td id="beforeProgressAmount">[[${processItem.progressAmount}]]</td>
+                            <td id="todayProgressAmount">0</td>
+                            <td id="afterProgressAmount">[[${processItem.progressAmount}]]</td>
+                            <td id="beforeProgressRate">[[${processItem.progressRate}]]</td>
+                            <td><input type="number" class="input-box-xs" id="todayProgressRate" name="todayProgressRate" min="0" max="100" step="0.01" th:value="0.00"></td>
+                            <td id="afterProgressRate">[[${processItem.progressRate}]]</td>
+                        </tr>
+                        </tbody>
+                    </table><!--// table-->
+                </div><!--//table-wrap-->
+            </div>
+            <div class="col2">
+                <div class="add-job grid">
+                    <div class="fm-section col2">
+                        <div class="fm-tit">
+                            <strong><i class="ico-require"></i>인원관리</strong>
+                        </div>
+                        <div class="fm-txt">
+                            <a href="#none" class="btn btn-color4 pop-open-btn btnSelectWorker" data-modal="#selectWorkList">추가</a>
+                            <p class="col6 fm-msg tblProcessWorker">
+                                <th:block th:if="${jobSheetProcessItem.worker.size() > 0}">
+                                    [[${jobSheetProcessItem.worker[0].name}]] [[${jobSheetProcessItem.worker[0].value}]]명 외 <strong class="txt-color1">[[${jobSheetProcessItem.worker.size()-1}]]</strong>건
+                                    <th:block  th:each="item, info : ${jobSheetProcessItem.worker}">
+                                        <input name="progressWorkerId" type="hidden" th:value="${item.id}">
+                                        <input name="progressWorkerName" type="hidden" th:value="${item.name}">
+                                        <input name="progressWorkerValue" type="hidden" th:value="${item.value}">
+                                    </th:block>
+                                </th:block>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fm-section col2">
+                        <div class="fm-tit">
+                            <strong><i class="ico-require"></i>장비관리</strong>
+                        </div>
+                        <div class="fm-txt">
+                            <a href="#none" class="btn btn-color3 pop-open-btn btnSelectDevice" data-modal="#selectDeviceList">추가</a>
+                            <p class="col6 fm-msg tblProcessDevice">
+                                <th:block th:if="${jobSheetProcessItem.device.size() > 0}">
+                                    [[${jobSheetProcessItem.device[0].name}]] [[${jobSheetProcessItem.device[0].value}]]개 외 <strong class="txt-color1">[[${jobSheetProcessItem.device.size()-1}]]</strong>건
+                                    <th:block  th:each="item, info : ${jobSheetProcessItem.device}">
+                                        <input name="progressDeviceId" type="hidden" th:value="${item.id}">
+                                        <input name="progressDeviceName" type="hidden" th:value="${item.name}">
+                                        <input name="progressDeviceValue" type="hidden" th:value="${item.value}">
+                                    </th:block>
+                                </th:block>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

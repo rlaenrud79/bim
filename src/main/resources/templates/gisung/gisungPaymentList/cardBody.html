@@ -1,0 +1,94 @@
+<div class="board-list" id="divCardBody" th:fragment="cardBody()">
+  <div class="scroll-wrap sc-table">
+    <table class="table">
+      <colgroup>
+        <col style="width:5%">
+        <col>
+        <col style="width:10%">
+      </colgroup>
+      <tbody>
+        <tr>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.gisung_payment_list.list_title_no}"> No</span>
+          </th>
+          <th id="th_title" class="text-center" width="100">
+            <span th:text="#{contents.gisung_payment_list.list_title_title}"> 문서명</span>
+          </th>
+          <th id="th_fileName" class="text-center" width="100">
+            <span th:text="#{contents.gisung_payment_list.list_title_file_name}"> 파일명</span>
+          </th>
+          <th class="text-center" width="80">
+            <span th:text="#{contents.gisung_payment_list.list_title_description}"> 파일설명</span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.gisung_payment_list.list_title_size}"> 크기</span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.gisung_payment_list.list_title_writer}"> 작성자</span>
+          </th>
+          <th id="th_writeDate" class="text-center" width="80">
+            <span th:text="#{contents.gisung_payment_list.list_title_write_date}"> 작성일자</span>
+          </th>
+          <th class="text-center" width="50">
+            <span th:text="#{contents.gisung_payment_list.list_title_delete}"> 삭제</span>
+          </th>
+        </tr>
+        <th:block th:if="${totalCount == null or totalCount == 0}">
+          <tr>
+            <td colspan="8" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+          </tr>
+        </th:block>
+        <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td>
+            <div class="table-text-cont">
+              <a href="#none" class="openUpdateModal pop-open-btn" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-payment-id="${item.id}" data-modal="#modalUpdateGisungPayment">
+                <span class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+              </a>
+              <span th:unless="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" class="text-over-dot" th:text="${item.title}">교량 구간 A01 공사 계획서</span>
+            </div>
+          </td>
+          <td>
+            <div class="table-text-cont">
+              <a href="#" th:data-file-id="${item.fileId}" class="download-attach-file">
+                <span class="text-over-dot" th:text="${item.originFileName}">교량 구간 A01 공사 계획서.doc</span>
+              </a>
+            </div>
+          </td>
+          <td>
+            <div class="table-text-cont">
+              <p class="text-over-dot" th:text="${item.description}">공사 설명 1</p>
+            </div>
+          </td>
+          <td class="text-center">
+            <span th:text="|${item.fileSizeMegaByteUnit} MB|"> 62.5 MB</span>
+          </td>
+          <td class="text-center">
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td class="text-center">
+            <span th:text="${#temporals.format(item.getWriteDate(), #messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-05</span>
+          </td>
+          <td class="text-center">
+            <button type="button" id="btnDeleteGisungPayment" th:if="${userInfoId == item.writerDTO.userId or isRoleAdminProject}" th:data-gisung-payment-id="${item.id}" class="btn-xs">
+               <span th:text="#{contents.gisung_payment_list.btn_delete_gisung_payment}">삭제</span>
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+  <!-- paging -->
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+
+  <script>
+    var currentSort = '[[${searchGisungPaymentVO.SortProp}]]';
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+  </div>
+</div>

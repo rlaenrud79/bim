@@ -1,0 +1,205 @@
+<!-- 모달 - 일정 상세 등록  -->
+<div class="schedule-add" xmlns="http://www.w3.org/1999/html">
+
+  <div class="form" th:object="${scheduleVO}">
+    <div class="grid">
+      <div class="fm-section col6">
+        <div class="fm-tit">
+          <i class="ico-require"></i>
+          <span th:text="#{admin.modal.add_schedule.work}">공종</span>
+          <small class="req-ico">*</small>
+        </div>
+        <div class="fm-txt">
+          <div class="check-set">
+            <input type="checkbox" id="allCheck">
+            <label for="allCheck" th:text="#{admin.modal.add_schedule.work_all}">전체</label>
+          </div>
+          <div class="flex gap-20 align-items-center mt-4 flex-wrap">
+            <div class="check-set" th:each="work, index : ${works}">
+              <input type="checkbox" class="itemCheck"
+                     th:id="works_+${work.id}"
+                     th:name="works_+${work.id}"
+                     th:value="${work.id}">
+              <label th:for="works_+${work.id}" th:text="${work.getLocaleName()}">교량공</label>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fm-section col6">
+        <div class="fm-tit">
+          <i class="ico-require"></i>
+          <span th:text="#{admin.modal.add_schedule.term}">기간</span>
+          <small class="req-ico">*</small>
+        </div>
+        <div class="fm-txt">
+
+          <div class="input-date-wrap">
+            <div class="input-date">
+              <input type="text" class="form-control" id="startDate" th:field="*{startDate}" readonly>
+              <i class="ico"></i>
+            </div>
+            <small class="bar">-</small>
+            <div class="input-date">
+              <input type="text" class="form-control" id="endDate" th:field="*{endDate}" readonly>
+              <i class="ico"></i>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="fm-section col6">
+        <div class="fm-tit">
+          <i class="ico-require"></i>
+          <span th:text="#{admin.modal.add_schedule.title}">일정명</span>
+          <small class="req-ico">*</small>
+        </div>
+        <div class="fm-txt">
+            <input type="text"
+                   id="title" name="title"
+                   class="form-control"
+                   th:field="*{title}"
+                   th:placeholder="#{admin.modal.add_schedule.title_placeholder}">
+        </div>
+      </div>
+
+      <div class="fm-section col6">
+        <div class="fm-tit">
+          <i class="ico-require"></i>
+          <span th:text="#{admin.modal.add_schedule.schedule_type}">일정 구분</span>
+          <small class="req-ico">*</small>
+        </div>
+        <div class="fm-txt">
+            <select class="custom-select" id="selectType" th:field="*{selectType}">
+              <option value="" th:utext="#{admin.modal.add_schedule.select_type_null}">::선택::</option>
+              <option th:each="scheduleType : ${scheduleTypes}"
+                      th:value="${scheduleType.code}"
+                      th:utext="${scheduleType.getLocaleName()}" >공휴일
+              </option>
+            </select>
+        </div>
+      </div>
+
+      <div class="fm-section col6">
+        <div class="fm-tit">
+          <i class="ico-require"></i>
+          <span th:text="#{admin.modal.add_schedule.description}">설명</span>
+        </div>
+        <div class="fm-txt">
+            <textarea id="description"
+                      th:field="*{description}"
+                      class="form-control"
+                      rows="5" maxlength="1024"
+                      th:placeholder="#{admin.modal.add_schedule.description_placeholder}"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+<div class="btn-box">
+  <button id="mBtnAdd" type="button" class="btn btn-color1" th:text="#{admin.modal.add_schedule.btn_add}">저장</button>
+</div>
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+
+    // datepicker init
+    $("#startDate, #endDate").datepicker(datepickerFormat);
+
+    let getSendData = function () {
+      return JSON.stringify({
+        "title": $("#title").val(),
+        "startDate": $("#startDate").val(),
+        "endDate": $("#endDate").val(),
+        "selectType": $("#selectType").val(),
+        "description": $("#description").val(),
+        "scheduleWorkIds": _selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",")
+      });
+    }
+
+    let executeAdd = function () {
+      reqPostJSON('/adminApi/postSchedule'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            toastr.success(data.message);
+            PageFunction.selectedYearMonth = $("#startDate").val().substr(0, 7);
+            $("#modalScheduleAdd").modal("hide");
+          } else toastr.error(data.message);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('change', '#startDate', function () {
+      let startDate = $(this).val();
+      let endDate = $("#endDate").val();
+
+      if (moment(startDate).isAfter(endDate)) $("#endDate").val($(this).val());
+    });
+
+    _this.on('change', '#endDate', function () {
+      let startDate = $("#startDate").val();
+      let endDate = $(this).val();
+
+      if (moment(endDate).isBefore(startDate)) $("#startDate").val($(this).val());
+    });
+
+    _this.on('click', '#mBtnAdd', function () {
+
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      $(".itemCheck").each(function (index, item) {
+        if ($(this).is(':checked')) {
+          _checkedWorkCnt++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+
+      if (_checkedWorkCnt == 0) {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_no_target_works}]]");
+        return;
+      }
+
+      if ($('#startDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_no_start_date}]]");
+        return;
+      }
+
+      if ($('#endDate').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_no_end_date}]]");
+        return;
+      }
+
+      if (moment($("#endDate").val()).isBefore( $("#startDate").val())) {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_end_before_start_date}]]");
+        return;
+      }
+
+        if ($('#title').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_no_title}]]");
+        return;
+      }
+
+      if ($('#selectType').val() == "") {
+        showErrorAlert("ALERT", "[[#{admin.modal.add_schedule.error_no_select_type}]]");
+        return;
+      }
+
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.add_schedule.confirm_add_schedule}]]", executeAdd);
+    });
+  });
+</script>

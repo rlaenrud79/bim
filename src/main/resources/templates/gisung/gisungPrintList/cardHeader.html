@@ -1,0 +1,11 @@
+<div class="card-header" th:fragment="cardHeader()">
+  <div class="col-12">
+    <div class="form-group">
+      <div class="gisung-help-txt">* STEP 01 부터 STEP 07 까지 순서에 따라 입력해주세요.</div>
+      <label th:text="#{contents.document_list.select_list_count}">목록 개수</label>
+      <select class="custom-select" id="pageSize" name="pageSize" th:replace="common/pagingSizeSelectBox :: type1()" />
+    </div>
+    <div class="bim-btn-group">
+    </div>
+  </div>
+</div>

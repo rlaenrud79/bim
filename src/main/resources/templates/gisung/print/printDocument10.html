@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link rel="stylesheet" href="/dist/css/print.css">
+
+
+<body style="overflow:visible;">
+<div class="print-page">
+    <section class="page list-ty1">
+        <div class="title">
+            <h2>목차</h2>
+        </div>
+        <ul>
+            <li th:each="item, index : ${contentsLists}" th:text="${item}">1. 기성부분검사원</li>
+        </ul>
+    </section>
+
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    window.print();
+</script>

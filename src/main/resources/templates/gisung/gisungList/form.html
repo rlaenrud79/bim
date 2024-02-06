@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+    <div th:replace="layout/common :: preLoader()"></div>
+    <nav th:replace="layout/common :: navigation('gisung')"></nav>
+    <aside th:replace="layout/common :: aside('gisung','gisungList')"></aside>
+
+    <!-- contents area  -->
+    <main role="main" class="content-wrapper project-content board-add">
+        <!-- Content Header (Page header) -->
+        <div id="divContentHeader" class="content-header"
+             th:replace="gisung/gisungList/contentHeader :: contentHeader()"></div>
+
+<!-- /.contents area -->
+<section class="content">
+    <div class="container-fluid">
+        <div class="con-report-add">
+            <div class="col-lg-12">
+                <div class="card content-body-area">
+                    <input id="gisungId" name="gisungId" type="hidden"
+                           th:value="${gisung.id}">
+                    <div th:replace="gisung/gisungList/tabForm :: tabForm()"></div>
+                    <div th:replace="${'gisung/gisungList/document'+no} :: contentForm()"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.container-fluid -->
+</section>
+<!-- /.content -->
+</main>
+
+    <footer th:replace="layout/common :: footer()"></footer>
+</div>
+
+<div id="processingProc" th:replace="process/modal/processingProc :: processingProc()"/>
+<div th:include="layout/common :: script()"></div>
+<style>
+    .dhx_grid-selected-row {
+        background: rgba(255, 198, 198, 0.3);
+        border-left: 2px solid #ff5252;
+    }
+
+    .dhx_grid-selected-cell {
+        border: 2px solid #ff5252;
+    }
+
+    .process-col-disabled {
+        background: whitesmoke;
+    }
+
+    .cost-value-changed {
+        background: lightsalmon;
+    }
+</style>
+<script type="text/javascript" src="/plugins/dhtmlx-suite_7.2.3/suite.js"></script>
+<script type="text/javascript" src="/plugins/fileDragAndDrop/jquery.ezdz.js"></script>
+<script type="text/javascript" src="/plugins/XLSX/xlsx.js"></script>
+<script type="text/javascript" src="/dist/js/common-grid.js"></script>
+
+<link href="/plugins/fileDragAndDrop/jquery.ezdz.css" rel="stylesheet" type="text/css"/>
+<script th:inline="javascript">
+    $(function () {
+
+        let _fileText = '[[#{cost.modal.cost_detail_file_upload.message_excel_format}]]';
+        let _openDivUploadFile = false;
+        let _rows = {};
+        let _endParse = false;
+
+        // excel upload param
+        let _executeBatchIdx = 0;
+        let _totalExecuteCnt = 0;
+        let _batchSize = 1000;
+        let _newProcessInfoId = 0;
+        let _works = [];
+        let _taskVOs = [];
+        let _taskLinkVOs = [];
+        let _excelJsonData = "";
+
+
+        // tab menu
+        $(this).on('click', '.btn-tab', function (e) {
+            var documentNo = $(this).data("document-no");
+            var id = $(this).data("gisung-id");
+            reloadComponent("/gisung/gisungListForm?id="+id+"&no="+documentNo, "#divCardBody", "");
+        });
+
+
+
+        $('input[type="file"]').ezdz({text: _fileText});
+
+
+        let initFileElement = function () {
+            $("#file").val("");
+            $("#mBtnRemoveFile").hide();
+            $("#mBtnUploadFile").hide();
+            $("#fileText").parent().removeClass("ezdz-enter").removeClass("ezdz-accept");
+            $("#fileText").text(_fileText);
+        };
+
+        let initGlobalObject = function () {
+            _rows = {};
+            _taskVOs = [];
+            _excelJsonData = "";
+            _isError = false;
+            _errorMessage = "";
+        };
+
+        let openDivUploadFile = function () {
+            _openDivUploadFile = true;
+            $("#divUploadExcel").show();
+        };
+
+        let closeDivUploadFile = function () {
+            _openDivUploadFile = false;
+            $("#divUploadExcel").hide();
+        };
+
+        $(this).on("click", "#btnUploadCostDetailFile", function () {
+            initFileElement();
+            initGlobalObject();
+            if (_openDivUploadFile) {
+                closeDivUploadFile();
+            } else {
+                openDivUploadFile();
+            }
+            hideTooltip($(this));
+        });
+
+        $(this).on("click", "#mBtnRemoveFile", function () {
+            initFileElement();
+            initGlobalObject();
+        });
+
+        $(this).on("click", "#mBtnRemoveFile", function () {
+            initFileElement();
+            initGlobalObject();
+        });
+
+        $(this).on("change", "#file", function (e) {
+
+            showProcessingProc();
+
+            _endParse = false;
+            _rows = {};
+
+            let input = e.target;
+            let reader = new FileReader();
+
+            if (input.files[0] == undefined) {
+                showErrorAlert("ALERT", '[[#{common.file_upload.error_undefined}]]');
+                return false;
+            }
+
+            if (!checkExcelFileSize(input, 5000000000)) {
+                showErrorAlert("ALERT", '[[#{common.file_upload.error_file_size}]]');
+                return false;
+            }
+
+            reader.onload = function () {
+                let data = reader.result;
+                let workBook = XLSX.read(data, {type: 'binary', cellDates: true, dateNF: 'YYYY-MM-DD'});
+
+                workBook.SheetNames.forEach(function (sheetName, index) {
+                    _rows = XLSX.utils.sheet_to_json(workBook.Sheets[sheetName], {raw: false});
+                });
+                _endParse = true;
+            };
+
+            reader.readAsBinaryString(input.files[0]);
+            let timer = setInterval(function () {
+                if (_endParse) {
+                    hideProcessingProc();
+                    $("#mBtnRemoveFile").show();
+                    $("#mBtnUploadFile").show();
+                    clearInterval(timer);
+                }
+            }, 1000);
+
+        });
+
+        let showProcessingProc = function () {
+            $('#processingProc').removeClass('display-none');
+        }
+
+        let hideProcessingProc = function () {
+            $('#processingProc').addClass('display-none');
+        }
+
+        let checkExcelFileSize = function (object, maxSize) {
+            if (object.files[0].size > maxSize) return false;
+            return true;
+        }
+
+        $(this).on("click", "#mBtnUploadFile", function (e) {
+            _excelJsonData = _rows;
+            console.log(_excelJsonData);
+            if (!_excelJsonData && _errorMessage != "") {
+                showErrorAlert("ALERT", _errorMessage);
+                return false;
+            }
+
+            if ($("#file").val() === "") {
+                showErrorAlert("ALERT", '[[#{cost.modal.process_file_upload.error_no_upload_file}]]');
+                return false;
+            }
+
+            showConfirm([[#{system.common.confirm.title}]], [[#{cost.modal.cost_detail_file_upload.confirm_upload_file}]], executeUploadFile);
+        });
+
+        let executeUploadFile = function () {
+            showProcessingProc();
+            _excelJsonData.push({"gisungNo": $("#gisungId").val()});
+            reqPostJSON("/costApi/saveGisungItemCostByExcel", JSON.stringify(_excelJsonData), function (data) {
+                if(data.result === true){
+                    setTimeout(function(){
+                        hideProcessingProc();
+                        toastr.info(data.message);
+                        $("#workId").val(0);
+                        $("#phasingCode").val("");
+                        $("#taskName").val("");
+                        $("#startDate").val("");
+                        $("#endDate").val("");
+                        getProcessItemCost();
+                    }, 1000);
+
+                }
+                else{
+                    hideProcessingProc();
+                    toastr.error(data.message);
+                }
+            });
+        }
+
+        // tab menu
+        $(this).on('click', '.btn-document-tab', function (e) {
+            var tabNo = $(this).index();
+            if (tabNo == 0) {
+                $(".tb-tab .btn-document-tab").removeClass("on");
+                $(".tb-tab .btn-document-tab").eq(0).addClass("on");
+                $("#tbTab1").show();
+                $("#tbTab2").hide();
+            } else {
+                $(".tb-tab .btn-document-tab").removeClass("on");
+                $(".tb-tab .btn-document-tab").eq(1).addClass("on");
+                $("#tbTab1").hide();
+                $("#tbTab2").show();
+            }
+        });
+
+        // tab menu
+        $(this).on('click', '.btn-tab', function (e) {
+            var documentNo = $(this).data("document-no");
+            var gisungId = $(this).data("gisung-id");
+            console.log(documentNo);
+            if (documentNo == 1) {
+                $(".tab-box .btn-tab").removeClass("on");
+                $(".tab-box .btn-tab").eq(0).addClass("on");
+            } else {
+                $(".tab-box .btn-tab").removeClass("on");
+                $(".tab-box .btn-tab").eq(1).addClass("on");
+            }
+            reloadComponent("/gisung/gisungListForm?id="+gisungId+"&no="+documentNo, "#divCardBody", "");
+        });
+
+        $(this).on('click', '#btnMoveListPage', function () {
+            window.location.href = '/gisung/gisungList';
+        });
+    });
+</script>
+</body>
+
+</html>

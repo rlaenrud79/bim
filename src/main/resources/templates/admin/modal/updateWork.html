@@ -1,0 +1,149 @@
+<div class="content work-modify" th:object="${work}">
+  <table class="table">
+    <caption><span th:text="#{admin.modal.update_work.work}">공종</span></caption>
+    <tbody>
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_work.sort_no}">순번</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group w-100">
+          <input type="hidden"
+                 id="workId"
+                 th:field="*{id}">
+          <input type="number"
+                 id="sortNo"
+                 th:field="*{sortNo}"
+                 class="form-control"
+                 th:placeholder="#{admin.modal.update_work.sort_no_placeholder}">
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <table class="table">
+    <caption><span th:text="#{admin.modal.update_work.work_name}">공종명</span></caption>
+    <tbody>
+    <tr>
+      <th>
+        <span th:text="#{admin.modal.update_work.work_name_en}">영어</span>
+        <small class="keysmall">&#40;<span>&#42;</span>&#41;</small>
+      </th>
+      <td>
+        <div class="form-group w-100">
+          <input type="text"
+                 id="workNameEN"
+                 name="workNameEN"
+                 class="form-control"
+                 th:placeholder="#{admin.modal.update_work.work_name_en_placeholder}"
+                 th:value="${workNameEN}"
+                 maxlength="1024">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th><span th:text="#{admin.modal.update_work.work_name_ko}">한글</span></th>
+      <td>
+        <div class="form-group w-100">
+          <input type="text"
+                 id="workNameKO"
+                 name="workNameKO"
+                 class="form-control"
+                 th:placeholder="#{admin.modal.update_work.work_name_ko_placeholder}"
+                 th:value="${workNameKO}"
+                 maxlength="1024">
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <th><span th:text="#{admin.modal.update_work.work_name_zh}">중국어</span></th>
+      <td>
+        <div class="form-group w-100">
+          <input type="text"
+                 id="workNameZH"
+                 name="workNameZH"
+                 class="form-control"
+                 th:placeholder="#{admin.modal.update_work.work_name_zh_placeholder}"
+                 th:value="${workNameZH}"
+                 maxlength="1024">
+        </div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+  <div class="btn-footer">
+    <button id="mBtnDelete" type="button" class="btn bg-gradient-danger"
+            th:text="#{admin.modal.update_work.btn_delete}">삭제
+    </button>
+    <button id="mBtnUpdate" type="button" class="btn bg-gradient-warning"
+            th:text="#{admin.modal.update_work.btn_update}">수정
+    </button>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $(this).on('click', '#mBtnDelete', function () {
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_work.confirm_delete_work}]]", deleteWork);
+    });
+
+    $(this).on('click', '#mBtnUpdate', function () {
+
+      if ($("#sortNo").val() === "") {
+        showErrorAlert("[[#{system.common.alert.warning}]]", "[[#{admin.modal.update_work.error_no_sort_no}]]");
+        return;
+      }
+
+      if ($("#workNameEN").val() === "") {
+        showErrorAlert("[[#{system.common.alert.warning}]]", "[[#{admin.modal.update_work.error_no_work_name_en}]]");
+        return;
+      }
+
+      showConfirm("[[#{system.common.confirm.title}]]", "[[#{admin.modal.update_work.confirm_update_work}]]", updateWork);
+    });
+
+    function deleteWork() {
+      reqPost('/adminApi/putDisabledWork'
+        , {"workId": parseInt($("#workId").val())}
+        , function (data) {
+          if (data.result) {
+            $("#modalWorkUpdate").modal("hide");
+            reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+            toastr.success(data.message);
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function updateWork() {
+      reqPostJSON('/adminApi/putWork'
+        , setSendData()
+        , function (data) {
+          if (data.result) {
+            $("#modalWorkUpdate").modal("hide");
+            reloadComponent("/admin/workListCardBody", "#divCardBody", "");
+            toastr.success(data.message);
+          }
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    function setSendData() {
+      return JSON.stringify({
+        "workId": parseInt($("#workId").val()),
+        "sortNo": parseInt($("#sortNo").val()),
+        "workNames": [
+          {"languageCode": "KO", "name": $("#workNameKO").val()},
+          {"languageCode": "EN", "name": $("#workNameEN").val()},
+          {"languageCode": "ZH", "name": $("#workNameZH").val()}
+        ]
+      });
+    }
+  });
+</script>

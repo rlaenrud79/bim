@@ -1,0 +1,92 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <span class="popup-tit" th:text="${title}">결재자 지정</span>
+            <button type="button" class="close close-btn">팝업닫기</button>
+        </div><!--//popup_top-->
+        <div class="popup-con">
+
+        </div><!--//popup_con-->
+    </div><!--//popup_content-->
+
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            $('.scroll-wrap').overlayScrollbars({});
+
+            const cate1 = "[[${searchProcessCategory.cate1}]]";
+            const cate2 = "[[${searchProcessCategory.cate2}]]";
+            const cate3 = "[[${searchProcessCategory.cate3}]]";
+            const cate4 = "[[${searchProcessCategory.cate4}]]";
+            const cate5 = "[[${searchProcessCategory.cate5}]]";
+            const cate6 = "[[${searchProcessCategory.cate6}]]";
+
+            $(this).on('click', '.btn-cate1', function () {
+                console.log("btn-cate1");
+                reqGet("/processModal/addProcessItem?cate1=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+
+            $(this).on('click', '.btn-cate2', function () {
+                console.log("btn-cate2");
+                reqGet("/processModal/addProcessItem?cate1="+cate1+"&cate2=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+
+            $(this).on('click', '.btn-cate3', function () {
+                console.log("btn-cate3");
+                reqGet("/processModal/addProcessItem?cate1="+cate1+"&cate2="+cate2+"&cate3=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+
+            $(this).on('click', '.btn-cate4', function () {
+                console.log("btn-cate4");
+                reqGet("/processModal/addProcessItem?cate1="+cate1+"&cate2="+cate2+"&cate3="+cate3+"&cate4=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+
+            $(this).on('click', '.btn-cate5', function () {
+                console.log("btn-cate5");
+                reqGet("/processModal/addProcessItem?cate1="+cate1+"&cate2="+cate2+"&cate3="+cate3+"&cate4="+cate4+"&cate5=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+
+            $(this).on('click', '.btn-cate6', function () {
+                console.log("btn-cate6");
+                reqGet("/processModal/addProcessItem?cate1="+cate1+"&cate2="+cate2+"&cate3="+cate3+"&cate4="+cate4+"&cate5="+cate5+"&cate6=" + $(this).data('code')
+                    , function (data) {
+                        $('#modalProcessAdd').find('.popup-con').html(data);
+                    }
+                    , function (xhr) {
+                        alert($.parseJSON(xhr.responseText).error);
+                    }, "html");
+            });
+        });
+
+    </script>
+</div><!--// popup-wrap-->
+

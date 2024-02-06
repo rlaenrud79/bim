@@ -1,0 +1,44 @@
+<div th:fragment="modal(id,title,popupSize)" th:id="${id}" id="" class="popup-wrap" th:classappend="${popupSize}">
+    <div class="popup-inner">
+        <div class="popup-top">
+            <div class="popup-tit">
+                <span th:text="${title}">공정추가</span>
+                <small>추가할 공정을 선택하세요.</small>
+                <div class="tab-nav-round">
+                    <ul>
+                        <li class="on"><a href="#none" id="btnProcessSelect" class="">공정별 보기</a></li>
+                        <li><a href="#none" id="btnSerachProcess" class="">코드별 보기</a></li>
+                    </ul>
+                </div>
+                <button type="button" class="close close-btn">팝업닫기</button>
+            </div>
+            <div class="btn-box">
+                <!--
+                <div class="search-box">
+                    <input type="radio"> 전체
+                    <input type="radio"> 기성포함내역만
+                    <input type="text" name="gcode" id="gcode" placeholder="검색코드를 입력하세요.">
+                    <a href="#none" id="searchGisungCode" class="btn btn-color1">검색</a>
+                    <input type="text" name="gcode" id="gcode" placeholder="기성수량를 입력하세요.">
+                    <a href="#none" id="searchGisungCode" class="btn btn-color1">전체 금회 기성 수량 적용</a>
+                    <a href="#none" class="btn close">취소</a>
+                </div>
+                -->
+            </div>
+        </div><!--//popup_top-->
+
+        <div class="popup-con">
+        </div>
+        <div class="bg-loading">
+            <img src="/dist/img/loading.gif" alt="">
+        </div>
+    </div><!--//popup_content-->
+</div><!--// popup-wrap-->
+
+
+<script th:inline="javascript">
+    $(document).ready(function() {
+        $('.scroll-wrap').overlayScrollbars({});
+    });
+
+</script>

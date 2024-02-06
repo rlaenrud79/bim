@@ -1,0 +1,58 @@
+<div class="divCodeValidateNav">
+  <!--
+  <div class="btn-group" role="toolbar">
+    <button id="btnSaveNowVersion" type="button" class="btn btn-color1">
+      <p>신규버전생성</p>
+    </button>
+  </div>
+  -->
+
+  <div id="divSaveNewVersion" style="display: none;">
+    <span th:text="#{process.modal.process_save_new_version.description}">버전 요약</span> <small class="keysmall"></small>
+    <input type="text"
+           id="newVersionDescription"
+           name="newVersionDescription"
+           class="form-control"
+           th:placeholder="#{process.modal.process_save_new_version.new_version_descrption_placeholder}"
+           maxlength="1024"/>
+    <button id="mBtnSaveNewVersion" type="button" data-toggle="tooltip" class="btn btn-b" th:text="#{process.modal.process_save_new_version.btn_save_new_version}">새버전 만들기 실행</button>
+  </div>
+
+  <!--
+  <div class="btn-group" role="toolbar">
+    <button id="btnUploadProcessFile" type="button" class="btn btn-color2">
+      <p>공정파일업로드</p>
+    </button>
+  </div>
+  -->
+
+  <div id="divUploadExcel" style="display: none;">
+    <span th:text="#{process.modal.process_file_upload.th_attach_file}">파일첨부</span> <small class="keysmall"></small>
+    <input type="file" id="file" name="files" class="form-control" th:placeholder="#{process.modal.process_file_upload.file_placeholder}" th:accept="${processFileExtension}"/>
+    <button id="mBtnRemoveFile" type="button" class="btn-b bg-gradient-danger mr-2" style="display:none;" th:text="#{process.modal.process_file_upload.btn_delete_file}">파일 제거</button>
+    <button id="mBtnUploadFile" type="button" class="btn-b bg-gradient-success mr-2" style="display: none;" th:text="#{process.modal.process_file_upload.btn_upload_file}">업로드 시작</button>
+    <button id="mBtnDownTemplateFile" type="button" class="btn-b bg-gradient-success" th:text="#{process.modal.process_file_upload.btn_download_template_file}">템플릿 받기</button>
+  </div>
+
+
+</div><!--//divCodeValidateNav-->
+
+
+<div id="divCodeValidateArea" th:fragment="codeValidateArea()" >
+  <div class="progress-area">
+    <b th:text="#{process.index.process_code_validation}">코드검증 성공률</b>
+    <div class="progress">
+      <div id="divProgressBar"
+           class="progress-bar bg-success"
+           role="progressbar"
+           aria-valuemin="0"
+           aria-valuemax="100"
+           th:aria-valuenow="${ #strings.isEmpty(processInfo.validateMessage) ? '0' :  ( #strings.equalsIgnoreCase(processInfo.validateMessage, '') ? '0' : processInfo.validateMessage ) }"
+           th:style="${'width:' + ( #strings.isEmpty(processInfo.validateMessage) ? '0' : ( (#strings.equalsIgnoreCase(processInfo.validateMessage, '') ? '0' : processInfo.validateMessage) ) ) + '%;' }">
+        <span id="spanProgressRate" th:text="${ #strings.isEmpty(processInfo.validateMessage) ? '0.00% Complete(success)' :  ( #strings.equalsIgnoreCase(processInfo.validateMessage, '') ? '0.00% Complete(success)' : processInfo.validateMessage + '% Complete(success)')}">40% Complete (success)</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="divCardCount" class="card content-header-area" th:replace="process/modal/resultCodeValidationCardCount :: cardCount()"/>
+</div>

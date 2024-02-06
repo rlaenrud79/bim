@@ -1,0 +1,12 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2><span th:text="#{contents.document_list.title_document_list}"> 문서관리</span></h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <form id="frmSearchForm" th:replace="contents/documentList/frmSearchForm :: frmSearchForm()"/>
+    </div>
+
+    <a href="#none" class="btn btn-color1 pop-open-btn" id="btnAdd" data-modal="#modalAddDocument"><span th:text="#{contents.modeling_list.btn_add}">등록</span></a>
+  </div>
+</div><!--// header-->

@@ -1,0 +1,27 @@
+<div id="jobSheetSnapShotList" class="up-file-list" th:fragment="load()">
+  <div th:each="item, index : ${snapShots}" class="d-flex flex-column align-items-center">
+    <img th:src="${item.source}" style="width: 200px; height: 100px;">
+    <div class="badge badge-pill">
+      <span th:text="${item.title}"></span>
+      <button type="button" name="btnSnapShotId" th:data-snap-shot-id="${item.id}" class=""><i
+          class="fas fa-times-circle"></i></button>
+    </div>
+  </div>
+  <script>
+    var btnDeleteSnapShot = document.getElementsByName('btnSnapShotId');
+
+    if (btnDeleteSnapShot.length > 0) {
+      for (var elem of btnDeleteSnapShot) {
+        elem.addEventListener('click', function () {
+          showConfirm("[[#{system.common.confirm.title}]]",
+            "[[#{project.job_sheet_update.confirm_delete_job_sheet_snap_shot}]]", removeParentElement.bind(this)
+          );
+        });
+      }
+    }
+
+    function removeParentElement() {
+      this.parentElement.parentElement.remove();
+    }
+  </script>
+</div>

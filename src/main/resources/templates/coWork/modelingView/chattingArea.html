@@ -1,0 +1,6 @@
+<div th:fragment="load()" id="chattingArea" class="" role="tabpanel"  th:class="${modelings!=null and modelings.size() > 0 ? 'tab-pane bim-chat-area active' : 'bim-chat-area non-model'}">
+  <article class="chat-area">
+    <header th:text="#{co_work.modeling_view.page.chatting}">채팅</header>
+    <div id="iframe-area"></div>
+  </article>
+</div>

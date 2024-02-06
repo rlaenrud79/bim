@@ -1,0 +1,42 @@
+<div id="divContentHeader" class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2>기성내역보기</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search mr-0">
+      <div class="search-box" th:object="${searchVO}">
+        <section>
+          <!--                    <p th:text="#{cost.index.page.phasing_code}">공정코드</p>-->
+          <input type="text" th:field="*{phasingCode}" class="wid-m" placeholder="공정코드 입력"/>
+        </section>
+        <section>
+          <!--                    <p th:text="#{cost.index.page.phasing_name}">공정명</p>-->
+          <input type="text" th:field="*{taskName}" class="wid-m" placeholder="공정명 입력">
+        </section>
+        <section>
+          <div class="input-date-wrap">
+            <p th:text="#{cost.index.page.process_term}">작업기간</p>
+            <div class="input-date">
+              <input type="date" th:field="*{startDate}" class="form-control" style="width:120px;">
+            </div>
+            <small class="bar">-</small>
+            <div class="input-date">
+              <input type="date" th:field="*{endDate}" class="form-control" style="width:120px;">
+            </div>
+          </div>
+        </section>
+        <section>
+          <div class="bim-btn-group">
+            <button type="button" id="btnSearch" class="btn btn-color1">
+              <span th:text="#{cost.index.page.search}"> 검색</span>
+            </button>
+            <button type="button" id="btnReset" class="btn bg-gradient-primary">
+              <span th:text="#{cost.index.page.reset_search_condition}"> 초기화</span>
+            </button>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>

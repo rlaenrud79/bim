@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="coWork/notificationUpdate/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <div id="divCardBody" th:replace="coWork/notificationUpdate/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+
+<!-- modal -->
+<div th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></div>
+<th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, '')"></th:block>
+<!-- modal end -->
+
+<div th:include="common/editor/page :: script()"></div>
+<script type="text/html" id="files-template" th:include="/common/fileUploader :: filesTemplate()"></script>
+<!-- summernote -->
+<link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
+<!-- Summernote -->
+<script src="/plugins/summernote/summernote-bs4.min.js"></script>
+<script th:if="${#strings.toString(#locale) != 'en'}" th:src="|/plugins/summernote/lang/summernote-#{common.editor.locale_language}.min.js|"></script>
+<script>
+  $(document).ready(function () {
+
+    let _this = $(this);
+    let _noticeId = 0;
+    let _checkedWorkCnt = 0;
+    let _selectedWorkIds = "";
+    let _fileId = 0;
+    let _notificationFileExtension = '[[${notificationFileExtension}]]';
+
+    //$("#startDateDay, #endDateDay").datepicker("isDisabled");
+
+    let setParam = function(page, size) {
+
+      let param = "";
+
+      param += "page=[[${pageable.pageNumber}]]";
+      param += "&size=[[${pageable.pageSize}]]";
+      param += "&searchType=[[${searchNoticeVO.searchType}]]";
+      param += "&searchText=[[${searchNoticeVO.searchText}]]";
+      param += "&writerName=[[${searchNoticeVO.writerName}]]";
+      param += "&writerId=[[${searchNoticeVO.writerId}]]";
+      param += "&searchDateFrom=[[${searchNoticeVO.searchDateFrom}]]";
+      param += "&searchDateEnd=[[${searchNoticeVO.searchDateEnd}]]";
+      param += "&sortProp=[[${searchNoticeVO.sortProp}]]";
+
+      return param;
+    }
+
+    let getSendData = function () {
+      return JSON.stringify({
+        "noticeId": _noticeId,
+        "title": $("#title").val(),
+        "contents": $("#contents").val(), //CommonEditor.getInputData(),
+        "isPopup": $("input:radio[id=\'isPopup_true\']").is(':checked') ? true : false,
+        "startDate": $("#startDateDay").val() + " " + $("#startDateHour").val() + ":" + $("#startDateMin").val() + ":00",
+        "endDate": $("#endDateDay").val() + " " + $("#startEndHour").val() + ":" + $("#startEndMin").val() + ":00",
+        "noticeWorkIds": _selectedWorkIds.substr(0, _selectedWorkIds.length - 1).split(",")
+      });
+    }
+
+    let executeUpdate = function () {
+
+      reqPostJSON('/coWorkApi/putNotification'
+        , getSendData()
+        , function (data) {
+          if (data.result) {
+            if ($("#noticeFileUpload" + "s").find(".devo_file_list").length > 0) {
+              _noticeId = data.returnId;
+              $("#noticeFileUpload").dmUploader("start");
+            }
+            else completeUploadFile();
+          }
+          else {
+            alert(data.message);
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        });
+    }
+
+    let executeDeleteFile = function (){
+      reqDelete('/commonApi/deleteFile/NOTIFICATION_FILE/' + _fileId
+        , function (data) {
+          if (data.result) {
+            $("#divFile_" + _fileId).remove();
+            alert(data.message);
+          } else {
+            alert(data.message);
+          }
+        }
+        , function (xhr) {
+          alert($.parseJSON(xhr.responseJSON).error);
+        }, "json");
+    }
+
+    let init = function(){
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')){
+        $("#isPopup_true").click();
+      }
+    }
+
+    _this.on("click", "#btnGoToList", function(){
+      location.href = "/coWork/notificationList?" + setParam();
+    });
+
+    _this.on("click", "#btnGoToView", function(){
+      _noticeId = $(this).data("id");
+      location.href="/coWork/notificationView?noticeId=" + _noticeId + "&" + setParam();
+    });
+
+    _this.on('change', '#allCheck', function () {
+      executeAllCheck(_this, this, ".itemCheck");
+    });
+
+    _this.on('click', "#isPopup_false", function(){
+      $("#startDateDay").val("");
+      $("#startDateHour").val("");
+      $("#startDateMin").val("");
+      $("#endDateDay").val("");
+      $("#startEndHour").val("");
+      $("#startEndMin").val("");
+
+      $("#startDateDay, #endDateDay").datepicker("destroy");
+      $("#startDateHour, #startDateMin" ).attr('disabled', 'true');
+      $("#startEndHour, #startEndMin" ).attr('disabled', 'true');
+    });
+
+    _this.on('click', "#isPopup_true", function(){
+      $("#startDateDay, #endDateDay").datepicker(datepickerFormat);
+      $("#startDateHour, #startDateMin" ).removeAttr('disabled', 'disabled');
+      $("#startEndHour, #startEndMin" ).removeAttr('disabled', 'disabled');
+    });
+
+    _this.on("click", "#btnUpdateNotification", function (){
+
+      let startDate = $("#startDateDay").val() + " " + $("#startDateHour").val() + ":" + $("#startDateMin").val() + ":00";
+      let endDate = $("#endDateDay").val() + " " + $("#startEndHour").val() + ":" + $("#startEndMin").val() + ":00";
+      _checkedWorkCnt = 0;
+      _selectedWorkIds = "";
+
+      if ($("#title").val() == "") {
+        alert("[[#{co_work.notification_update.error_no_title}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+        && ($("#startDateDay").val() == "" || $("#startDateHour").val() == "" || $("#startDateMin").val() == "")) {
+        alert("[[#{co_work.notification_update.error_no_start_date}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+        && ($("#endDateDay").val() == "" || $("#startEndHour").val() == "" || $("#startEndMin").val() == "")) {
+        alert("[[#{co_work.notification_update.error_no_end_date}]]");
+        return;
+      }
+
+      if($("input:radio[id=\'isPopup_true\']").is(':checked')
+        && (moment(endDate).isBefore(moment(startDate)))){
+        alert("[[#{co_work.notification_update.error_date_end_before_start}]]");
+        return;
+      }
+
+      $(".itemCheck").each(function (index, item) {
+        if($(this).is(':checked')) {
+          _checkedWorkCnt ++;
+          _selectedWorkIds += $(this).val() + ",";
+        }
+      });
+
+      if(_checkedWorkCnt == 0) {
+        alert("[[#{co_work.notification_update.error_no_target_works}]]");
+        return;
+      }
+
+      if ($("#contents").val() == "") {
+      //if(CommonEditor.getInputData() == "<p><br></p>"  || CommonEditor.isEmpty()){
+        alert("[[#{co_work.notification_update.error_no_contents}]]");
+        return;
+      }
+
+      _noticeId = $(this).data("id");
+      if (confirm("[[#{co_work.notification_update.confirm_update_notification}]]")) {
+        executeUpdate();
+      }
+    });
+
+    _this.on("click", "a[id^='btnNoticeFile_']", function () {
+      if($(this).data("ext").toUpperCase() === "PDF") window.open("[[${saveBasePath}]]" + $(this).data("file-path"));
+      if($(this).data("is-image")) return;
+      else executeFileDownloadModal($(this).data("id"), "NOTIFICATION_FILE");
+    });
+
+    _this.on("click", "a[id^='btnDeleteNoticeFile_']", function (){
+      _fileId = $(this).data("id");
+      if (confirm("[[#{co_work.notification_update.confirm_delete_notification_file}]]")) {
+        executeDeleteFile();
+      }
+    });
+
+    let completeUploadFile = function () {
+      alert('[[#{co_work.notification_update.message_success}]]');
+      $("#btnGoToView").click();
+    }
+
+    let noticeFileExtraData = function () {
+      return {
+        "id": _noticeId,
+        "fileUploadUIType": "NOTIFICATION_FILE",
+        "makeVersion": false,
+        "executeHoopsConverter" : false
+      }
+    }
+
+    makeMultiUploaderScript("#noticeFileUpload"
+      , noticeFileExtraData
+      , 5000000000
+      , _notificationFileExtension.split("||")
+      , '[[#{common.file_upload.error_file_size}]]'
+      , '[[#{common.file_upload.error_ext}]]'
+      , completeUploadFile
+    );
+
+    init();
+
+  });
+</script>
+</body>
+
+</html>

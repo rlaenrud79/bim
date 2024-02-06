@@ -1,0 +1,42 @@
+ <div id="divCardBody" class="" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+
+    <div class="scroll-wrap">
+      <table class="table">
+        <thead>
+        <tr>
+          <th class="text-center" width="100" th:text="#{process.modal.result_code_validation.list_title_no}">No</th>
+          <th class="text-center" width="400" th:text="#{process.modal.result_code_validation.list_title_task_name}">공정명</th>
+          <th class="text-center" width="220" th:text="#{process.modal.result_code_validation.list_title_phasing_code}">페이징코드</th>
+          <th class="text-center" width="200" th:text="#{process.modal.result_code_validation.list_title_start_date}">시작일자</th>
+          <th class="text-center" width="200" th:text="#{process.modal.result_code_validation.list_title_end_date}">종료일자</th>
+          <th class="text-center" width="200" th:text="#{process.modal.result_code_validation.list_title_validate}">결과</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item, index : ${list}"  th:if="${list.size > 0}" th:classappend="${#strings.equals(item.validate, 'FAIL')} ? 'bg-danger' : (${#strings.equals(item.validate, 'NONE')} ? 'bg-warning')">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td>
+            <div class="table-text-cont">
+              <span class="text-over-dot" th:text="${item.taskName}">휴무일 공지(2021.05.05)</span>
+            </div>
+          </td>
+          <td class="text-center" th:text="${item.phasingCode}">페이징 코드</td>
+          <td class="text-center" th:text="${item.startDate}">2021-04-06</td>
+          <td class="text-center" th:text="${item.endDate}">2021-04-06</td>
+          <td class="text-center" th:text="${item.validate}">SUCCESS</td>
+        </tr>
+        <tr th:if="${list.size == 0}">
+          <td class="text-center" th:text="#{process.modal.result_code_validation.list_there_is_no_result}">코드 검증 결과가 없습니다.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+
+</div>
+
+ <script>
+   /*scroll*/
+   $('.scroll-wrap').overlayScrollbars({ });
+ </script>

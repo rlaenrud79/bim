@@ -1,0 +1,71 @@
+/// BIM TABLES
+
+table,
+.table {
+    margin: 0!important;
+
+    &.thbg th { background-color: #EEF0F2; }
+
+    caption {
+        caption-side: top;
+        padding: .4rem;
+        text-align: center;
+        font-size: 1rem;
+        color: $font-color;
+        background-color: #fff;
+    }
+    
+    th, td {
+        padding: 1rem .5rem;
+        font-size: 1rem;
+        vertical-align: middle!important;
+        word-break: keep-all;
+    }
+
+    .table-text-cont {
+        display: flex;
+        align-items: center;
+
+        a, p, span { max-width: 400px; }
+
+        span[data-toggle="tooltip"] {
+            margin-right: .5rem;
+            width: 20px;
+            font-size: 1.1rem;
+        }
+    }
+}
+
+.data-table {
+    thead {
+        th {
+            &.sort {
+                position: relative;
+                cursor: pointer;
+
+                &:hover { background-color: #f1f1f1;; }
+
+                &.descending {
+                    &::before { color: #212529; }
+                }
+                &.ascending {
+                    &::after { color: #212529; }
+                }
+
+                &::before, &::after {
+                    content: '';
+                    position: absolute;
+                    right: 1rem;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    display: block;
+                    color: #bbb;
+                }
+
+                &::before { content: "↑"; right: 1.7rem; }
+
+                &::after { content: "↓"; }
+            }
+        }
+    }
+}

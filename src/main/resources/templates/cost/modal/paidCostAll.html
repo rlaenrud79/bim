@@ -1,0 +1,131 @@
+<section class="content">
+  <div class="container-fluid">
+    <div class="con-breakdown">
+      <div class="col-lg-12">
+        <div class="card content-body-area">
+          <div class="card-header">
+            <div class="col-12">
+              <div class="bim-btn-group">
+                <button type="button" id="postPaidCostAll" class="btn bg-gradient-primary">
+                  <i class="fas fa-plus"></i><span th:text="#{cost.modal.paid_cost_all.process}">처리</span>
+                </button>
+                <button type="button" id="resetPaidCostAll" class="btn bg-gradient-primary">
+                  <i class="fas fa-sync-alt"></i><span th:text="#{cost.modal.paid_cost_all.reset}">초기화</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="col-12">
+              <div class="table-responsive">
+                <form id="frmProcessItemCostPayAll">
+                  <table class="table">
+                    <tbody th:object="${paidCostAll}">
+                    <tr>
+                      <th><span th:text="#{cost.modal.paid_cost_all.paid_cost_date}">기성일</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                      <td>
+                        <div class="d-flex align-items-center">
+                          <div class="form-group from-date w-75">
+                            <div class="input-group">
+                              <input type="text" th:field="*{costDate}" class="form-control" readonly/>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th><span th:text="#{cost.modal.paid_cost_all.paid_cost_no}">기성 회차</span> <small class="keysmall">&#40;<span>&#42;</span>&#41;</small></th>
+                      <td>
+                        <div class="d-flex align-items-center w-75 mr-2">
+                          <div class="form-group w-50">
+                            <input type="number" th:field="*{costNo}" class="form-control"/> 차
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th th:text="#{cost.modal.paid_cost_all.paid_cost_etc}">비고</th>
+                      <td colspan="5">
+                        <div class="form-group w-100">
+                          <input type="text" th:field="*{description}" class="form-control" maxlength="1024"/>
+                        </div>
+                      </td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<script th:inline="javascript">
+  $(function () {
+    const $this = $("#paidCostAll");
+    let paidCostAll = [[${paidCostAll}]];
+
+    $this.find("#costDate").datepicker(datepickerFormat);
+
+    let checkBlank = function (idName, message) {
+      let value = $this.find("#" + idName).val();
+      if (isBlank(value)) {
+        showErrorAlert([[#{cost.modal.paid_cost_all.message.input_value}]], message);
+        return true;
+      }
+      return false;
+    }
+
+    let checkNumeric = function (idName, message) {
+      let value = $this.find("#" + idName).val();
+      if (!isNumeric(value)) {
+        showErrorAlert([[#{cost.modal.paid_cost_all.message.input_value}]], message);
+        return true;
+      }
+      return false;
+    }
+
+    let validatePaidCost = function () {
+      if (checkBlank("costDate", [[#{cost.modal.paid_cost_all.message.select_paid_cost_date}]])) return true;
+      if (checkBlank("costNo", [[#{cost.modal.paid_cost_all.message.select_paid_cost_no}]])) return true;
+      if (checkNumeric("costNo", [[#{cost.modal.paid_cost_all.message.input_paid_cost_no_is_numeric}]])) return true;
+      let thisCostNo = parseInt($this.find("#costNo").val());
+      if( thisCostNo < paidCostAll.costNo) {
+        showErrorAlert([[#{cost.modal.paid_cost_all.message.input_value}]], paidCostAll.costNo+[[#{cost.modal.paid_cost_all.message.input_paid_cost_no_over_number}]]);
+        $this.find("#costNo").focus();
+        return true;
+      }
+      return false;
+    }
+
+    $this.find("#resetPaidCostAll").on("click", function () {
+      $this.find("#costDate").val(paidCostAll.costDate);
+      $this.find("#costNo").val(paidCostAll.costNo);
+      $this.find("#description").val(paidCostAll.description);
+    });
+
+    $this.find("#postPaidCostAll").on("click", function () {
+      if (validatePaidCost()) return;
+
+      const message = [[#{cost.modal.paid_cost_all.message.task_rate_latest_sum_task_rate_bigger_can_process}]]
+        + "<br/>"+[[#{cost.modal.paid_cost_all.message.task_rate_different_calculate_auto_and_current_task_rate_cost_different_able}]]
+        + "<br/>"+[[#{cost.modal.paid_cost_all.message.paid_cost_all_after_each_edit}]]
+        + "<br/>"+[[#{cost.modal.paid_cost_all.message.process_paid_cost_all}]]
+
+      showConfirm([[#{cost.modal.paid_cost_all.message.paid_cost_all}]], message, function () {
+        let param = JSON.stringify($this.find("#frmProcessItemCostPayAll").serializeObject());
+
+        reqPostJSON("/costApi/processItemCostPayAll/[[${processInfoId}]]", param, function (data) {
+          if (data.result) {
+            toastr.success(data.message);
+            $("#btnSearch").trigger("click");
+            $this.modal('hide');
+          } else toastr.error(data.message);
+        });
+      });
+    });
+
+  });
+</script>

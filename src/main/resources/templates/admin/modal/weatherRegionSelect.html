@@ -1,0 +1,20 @@
+<tr th:fragment="load(step,regions, selectedRegion)" th:id="${'region'+step+'Area'}">
+  <th th:text="#{admin.modal.project_weather_location.region_step(${step})}">3단계</th>
+  <td>
+    <div class="form-group w-100">
+      <select th:id="${'region'+step}" class="custom-select" th:data-step="${step}" th:disabled="${regions.size() == 0}">
+        <option th:text="#{admin.modal.project_weather_location.select_region_step(${step})}" value="" th:selected="${''==selectedRegion}">Value 1</option>
+        <option th:each="region : ${regions}"
+                th:text="${region.getName(step)}"
+                th:data-weather-x="${region.weatherXY.weatherX}"
+                th:data-weather-y="${region.weatherXY.weatherY}"
+                th:data-weather-long-forecast-region-code="${region.weatherXY.longForecastRegionCode}"
+                th:data-weather-long-temperature-region-code="${region.weatherXY.longTemperatureRegionCode}"
+                th:value="${region.getName(step)}"
+                th:selected="${region.getName(step)==selectedRegion}">
+          Value 2
+        </option>
+      </select>
+    </div>
+  </td>
+</tr>

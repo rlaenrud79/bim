@@ -1,0 +1,136 @@
+
+
+    <div class="dual-list flex">
+        <section class="dual-left col3">
+            <p class="txt1">항목을 선택하세요.</p>
+            <div class="scroll-wrap">
+                <ul class="task-work-ck">
+                    <li th:each="row, index : ${processDeviceList}">
+                        <div class="check-set">
+                            <input type="checkbox" th:id="${'device' + index.index}" class="deviceItemCheck" name="deviceItem[]" th:value="${row.id}" th:data-name="${row.deviceName}">
+                            <label th:for="${'device' + index.index}" th:text="${row.deviceName}"></label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+        <section class="dual-right col3">
+            <p class="txt1">선택된 항목</p>
+            <div class="scroll-wrap">
+                <ul class="task-work-ck div-device">
+                    <li class="no-list">
+                        선택한 항목이 없습니다.
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+
+    <div class="btn-box">
+        <a href="#none" class="btn btn-color1 btnPrcessItemAdd" th:text="#{common.modal.btn_save}">저장</a>
+        <a href="#none" class="btn btn-close" th:text="#{common.modal.btn_cancel}">취소</a>
+    </div>
+
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        const $this = $("#[[${formElementIdForModal}]]");
+        const currentProcessItemIndex = [[${currentProcessItemIndex}]];
+        const checkboxes = document.querySelectorAll('.deviceItemCheck');
+
+        getProcessItemValues(currentProcessItemIndex);
+
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('click', function() {
+                let html = "";
+                const table = $(".div-device");
+                if (this.checked) {
+                    html += '<li id="'+this.value+'" data-name="'+this.getAttribute("data-name")+'">';
+                    html += '    <p>'+this.getAttribute("data-name")+'</p>';
+                    html += '    <input name="deviceItemValue" type="number" min="0" step="1" maxlength="10" value="0" class="wid-80" placeholder="숫자입력">';
+                    html += '        <a href="#none" class="btn-delete-ico btn-device-del" data-id="'+this.value+'" title="삭제"><span class="hidden">삭제</span></a>';
+                    html += '</li>';
+                } else {
+                    const liToRemove = document.getElementById(this.value);
+                    if (liToRemove) {
+                        liToRemove.remove();
+                    }
+                }
+                $(".div-device .no-list").remove();
+                table.append(html);
+            });
+        });
+
+        // 장비관리 항목 삭제
+        $this.on('click', '.btn-device-del', function () {
+            let deviceId = $(this).attr("data-id");
+            $('input[type="checkbox"][name="deviceItem[]"][value="' + deviceId + '"]').prop('checked', false);
+            const liToRemove = document.getElementById(deviceId);
+            if (liToRemove) {
+                liToRemove.remove();
+            }
+        });
+
+        // 인원관리, 장비관리 적용
+        //$this.find('#mSearchText').on('keyup', function () {
+        $('.btnPrcessItemAdd').click(function () {
+            const target = "tblProcessDevice";
+            const selector = $("p." + target);
+            const table = $(selector).eq(currentProcessItemIndex);
+            const names = [];
+            const deviceIds = [];
+            const values = [];
+            let inputdiv = "";
+            let html = "";
+
+            $('.div-device > li').each(function() {
+                // data-no 속성을 사용하여 item_no 값을 가져옴
+                var device = $(this).attr('id');
+                var deviceName = $(this).attr('data-name');
+                if (device) {
+                    let progressItemValue = $(this).find("input[name='deviceItemValue']").val();
+                    inputdiv += '<input name="progressDeviceId" type="hidden" value="' + device + '">';
+                    inputdiv += '<input name="progressDeviceName" type="hidden" value="' + deviceName + '">';
+                    inputdiv += '<input name="progressDeviceValue" type="hidden" value="' + progressItemValue + '">';
+                    deviceIds.push(device);
+                    names.push(deviceName);
+                    values.push(progressItemValue);
+                }
+            });
+
+            if (names.length > 0) {
+                html += names[0] + ' ' + values[0] + '명 외 <strong class="txt-color1">' + (names.length - 1) + '</strong>건';
+                html += inputdiv;
+            }
+            table.html(html);
+
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+
+        });
+
+        $this.find('.btn-close').on('click', function () {
+            $(this).closest('.popup-wrap').hide();
+            $('body').css('overflow', 'auto');
+        });
+    });
+
+    function getProcessItemValues(currentProcessItemIndex) {
+        const target = "tblProcessDevice";
+        const selector = $("p." + target);
+        const table = $(selector).eq(currentProcessItemIndex);
+        const deviceIds = table.find('input[name=progressDeviceId]');
+        const names = table.find('input[name=progressDeviceName]');
+        const values = table.find('input[name=progressDeviceValue]');
+        let html = "";
+        for (let i=0; i<names.length; i++) {
+            html += '<li id="'+deviceIds.eq(i).val()+'" data-name="'+names.eq(i).val()+'">';
+            html += '    <p>'+names.eq(i).val()+'</p>';
+            html += '    <input name="deviceItemValue" type="number" min="0" step="1" maxlength="10" value="' + values.eq(i).val() + '" class="wid-80" placeholder="숫자입력">';
+            html += '        <a href="#none" class="btn-delete-ico btn-device-del" data-id="'+deviceIds.eq(i).val()+'" title="삭제"><span class="hidden">삭제</span></a>';
+            html += '</li>';
+            $('.deviceItemCheck[value="' + deviceIds.eq(i).val() + '"]').prop('checked', true);
+        }
+        $(".div-device").html(html);
+    }
+</script>

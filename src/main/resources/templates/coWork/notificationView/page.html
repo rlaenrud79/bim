@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="coWork/notificationView/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <div id="divCardBody" th:replace="coWork/notificationView/cardBody :: cardBody()"/>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+  <!-- modal -->
+  <div th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></div>
+  <th:block th:replace="layout/popup :: modal('modalDownloadFile', #{common.modal_title.download_file}, '')"></th:block>
+  <!-- modal end -->
+
+
+  <link href="/plugins/ekko-lightbox/ekko-lightbox.css" rel="stylesheet" type="text/css"/>
+  <script src="/plugins/ekko-lightbox/ekko-lightbox.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      let _this = $(this);
+
+      let _page = '[[${pageable.pageNumber}]]';
+      let _size = '[[${pageable.pageSize}]]';
+      let _noticeId = 0;
+
+      let setParam = function(page, size) {
+
+        let param = "";
+
+        param += "page=" + page;
+        param += "&size=" + size;
+        param += "&searchType=[[${searchNoticeVO.searchType}]]";
+        param += "&searchText=[[${searchNoticeVO.searchText}]]";
+        param += "&writerName=[[${searchNoticeVO.writerName}]]";
+        param += "&writerId=[[${searchNoticeVO.writerId}]]";
+        param += "&searchDateFrom=[[${searchNoticeVO.searchDateFrom}]]";
+        param += "&searchDateEnd=[[${searchNoticeVO.searchDateEnd}]]";
+        param += "&sortProp=[[${searchNoticeVO.sortProp}]]";
+
+        return param;
+      }
+
+      let deleteNoticeItem = function() {
+        reqDelete('/coWorkApi/deleteNotification/' + _noticeId
+          , function (data) {
+            if (data.result) {
+              location.href = "/coWork/notificationList?" + setParam(0, _size);
+              //toastr.success(data.message);
+            } else {
+              alert(data.message);
+            }
+          }
+          , function (xhr) {
+            alert($.parseJSON(xhr.responseJSON).error);
+          }, "json");
+      }
+
+      _this.on("click", "#btnGoToList", function(){
+        location.href = "/coWork/notificationList?" + setParam(_page, _size);
+      });
+
+      _this.on("click", "#btnDelete", function (){
+        _noticeId = $(this).data("id");
+        if (confirm("[[#{co_work.notification_view.confirm_delete_issue}]]") == true) {
+          deleteNoticeItem();
+        }
+      });
+
+      _this.on("click", "#btnUpdateNotification", function(){
+        location.href="/coWork/notificationUpdate?noticeId=" + $(this).data("id") + "&" + setParam(_page, _size);
+      });
+
+      _this.on("click", "a[id^='btnNoImage_'], a[id^='btnNoImageDownLoad_']", function () {
+        if($(this).data("ext").toUpperCase() === "PDF") window.open("[[${saveBasePath}]]" + $(this).data("file-path"));
+        if($(this).data("is-image")) return;
+        else executeFileDownloadModal($(this).data("id"), "NOTIFICATION_FILE");
+      });
+
+      _this.on("click", ".zoom-in-image", function(){
+        let html = "<a href='" + $(this).attr("src") + "'/>";
+        $(html).ekkoLightbox({ alwyasShowClose: true});
+      });
+    });
+  </script>
+</body>
+
+</html>

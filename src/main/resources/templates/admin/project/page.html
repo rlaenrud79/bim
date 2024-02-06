@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="header" th:replace="admin/project/contentHeader :: contentHeader()"></div>
+
+      <div class="content">
+        <form id="projectSummary" th:object="${project}" method="post" style="height: 100%;">
+
+          <div class="form">
+            <div class="form grid">
+              <div class="fm-section col6">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.project_name}">사업명</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" th:field="*{name}" class="form-control" th:placeholder="#{admin.project.page.input_project_name}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.project_purpose}">사업 목적</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" th:field="*{purpose}" class="form-control" th:placeholder="#{admin.project.page.input_project_purpose}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.project_address}">사업 위치</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" th:field="*{address}" class="form-control" th:placeholder="#{admin.project.page.input_project_address}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.project_term}">공사기간</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <input type="text" th:field="*{term}" class="form-control" th:placeholder="#{admin.project.page.input_project_term}">
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.start_design_date}">설계 착수일</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{startDesignDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.end_design_date}">설계 준공일</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{endDesignDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.start_date}">착공일</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{startDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.start_due_date}">시공 착공 예정일</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{startDueDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.end_date}">준공일</span><small class="req-ico">*</small></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{endDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col2">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.end_due_date}">시공 완료 예정일</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="input-date wid-lg">
+                    <input type="text" class="form-control wid-lg" th:field="*{endDueDate}" readonly>
+                    <i class="ico"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col6">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i><span th:text="#{admin.project.page.project_weather_location_point}">날씨좌표</span></strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="flex al-center gap-10">
+                    <input type="hidden" id="weatherX" name="weatherX" th:value="${project.weatherXY == null ? '' : project.weatherXY?.weatherX}">
+                    <input type="hidden" id="weatherY" name="weatherY" th:value="${project.weatherXY == null ? '' : project.weatherXY?.weatherY}">
+                    <input type="hidden" id="longForecastRegionCode" name="longForecastRegionCode" th:value="${project.weatherXY == null ? '' : project.weatherXY?.longForecastRegionCode}">
+                    <input type="hidden" id="longTemperatureRegionCode" name="longTemperatureRegionCode" th:value="${project.weatherXY == null ? '' : project.weatherXY?.longTemperatureRegionCode}">
+                    <button type="button" class="btn-b mt-5" data-toggle="modal" data-target="#projectWeatherLocation" th:text="#{admin.project.page.set_weather_location_point}">좌표 설정</button>
+                    <p th:if="*{weatherXY!=null && weatherXY?.isWeatherPoint}" class="ml-3 weatherLocationString">
+                      <b>X: </b> <span th:text="*{weatherXY?.weatherX}">○○○○○</span> |
+                      <b class="ml-3">Y: </b> <span th:text="*{weatherXY?.weatherY}">□□□□□</span>
+                      [<span th:text="*{weatherXY?.longForecastRegionCode}"></span> / <span th:text="*{weatherXY?.longTemperatureRegionCode}"></span>]
+                    </p>
+                    <p th:if="*{weatherXY==null}" class="ml-3 weatherLocationString" th:text="#{admin.project.page.no_set_project_weather_point}"></p>
+                    <small class="d-block mt-3 w-100">( <span th:text="#{admin.project.page.click_to_save_button_after_changed_point}">좌표바꾼 후 저장 클릭 하세요.</span> )</small>
+                  </div>
+                </div>
+              </div>
+              <div class="fm-section col6">
+                <div class="fm-tit">
+                  <strong><i class="ico-require on"></i>사업개요 코드입력</strong>
+                </div>
+                <div class="fm-txt">
+                  <div class="txt-bg">
+                    <textarea id="dashboard_contents" name="dashboard_contents" placeholder="내용을 입력하세요." th:text="${project.dashboard_contents}"></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+
+
+          </div><!--// content-->
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <!-- modal -->
+  <th:block th:replace="layout/popup :: modal('projectImage',#{admin.project.page.project_image_management},'')"></th:block>
+  <th:block th:replace="layout/popup :: modal('projectWeatherLocation',#{admin.project.page.project_weather_setting},'')"></th:block>
+  <th:block th:replace="layout/common :: loadModalCaseBy('(zoomInImage)')"></th:block>
+  <!-- modal end -->
+
+  <script th:inline="javascript">
+    $(function () {
+      const $this = $(this);
+
+      $this.find("#btnAddNotification").on("click", function () {
+
+        let name = $this.find("#name").val();
+        if (name.trim() == "") {
+          alert([[#{admin.project.page.input_project_name}]]);
+          return false;
+        }
+
+        let purpose = $this.find("#purpose").val();
+        if (purpose.trim() == "") {
+          alert([[#{admin.project.page.input_project_purpose}]]);
+          return false;
+        }
+
+        let startDesignDate = $this.find("#startDesignDate").val();
+        if (startDesignDate.trim() == "") {
+          alert([[#{admin.project.page.input_project_design_date}]]);
+          return false;
+        }
+
+        let startDate = $this.find("#startDate").val();
+        if (startDate.trim() == "") {
+          alert([[#{admin.project.page.input_project_start_date}]]);
+          return false;
+        }
+
+        let endDate = $this.find("#endDate").val();
+        if (endDate.trim() == "") {
+          alert([[#{admin.project.page.input_project_end_date}]]);
+          return false;
+        }
+
+        let param = JSON.stringify($this.find("#projectSummary").serializeObject());
+
+        reqPutJSON("/adminApi/project"
+                , param
+                , (data) => {
+                  if (data.result) {
+                    alert([[#{admin.project.page.save_project_summary_success}]]);
+                    location.reload();
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }
+        );
+      });
+
+      $this.find("#putProjectContents").on("click", function () {
+        reqPutJSON("/adminApi/projectContents"
+                , JSON.stringify({contents: CommonEditor.getInputData()})
+                , (data) => {
+                  if (data.result) {
+                    alert(data.message);
+                  }
+                  else {
+                    alert(data.message);
+                  }
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                });
+      });
+
+      $this.find("#postTotalPay").on("click", function () {
+        let totalPay = $("#totalPay").val();
+        let totalCost = $("#totalCost").val();
+
+        if (isNaN(totalPay) || totalPay == "") {
+          alert([[#{admin.project.page.validate_total_pay_value_number}]]);
+          $("#totalPay").focus;
+          return false;
+        }
+
+        if (isNaN(totalCost) || totalCost == "") {
+          alert([[#{admin.project.page.validate_total_cost_value_number}]]);
+          $("#totalCost").focus;
+          return false;
+        }
+
+        let param = {totalPay: totalPay, totalCost: totalCost}
+
+        reqPost("/adminApi/payHistory"
+                , param
+                , (data) => {
+                  if (data.result) toastr.success(data.message);
+                  else toastr.error(data.message);
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                });
+      });
+
+      $this.find("#startDate,#endDate,#startDueDate,#endDueDate,#startDesignDate,#endDesignDate").datepicker(datepickerFormat);
+
+      $this.on('click', '.btn-zoom-img', function () {
+        let html = "<a href='" + $('.carousel-item.active > .zoom-in-image').attr("src") + "'/>";
+        $(html).ekkoLightbox({ alwyasShowClose: true});
+        //$('.carousel-item.active > .zoom-in-image').trigger('click');
+      });
+
+      $this.find("#goCompany").on("click", function () {
+        location.href = "/admin/companyList";
+      });
+
+      $('#projectWeatherLocation').on('show.bs.modal', function () {
+        reqGet("/adminModal/projectWeatherLocation"
+                , function (data) {
+                  $('#projectWeatherLocation').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }, "html");
+      });
+
+      $("#projectWeatherLocation").on('hidden.bs.modal', function () {
+        $("#region1").off("change");
+        $("#region2").off("change");
+        $("#region3").off("change");
+        $("#setWeatherLocationPoint").off("click");
+        $(this).data('bs.modal', null);
+      });
+
+      $('#projectImage').on('show.bs.modal', function () {
+        reqGet("/adminModal/projectImage"
+                , function (data) {
+                  $('#projectImage').find('.modal-body').html(data);
+                }
+                , function (xhr) {
+                  alert($.parseJSON(xhr.responseJSON).error);
+                }, "html");
+      });
+
+      $("#projectImage").on('hidden.bs.modal', function () {
+        $(".deleteProjectImage").off("click");
+        $("#postProjectImage").off("click");
+        $("#projectImage").find('.modal-body').html('');
+      });
+
+      CommonEditor.setInputData([[${project.contents}]]);
+    });
+  </script>
+</body>
+</html>
+
+
+

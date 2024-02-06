@@ -1,0 +1,38 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2>기성신청</h2>
+  </div>
+  <div class="header-right">
+    <div class="top-search">
+      <div class="search-box">
+        <section>
+          <input type="hidden" id="searchType" value="title">
+          <input type="text" id="searchValue" name="searchValue" placeholder="검색어를 입력하세요.">
+        </section>
+        <section>
+          <p th:text="#{contents.gisung_list.select_write_date}">작성일자</p>
+          <div class="input-date-wrap">
+            <div class="input-date">
+              <input type="date" id="startDate" placeholder="">
+              <i class="ico"></i>
+            </div>
+            <small class="bar">-</small>
+            <div class="input-date">
+              <input type="date" id="endDate" placeholder="">
+              <i class="ico"></i>
+            </div>
+          </div>
+        </section>
+        <section>
+          <a href="#none" id="btnSearchGisung" class="btn btn-color2"><span th:text="#{contents.gisung_list.btn_search_document}">검색</span></a>
+<!--          <a href="#none" id="btnResetSearchCondition" class="btn"><span th:text="#{contents.gisung_list.btn_reset_search_condition}">초기화</span></a>-->
+        </section>
+      </div>
+    </div>
+
+    <!--<a href="javascript:exportTotalXlsx();" class="btn btn-color4 btnExportTotalXlsx"><span th:text="#{gisung.index.detail.total_gisung_excel_make}">전체 기성 엑셀 생성</span></a>-->
+    <a href="#none" id="exportTotalXlsx" class="btn btn-color4 btnExportTotalXlsx"><span>xlsx 전체 출력 생성</span></a>
+    <a href="#none" id="exportTotalXlsxDown" class="btn btn-color4 btnExportTotalXlsx"><span>xlsx 전체 출력</span></a>
+    <a href="#none" id="btnAdd" class="btn btn-color1 pop-open-btn" data-modal="#modalAddGisung"><span th:text="#{gisung.index.detail.btn_new_add}">신규등록</span></a>
+  </div>
+</div>

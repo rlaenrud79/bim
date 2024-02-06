@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/common :: head('BIM | CDEㆍ4Dㆍ5D')"></head>
+
+<body>
+<div class="wrap">
+  <div class="container">
+    <nav th:replace="layout/common :: navigation('project')"></nav>
+
+    <div class="right-area">
+      <div id="divContentHeader" class="content-header" th:replace="admin/calendar/contentHeader :: contentHeader()"/>
+
+      <div class="content">
+        <div class="container-fluid">
+          <div class="con-calender">
+            <div class="col-lg-12">
+              <div class="card content-body-area">
+                <div class="card-body">
+                  <div class="btn-group" style="width: 100%; margin-bottom: 10px;" th:replace="admin/calendar/eventColor :: eventColor()"/>
+
+                  <div id='calendar'></div>
+
+                  <div class="btn-group" style="width: 100%; margin-bottom: 10px;" th:replace="admin/calendar/eventColor :: eventColor()"/>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div><!--// content-->
+    </div>
+  </div>
+</div>
+
+<!-- modal -->
+<th:block th:replace="layout/popup :: modal('modalScheduleAdd', #{admin.calendar.modal_title.add_schedule}, 'popup-md')"></th:block>
+<th:block th:replace="layout/popup :: modal('modalScheduleUpdate', #{admin.calendar.modal_title.update_schedule}, 'popup-md')"></th:block>
+<!-- modal end -->
+
+
+
+<script src="/plugins/moment/moment.min.js"></script>
+<script src="/dist/js/pages/calendar.js"></script>
+
+<link href='/plugins/fullcalendar/main.css' rel='stylesheet'>
+<script src='/plugins/fullcalendar/main.js'></script>
+<script src='/plugins/fullcalendar/locales-all.js'></script>
+<script>
+
+  let PageFunction = {};
+
+  $(document).ready(function () {
+
+    let _this = $(this);
+
+    let _selectedScheduleId = "";
+    let _selectedYearMonth = moment();  // 오늘
+    let _calendarEl = document.getElementById('calendar');
+
+    let _calendar = new FullCalendar.Calendar(_calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: '[[${#locale}]]'
+    });
+
+    _calendar.render();
+
+    let checkMonthDayLength = function (month) {
+      if (month.toString().length > 1) return month;
+      return "0" + month;
+    }
+
+    let initScheduleEvent = function()  {
+      $.each(_calendar.getEvents(), function (index, item) {
+        item.remove();
+      });
+    }
+
+    let setNewScheduleEvents = function(events) {
+      $.each(events, function (index, item) {
+        _calendar.addEvent(item);
+      });
+    }
+
+    let getYearMonthForQuery = function() {
+      let tmpSelectedYearMonth = _selectedYearMonth.clone();
+      if (tmpSelectedYearMonth.format('MM') === '01') return tmpSelectedYearMonth.format('YYYY') + "-00";
+      else return tmpSelectedYearMonth.subtract(1, 'months').format('YYYY-MM');
+    }
+
+    let queryScheduleEvents = function(data) {
+      return JSON.parse(data.model).map(function (item) {
+        return {
+          id: item.scheduleId,
+          title: item.isTotalWorks ? item.title + " - " + '[[#{admin.calendar.all_work}]]' : item.title + " - " + item.worksNames,
+          start: item.startYear + "-" + checkMonthDayLength(item.startMonth) + "-" + checkMonthDayLength(item.startDay),
+          end: item.endYear + "-" + checkMonthDayLength(item.endMonth) + "-" + checkMonthDayLength(item.endDay + 1), // 하루 -1로 표시되기 때문에 1증가.
+          backgroundColor: item.backgroundColor,
+          borderColor: item.borderColor,
+          allDay: item.allDay,
+          isOwner : item.isOwner
+        }
+      });
+    }
+
+    let getScheduleEvent = function(){
+      reqGet( '/adminApi/getEvent/' + getYearMonthForQuery()
+        , function (data) {
+          if (!data.result) showErrorAlert("ALERT", data.message);
+          else setNewScheduleEvents(queryScheduleEvents(data));
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseJSON).error);
+        }, 'json');
+    }
+
+    let clickToday = function(eventType){
+      if(eventType === "PREV") _selectedYearMonth.subtract(1, 'months');
+      if(eventType === "NEXT") _selectedYearMonth.add(1, 'months');
+      if(eventType === "TODAY") _selectedYearMonth = moment();
+
+      initScheduleEvent();
+      getScheduleEvent();
+    }
+
+    _this.on('click', '.fc-prev-button, .fc-next-button ', function () {
+      if($(this).hasClass('fc-prev-button')) clickToday('PREV');
+      else clickToday('NEXT');
+    });
+
+    _this.on('click', '.fc-daygrid-event', function(e){
+      _selectedScheduleId = $(this).data("id");
+      modalShowAndDraggable('#modalScheduleUpdate');
+    });
+
+    _this.on('show.bs.modal', '#modalScheduleUpdate', function(){
+      reqGet("/adminModal/updateSchedule?mScheduleId=" + _selectedScheduleId
+        , function (data) {
+          $('#modalScheduleUpdate').find('.modal-body').html(data);
+        }
+        , function (xhr) {
+          showErrorAlert("ALERT", $.parseJSON(xhr.responseText).error);
+        }
+        , "html");
+    });
+
+    _this.on('hide.bs.modal', '#modalScheduleUpdate', function(){
+      $("#allCheck").off("change");
+      $("#startDate").off("change");
+      $("#endDate").off("change");
+      $("#mBtnDelete").off("click");
+      $("#mBtnUpdate").off("click");
+
+      $('#modalScheduleUpdate').find('.modal-body').html('');
+      initScheduleEvent();
+      getScheduleEvent();
+    });
+
+    PageFunction.clickToday = clickToday;
+    PageFunction.selectedYearMonth = _selectedYearMonth;
+    getScheduleEvent();
+  });
+</script>
+</body>
+
+</html>

@@ -1,0 +1,47 @@
+<div id="divCardBody" th:fragment="cardBody()" class="board-list">
+
+  <div class="table-wrap">
+    <table class="table">
+      <colgroup>
+        <col style="width:5%">
+        <col>
+        <col style="width:10%" span="5">
+      </colgroup>
+      <tbody>
+      <tr>
+        <th><span th:text="#{co_work.notification_list.list_title_no}">No</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_subject}">제목</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_work}">대상</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_writer}">작성자</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_is_popup}">팝업여부</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_popup_term}">팝업 기간</span></th>
+        <th><span th:text="#{co_work.notification_list.list_title_write_date}">작성일자</span></th>
+      </tr>
+      <th:block th:if="${totalCount == null or totalCount == 0}">
+        <tr>
+          <td colspan="7" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:id="|trIndex_${index.index}|" th:each="item, index : ${list}">
+        <td th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+        <td><a href="#" th:id="aTitle_+${index.index}" th:data-id="${item.id}" class="tb-tit" th:text="${item.title}">휴무일 공지(2021.05.05)</a></td>
+        <td th:if="${item.isTotalWorks}" th:text="#{co_work.notification_list.list_work_total}">전체</td>
+        <td th:if="${!item.isTotalWorks}" th:text="${item.worksNames}">공종</td>
+        <td>
+          <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+        </td>
+        <td th:text="${item.isPopup ? 'Y' : 'N'}">Y</td>
+        <td th:if="${!item.isPopup}" th:text="${'-'}">-</td>
+        <td th:if="${item.isPopup}" th:text="${#temporals.format(item.startDate,#messages.msg('system.locale.dateformat.year_month_day')) + ' ~ ' + #temporals.format(item.endDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+        <td th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+      </tr>
+      </tbody>
+    </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div class="paging-wrap">
+    <div id="divPagination" class="paging" th:replace="common/paginationArea :: pagination()"/>
+  </div><!--paging wrap-->
+</div><!--// board-list-->
+
+
+

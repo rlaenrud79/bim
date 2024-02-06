@@ -1,0 +1,9 @@
+<div class="header" th:fragment="contentHeader()">
+  <div class="header-left">
+    <h2 th:text="#{admin.company_update.title_company_update}">관계사 수정</h2>
+  </div>
+  <div class="header-right">
+    <a href="#none" id="btnGotoList" class="btn"><span th:text="#{admin.company_update.btn_goto_list}">목록으로</span></a>
+    <a href="#none" id="btnUpdateCompany" class="btn btn-color1 pop-open-btn" th:data-id="${companyItem.id}"><span th:text="#{admin.company_update.btn_execute_update}">수정</span></a>
+  </div>
+</div>

@@ -1,0 +1,18 @@
+<div class="contents-preview" th:fragment="load(className, contents)">
+  <div th:class="${className}"></div>
+
+  <script th:inline="javascript">
+    var contents = [[${contents}]]
+    var className = [[${className}]]
+
+    function html_decode(text){
+      var textarea = document.createElement("textarea");
+      textarea.innerHTML = text;
+      return ("textContent" in textarea) ? textarea.textContent : textarea.innerText ;
+    }
+
+    var decodedContents = html_decode(contents);
+
+    document.getElementsByClassName(className)[0].innerHTML = decodedContents;
+  </script>
+</div>

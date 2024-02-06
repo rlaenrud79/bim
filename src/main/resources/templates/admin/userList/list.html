@@ -1,0 +1,58 @@
+<div class="board-list" id="list" th:fragment="load()">
+  <div class="board-top" th:replace="common/pagingSizeSelectBox :: type1()" /><!--//board-top-->
+  <div class="table-wrap">
+    <table class="table">
+
+      <tbody>
+      <tr>
+        <th class="text-center" th:text="#{admin.user_list.page.no}">No</th>
+        <th class="text-center" th:text="#{admin.user_list.page.user_name}">성명</th>
+        <th class="text-center" th:text="#{admin.user_list.page.email}">아이디</th>
+        <th class="text-center" th:text="#{admin.user_list.page.company_name}">회사</th>
+        <th class="text-center" th:text="#{admin.company_role_list.list_title_write_date}">휴대전화번호</th>
+        <th class="text-center" th:text="#{admin.user_list.page.work}">공종</th>
+        <th class="text-center" th:text="#{admin.user_list.page.enabled}">활성여부</th>
+        <th class="text-center" th:text="#{admin.user_list.page.last_modify_date}">최종 수정 일시</th>
+      </tr>
+      <th:block th:if="${totalCount == null or totalCount == 0}">
+        <tr>
+          <td colspan="8" class="no-data" th:text="#{layout.common.no_data}">등록된 데이터가 없습니다.</td>
+        </tr>
+      </th:block>
+      <tr th:each="item,index:${list}">
+        <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+        <td>
+          <div class="txt-left">
+              <img th:src="${#strings.isEmpty(item.photoPath) ? '/dist/img/no_user_photo.png' : item.photoPath}"
+                   class="user-img" alt="User Image">
+              <a th:href="@{/admin/user/{id}(id=${item.userId})}" class="ml-10 ">
+                <span class="text-over-dot" th:text="${item.userName}">홍길동</span> <i th:if="${item.responsible}" class="fas fa-crown"></i>
+              </a>
+          </div>
+        </td>
+        <td>
+          <span class="text-over-dot" th:text="${item.email}">kildonghong@google.com</span>
+        </td>
+        <td th:text="${item.companyName}">한국 도로공사</td>
+        <td th:text="${item.mobileNo}">010-0000-0000</td>
+        <td th:text="${item.workNames}">포장공, 부대공, 배수공</td>
+        <td th:text="${item.getEnabled == 1? #messages.msg('admin.user_list.page.active'):#messages.msg('admin.user_list.page.inactive')}">Y</td>
+        <td th:text="${#temporals.format(item.lastModifyDate,#messages.msg('system.locale.dateformat.year_month_day_hour_min'))}">2021-04-06 11:10</td>
+      </tr>
+      </tbody>
+    </table><!--// table-->
+  </div><!--//table-wrap-->
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+</div>
+
+<script>
+  var currentSort = '[[${searchVO.sortProp}]]';
+
+  if (currentSort) {
+    for (let element of document.querySelectorAll("[data-sort]")) {
+      if (element.dataset.sort !== currentSort) {
+        element.style.opacity = '0.2';
+      }
+    }
+  }
+</script>

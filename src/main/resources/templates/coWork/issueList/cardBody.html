@@ -1,0 +1,81 @@
+<div id="divCardBody" class="card-body" th:fragment="cardBody()" xmlns:sec="http://www.w3.org/1999/xhtml">
+  <div class="col-12">
+    <div class="table-responsive">
+      <table class="table data-table">
+        <thead>
+        <tr>
+          <th class="text-center" width="100">
+            <span th:text="#{co_work.issue_list.list_title_no}">No</span>
+          </th>
+          <th class="text-center" width="400">
+            <span th:text="#{co_work.issue_list.list_title_subject}">제목</span>
+            <span>(<i data-sort="titleASC" class="fas fa-arrow-up sort"></i><i data-sort="titleDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center" width="180">
+            <span th:text="#{co_work.issue_list.list_title_writer}">작성자</span>
+            <span>(<i data-sort="writerNameASC" class="fas fa-arrow-up sort"></i><i data-sort="writerNameDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center" width="220">
+            <span th:text="#{co_work.issue_list.list_title_request_date}">완료 요구일자</span>
+          </th>
+          <th class="text-center" width="180">
+            <span th:text="#{co_work.issue_list.list_title_priority}">중요도</span>
+            <span>(<i data-sort="priorityASC" class="fas fa-arrow-up sort"></i><i data-sort="priorityDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center" width="180">
+            <span th:text="#{co_work.issue_list.list_title_status}">상태</span>
+            <span>(<i data-sort="statusASC" class="fas fa-arrow-up sort"></i><i data-sort="statusDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+          <th class="text-center" width="220">
+            <span th:text="#{co_work.issue_list.list_title_status_update_date}">상태 변경일자</span>
+          </th>
+          <th class="text-center" width="220">
+            <span th:text="#{co_work.issue_list.list_title_write_date}">작성일자</span>
+            <span>(<i data-sort="writeDateASC" class="fas fa-arrow-up sort"></i><i data-sort="writeDateDESC" class="fas fa-arrow-down sort"></i>)</span>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="item, index : ${list}"
+            th:classappend="${#session.getAttribute('scopedTarget.userInfo')?.isRoleAdminProject && item.isRequestOrGoing} ? 'bg-info' : (${item.isIncludedUser(#session.getAttribute('scopedTarget.userInfo')?.id) && item.isRequestOrGoing} ? 'bg-danger')">
+          <td class="text-center" th:text="${totalCount - (index.index + 1) - (list.pageable.pageNumber * pageSize) + 1}">1</td>
+          <td>
+            <div class="table-text-cont">
+              <a th:id="aTitle_+${index.index}" href="#" th:data-id="${item.id}">
+                <span class="text-over-dot" th:text="${item.title}">휴무일 공지(2021.05.05)</span>
+              </a>
+            </div>
+          </td>
+          <td class="text-center">
+            <div th:replace="/common/userInfo :: userInfo(${item.writerDTO})"></div>
+          </td>
+          <td class="text-center" th:text="${#temporals.format(item.requestDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+          <td class="text-center" th:if="${item.priority == 10}" th:text="#{co_work.issue_list.list_priority_10}">긴급</td>
+          <td class="text-center" th:if="${item.priority == 20}" th:text="#{co_work.issue_list.list_priority_20}">상</td>
+          <td class="text-center" th:if="${item.priority == 30}" th:text="#{co_work.issue_list.list_priority_30}">중</td>
+          <td class="text-center" th:if="${item.priority == 40}" th:text="#{co_work.issue_list.list_priority_40}">하</td>
+          <td class="text-center" th:text="#{${item.status.getMessageProperty()}}">작성중</td>
+          <td class="text-center" th:text="${#temporals.format(item.statusUpdateDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+          <td class="text-center" th:text="${#temporals.format(item.writeDate,#messages.msg('system.locale.dateformat.year_month_day'))}">2021-04-06</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- paging -->
+  <div id="divPagination" class="col-12" th:replace="common/paginationArea :: pagination()"/>
+
+  <script>
+    var currentSort = '[[${searchIssueVO.sortProp}]]';
+
+    if (currentSort) {
+      for (let element of document.querySelectorAll("[data-sort]")) {
+        if (element.dataset.sort !== currentSort) {
+          element.style.opacity = '0.2';
+        }
+      }
+    }
+  </script>
+</div>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link rel="stylesheet" href="/dist/css/print.css">
+
+
+<body style="overflow: visible;">
+
+
+<div class="print-page2">
+        <section>
+            <h1 th:text="#{project.job_sheet_view.job_sheet}">공사일지</h1>
+            <div class="title">
+                <h2 th:text="#{project.job_sheet_view.print_general}">1. 일반현황</h2>
+            </div>
+            <div class="write-date">
+                <strong th:text="#{project.job_sheet_view.print_write_date}">작성일자 :</strong>
+                <span th:text="|${#strings.substring(jobSheet.writeEmbedded.writeDate, 0, 4)}.|">2023.</span>
+                <span th:text="|${#strings.substring(jobSheet.writeEmbedded.writeDate, 5, 7)}.|">03.</span>
+                <span th:text="|${#strings.substring(jobSheet.writeEmbedded.writeDate, 8, 10)}.|">01</span>
+                <!--<span>(수)</span>-->
+            </div>
+            <table class="table">
+                <tbody>
+                <colgroup>
+                    <col style="width:6%">
+                    <col style="width:23%">
+                    <col style="width:6%">
+                    <col style="width:17%">
+                    <col style="width:7%" span="3">
+                </colgroup>
+                <tr>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.project_name}">공사명</th>
+                    <td rowspan="2" class="txt-left" th:text="${projectName}">세종포천선 세종-안성 10공구</td>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.print_title_write}">작성자</th>
+                    <td rowspan="2" class="txt-left">
+                        <span th:text="#{project.job_sheet_view.print_agent_write}">현장대리인 : </span>
+                        <span class="s-txt" th:text="#{project.job_sheet_view.print_sign}">(인)</span>
+                    </td>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.temperature}">온도</th>
+                    <td class="txt-cnt" th:text="#{project.job_sheet_view.temperature_max}">최고</td>
+                    <td class="txt-left">
+                        <span th:text="${jobSheet.temperatureMax}">29.3</span>
+                        <span class="s-txt">℃</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="txt-cnt" th:text="#{project.job_sheet_view.temperature_min}">최저</td>
+                    <td class="txt-left">
+                        <span th:text="${jobSheet.temperatureMin}">13.6</span>
+                        <span class="s-txt">℃</span>
+                    </td>
+                </tr>
+                <tr>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.location}">위치</th>
+                    <td rowspan="2" class="txt-left" th:text="${jobSheet.location}">경기도 안성시 금광면 배티로 715</td>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.print_confirm_user}">확인자</th>
+                    <td rowspan="2" class="txt-left">
+                        <span th:text="#{project.job_sheet_view.print_supervisor_write}">감독원 : </span>
+                        <span class="s-txt" th:text="#{project.job_sheet_view.print_sign}">(인)</span>
+                    </td>
+                    <th rowspan="2" class="txt-cnt" th:text="#{project.job_sheet_view.weather}">기상</th>
+                    <td class="txt-cnt" th:text="#{project.job_sheet_view.rain_fall_amount}">강우량</td>
+                    <td class="txt-left">
+                        <span th:text="${jobSheet.rainfallAmount}">44</span>
+                        <span class="s-txt">mm</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="txt-cnt" th:text="#{project.job_sheet_view.snow_fall_amount}">강설량</td>
+                    <td class="txt-left">
+                        <span th:text="${jobSheet.snowfallAmount}">0</span>
+                        <span class="s-txt">mm</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="title">
+                <h2 th:text="#{project.job_sheet_view.print_process_status}">2. 공정현황</h2>
+                <h3 th:text="#{project.job_sheet_view.print_total}">가. 총괄</h3>
+            </div>
+            <table class="table">
+                <colgroup>
+                    <col style="width:10%">
+                    <col style="width:13.333%" span="6">
+                    <col style="width:10%">
+                </colgroup>
+                <tbody>
+                <tr class="tb-head">
+                    <th rowspan="2" th:text="#{project.job_sheet_view.print_title_type}">구분</th>
+                    <th colspan="3" th:text="#{project.job_sheet_view.print_title_work_all}">전체(%)</th>
+                    <th colspan="3" th:text="#{project.job_sheet_view.print_title_now_year}">당해년도(%)</th>
+                    <th th:text="#{project.job_sheet_view.print_title_total_all}">전체누계(%)</th>
+                </tr>
+                <tr class="tb-head">
+                    <th th:text="#{project.job_sheet_view.print_title_all}">총계</th>
+                    <th th:text="#{project.job_sheet_view.print_title_previous_year}">전년까지</th>
+                    <th th:text="#{project.job_sheet_view.print_title_current_year}">당해년도</th>
+                    <th th:text="#{project.job_sheet_view.print_title_plan}">계획</th>
+                    <th th:text="#{project.job_sheet_view.print_title_conduct}">실시</th>
+                    <th th:text="#{project.job_sheet_view.print_title_contrast}">대비</th>
+                    <th th:text="#{project.job_sheet_view.print_title_contrast}">대비</th>
+                </tr>
+                <tr>
+                    <th th:text="#{project.job_sheet_view.print_title_all}">총 계
+                    </th>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(workAmountTotal.totalAmount, 1, 'COMMA')}">216,070,368,431</span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(workAmountTotal.prevAmount, 1, 'COMMA')}">29,450,000,000</span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(workAmountTotal.amount, 1, 'COMMA')}">45,000,000,000</span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(workPlanAmountSum, 1, 'COMMA')}"></span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatInteger(workAmountTotal.todayAmount, 1, 'COMMA')}">1,005,971,800</span>
+                    </td>
+                    <td>
+                        <span th:text="${#numbers.formatDecimal(workAmountContrastSum, 1, 'COMMA', 2, 'POINT')}"></span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(workTotalContrastSum, 1, 'COMMA', 2, 'POINT')}"></td>
+                </tr>
+                <th:block th:each="row, info : ${workAmounts}">
+                    <tr>
+                        <th th:text="|${(info.index+1)}. ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale} 계|">1</th>
+                        <td>
+                            <span th:text="${#numbers.formatInteger(row.totalAmount, 1, 'COMMA')}">12,941,990,175</span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatInteger(row.prevAmount, 1, 'COMMA')}">12,941,990,175</span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatInteger(row.amount, 1, 'COMMA')}">12,941,990,175</span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatInteger(workPlanAmounts[info.index], 1, 'COMMA')}"></span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatInteger(row.todayAmount, 1, 'COMMA')}">47,620,168</span>
+                        </td>
+                        <td>
+                            <span th:text="${#numbers.formatDecimal(workAmountContrast[info.index], 1, 'COMMA', 2, 'POINT')}"></span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(workTotalContrast[info.index], 1, 'COMMA', 2, 'POINT')}"></td>
+                    </tr>
+                </th:block>
+                </tbody>
+            </table>
+        </section><!---//section-->
+
+        <section>
+
+            <div class="title">
+                <h3>나. 세부내역</h3>
+            </div>
+            <table class="table">
+                <colgroup>
+                    <col style="width:23%">
+                    <col style="width:10%">
+                    <col style="width:12%" span="3">
+                    <col style="width:7.5%" span="3">
+                </colgroup>
+                <tbody>
+                <tr class="tb-head">
+                    <th rowspan="2">공종</th>
+                    <th rowspan="2">설계량</th>
+                    <th colspan="3">실시량(원)</th>
+                    <th colspan="3">진도(%)</th>
+                </tr>
+                <tr class="tb-head">
+                    <th>전일누계</th>
+                    <th>금일</th>
+                    <th>누계</th>
+                    <th>금일실시</th>
+                    <th>당해년도<br>누계</th>
+                    <th>전체누계</th>
+                </tr>
+                <tr>
+                    <th th:text="#{project.job_sheet_view.print_title_all}">총 계</th>
+                    <td th:if="${#lists.size(jobSheetProcessItems) > 0}" th:text="${#numbers.formatInteger(#aggregates.sum(jobSheetProcessItems.![cost]), 1, 'COMMA')}">0</td>
+                    <td th:if="${#lists.size(jobSheetProcessItems) > 0}" th:text="${#numbers.formatInteger(#aggregates.sum(jobSheetProcessItems.![beforeProgressAmount]), 1, 'COMMA')}">0</td>
+                    <td th:if="${#lists.size(jobSheetProcessItems) > 0}" th:text="${#numbers.formatInteger(#aggregates.sum(jobSheetProcessItems.![todayProgressAmount]), 1, 'COMMA')}">0</td>
+                    <td th:if="${#lists.size(jobSheetProcessItems) > 0}" th:text="${#numbers.formatInteger(#aggregates.sum(jobSheetProcessItems.![afterProgressAmount]), 1, 'COMMA')}">0</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <th:block th:each="row, info : ${jobSheetProcessItems}">
+                    <tr th:with="newParentId = ''">
+                        <th th:text="|${(info.index+1)}. ${#strings.isEmpty(row.workNameLocale) ? row.workName : row.workNameLocale} 계|"></th>
+                        <td th:text="${#numbers.formatInteger(row.cost, 1, 'COMMA')}">0</td>
+                        <td th:text="${#numbers.formatInteger(row.beforeProgressAmount, 1, 'COMMA')}">0</td>
+                        <td th:text="${#numbers.formatInteger(row.todayProgressAmount, 1, 'COMMA')}">0</td>
+                        <td th:text="${#numbers.formatInteger(row.afterProgressAmount, 1, 'COMMA')}">0</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <th:block th:if="${#lists.size(row.jobSheetProcessItemDTOs) > 0}" th:each="item, info : ${row.jobSheetProcessItemDTOs}">
+                        <tr>
+                            <td th:text="${item.taskName}"></td>
+                            <td th:text="${#numbers.formatInteger(item.cost, 1, 'COMMA')}"></td>
+                            <td th:text="${#numbers.formatInteger(item.beforeProgressAmount, 1, 'COMMA')}"></td>
+                            <td th:text="${#numbers.formatInteger(item.todayProgressAmount, 1, 'COMMA')}"></td>
+                            <td th:text="${#numbers.formatInteger(item.afterProgressAmount, 1, 'COMMA')}"></td>
+                            <td th:text="${#numbers.formatDecimal(item.todayProgressRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(item.yearProgressRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${#numbers.formatDecimal(item.afterProgressRate, 1, 'COMMA', 2, 'POINT')}"></td>
+                        </tr>
+                    </th:block>
+                </th:block>
+                </tbody>
+            </table>
+        </section><!---//section-->
+
+        <section>
+            <div class="title">
+                <h2>3. 인원현황</h2>
+            </div>
+            <table class="table">
+                <colgroup>
+                    <col style="width:20%" span="5">
+                </colgroup>
+                <tbody>
+                <tr class="tb-head">
+                    <th>구분</th>
+                    <th>전일누계</th>
+                    <th>금일투입</th>
+                    <th>누계인원</th>
+                    <th>비고</th>
+                </tr>
+                <th:block th:each="row, info : ${jobSheetProcessItemWorkers}">
+                    <tr th:with="beforeAmount=${#strings.isEmpty(row.beforeAmount)?0:row.beforeAmount}, amount=${#strings.isEmpty(row.amount)?0:row.amount}">
+                        <th>[[${row.name}]]</th>
+                        <td th:text="${#numbers.formatDecimal(beforeAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                        <td th:text="${#numbers.formatDecimal(amount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                        <td th:text="${#numbers.formatDecimal(beforeAmount+amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td></td>
+                    </tr>
+                </th:block>
+                <tr>
+                    <th class="txt-cnt">계</th>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemWorkerBeforeAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemWorkerAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemWorkerTotalAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </section><!---//section-->
+
+        <section>
+            <div class="title">
+                <h2>4. 장비현황</h2>
+            </div>
+            <table class="table">
+                <colgroup>
+                    <col style="width:20%" span="5">
+                </colgroup>
+                <tbody>
+                <tr class="tb-head">
+                    <th>장비명</th>
+                    <th>전일누계</th>
+                    <th>금일투입</th>
+                    <th>누계인원</th>
+                    <th>비고</th>
+                </tr>
+                <th:block th:each="row, info : ${jobSheetProcessItemDevices}">
+                    <tr th:with="beforeAmount=${#strings.isEmpty(row.beforeAmount)?0:row.beforeAmount}, amount=${#strings.isEmpty(row.amount)?0:row.amount}">
+                        <th>[[${row.name}]]</th>
+                        <td th:text="${#numbers.formatDecimal(beforeAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                        <td th:text="${#numbers.formatDecimal(amount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                        <td th:text="${#numbers.formatDecimal(beforeAmount+amount, 1, 'COMMA', 2, 'POINT')}"></td>
+                        <td></td>
+                    </tr>
+                </th:block>
+                <tr>
+                    <th class="txt-cnt">계</th>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemDeviceBeforeAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemDeviceAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td th:text="${#numbers.formatDecimal(jobSheetProcessItemDeviceTotalAmount, 1, 'COMMA', 2, 'POINT')}">0</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </section><!---//section-->
+        <!--
+        <section>
+            <div class="title">
+                <h2>5. 주요자재명</h2>
+            </div>
+            <table class="table">
+                <tbody>
+                <tr class="tb-head">
+                    <th rowspan="2">품명</th>
+                    <th rowspan="2">규격</th>
+                    <th rowspan="2">설계량</th>
+                    <th colspan="3">반입량</th>
+                    <th colspan="2">사용량</th>
+                    <th rowspan="2">잔량</th>
+                </tr>
+                <tr class="tb-head">
+                    <th>전일누계</th>
+                    <th>금일</th>
+                    <th>누계</th>
+                    <th>금일사용</th>
+                    <th>누계사용</th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </section>--><!---//section-->
+        <section>
+            <div class="title">
+                <h2>5. 주요작업내용</h2>
+            </div>
+            <table class="table">
+                <colgroup>
+                    <col style="width:50%" span="2">
+                </colgroup>
+                <tbody>
+                <tr class="tb-head">
+                    <th>전일작업</th>
+                    <th>금일작업</th>
+                </tr>
+                <tr class="no-break">
+                    <td class="txt-left edit-txt" th:if="${jobSheet.contents != null}" th:utext="${jobSheet.contents.replaceAll('\n', '<br/>')}"></td>
+                    <td class="txt-left edit-txt" th:if="${jobSheet.todayContents != null}" th:utext="${jobSheet.todayContents.replaceAll('\n', '<br/>')}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </section><!---//section-->
+</div><!--//page-->
+</body>
+
+</html>
+
+<script type="text/javascript">
+    window.print();
+</script>
