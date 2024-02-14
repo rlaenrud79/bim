@@ -92,6 +92,7 @@
     </div>
   </section>
 </div>
+<script type="text/javascript" src="/dist/js/common-grid.js"></script>
 <script th:inline="javascript">
   $(document).ready(function() {
     calculateCostDetailComplexUnitPrice();
@@ -274,6 +275,13 @@
           //$this.find(".setBookmark[data-is-bookmark=" + isBookmark + "]").removeClass("on");
         }
       });
+    });
+
+    $this.on("change", "#count", function () {
+      var trId = $(this).closest('tr').attr('id');
+      let count = $(this).val();
+      let cost = calculateMultipleZ(count, $('#'+trId+' input[name="unitPrice"]').val().replace(/,/g, ""));
+      $('#'+trId+' input[name="cost"]').val(numberWithCommas(cost));
     });
   });
 
